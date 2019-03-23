@@ -74,8 +74,8 @@ public class InputManager : MonoBehaviour
     }
 
     //Returns a axis for the movement class out of 360 degrees in world z coordiantes
-    private Vector2 MovementInput ()
+    private float MovementInput ()
     {
-        return Vector2.zero;
+        return 5f;
     }
 }
