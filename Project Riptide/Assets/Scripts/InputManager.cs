@@ -10,7 +10,7 @@ public class InputManager : MonoBehaviour
 
     //---------Swiping-------------------------------
     public bool currentlySwiping;
-    private Vector2 startTouchPos;
+    public Vector2 startTouchPos;
     public Vector2 currentTouchPos;
     public float minTouchDistance;
 
@@ -82,9 +82,10 @@ public class InputManager : MonoBehaviour
         else //No touches on screen
         {
             buttonsPressed = 0;
-        }
-        //Multi Tapping ----------------------------------------------------------------------------------------------------------
-        if(tapCounter > 0)
+			currentlySwiping = false;
+		}
+		//Multi Tapping ----------------------------------------------------------------------------------------------------------
+		if(tapCounter > 0)
          {
             multiTapTimer += Time.deltaTime;
             if(multiTapTimer > 2.5f) //Manually change the timer length here!
