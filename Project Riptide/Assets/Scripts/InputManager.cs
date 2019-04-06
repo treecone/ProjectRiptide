@@ -35,6 +35,7 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         DetectingMobileInput();
+        DetectingKeyboardInput();
     }
 
     void DetectingMobileInput () //This method is responsiable for handing swipe and tapping
@@ -91,6 +92,62 @@ public class InputManager : MonoBehaviour
             if(multiTapTimer > 2.5f) //Manually change the timer length here!
             {
                 if(tapCounter == 2)
+                {
+                    //DOUBLE TAP | DO SOMETHING?
+                    Debug.Log("Double Tapped");
+                }
+                if (tapCounter == 3)
+                {
+                    //TRIPLE TAP | DO SOMETHING?
+                    Debug.Log("Triple Tapped");
+                }
+                tapCounter = 0;
+                multiTapTimer = 0;
+            }
+        }
+    }
+    void DetectingKeyboardInput()
+    {
+        //On first click on Mouse Button.
+        if (Input.GetMouseButtonDown(0))
+        {
+            touchVisual.GetComponent<Image>().enabled = true;
+            touchVisualCursor.GetComponent<Image>().enabled = true;
+            startTouchPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+            touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
+            touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
+            tapCounter += 1;
+        }
+        //When the mouse button is held down.
+        else if (Input.GetMouseButton(0))
+        {
+            currentTouchPos = new Vector3(Input.mousePosition.x - gameObject.GetComponent<RectTransform>().rect.width / 2, Input.mousePosition.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
+            touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = currentTouchPos;
+            if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minTouchDistance || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minTouchDistance) //If the player has dragged a certain distanceS
+            {
+                //Do stuff while swiping?
+                currentlySwiping = true;
+            }
+            else
+            {
+                currentlySwiping = false;
+            }
+        }
+        //The player has stopped presing the mouse button.
+        else
+        {
+            touchVisual.GetComponent<Image>().enabled = false;
+            touchVisualCursor.GetComponent<Image>().enabled = false;
+            buttonsPressed = 0;
+            currentlySwiping = false;
+        }
+
+        if (tapCounter > 0)
+        {
+            multiTapTimer += Time.deltaTime;
+            if (multiTapTimer > 2.5f) //Manually change the timer length here!
+            {
+                if (tapCounter == 2)
                 {
                     //DOUBLE TAP | DO SOMETHING?
                     Debug.Log("Double Tapped");
