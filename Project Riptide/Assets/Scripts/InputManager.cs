@@ -22,6 +22,7 @@ public class InputManager : MonoBehaviour
     private float multiTapTimer;
     public int tapCounter;
  
+	public bool mobile = false;
 
     void Start()
     {
@@ -34,8 +35,10 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        DetectingMobileInput();
-        DetectingKeyboardInput();
+		if(mobile)
+			DetectingMobileInput();
+		else
+			DetectingKeyboardInput();
     }
 
     void DetectingMobileInput () //This method is responsiable for handing swipe and tapping
@@ -106,6 +109,7 @@ public class InputManager : MonoBehaviour
             }
         }
     }
+
     void DetectingKeyboardInput()
     {
         //On first click on Mouse Button.

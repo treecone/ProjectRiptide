@@ -6,7 +6,7 @@ using UnityEngine;
 /// 3/7/2019
 /// Camera movement
 /// </summary>
-public class Camera : MonoBehaviour
+public class CameraController : MonoBehaviour
 {
     //fields
     public Transform player;

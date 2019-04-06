@@ -11,11 +11,15 @@ public class PlayerController : MonoBehaviour
 	public float speed = 1f;
 	public float rotationSpeed = 0.5f;
 
-    // Start is called before the first frame update
-    void Start()
+	private Camera camera;
+	private Vector3 newPosition;
+
+	// Start is called before the first frame update
+	void Start()
     {
         inputManager = GameObject.Find("Canvas").GetComponent<InputManager>();
 		rb = GetComponent<Rigidbody>();
+		camera = Camera.main;
     }
 
     // Update is called once per frame
@@ -26,18 +30,19 @@ public class PlayerController : MonoBehaviour
 			Vector2 touchPos = inputManager.currentTouchPos - inputManager.startTouchPos;
 			touchMove = new Vector3(-touchPos.y, 0, touchPos.x);	//Convert 2D input into 3d movement
 			touchMove.Normalize();
-
+			
 			//Apply a velocity to the ship
 			rb.velocity = touchMove;
+
 			//Look in the direction of movement
 			gameObject.transform.LookAt(touchMove + gameObject.transform.position);
-
-			//Old Test code that I may use later
-			//if(touchMove.x > 0)
-			//	rb.velocity = Vector3.forward * speed;
-			//else if(touchMove.x < 0)
-			//	rb.velocity = Vector3.back * speed;
-			//rb.rotation = Quaternion.FromToRotation(gameObject.transform.position, touchMove + gameObject.transform.position);
 		}
-    }
+		/*else if(Input.GetMouseButtonDown(0))
+		{
+			Vector3 clickedPos = Camera.main.ViewportToWorldPoint(Input.mousePosition);
+			print(clickedPos.ToString());
+			//clickedPos = new Vector2(clickedPos.x, 0, clickedPos.y);
+			//transform.position = clickedPos;
+		}*/
+	}
 }
