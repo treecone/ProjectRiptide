@@ -18,20 +18,28 @@ public class Enemy : MonoBehaviour
     private float hostileRadius;
     //Radius to trigger passive AI
     private float passiveRadius;
+    //Fields for AI
+    private Vector3 oldPosition;
+    private Vector3 destination;
+    private double timeBetween;
+    private double timeCurrent;
 
     public int Health { get { return health; } }
 
     // Start is called before the first frame update
     void Start()
     {
-        playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("player").transform.position);
+        state = EnemyState.Passive;
+        playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        timeBetween = 5.0;
+        timeCurrent = 5.0;
     }
 
     // Update is called once per frame
     void Update()
     {
         //updates player position
-        playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("player").transform.position);
+        playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
 
         //checks for states
         switch (state)
@@ -41,7 +49,7 @@ public class Enemy : MonoBehaviour
                 //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
                 if(playerDistance < hostileRadius)
                 {
-                    state = EnemyState.Hostile;
+                    //state = EnemyState.Hostile;
                 }
                 break;
             case EnemyState.Hostile:
@@ -74,7 +82,17 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public void PassiveMovement()
     {
-        
+        if(timeCurrent >= timeBetween)
+        {
+            oldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
+            timeCurrent = 0;
+        }
+
+        timeCurrent += Time.deltaTime;
+        transform.position = Vector3.Lerp(oldPosition, destination, (float)(timeCurrent / timeBetween));
+        Debug.Log(transform.position.x);
+        Debug.Log(timeCurrent);
     }
 
     /// <summary>
