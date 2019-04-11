@@ -21,6 +21,7 @@ public class Enemy : MonoBehaviour
     //Fields for AI
     private Vector3 oldPosition;
     private Vector3 destination;
+    private Quaternion lookRotation;
     private double timeBetween;
     private double timeCurrent;
 
@@ -89,8 +90,11 @@ public class Enemy : MonoBehaviour
             timeCurrent = 0;
         }
 
+        lookRotation = Quaternion.LookRotation(destination - transform.position);
         timeCurrent += Time.deltaTime;
-        transform.position = Vector3.Lerp(oldPosition, destination, (float)(timeCurrent / timeBetween));
+        transform.Translate(new Vector3(transform.forward.x, 0, transform.forward.z) / 40);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
+
         Debug.Log(transform.position.x);
         Debug.Log(timeCurrent);
     }
