@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     //Radius to trigger passive AI
     private float passiveRadius;
     //Fields for AI
-    private Vector3 oldPosition;
+    private float speed;
     private Vector3 destination;
     private Quaternion lookRotation;
     private double timeBetween;
@@ -32,8 +32,9 @@ public class Enemy : MonoBehaviour
     {
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        speed = 1.0f;
         timeBetween = 5.0;
-        timeCurrent = 5.0;
+        timeCurrent = timeBetween;
     }
 
     // Update is called once per frame
@@ -85,18 +86,30 @@ public class Enemy : MonoBehaviour
     {
         if(timeCurrent >= timeBetween)
         {
-            oldPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
             timeCurrent = 0;
         }
 
         lookRotation = Quaternion.LookRotation(destination - transform.position);
         timeCurrent += Time.deltaTime;
-        transform.Translate(new Vector3(transform.forward.x, 0, transform.forward.z) / 40);
+        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
+        Debug.DrawRay(ray.origin, ray.direction, Color.black);
+        if (Physics.Raycast(ray, out hit, 5.0f))
+        {
+            if (hit.collider.CompareTag("Obstical"))
+            {
+                Debug.Log("Obstical in front");
+                lookRotation = Quaternion.Inverse(lookRotation);
+                if(hit.collider.bounds.Contains(destination))
+                {
+                    timeCurrent += timeBetween;
+                }
+            }
+        }
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-
-        Debug.Log(transform.position.x);
-        Debug.Log(timeCurrent);
+        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
     }
 
     /// <summary>
