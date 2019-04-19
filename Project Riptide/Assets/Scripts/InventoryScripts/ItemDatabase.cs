@@ -2,78 +2,85 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using LitJson;
 
+//USING LITJSON
 public class ItemDatabase : MonoBehaviour
 {
+    private string defaultPath;
+    private string jsonString;
+    private JsonData itemData;
     private List<Item> allItemsList;
-    private string defaultPath = Application.dataPath + "Assets/Resources/Items";
 
-    void Awake()
+    //Types ---------
+    /*
+     * Resources
+     * Equipment
+     */
+
+    void Start()
     {
+        defaultPath = Application.dataPath + "/Items.json";
+        jsonString = File.ReadAllText(defaultPath);
         allItemsList = new List<Item>();
-        CreateListFromJson();
+        System.Console.WriteLine(GetItem("Resources", "Stone").Description);
     }
 
     void Update()
     {
-        
+        Debug.Log(allItemsList[0].ItemName);
     }
 
-    void CreateListFromJson ()
+    public Item GetItem(string type, string nameOfItem)
     {
-        if(File.Exists (defaultPath))
+        JsonData tempObject = new JsonData();
+        if (File.Exists(defaultPath))
         {
-            Item[] tempItems = JsonHelper.FromJson<Item>(defaultPath);
-            foreach (Item i in tempItems)
+            itemData = JsonMapper.ToObject(jsonString);
+            for (int i = 0; i < itemData[type].Count; i++)
             {
-                allItemsList.Add(new Item(i.Id, i.ItemName, i.Description, i.Stackable));
+                if(itemData[type][i][nameOfItem].ToString() == name)
+                {
+                    tempObject = itemData[type][i];
+                }
+            }
+
+            if(itemData[type][0] != null)
+            {
+                return new Item((int)tempObject["id"], (string)tempObject["name"], (string)tempObject["description"], (bool)tempObject["stackable"], (int)tempObject["rarity"], (int)tempObject["value"]);
+            }
+            else
+            {
+                Debug.LogError("Item of that type or name could not be retreved!");
             }
         }
         else
         {
-            Debug.LogError("There is no items Json in the defualt path!");
+            Debug.LogError("File path to Items.json is wrong!");
         }
+        return null;
     }
 }
 
+//https://forum.unity.com/threads/reading-and-writing-json-files-c-litjson-awfulmedia.351806/
+
 public class Item : MonoBehaviour
 {
-    public Item(int id, string itemName, string description, bool stackable)
-    {
-        Id = id;
-        ItemName = itemName;
-        Description = description;
-        Stackable = stackable;
-    }
 
     public int Id; //These are public, and thus not secure...
     public string ItemName;
     public string Description;
     public bool Stackable;
-}
+    public int Rarity;
+    public int Value;
 
-//https://stackoverflow.com/questions/36239705/serialize-and-deserialize-json-and-json-array-in-unity
-
-//This class helps by allowing you to serialze and deserialize array's from Json files
-public static class JsonHelper
-{
-
-    public static T[] FromJson<T>(string json)
+    public Item(int id, string itemName, string description, bool stackable, int rarity, int value)
     {
-        Wrapper<T> wrapper = UnityEngine.JsonUtility.FromJson<Wrapper<T>>(json);
-        return wrapper.Items;
-    }
-
-    public static string ToJson<T>(T[] array)
-    {
-        Wrapper<T> wrapper = new Wrapper<T>();
-        wrapper.Items = array;
-        return UnityEngine.JsonUtility.ToJson(wrapper);
-    }
-
-    [SerializeField] //This was SERILIZABLE not serField
-    private class Wrapper<T>
-    {
-        public T[] Items;
+        Id = id;
+        ItemName = itemName;
+        Description = description;
+        Stackable = stackable;
+        Rarity = rarity;
+        Value = value;
     }
 }
