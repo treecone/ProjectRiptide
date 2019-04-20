@@ -94,20 +94,24 @@ public class Enemy : MonoBehaviour
         timeCurrent += Time.deltaTime;
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
         RaycastHit hit;
-        Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
-        Debug.DrawRay(ray.origin, ray.direction, Color.black);
-        if (Physics.Raycast(ray, out hit, 5.0f))
+        Ray ray1 = new Ray(transform.position + transform.right, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
+        Ray ray2 = new Ray(transform.position - transform.right , new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
+        Debug.DrawRay(ray1.origin, ray1.direction, Color.black);
+        Debug.DrawRay(ray2.origin, ray2.direction, Color.black);
+        if (Physics.Raycast(ray1, out hit, 10.0f) || Physics.Raycast(ray2, out hit, 10.0f))
         {
             if (hit.collider.CompareTag("Obstical"))
             {
                 Debug.Log("Obstical in front");
-                lookRotation = Quaternion.Inverse(lookRotation);
+                lookRotation = Quaternion.LookRotation(Vector3.Cross(forward, Vector3.up));
                 if(hit.collider.bounds.Contains(destination))
                 {
                     timeCurrent += timeBetween;
                 }
             }
         }
+        Debug.Log(lookRotation);
+        
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
         transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
     }
