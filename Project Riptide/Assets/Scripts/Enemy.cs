@@ -87,6 +87,7 @@ public class Enemy : MonoBehaviour
         if(timeCurrent >= timeBetween)
         {
             destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
+            //destination = new Vector3(transform.position.x, transform.position.y, transform.position.z + 30.0f);
             timeCurrent = 0;
         }
 
@@ -94,26 +95,49 @@ public class Enemy : MonoBehaviour
         timeCurrent += Time.deltaTime;
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
         RaycastHit hit;
-        Ray ray1 = new Ray(transform.position + transform.right, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
-        Ray ray2 = new Ray(transform.position - transform.right , new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
-        Debug.DrawRay(ray1.origin, ray1.direction, Color.black);
-        Debug.DrawRay(ray2.origin, ray2.direction, Color.black);
-        if (Physics.Raycast(ray1, out hit, 10.0f) || Physics.Raycast(ray2, out hit, 10.0f))
+        Ray rightFRay = new Ray(transform.position + transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
+        Ray leftFRay = new Ray(transform.position - transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
+        Ray rightSRay = new Ray(transform.position + transform.right * 1.2f, new Vector3(transform.right.x, 0, transform.right.z) * speed);
+        Ray leftSRay = new Ray(transform.position - transform.right * 1.2f, new Vector3(-transform.right.x, 0, -transform.right.z) * speed);
+        Debug.DrawRay(rightFRay.origin, rightFRay.direction, Color.black);
+        Debug.DrawRay(leftFRay.origin, leftFRay.direction, Color.black);
+        Debug.DrawRay(rightSRay.origin, rightSRay.direction, Color.black);
+        Debug.DrawRay(leftSRay.origin, leftSRay.direction, Color.black);
+        if (Physics.Raycast(leftFRay, out hit, 5.0f) || Physics.Raycast(leftSRay, out hit, 1.0f))
         {
             if (hit.collider.CompareTag("Obstical"))
             {
                 Debug.Log("Obstical in front");
-                lookRotation = Quaternion.LookRotation(Vector3.Cross(forward, Vector3.up));
-                if(hit.collider.bounds.Contains(destination))
+                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+                Debug.Log("Ray 1 hit: new dir = " + Vector3.Cross(Vector3.up, transform.forward));
+                if (hit.collider.bounds.Contains(destination))
                 {
                     timeCurrent += timeBetween;
                 }
             }
         }
-        Debug.Log(lookRotation);
-        
+        else if(Physics.Raycast(rightFRay, out hit, 5.0f) || Physics.Raycast(rightSRay, out hit, 1.0f))
+        {
+            if (hit.collider.CompareTag("Obstical"))
+            {
+                Debug.Log("Obstical in front");
+                lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
+                Debug.Log("Ray 2 hit: new dir = " + Vector3.Cross(transform.forward, Vector3.up));
+                if (hit.collider.bounds.Contains(destination))
+                {
+                    timeCurrent += timeBetween;
+                }
+            }
+        } 
+        else
+        {
+            Debug.Log("No obstical");
+            Debug.Log("No hit: dir = " + transform.forward);
+        }
+
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
         transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+
     }
 
     /// <summary>
