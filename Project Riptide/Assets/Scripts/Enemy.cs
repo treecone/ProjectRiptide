@@ -24,6 +24,8 @@ public class Enemy : MonoBehaviour
     private Quaternion lookRotation;
     private double timeBetween;
     private double timeCurrent;
+    private Vector3 startPos;
+    private float wanderRadius;
 
     public int Health { get { return health; } }
 
@@ -35,6 +37,10 @@ public class Enemy : MonoBehaviour
         speed = 1.0f;
         timeBetween = 5.0;
         timeCurrent = timeBetween;
+        startPos = transform.position;
+        wanderRadius = 30.0f;
+        hostileRadius = 10.0f;
+        passiveRadius = 50.0f;
     }
 
     // Update is called once per frame
@@ -51,7 +57,7 @@ public class Enemy : MonoBehaviour
                 //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
                 if(playerDistance < hostileRadius)
                 {
-                    //state = EnemyState.Hostile;
+                    state = EnemyState.Hostile;
                 }
                 break;
             case EnemyState.Hostile:
@@ -84,16 +90,57 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public void PassiveMovement()
     {
+        //If time between movements is over select a new destination
         if(timeCurrent >= timeBetween)
         {
-            destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
-            //destination = new Vector3(transform.position.x, transform.position.y, transform.position.z + 30.0f);
+            //Select new destination that is inside wander radius
+            do
+            {
+                destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
+            } while (Vector3.Distance(destination, startPos) > wanderRadius);
             timeCurrent = 0;
         }
 
+        //Find the direction the monster should be looking
         lookRotation = Quaternion.LookRotation(destination - transform.position);
+        //Increment time
         timeCurrent += Time.deltaTime;
+        //Find local forward vector
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+        CheckCollision();
+        //Rotate and move monster
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
+        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+    }
+
+    /// <summary>
+    /// Moves the monster based on an AI (hostile)
+    /// </summary>
+    public void HostileMovement()
+    {
+        //Track player
+        destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
+        //Find the direction the monster should be looking
+        lookRotation = Quaternion.LookRotation(destination - transform.position);
+        //Find local forward vector
+        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+        //When monster gets close circle player
+        if(!CheckCollision() && playerDistance < 5.0f)
+        {
+            lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+        }
+
+        //Rotate and move monster
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
+        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 20);
+    }
+
+    /// <summary>
+    /// Checks monster collisions with surrounding obsticals
+    /// </summary>
+    public bool CheckCollision()
+    {
+        //Create rays for hit detection
         RaycastHit hit;
         Ray rightFRay = new Ray(transform.position + transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
         Ray leftFRay = new Ray(transform.position - transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
@@ -103,49 +150,25 @@ public class Enemy : MonoBehaviour
         Debug.DrawRay(leftFRay.origin, leftFRay.direction, Color.black);
         Debug.DrawRay(rightSRay.origin, rightSRay.direction, Color.black);
         Debug.DrawRay(leftSRay.origin, leftSRay.direction, Color.black);
+        //Check for collision and change rotation accodingly 
         if (Physics.Raycast(leftFRay, out hit, 5.0f) || Physics.Raycast(leftSRay, out hit, 1.0f))
         {
             if (hit.collider.CompareTag("Obstical"))
             {
-                Debug.Log("Obstical in front");
                 lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-                Debug.Log("Ray 1 hit: new dir = " + Vector3.Cross(Vector3.up, transform.forward));
-                if (hit.collider.bounds.Contains(destination))
-                {
-                    timeCurrent += timeBetween;
-                }
+                return true;
             }
         }
-        else if(Physics.Raycast(rightFRay, out hit, 5.0f) || Physics.Raycast(rightSRay, out hit, 1.0f))
+        else if (Physics.Raycast(rightFRay, out hit, 5.0f) || Physics.Raycast(rightSRay, out hit, 1.0f))
         {
             if (hit.collider.CompareTag("Obstical"))
             {
-                Debug.Log("Obstical in front");
                 lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
-                Debug.Log("Ray 2 hit: new dir = " + Vector3.Cross(transform.forward, Vector3.up));
-                if (hit.collider.bounds.Contains(destination))
-                {
-                    timeCurrent += timeBetween;
-                }
+                return true;
             }
-        } 
-        else
-        {
-            Debug.Log("No obstical");
-            Debug.Log("No hit: dir = " + transform.forward);
         }
 
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
-
-    }
-
-    /// <summary>
-    /// Moves the monster based on an AI (hostile)
-    /// </summary>
-    public void HostileMovement()
-    {
-
+        return false;
     }
  
 }
