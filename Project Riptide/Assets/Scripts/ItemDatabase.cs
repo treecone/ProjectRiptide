@@ -11,6 +11,8 @@ public class ItemDatabase : MonoBehaviour
     private string jsonString;
     private JsonData itemData;
 
+    public Color[] rarityColors;
+
     //This list holds all the items in the game after it's been constructed using the ConstructDatabase method
     private List<Item> database = new List<Item>();
 
@@ -72,6 +74,11 @@ public class ItemDatabase : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public Item GetRandomItem ()
+    {
+        return database[Random.Range(0, database.Count)];
     }
 
     //Refrences -------------------------------------------------------------------------------------------------------------------------------

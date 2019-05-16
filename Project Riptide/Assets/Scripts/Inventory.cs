@@ -12,7 +12,7 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         inventorySlots = new List<ItemSlot>();
-        theDatabase = GameObject.FindWithTag("Canvas").GetComponent<ItemDatabase>();
+        theDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
         ConstructInventory();
         AddItem("nullitem", 20);
     }
@@ -48,6 +48,12 @@ public class Inventory : MonoBehaviour
         if (Input.GetKey(KeyCode.M))
         {
             RemoveItem("Stone", 1);
+        }
+        if (Input.GetKey(KeyCode.J))
+        {
+            GameObject lootable = Instantiate(Resources.Load("Lootable"), new Vector3(Random.Range(0,5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
+            lootable.GetComponent<Lootable>().itemStored = theDatabase.GetRandomItem();
+            lootable.GetComponent<Lootable>().lightColor = theDatabase.rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
         }
     }
 
