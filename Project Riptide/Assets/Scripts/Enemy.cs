@@ -26,6 +26,11 @@ public class Enemy : MonoBehaviour
     private double timeCurrent;
     private Vector3 startPos;
     private float wanderRadius;
+    private float specialTimer;
+    private float specialCooldown;
+    private bool inSpecial;
+    private bool playerCollision;
+    private bool obsticalCollision;
 
     public int Health { get { return health; } }
 
@@ -41,6 +46,10 @@ public class Enemy : MonoBehaviour
         wanderRadius = 30.0f;
         hostileRadius = 10.0f;
         passiveRadius = 50.0f;
+        specialTimer = 0.0f;
+        specialCooldown = 0.0f;
+        inSpecial = false;
+        playerCollision = false;
     }
 
     // Update is called once per frame
@@ -69,6 +78,9 @@ public class Enemy : MonoBehaviour
                 }
                 break;
         }
+
+        playerCollision = false;
+        obsticalCollision = false;
     }
 
     /// <summary>
@@ -118,21 +130,75 @@ public class Enemy : MonoBehaviour
     /// </summary>
     public void HostileMovement()
     {
-        //Track player
-        destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
-        //Find the direction the monster should be looking
-        lookRotation = Quaternion.LookRotation(destination - transform.position);
-        //Find local forward vector
-        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        //When monster gets close circle player
-        if(!CheckCollision() && playerDistance < 5.0f)
+        if (!inSpecial)
         {
-            lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-        }
+            //Track player
+            destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
+            //Find the direction the monster should be looking
+            lookRotation = Quaternion.LookRotation(destination - transform.position);
+            //Find local forward vector
+            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+            //When monster gets close circle player
+            if (!CheckCollision() && playerDistance < 5.0f)
+            {
+                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+            }
 
-        //Rotate and move monster
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 20);
+            //Cooldown special while in a 10 units of player
+            if(playerDistance < 10.0f)
+            {
+                specialCooldown -= Time.deltaTime;
+            }
+            //If cooldown is finished, switch to special
+            if(specialCooldown <= 0)
+            {
+                inSpecial = true;
+            }
+
+            //Rotate and move monster
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
+            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        }
+        else
+        {
+            //Monster stays still and charges for 2 seconds
+            if(specialTimer < 2.0f)
+            {
+                //Track player
+                destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
+                //Find the direction the monster should be looking
+                lookRotation = Quaternion.LookRotation(destination - transform.position);
+                //Find local forward vector
+                Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+                specialTimer += Time.deltaTime;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.0f);
+            }
+            else if(specialTimer < 3.0f)
+            {
+                //Find local forward vector
+                Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+                CheckCollision();
+                //If monster hits player, stop special
+                if (playerCollision || obsticalCollision)
+                    specialTimer = 5.0f;
+                specialTimer += Time.deltaTime;
+                transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
+            }
+            else if( specialTimer >= 5.0f && specialTimer < 5.3f)
+            {
+                //Find local forward vector
+                Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+                specialTimer += Time.deltaTime;
+                transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
+            }
+            else
+            {
+                inSpecial = false;
+                specialTimer = 0.0f;
+                specialCooldown = 5.0f;
+            }
+            
+        }
     }
 
     /// <summary>
@@ -170,5 +236,17 @@ public class Enemy : MonoBehaviour
 
         return false;
     }
- 
+
+    /// <summary>
+    /// Check for collision with player
+    /// </summary>
+    /// <param name="col">Collision detected</param>
+    void OnCollisionEnter(Collision col)
+    {
+        if (col.gameObject.tag == "Player")
+            playerCollision = true;
+        if (col.gameObject.tag == "Obstical")
+            obsticalCollision = true;
+    }
+
 }
