@@ -10,7 +10,8 @@ public class PlayerController : MonoBehaviour
 	public Vector3 touchMove;
 	public float speed = 1f;
 	public float rotationSpeed = 0.5f;
-    private float goalRotation;
+    public float targetVelocity;
+    private float currentVelocity;
 
 	private Camera camera;
 	private Vector3 newPosition;
@@ -27,7 +28,6 @@ public class PlayerController : MonoBehaviour
 		camera = Camera.main;
         previousTouchVector = Vector3.zero;
         currentTouchVector = Vector3.zero;
-        goalRotation = 0;
     }
 
     // Update is called once per frame
@@ -39,14 +39,32 @@ public class PlayerController : MonoBehaviour
 			touchMove = new Vector3(-touchPos.y, 0, touchPos.x);	//Convert 2D input into 3d movement
 			touchMove.Normalize();
             //Set the current vector now.
-            currentTouchVector = inputManager.currentTouchPos - new Vector2(inputManager.touchVisual.GetComponent<RectTransform>().position.x,inputManager.touchVisual.GetComponent<RectTransform>().position.y);
-			
-			//If you have moved your finger from the start position
-            if(Mathf.Abs(touchPos.x) > 20f || Mathf.Abs(touchPos.y) > 20f)
+            currentTouchVector = inputManager.currentTouchPos - (Vector2)(inputManager.touchVisual.GetComponent<RectTransform>().anchoredPosition);
+            //Only update velocity if the player hasn't made the touch vector shorter than what it began as.
+            if(currentTouchVector.magnitude>=100)
             {
-                rb.velocity = transform.forward;
-                goalRotation = Vector2.SignedAngle(currentTouchVector,previousTouchVector);
-                transform.Rotate(0,goalRotation/5,0,Space.Self);
+                targetVelocity = currentTouchVector.magnitude/100f - 1f;
+                if(targetVelocity>6.6f)
+                {
+                    targetVelocity = 6.6f;
+                }
+            }
+			//If you have moved your finger from the start position even slightly.
+            if(Mathf.Abs(touchPos.x) > 100f || Mathf.Abs(touchPos.y) > 100f)
+            {
+                //Rotate the ship.
+                float goalRotation = Vector2.SignedAngle(currentTouchVector,previousTouchVector);
+                transform.Rotate(0,goalRotation/1,0,Space.Self);
+                //Change the ships velocity.   
+                if(rb.velocity.magnitude < targetVelocity - .1f)
+                {
+                    currentVelocity += .01f;
+                }
+                else if(rb.velocity.magnitude > targetVelocity +.1f)
+                {
+                    currentVelocity -= .01f;
+                }    
+                rb.velocity = transform.forward * currentVelocity;
             }
         }
         else

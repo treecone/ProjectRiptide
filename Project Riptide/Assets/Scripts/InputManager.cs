@@ -17,12 +17,15 @@ public class InputManager : MonoBehaviour
     // ------------GameObjects and visuals-----------
     public GameObject touchVisual;
     private GameObject touchVisualCursor;
+    private GameObject ship;
 
     //---------Multi Tapping-------------------------
     private float multiTapTimer;
     public int tapCounter;
  
 	public bool mobile = true;
+
+    public float yRot;
 
     void Start()
     {
@@ -31,6 +34,7 @@ public class InputManager : MonoBehaviour
         multiTapTimer = 0;
         Vector2 startTouchPos = Vector2.zero;
         Vector2 currentTouchPos = Vector2.zero;
+        ship = GameObject.Find("/Ship");
     }
 
     void Update()
@@ -56,7 +60,13 @@ public class InputManager : MonoBehaviour
                         touchVisual.GetComponent<Image>().enabled = true;
                         touchVisualCursor.GetComponent<Image>().enabled = true;
                         startTouchPos = new Vector3(touch.position.x - gameObject.GetComponent<RectTransform>().rect.width / 2, touch.position.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
-                        touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
+                        //The offset of the touch visual.
+                        Vector2 touchVisualOffset = Vector2.zero;
+                        //The y rotation/orientation of the ship.
+                        yRot = ship.GetComponent<Rigidbody>().transform.rotation.ToEuler().y * Mathf.Rad2Deg;
+                        //Offset the touch cursor.
+                        touchVisualOffset = new Vector2(Mathf.Cos(Mathf.Deg2Rad*yRot)*-1f, Mathf.Sin(Mathf.Deg2Rad*yRot));           
+                        touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos + touchVisualOffset*100;
                         touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
                         tapCounter += 1;
                         break;
