@@ -15,14 +15,14 @@ public class InputManager : MonoBehaviour
     public float minTouchDistance;
 
     // ------------GameObjects and visuals-----------
-    private GameObject touchVisual;
+    public GameObject touchVisual;
     private GameObject touchVisualCursor;
 
     //---------Multi Tapping-------------------------
     private float multiTapTimer;
     public int tapCounter;
  
-	public bool mobile = false;
+	public bool mobile = true;
 
     void Start()
     {
