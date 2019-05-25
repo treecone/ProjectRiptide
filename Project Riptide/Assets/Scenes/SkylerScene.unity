@@ -227,10 +227,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b2652ed5f3b8c545a2519df8863296c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  touchMove: {x: 0, y: 0, z: 0}
   speed: 1
-  rotationSpeed: 0.5
-  previousTouchVector: {x: 0, y: 0}
+  rotationSpeed: 0
+  targetVelocity: 0
+  currentVelocity: 0
+  startTouchVector: {x: 0, y: 0}
   currentTouchVector: {x: 79, y: 70}
 --- !u!54 &276101493
 Rigidbody:
@@ -373,6 +374,7 @@ MonoBehaviour:
   touchVisual: {fileID: 0}
   tapCounter: 0
   mobile: 1
+  yRot: 0
 --- !u!1 &720440815
 GameObject:
   m_ObjectHideFlags: 0
