@@ -38,7 +38,7 @@ public class HealthBar : MonoBehaviour
         }
         else
         {
-            timing += Time.deltaTime;
+            timing -= Time.deltaTime;
         }
 
     }
@@ -74,7 +74,7 @@ public class HealthBar : MonoBehaviour
     public void ModifyHealth(int amount)
     {
         currentHealth += amount;
-        float currentHealthPct = currentHealth / maxHealth;
+        float currentHealthPct = (float)currentHealth / (float)maxHealth;
         HandleHealthChange(currentHealthPct);
     }
 
