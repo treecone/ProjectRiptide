@@ -39,45 +39,49 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //SwipingMovement();
+        TouchingMovement();
+	}
+
+    public void SwipingMovement()
+    {
         //If the player is swiping.
-        if(inputManager.currentlySwiping)
-		{
+        if (inputManager.currentlySwiping)
+        {
             //Set the current vector now.
             currentTouchVector = inputManager.currentTouchPos - (Vector2)(inputManager.touchVisual.GetComponent<RectTransform>().anchoredPosition);
             //If this is the first frame of touching, set the start touch vector.
-            if(startTouchVector == Vector2.zero)
+            if (startTouchVector == Vector2.zero)
             {
                 startTouchVector = currentTouchVector;
             }
             //Only update velocity if the player hasn't made the touch vector shorter than what it began as.
-            if(currentTouchVector.magnitude>=100)
+            if (currentTouchVector.magnitude >= 100)
             {
                 //Set the target velocity.
-                targetVelocity = currentTouchVector.magnitude/100f - 1f;
-                if(targetVelocity>6.6f)
+                targetVelocity = currentTouchVector.magnitude / 100f - 1f;
+                if (targetVelocity > 6.6f)
                 {
                     targetVelocity = 6.6f;
                 }
                 //The total rotation needed.
-                totalRotation = Vector2.SignedAngle(currentTouchVector,startTouchVector);
+                totalRotation = Vector2.SignedAngle(currentTouchVector, startTouchVector);
                 //Rotate the boat.
                 transform.Rotate(0, rotationSpeed, 0, Space.Self);
                 //Increase the current anglular distance traveled by the boat.
                 currentRotation += rotationSpeed;
                 //determine the sign of rotation.
-                float sign = (totalRotation > 0)? 1f : -1f;
+                float sign = (totalRotation > 0) ? 1f : -1f;
                 //Increase the speed of rotation.
-                rotationSpeed += .002f * sign;             
+                rotationSpeed += .002f * sign;
                 //The ship has completed its rotation, so reset the neccessary components.
-                if(Mathf.Abs(currentRotation) >= Mathf.Abs(totalRotation))
+                if (Mathf.Abs(currentRotation) >= Mathf.Abs(totalRotation))
                 {
                     startTouchVector = currentTouchVector;
                     currentRotation = 0;
                     totalRotation = 0;
                     rotationSpeed = 0;
                 }
-
-
                 /*turningTime += Time.deltaTime * turnSpeed;
                 float yRot = transform.rotation.ToEuler().y;
                 Vector2 currentRotation = new Vector2(Mathf.Cos(yRot)*-1f, Mathf.Sin(yRot));
@@ -87,7 +91,7 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Lerp(from, to , turningTime);
                 */
             }
-			
+
         }
         //If the player is not swiping reset the touch vectors.
         else
@@ -96,14 +100,41 @@ public class PlayerController : MonoBehaviour
             startTouchVector = Vector2.zero;
         }
         //Update the ships velocity according to what its target velocity is set at.   
-        if(rb.velocity.magnitude < targetVelocity - .1f)
+        if (rb.velocity.magnitude < targetVelocity - .1f)
         {
-             currentVelocity += .01f;
+            currentVelocity += .01f;
         }
-        else if(rb.velocity.magnitude > targetVelocity +.1f)
+        else if (rb.velocity.magnitude > targetVelocity + .1f)
         {
-             currentVelocity -= .01f;
-        }    
+            currentVelocity -= .01f;
+        }
         rb.velocity = transform.forward * currentVelocity;
-	}
+    }
+    public void TouchingMovement()
+    {
+        rb.velocity = transform.forward * inputManager.speedSlider.value;
+        //Rotate the ship ccw.
+        if (inputManager.touchingLeft)
+        {
+            if(Mathf.Abs(rotationSpeed) < 2)
+            {
+                rotationSpeed -= .002f;
+            }
+            transform.Rotate(0, rotationSpeed, 0, Space.Self);
+        }
+        //Rotate the ship cw
+        else if (inputManager.touchingRight)
+        {
+            if(Mathf.Abs(rotationSpeed) < 2)
+            {
+                rotationSpeed += .002f;
+            }
+            transform.Rotate(0, rotationSpeed, 0, Space.Self);
+        }
+        //Reset rotation speed.
+        else
+        {
+            rotationSpeed = 0;
+        }
+    }
 }

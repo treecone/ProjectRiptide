@@ -14,10 +14,14 @@ public class InputManager : MonoBehaviour
     public Vector2 currentTouchPos;
     public float minTouchDistance;
 
+    public bool touchingLeft;
+    public bool touchingRight;
+
     // ------------GameObjects and visuals-----------
     public GameObject touchVisual;
     private GameObject touchVisualCursor;
     private GameObject ship;
+    public Slider speedSlider;
 
     //---------Multi Tapping-------------------------
     private float multiTapTimer;
@@ -31,6 +35,7 @@ public class InputManager : MonoBehaviour
     {
         touchVisual = gameObject.transform.Find("TouchVisual").gameObject;
         touchVisualCursor = gameObject.transform.Find("TouchVisualCursor").gameObject;
+        speedSlider = gameObject.transform.Find("ToggleSpeed").GetComponent<Slider>();
         multiTapTimer = 0;
         Vector2 startTouchPos = Vector2.zero;
         Vector2 currentTouchPos = Vector2.zero;
@@ -91,12 +96,30 @@ public class InputManager : MonoBehaviour
                         touchVisualCursor.GetComponent<Image>().enabled = false;
                         break;
                 }
+                //Detect touching left or right
+                if (currentTouchPos.x > 0 && currentTouchPos.y > -800)
+                {
+                    touchingRight = true;
+                    touchingLeft = false;
+                }
+                else if (currentTouchPos.x < 0 && currentTouchPos.y > -800)
+                {
+                    touchingRight = false;
+                    touchingLeft = true;
+                }
+                else
+                {
+                    touchingLeft = false;
+                    touchingRight = false;
+                }
             }
         }
         else //No touches on screen
         {
             buttonsPressed = 0;
 			currentlySwiping = false;
+            touchingLeft = false;
+            touchingRight = false;
 		}
 		//Multi Tapping ----------------------------------------------------------------------------------------------------------
 		if(tapCounter > 0)
