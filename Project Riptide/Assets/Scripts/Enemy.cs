@@ -16,6 +16,8 @@ public partial class Enemy : MonoBehaviour
     private EnemyState state;
     //player's distance from enemy
     private float playerDistance;
+    //monsters distance from start position
+    private float enemyDistance;
     //Radius to trigger hostile AI
     private float hostileRadius;
     //Radius to trigger passive AI
@@ -28,6 +30,8 @@ public partial class Enemy : MonoBehaviour
     private double timeCurrent;
     private Vector3 startPos;
     private float wanderRadius;
+    private float maxRadius;
+    private float passiveCooldown;
     private float[] specialTimer;
     private float[] specialCooldown;
     private bool[] inSpecial;
@@ -50,6 +54,7 @@ public partial class Enemy : MonoBehaviour
         wanderRadius = 30.0f;
         hostileRadius = 10.0f;
         passiveRadius = 50.0f;
+        maxRadius = 120.0f;
         specialTimer = new float[1] { 0.0f };
         specialCooldown = new float[1] { 5.0f };
         inSpecial = new bool[1] { false };
@@ -63,6 +68,7 @@ public partial class Enemy : MonoBehaviour
     {
         //updates player position
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        enemyDistance = Vector3.Distance(startPos, transform.position);
 
         //checks for states
         switch (state)
@@ -70,7 +76,8 @@ public partial class Enemy : MonoBehaviour
             case EnemyState.Passive:
                 PassiveAI();
                 //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
-                if(playerDistance < hostileRadius)
+                //also make sure enemy is not in a passive cooldown
+                if(playerDistance < hostileRadius && passiveCooldown <= 0)
                 {
                     state = EnemyState.Hostile;
                 }
@@ -84,6 +91,9 @@ public partial class Enemy : MonoBehaviour
                 }
                 break;
         }
+
+        if (passiveCooldown > 0)
+            passiveCooldown -= Time.deltaTime;
 
         playerCollision = false;
         obsticalCollision = false;
@@ -150,5 +160,4 @@ public partial class Enemy : MonoBehaviour
         if (col.gameObject.tag == "Obstical")
             obsticalCollision = true;
     }
-
 }
