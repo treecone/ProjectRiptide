@@ -7,13 +7,15 @@ using UnityEngine;
 /// </summary>
 enum EnemyState { Passive, Hostile }
 public delegate void AI();
-
+public enum EnemyType { FirstEnemy, KoiBoss }
 
 public partial class Enemy : MonoBehaviour
 {
     //fields
     private int health;
+    private int maxHealth;
     private EnemyState state;
+    public EnemyType enemyType;
     //player's distance from enemy
     private float playerDistance;
     //monsters distance from start position
@@ -47,20 +49,7 @@ public partial class Enemy : MonoBehaviour
     {
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
-        speed = 1.0f;
-        timeBetween = 5.0;
-        timeCurrent = timeBetween;
-        startPos = transform.position;
-        wanderRadius = 30.0f;
-        hostileRadius = 10.0f;
-        passiveRadius = 50.0f;
-        maxRadius = 120.0f;
-        specialTimer = new float[1] { 0.0f };
-        specialCooldown = new float[1] { 5.0f };
-        inSpecial = new bool[1] { false };
-        playerCollision = false;
-        HostileAI = HostileFollowAndDash;
-        PassiveAI = PassiveWanderRadius;
+        LoadEnemy(enemyType);
     }
 
     // Update is called once per frame
@@ -97,6 +86,50 @@ public partial class Enemy : MonoBehaviour
 
         playerCollision = false;
         obsticalCollision = false;
+    }
+
+    private void LoadEnemy(EnemyType type)
+    {
+        switch(type)
+        {
+            case EnemyType.FirstEnemy:
+                speed = 1.0f;
+                health = 20;
+                maxHealth = 20;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 30.0f;
+                hostileRadius = 10.0f;
+                passiveRadius = 50.0f;
+                maxRadius = 120.0f;
+                specialTimer = new float[1] { 0.0f };
+                specialCooldown = new float[1] { 5.0f };
+                inSpecial = new bool[1] { false };
+                playerCollision = false;
+                HostileAI = HostileFollowAndDash;
+                PassiveAI = PassiveWanderRadius;
+                break;
+            case EnemyType.KoiBoss:
+                speed = 1.0f;
+                health = 100;
+                maxHealth = 100;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 45.0f;
+                hostileRadius = 15.0f;
+                passiveRadius = 60.0f;
+                maxRadius = 240.0f;
+                specialTimer = new float[5] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                inSpecial = new bool[5] { false, false, false, false, false };
+                playerCollision = false;
+                HostileAI = KoiBossHostile;
+                PassiveAI = PassiveWanderRadius;
+                break;
+
+        }
     }
 
     /// <summary>
@@ -147,6 +180,19 @@ public partial class Enemy : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Resets enemy's hostile AI values
+    /// </summary>
+    public void ResetHostile()
+    {
+        for(int i = 0; i > inSpecial.Length; i++)
+        {
+            inSpecial[i] = false;
+            specialCooldown[i] = 0.0f;
+            specialTimer[i] = 0.0f;
+        }
     }
 
     /// <summary>
