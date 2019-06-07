@@ -379,7 +379,10 @@ MonoBehaviour:
   startTouchPos: {x: 0, y: 0}
   currentTouchPos: {x: 0, y: 0}
   minTouchDistance: 0
+  touchingLeft: 0
+  touchingRight: 0
   touchVisual: {fileID: 0}
+  speedSlider: {fileID: 0}
   tapCounter: 0
   mobile: 1
   yRot: 0
@@ -1667,6 +1670,7 @@ GameObject:
   - component: {fileID: 2055122609}
   - component: {fileID: 2055122608}
   - component: {fileID: 2055122607}
+  - component: {fileID: 2055122613}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -1781,3 +1785,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2055122613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055122606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9645a8dc069ba7049a22399aab9cf9f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cannonBall: {fileID: 6810507575641601458, guid: 2be3efd9ab28a334cabdd927328840ac,
+    type: 3}
+  fireSpeedHoriz: 15
+  fireSpeedVert: 4
