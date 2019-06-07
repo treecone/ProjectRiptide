@@ -65,13 +65,11 @@ public class InputManager : MonoBehaviour
                         touchVisual.GetComponent<Image>().enabled = true;
                         touchVisualCursor.GetComponent<Image>().enabled = true;
                         startTouchPos = new Vector3(touch.position.x - gameObject.GetComponent<RectTransform>().rect.width / 2, touch.position.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
-                        //The offset of the touch visual.
-                        Vector2 touchVisualOffset = Vector2.zero;
+                        //The offset of the touch visual.                        
                         //The y rotation/orientation of the ship.
                         yRot = ship.GetComponent<Rigidbody>().transform.rotation.ToEuler().y * Mathf.Rad2Deg;
                         //Offset the touch cursor.
-                        touchVisualOffset = new Vector2(Mathf.Cos(Mathf.Deg2Rad*yRot)*-1f, Mathf.Sin(Mathf.Deg2Rad*yRot));           
-                        touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos + touchVisualOffset*100;
+                        touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
                         touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
                         tapCounter += 1;
                         break;
@@ -97,12 +95,12 @@ public class InputManager : MonoBehaviour
                         break;
                 }
                 //Detect touching left or right
-                if (currentTouchPos.x > 0 && currentTouchPos.y > -800)
+                if (currentTouchPos.x > 100 && currentTouchPos.y > -800)
                 {
                     touchingRight = true;
                     touchingLeft = false;
                 }
-                else if (currentTouchPos.x < 0 && currentTouchPos.y > -800)
+                else if (currentTouchPos.x < -100 && currentTouchPos.y > -800)
                 {
                     touchingRight = false;
                     touchingLeft = true;

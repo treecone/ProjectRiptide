@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 	private InputManager inputManager; 
 	private Rigidbody rb;
 
-	public float speed = 1f;
+    public float speedLevel = 0f;
     public float rotationSpeed = 0f;
     public float targetVelocity;
     public float currentVelocity;
@@ -15,9 +15,9 @@ public class PlayerController : MonoBehaviour
     private float currentRotation;
     private float turningTime = 0f;
     private float turnSpeed = .001f;
+    private float timer;
 
-    private Quaternion from;
-    private Quaternion to;
+    public bool readyForSwipe = true;
 
 	private Camera camera;
 	private Vector3 newPosition;
@@ -39,80 +39,16 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //SwipingMovement();
-        TouchingMovement();
+        Turning();
+        SetSpeed();
 	}
 
-    public void SwipingMovement()
+ 
+    /// <summary>
+    /// Detect input from the user and turn the ship accordingly.
+    /// </summary>
+    public void Turning()
     {
-        //If the player is swiping.
-        if (inputManager.currentlySwiping)
-        {
-            //Set the current vector now.
-            currentTouchVector = inputManager.currentTouchPos - (Vector2)(inputManager.touchVisual.GetComponent<RectTransform>().anchoredPosition);
-            //If this is the first frame of touching, set the start touch vector.
-            if (startTouchVector == Vector2.zero)
-            {
-                startTouchVector = currentTouchVector;
-            }
-            //Only update velocity if the player hasn't made the touch vector shorter than what it began as.
-            if (currentTouchVector.magnitude >= 100)
-            {
-                //Set the target velocity.
-                targetVelocity = currentTouchVector.magnitude / 100f - 1f;
-                if (targetVelocity > 6.6f)
-                {
-                    targetVelocity = 6.6f;
-                }
-                //The total rotation needed.
-                totalRotation = Vector2.SignedAngle(currentTouchVector, startTouchVector);
-                //Rotate the boat.
-                transform.Rotate(0, rotationSpeed, 0, Space.Self);
-                //Increase the current anglular distance traveled by the boat.
-                currentRotation += rotationSpeed;
-                //determine the sign of rotation.
-                float sign = (totalRotation > 0) ? 1f : -1f;
-                //Increase the speed of rotation.
-                rotationSpeed += .002f * sign;
-                //The ship has completed its rotation, so reset the neccessary components.
-                if (Mathf.Abs(currentRotation) >= Mathf.Abs(totalRotation))
-                {
-                    startTouchVector = currentTouchVector;
-                    currentRotation = 0;
-                    totalRotation = 0;
-                    rotationSpeed = 0;
-                }
-                /*turningTime += Time.deltaTime * turnSpeed;
-                float yRot = transform.rotation.ToEuler().y;
-                Vector2 currentRotation = new Vector2(Mathf.Cos(yRot)*-1f, Mathf.Sin(yRot));
-                float goalRotation = Vector2.SignedAngle(currentTouchVector,currentRotation) * Mathf.Rad2Deg; // How much the ship needs to turn total.
-                from = transform.rotation;
-                to = Quaternion.AngleAxis(goalRotation, Vector3.up) * from;
-                transform.rotation = Quaternion.Lerp(from, to , turningTime);
-                */
-            }
-
-        }
-        //If the player is not swiping reset the touch vectors.
-        else
-        {
-            currentTouchVector = Vector2.zero;
-            startTouchVector = Vector2.zero;
-        }
-        //Update the ships velocity according to what its target velocity is set at.   
-        if (rb.velocity.magnitude < targetVelocity - .1f)
-        {
-            currentVelocity += .01f;
-        }
-        else if (rb.velocity.magnitude > targetVelocity + .1f)
-        {
-            currentVelocity -= .01f;
-        }
-        rb.velocity = transform.forward * currentVelocity;
-    }
-    public void TouchingMovement()
-    {
-        rb.velocity = transform.forward * inputManager.speedSlider.value;
         //Rotate the ship ccw.
         if (inputManager.touchingLeft)
         {
@@ -134,7 +70,58 @@ public class PlayerController : MonoBehaviour
         //Reset rotation speed.
         else
         {
-            rotationSpeed = 0;
+            if(rotationSpeed > 0)
+            {
+                rotationSpeed -= .004f;
+            }
+            else if(rotationSpeed < 0)
+            {
+                rotationSpeed += .004f;
+            }
+            transform.Rotate(0, rotationSpeed, 0, Space.Self);
+        }
+    }
+    /// <summary>
+    /// Detect swiping movement from the player and adjust the ship's speed accordingly
+    /// </summary>
+    public void SetSpeed()
+    {
+        //Check for swiping and eligibility of player swipe.
+        if (inputManager.currentlySwiping && readyForSwipe)
+        {
+            //Swipe up -- increase speed level.
+            if (inputManager.currentTouchPos.y > inputManager.startTouchPos.y + 25 && speedLevel < 2)
+            {
+                speedLevel++;
+                targetVelocity = speedLevel * 2.5f;
+                readyForSwipe = false;
+
+            }
+            //Swipe down -- decrease speed level.
+            else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 25 && speedLevel > 0)
+            {
+                speedLevel--;
+                targetVelocity = speedLevel * 2.5f;
+                readyForSwipe = false;
+            }
+        }
+        //Adjust current velocity of the ship.
+        if(currentVelocity < targetVelocity)
+        {
+            currentVelocity += .01f;
+        }
+        else if(currentVelocity > targetVelocity)
+        {
+            currentVelocity -= .01f;
+        }
+        //Move the ship.
+        rb.velocity = transform.forward * currentVelocity;
+        //See if enough time has elapsed to allow swipe.
+        timer += Time.deltaTime;
+        if (timer > 1f)
+        {
+            readyForSwipe = true;
+            timer = 0;
         }
     }
 }
