@@ -197,6 +197,27 @@ public partial class Enemy : MonoBehaviour
                         }
                     }
 
+                    //Check to see if monster can use bubble attack
+                    if (playerDistance > 10.0f)
+                    {
+                        specialCooldown[2] -= Time.deltaTime;
+                        if (specialCooldown[0] < 0.0f && specialCooldown[2] < 0.0f && Random.Range(1, 4) == 1)
+                        {
+                            //Load projectile
+                            GameObject.Instantiate(projectile,
+                                transform.position + new Vector3(transform.forward.x, 0, transform.forward.z) * (5 * lengthMult / 6),
+                                new Quaternion())
+                                .GetComponent<EnemyProjectile>().LoadProjectile(
+                                new Vector3(transform.forward.x, 0, transform.forward.z),
+                                2.0f,
+                                10,
+                                5.0f);
+                            Debug.Log("Projectile Spawned");
+                            specialCooldown[0] = 2.0f;
+                            specialCooldown[2] = 3.0f;
+                        }
+                    }
+
                     /*
                     //Check to see if player can use charge projectile special attack
                     if(playerDistance < 20.0f)

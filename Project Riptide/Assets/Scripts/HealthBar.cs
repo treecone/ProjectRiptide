@@ -57,6 +57,7 @@ public class HealthBar : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             foregroundImage.fillAmount = Mathf.Lerp(preChangePct, pct, elapsed / updateSpeed);
+            Debug.Log("Health stuff");
             yield return null;
         }
         foregroundImage.fillAmount = pct;

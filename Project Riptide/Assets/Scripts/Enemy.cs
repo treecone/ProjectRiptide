@@ -11,11 +11,14 @@ public enum EnemyType { FirstEnemy, KoiBoss }
 
 public partial class Enemy : MonoBehaviour
 {
+    //public fields
+    public EnemyType enemyType;
+    public GameObject projectile;
+
     //fields
     private int health;
     private int maxHealth;
     private EnemyState state;
-    public EnemyType enemyType;
     //player's distance from enemy
     private float playerDistance;
     //monsters distance from start position
@@ -39,8 +42,12 @@ public partial class Enemy : MonoBehaviour
     private bool[] inSpecial;
     private bool playerCollision;
     private bool obsticalCollision;
-    AI HostileAI;
-    AI PassiveAI;
+    private AI HostileAI;
+    private AI PassiveAI;
+
+    //Fields for collision detection
+    public float lengthMult;
+    public float widthMult;
 
     public int Health { get { return health; } }
 
@@ -153,14 +160,14 @@ public partial class Enemy : MonoBehaviour
     {
         //Create rays for hit detection
         RaycastHit hit;
-        Ray rightFRay = new Ray(transform.position + transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
-        Ray leftFRay = new Ray(transform.position - transform.right * 1.2f, new Vector3(transform.forward.x, 0, transform.forward.z) * speed * 6);
-        Ray rightSRay = new Ray(transform.position + transform.right * 1.2f, new Vector3(transform.right.x, 0, transform.right.z) * speed);
-        Ray leftSRay = new Ray(transform.position - transform.right * 1.2f, new Vector3(-transform.right.x, 0, -transform.right.z) * speed);
-        Debug.DrawRay(rightFRay.origin, rightFRay.direction, Color.black);
-        Debug.DrawRay(leftFRay.origin, leftFRay.direction, Color.black);
-        Debug.DrawRay(rightSRay.origin, rightSRay.direction, Color.black);
-        Debug.DrawRay(leftSRay.origin, leftSRay.direction, Color.black);
+        Ray rightFRay = new Ray(transform.position + (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray leftFRay = new Ray(transform.position - (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray rightSRay = new Ray(transform.position + (transform.right), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
+        Ray leftSRay = new Ray(transform.position - (transform.right), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
+        Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
+        Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
+        Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
+        Debug.DrawRay(leftSRay.origin, leftSRay.direction * lengthMult / 6, Color.black);
         //Check for collision and change rotation accodingly 
         if (Physics.Raycast(leftFRay, out hit, 5.0f) || Physics.Raycast(leftSRay, out hit, 1.0f))
         {
