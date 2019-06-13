@@ -122,7 +122,7 @@ public partial class Enemy : MonoBehaviour
                     //Find local forward vector
                     Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                     specialTimer[0] += Time.deltaTime;
-                    transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
+                    transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 6);
                 }
                 else
                 {
@@ -212,13 +212,11 @@ public partial class Enemy : MonoBehaviour
                                 2.0f,
                                 10,
                                 5.0f);
-                            Debug.Log("Projectile Spawned");
                             specialCooldown[0] = 2.0f;
                             specialCooldown[2] = 3.0f;
                         }
                     }
 
-                    /*
                     //Check to see if player can use charge projectile special attack
                     if(playerDistance < 20.0f)
                     {
@@ -228,7 +226,7 @@ public partial class Enemy : MonoBehaviour
                             inSpecial[0] = true;
                             inSpecial[3] = true;
                         }
-                    } */
+                    }
 
                     //Rotate and move monster
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
@@ -296,6 +294,73 @@ public partial class Enemy : MonoBehaviour
                         inSpecial[1] = false;
                         specialTimer[1] = 0.0f;
                         specialCooldown[1] = 10.0f;
+                    }
+                }
+                else if(inSpecial[3])
+                {
+                    if(specialTimer[3] < 1.5f)
+                    {
+                        //Track player
+                        destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
+                        //Find the direction the monster should be looking
+                        lookRotation = Quaternion.LookRotation(destination - transform.position);
+                        //Find local forward vector
+                        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+                        specialTimer[3] += Time.deltaTime;
+                        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);
+                    }
+                    else if(specialTimer[3] < 2.0f && specialTimer[3] >= 1.5f)
+                    {
+                        specialTimer[3] += Time.deltaTime;
+                    }
+                    else
+                    {
+                        GameObject.Instantiate(projectile,
+                            transform.position + new Vector3(transform.forward.x, 0, transform.forward.z) * (5 * lengthMult / 6),
+                            new Quaternion())
+                            .GetComponent<EnemyProjectile>().LoadProjectile(
+                            new Vector3(transform.forward.x, 0, transform.forward.z),
+                            2.0f,
+                            10,
+                            5.0f);
+                        GameObject.Instantiate(projectile,
+                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.1f,0,0).x, 0, transform.forward.z + transform.TransformVector(0, 0, 0.5f).z) * (5 * lengthMult / 6),
+                            new Quaternion())
+                            .GetComponent<EnemyProjectile>().LoadProjectile(
+                            new Vector3(transform.forward.x, 0, transform.forward.z),
+                            2.0f,
+                            10,
+                            5.0f);
+                        GameObject.Instantiate(projectile,
+                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.25f, 0, 0).x, 0, transform.forward.z + transform.TransformVector(0, 0, 1.0f).z) * (5 * lengthMult / 6),
+                            new Quaternion())
+                            .GetComponent<EnemyProjectile>().LoadProjectile(
+                            new Vector3(transform.forward.x, 0, transform.forward.z),
+                            2.0f,
+                            10,
+                            5.0f);
+                        GameObject.Instantiate(projectile,
+                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.1f, 0, 0).x, 0, transform.forward.z - transform.TransformVector(0, 0, 0.5f).z) * (5 * lengthMult / 6),
+                            new Quaternion())
+                            .GetComponent<EnemyProjectile>().LoadProjectile(
+                            new Vector3(transform.forward.x, 0, transform.forward.z),
+                            2.0f,
+                            10,
+                            5.0f);
+                        GameObject.Instantiate(projectile,
+                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.25f, 0, 0).x, 0, transform.forward.z - transform.TransformVector(0, 0, 1.0f).z) * (5 * lengthMult / 6),
+                            new Quaternion())
+                            .GetComponent<EnemyProjectile>().LoadProjectile(
+                            new Vector3(transform.forward.x, 0, transform.forward.z),
+                            2.0f,
+                            10,
+                            5.0f);
+                        inSpecial[0] = false;
+                        specialTimer[0] = 0.0f;
+                        specialCooldown[0] = 5.0f;
+                        inSpecial[3] = false;
+                        specialTimer[3] = 0.0f;
+                        specialCooldown[3] = 8.0f;
                     }
                 }
             }

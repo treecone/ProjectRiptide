@@ -118,7 +118,7 @@ public partial class Enemy : MonoBehaviour
                 PassiveAI = PassiveWanderRadius;
                 break;
             case EnemyType.KoiBoss:
-                speed = 1.0f;
+                speed = 2.0f;
                 health = 100;
                 maxHealth = 100;
                 timeBetween = 5.0;
@@ -206,7 +206,7 @@ public partial class Enemy : MonoBehaviour
     /// Check for collision with player
     /// </summary>
     /// <param name="col">Collision detected</param>
-    void OnCollisionEnter(Collision col)
+    public void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Player")
             playerCollision = true;
