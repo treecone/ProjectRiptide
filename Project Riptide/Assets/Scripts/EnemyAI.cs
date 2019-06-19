@@ -204,14 +204,7 @@ public partial class Enemy : MonoBehaviour
                         if (specialCooldown[0] < 0.0f && specialCooldown[2] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Load projectile
-                            GameObject.Instantiate(projectile,
-                                transform.position + new Vector3(transform.forward.x, 0, transform.forward.z) * (5 * lengthMult / 6),
-                                new Quaternion())
-                                .GetComponent<EnemyProjectile>().LoadProjectile(
-                                new Vector3(transform.forward.x, 0, transform.forward.z),
-                                2.0f,
-                                10,
-                                5.0f);
+                            SpawnProjectile(new Vector3(0, 0, 5 * lengthMult / 6), 2.0f, 10, 5.0f, MovementPattern.Forward);
                             specialCooldown[0] = 2.0f;
                             specialCooldown[2] = 3.0f;
                         }
@@ -315,46 +308,13 @@ public partial class Enemy : MonoBehaviour
                     }
                     else
                     {
-                        GameObject.Instantiate(projectile,
-                            transform.position + new Vector3(transform.forward.x, 0, transform.forward.z) * (5 * lengthMult / 6),
-                            new Quaternion())
-                            .GetComponent<EnemyProjectile>().LoadProjectile(
-                            new Vector3(transform.forward.x, 0, transform.forward.z),
-                            2.0f,
-                            10,
-                            5.0f);
-                        GameObject.Instantiate(projectile,
-                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.1f,0,0).x, 0, transform.forward.z + transform.TransformVector(0, 0, 0.5f).z) * (5 * lengthMult / 6),
-                            new Quaternion())
-                            .GetComponent<EnemyProjectile>().LoadProjectile(
-                            new Vector3(transform.forward.x, 0, transform.forward.z),
-                            2.0f,
-                            10,
-                            5.0f);
-                        GameObject.Instantiate(projectile,
-                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.25f, 0, 0).x, 0, transform.forward.z + transform.TransformVector(0, 0, 1.0f).z) * (5 * lengthMult / 6),
-                            new Quaternion())
-                            .GetComponent<EnemyProjectile>().LoadProjectile(
-                            new Vector3(transform.forward.x, 0, transform.forward.z),
-                            2.0f,
-                            10,
-                            5.0f);
-                        GameObject.Instantiate(projectile,
-                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.1f, 0, 0).x, 0, transform.forward.z - transform.TransformVector(0, 0, 0.5f).z) * (5 * lengthMult / 6),
-                            new Quaternion())
-                            .GetComponent<EnemyProjectile>().LoadProjectile(
-                            new Vector3(transform.forward.x, 0, transform.forward.z),
-                            2.0f,
-                            10,
-                            5.0f);
-                        GameObject.Instantiate(projectile,
-                            transform.position + new Vector3(transform.forward.x - transform.TransformVector(0.25f, 0, 0).x, 0, transform.forward.z - transform.TransformVector(0, 0, 1.0f).z) * (5 * lengthMult / 6),
-                            new Quaternion())
-                            .GetComponent<EnemyProjectile>().LoadProjectile(
-                            new Vector3(transform.forward.x, 0, transform.forward.z),
-                            2.0f,
-                            10,
-                            5.0f);
+                        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 1.0f, 10, 5.0f, MovementPattern.Forward);
                         inSpecial[0] = false;
                         specialTimer[0] = 0.0f;
                         specialCooldown[0] = 5.0f;

@@ -213,4 +213,25 @@ public partial class Enemy : MonoBehaviour
         if (col.gameObject.tag == "Obstical")
             obsticalCollision = true;
     }
+
+    /// <summary>
+    /// Spawns an enemy projectile
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="speed">Speed of projectile</param>
+    /// <param name="damage">Damage projectile inflicts</param>
+    /// <param name="maxLifeSpan">Max life span of projectile</param>
+    /// <param name="movementPattern">Movement pattern of projectile</param>
+    private void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
+    {
+        GameObject.Instantiate(projectile,
+            transform.position + transform.TransformVector(position),
+            new Quaternion())
+            .GetComponent<EnemyProjectile>().LoadProjectile(
+            transform.TransformVector(position),
+            speed,
+            damage,
+            maxLifeSpan,
+            movementPattern);
+    }
 }
