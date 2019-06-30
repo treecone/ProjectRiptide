@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum MovementPattern { Forward }
+
 public class EnemyProjectile : MonoBehaviour
 {
     //Fields
@@ -10,6 +12,7 @@ public class EnemyProjectile : MonoBehaviour
     private float speed;
     private float currLifeSpan;
     private float maxLifeSpan;
+    private MovementPattern movementPattern;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +32,13 @@ public class EnemyProjectile : MonoBehaviour
         }
         else
         {
-            transform.Translate(velocity);
+            //Move projectile based on its movement pattern
+            switch(movementPattern)
+            {
+                case MovementPattern.Forward:
+                    MoveProjectileForward();
+                    break;
+            }
         }
     }
 
@@ -42,11 +51,27 @@ public class EnemyProjectile : MonoBehaviour
             GameObject.Destroy(gameObject);
     }
 
-    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan)
+    /// <summary>
+    /// Loads projecitle
+    /// </summary>
+    /// <param name="velocity">Direction of projectile</param>
+    /// <param name="speed">Speed of projectile</param>
+    /// <param name="damage">Damage projectile inflicts</param>
+    /// <param name="maxLifeSpan">Max life span of projectile</param>
+    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
     {
         this.velocity = velocity;
         this.speed = speed;
         this.damage = damage;
         this.maxLifeSpan = maxLifeSpan;
+        this.movementPattern = movementPattern;
+    }
+
+    /// <summary>
+    /// Moves projectile in a straight line
+    /// </summary>
+    private void MoveProjectileForward()
+    {
+        transform.Translate(velocity.normalized * speed);
     }
 }
