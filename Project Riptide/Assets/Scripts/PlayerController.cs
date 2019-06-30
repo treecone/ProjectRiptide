@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
         if (inputManager.currentlySwiping && readyForSwipe)
         {
             //Swipe up -- increase speed level.
-            if (inputManager.currentTouchPos.y > inputManager.startTouchPos.y + 25 && speedLevel < 2)
+            if (inputManager.currentTouchPos.y > inputManager.startTouchPos.y + 250 && speedLevel < 2)
             {
                 speedLevel++;
                 targetVelocity = speedLevel * 2.5f;
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
             }
             //Swipe down -- decrease speed level.
-            else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 25 && speedLevel > 0)
+            else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 250 && speedLevel > 0)
             {
                 speedLevel--;
                 targetVelocity = speedLevel * 2.5f;
@@ -119,10 +119,11 @@ public class PlayerController : MonoBehaviour
         rb.velocity = transform.forward * currentVelocity;
         //See if enough time has elapsed to allow swipe.
         timer += Time.deltaTime;
-        if (timer > 1f)
+        if (timer > .25f)
         {
             readyForSwipe = true;
             timer = 0;
+            inputManager.startTouchPos = inputManager.currentTouchPos;
         }
     }
 }
