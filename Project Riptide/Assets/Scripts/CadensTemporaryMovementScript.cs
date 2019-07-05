@@ -96,11 +96,11 @@ public class CadensTemporaryMovementScript : MonoBehaviour
         //Adjust current velocity of the ship.
         if (currentVelocity < targetVelocity)
         {
-            currentVelocity += .01f;
+            currentVelocity += .05f;
         }
         else if (currentVelocity > targetVelocity)
         {
-            currentVelocity -= .01f;
+            currentVelocity -= .05f;
         }
         //Move the ship.
         rb.velocity = transform.forward * currentVelocity;

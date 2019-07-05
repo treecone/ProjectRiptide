@@ -14,9 +14,10 @@ public partial class Enemy : MonoBehaviour
     //public fields
     public EnemyType enemyType;
     public GameObject projectile;
+    public GameObject shadow;
 
     //fields
-    private int health;
+    public int health;
     private int maxHealth;
     private EnemyState state;
     //player's distance from enemy
@@ -48,6 +49,7 @@ public partial class Enemy : MonoBehaviour
     //Fields for collision detection
     public float lengthMult;
     public float widthMult;
+    public float heightMult;
 
     public int Health { get { return health; } }
 
@@ -118,7 +120,7 @@ public partial class Enemy : MonoBehaviour
                 PassiveAI = PassiveWanderRadius;
                 break;
             case EnemyType.KoiBoss:
-                speed = 2.0f;
+                speed = 1.4f;
                 health = 100;
                 maxHealth = 100;
                 timeBetween = 5.0;
@@ -128,9 +130,9 @@ public partial class Enemy : MonoBehaviour
                 hostileRadius = 15.0f;
                 passiveRadius = 60.0f;
                 maxRadius = 240.0f;
-                specialTimer = new float[5] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                inSpecial = new bool[5] { false, false, false, false, false };
+                specialTimer = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                specialCooldown = new float[6] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                inSpecial = new bool[6] { false, false, false, false, false, false };
                 playerCollision = false;
                 HostileAI = KoiBossHostile;
                 PassiveAI = PassiveWanderRadius;
@@ -160,10 +162,10 @@ public partial class Enemy : MonoBehaviour
     {
         //Create rays for hit detection
         RaycastHit hit;
-        Ray rightFRay = new Ray(transform.position + (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray leftFRay = new Ray(transform.position - (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray rightSRay = new Ray(transform.position + (transform.right), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
-        Ray leftSRay = new Ray(transform.position - (transform.right), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
+        Ray rightFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray leftFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray rightSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
+        Ray leftSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
         Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
