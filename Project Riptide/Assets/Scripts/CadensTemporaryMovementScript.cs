@@ -82,7 +82,7 @@ public class CadensTemporaryMovementScript : MonoBehaviour
                 speedLevel++;
                 targetVelocity = speedLevel * 2.5f;
                 readyForSwipe = false;
-
+                Debug.Log("Speed Up");
             }
             //Swipe down -- decrease speed level.
             else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 25 && speedLevel > 0)
@@ -90,6 +90,7 @@ public class CadensTemporaryMovementScript : MonoBehaviour
                 speedLevel--;
                 targetVelocity = speedLevel * 2.5f;
                 readyForSwipe = false;
+                Debug.Log("Slow Down");
             }
         }
         //Adjust current velocity of the ship.

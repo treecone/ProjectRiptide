@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,11 +9,16 @@ public class InputManager : MonoBehaviour
     //Number of buttons currently being touched on screen, not sure if we'll need this variable but for debug
     public int buttonsPressed;
 
+    public Camera camera;
+
+    private float touchStartTime = 0;
+    private Vector2 touchStartPosition = new Vector2();
     //---------Swiping-------------------------------
     public bool currentlySwiping;
     public Vector2 startTouchPos;
     public Vector2 currentTouchPos;
-    public float minTouchDistance;
+    public float minSwipeDelta = 100;
+    public float minSwipeSpeed = 1000;
 
     public bool touchingLeft;
     public bool touchingRight;
@@ -37,8 +43,6 @@ public class InputManager : MonoBehaviour
         touchVisualCursor = gameObject.transform.Find("TouchVisualCursor").gameObject;
         speedSlider = gameObject.transform.Find("ToggleSpeed").GetComponent<Slider>();
         multiTapTimer = 0;
-        Vector2 startTouchPos = Vector2.zero;
-        Vector2 currentTouchPos = Vector2.zero;
         ship = GameObject.Find("/Ship");
     }
 
@@ -59,39 +63,73 @@ public class InputManager : MonoBehaviour
             if(Input.touches.Length == 1) //user is touching with a single finger
             {
                 Touch touch = Input.GetTouch(0);
+                Vector2 touchLocation = touch.position - new Vector2(Screen.width / 2, Screen.height / 2);
                 switch (touch.phase) //What is the first touch currently doing
                 {
-                    case (TouchPhase.Began):
+                    case TouchPhase.Began:
                         touchVisual.GetComponent<Image>().enabled = true;
                         touchVisualCursor.GetComponent<Image>().enabled = true;
-                        startTouchPos = new Vector3(touch.position.x - gameObject.GetComponent<RectTransform>().rect.width / 2, touch.position.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
-                        //The offset of the touch visual.                        
+
+                        touchStartTime = Time.time;
+                        touchStartPosition = touch.position;
+
+                        Debug.Log("Touch down at " + touch.position + "Time: " + touchStartTime);
+                        touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = touchLocation;
+                        touchVisual.GetComponent<RectTransform>().anchoredPosition = touchLocation;
+                        /*
                         //The y rotation/orientation of the ship.
                         yRot = ship.GetComponent<Rigidbody>().transform.rotation.ToEuler().y * Mathf.Rad2Deg;
-                        //Offset the touch cursor.
-                        touchVisual.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
-                        touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = startTouchPos;
-                        tapCounter += 1;
+                        tapCounter += 1;*/
+                        break;
+                    case TouchPhase.Moved:
+                    case TouchPhase.Stationary:
+                        
+                        touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = touchLocation;
                         break;
 
-                    case (TouchPhase.Moved):
-                    case (TouchPhase.Stationary):
-                        currentTouchPos = new Vector3(touch.position.x - gameObject.GetComponent<RectTransform>().rect.width / 2, touch.position.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
-                        touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = currentTouchPos;
-                        if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minTouchDistance || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minTouchDistance) //If the player has dragged a certain distanceS
-                        {
-                            //Do stuff while swiping?
-                            currentlySwiping = true;
-                        }
-                        else
-                        {
-                            currentlySwiping = false;
-                        }
-                        break;
-
-                    case (TouchPhase.Ended):
+                    case TouchPhase.Ended:
                         touchVisual.GetComponent<Image>().enabled = false;
                         touchVisualCursor.GetComponent<Image>().enabled = false;
+
+                        Debug.Log("Touch up at " + touch.position);
+
+                        float tapLength = Time.time - touchStartTime;
+                        Vector2 tapDisplacement = touch.position - touchStartPosition;
+                        
+                        if((tapDisplacement / tapLength).magnitude > minSwipeSpeed && tapDisplacement.magnitude > minSwipeDelta)
+                        {
+                            Debug.Log("Swipe");
+                            Debug.Log("Swipe speed: " + (tapDisplacement / tapLength).magnitude);
+                            Debug.Log("Swipe displacement: " + tapDisplacement.magnitude);
+                            string directionText = "Swipe Direction: ";
+                            if(Math.Abs(tapDisplacement.x) > Math.Abs(tapDisplacement.y)) //if true, is swipe left or right
+                            {
+                                if(tapDisplacement.x > 0)
+                                {
+                                    directionText += "Right";
+                                } else
+                                {
+                                    directionText += "Left";
+                                }
+                            } else //if false, is swipe up or down
+                            {
+                                if (tapDisplacement.y > 0)
+                                {
+                                    directionText += "Up";
+                                }
+                                else
+                                {
+                                    directionText += "Down";
+                                }
+                            }
+                            Debug.Log(directionText);
+                        } else if(tapLength < 0.5f)
+                        {
+                            Debug.Log("Tap " + tapLength);
+                        } else
+                        {
+                            Debug.Log("Touch and Hold " + tapLength);
+                        }
                         break;
                 }
                 //Detect touching left or right
@@ -158,7 +196,7 @@ public class InputManager : MonoBehaviour
         {
             currentTouchPos = new Vector3(Input.mousePosition.x - gameObject.GetComponent<RectTransform>().rect.width / 2, Input.mousePosition.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = currentTouchPos;
-            if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minTouchDistance || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minTouchDistance) //If the player has dragged a certain distanceS
+            if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minSwipeDelta || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minSwipeDelta) //If the player has dragged a certain distanceS
             {
                 //Do stuff while swiping?
                 currentlySwiping = true;
