@@ -43,6 +43,8 @@ public partial class Enemy : MonoBehaviour
     private bool[] inSpecial;
     private bool playerCollision;
     private bool obsticalCollision;
+    private bool isRaming;
+    private int ramingDamage;
     private AI HostileAI;
     private AI PassiveAI;
 
@@ -116,6 +118,8 @@ public partial class Enemy : MonoBehaviour
                 specialCooldown = new float[1] { 5.0f };
                 inSpecial = new bool[1] { false };
                 playerCollision = false;
+                isRaming = false;
+                ramingDamage = 15;
                 HostileAI = HostileFollowAndDash;
                 PassiveAI = PassiveWanderRadius;
                 break;
@@ -134,6 +138,8 @@ public partial class Enemy : MonoBehaviour
                 specialCooldown = new float[6] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
                 inSpecial = new bool[6] { false, false, false, false, false, false };
                 playerCollision = false;
+                isRaming = false;
+                ramingDamage = 20;
                 HostileAI = KoiBossHostile;
                 PassiveAI = PassiveWanderRadius;
                 break;
@@ -211,7 +217,14 @@ public partial class Enemy : MonoBehaviour
     public void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Player")
+        {
             playerCollision = true;
+            if(isRaming)
+            {
+                //Deal damage to the player
+                isRaming = false;
+            }
+        }
         if (col.gameObject.tag == "Obstical")
             obsticalCollision = true;
     }

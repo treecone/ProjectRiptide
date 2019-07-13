@@ -204,7 +204,7 @@ public partial class Enemy : MonoBehaviour
                         if (specialCooldown[0] < 0.0f && specialCooldown[2] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Load projectile
-                            SpawnProjectile(new Vector3(0, 0, 5 * lengthMult / 6), 1.0f, 10, 5.0f, MovementPattern.Forward);
+                            SpawnProjectile(new Vector3(0, 0, 5 * lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward);
                             specialCooldown[0] = 2.0f;
                             specialCooldown[2] = 3.0f;
                         }
@@ -249,6 +249,7 @@ public partial class Enemy : MonoBehaviour
                     //Monster stays still and charges for 2 seconds
                     if (specialTimer[1] < 1.0f || (specialTimer[1] < 3.0f && specialTimer[1] >= 2.0f) || (specialTimer[1] < 5.0f && specialTimer[1] >= 4.0f))
                     {
+                        isRaming = false;
                         //Track player
                         destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
                         //Find the direction the monster should be looking
@@ -260,6 +261,7 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if (specialTimer[1] < 2.0f || (specialTimer[1] < 4.0f && specialTimer[1] >= 3.0f) || (specialTimer[1] < 6.0f && specialTimer[1] >= 5.0f))
                     {
+                        isRaming = true;
                         //Find local forward vector
                         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                         CheckCollision();
@@ -271,10 +273,11 @@ public partial class Enemy : MonoBehaviour
                         }
                         else
                             specialTimer[1] += Time.deltaTime;
-                        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
+                        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 3);
                     }
                     else if(specialTimer[1] < 9.0f && specialTimer[1] >= 6.0f)
                     {
+                        isRaming = false;
                         //Koi does not move for 3 seconds to give player a chance to attack
                         specialTimer[1] += Time.deltaTime;
                     }
@@ -308,13 +311,13 @@ public partial class Enemy : MonoBehaviour
                     }
                     else
                     {
-                        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward);
                         inSpecial[0] = false;
                         specialTimer[0] = 0.0f;
                         specialCooldown[0] = 5.0f;
@@ -348,6 +351,7 @@ public partial class Enemy : MonoBehaviour
                     specialTimer[3] = 0.0f;
                     inSpecial[4] = false;
                     specialTimer[4] = 0.0f;
+                    isRaming = false;
                 }
             }
             //Phase 2 AI
@@ -475,6 +479,7 @@ public partial class Enemy : MonoBehaviour
                     //Monster stays still and charges for 2 seconds
                     if (specialTimer[1] < 1.0f || (specialTimer[1] < 3.0f && specialTimer[1] >= 2.0f) || (specialTimer[1] < 5.0f && specialTimer[1] >= 4.0f))
                     {
+                        isRaming = false;
                         //Track player
                         destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
                         //Find the direction the monster should be looking
@@ -487,6 +492,7 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if (specialTimer[1] < 2.0f || (specialTimer[1] < 4.0f && specialTimer[1] >= 3.0f) || (specialTimer[1] < 6.0f && specialTimer[1] >= 5.0f))
                     {
+                        isRaming = true;
                         //Find local forward vector
                         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                         CheckCollision();
@@ -512,6 +518,7 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if(specialTimer[1] < 7.0f && specialTimer[1] >= 6)
                     {
+                        isRaming = false;
                         specialTimer[1] += Time.deltaTime;
                         transform.Translate(Vector3.up * Time.deltaTime * 3);
                         shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
@@ -557,6 +564,7 @@ public partial class Enemy : MonoBehaviour
                     //Track player
                     else if (specialTimer[3] < 2.5f && specialTimer[3] >= 1.0f)
                     {
+                        isRaming = true;
                         //Track player
                         destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
                         //Find the direction the monster should be looking
@@ -569,18 +577,19 @@ public partial class Enemy : MonoBehaviour
                     //Stop tracking for half a second
                     else if (specialTimer[3] < 3.0f && specialTimer[3] >= 2.5f)
                     {
+                        isRaming = false;
                         specialTimer[3] += Time.deltaTime;
                     }
                     //Shoot projectile
                     else if(specialTimer[3] < 3.5 && specialTimer[3] >= 3.0f)
                     {
-                        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 5.0f, MovementPattern.Forward);
-                        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 5.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward);
+                        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward);
                         specialTimer[3] += 0.5f;
                     }
                     //Give player chance to attack
