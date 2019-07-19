@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 276101488}
   - component: {fileID: 276101492}
   - component: {fileID: 276101493}
+  - component: {fileID: 276101494}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -250,6 +251,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 84
   m_CollisionDetection: 0
+--- !u!114 &276101494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 276101487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d7e79d6f50d5474aab5cb84158c7bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  myPrefab: {fileID: 1027207155806325851, guid: eabf87081ad0f6a4280c3d56e97f55d8,
+    type: 3}
 --- !u!20 &506001900 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 1169885611229653704, guid: fb58c0a273275ae478587ea76a52ef51,
