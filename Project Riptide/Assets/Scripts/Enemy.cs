@@ -15,10 +15,11 @@ public partial class Enemy : MonoBehaviour
     public EnemyType enemyType;
     public GameObject projectile;
     public GameObject shadow;
+    public HealthBar healthBar;
 
     //fields
-    public int health;
-    private int maxHealth;
+    public float health;
+    private float maxHealth;
     private EnemyState state;
     //player's distance from enemy
     private float playerDistance;
@@ -53,13 +54,14 @@ public partial class Enemy : MonoBehaviour
     public float widthMult;
     public float heightMult;
 
-    public int Health { get { return health; } }
+    public float Health { get { return health; } }
 
     // Start is called before the first frame update
     void Start()
     {
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        healthBar = GetComponent<HealthBar>();
         LoadEnemy(enemyType);
     }
 
@@ -143,17 +145,20 @@ public partial class Enemy : MonoBehaviour
                 HostileAI = KoiBossHostile;
                 PassiveAI = PassiveWanderRadius;
                 break;
-
         }
+
+        //Setup health bar
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     /// <summary>
     /// Monster takes damage, if health is 0 they die
     /// </summary>
-    /// <param name="damage">int Amount of damage taken</param>
-    public void TakeDamage(int damage)
+    /// <param name="damage">Amount of damage taken</param>
+    public void TakeDamage(float damage)
     {
         health -= damage;
+        healthBar.UpdateHealth(health);
         if(health <= 0)
         {
             health = 0;
