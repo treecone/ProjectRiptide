@@ -15,7 +15,10 @@ public partial class Enemy : MonoBehaviour
     public EnemyType enemyType;
     public GameObject projectile;
     public GameObject shadow;
-    public HealthBar healthBar;
+    public GameObject healthBarObject;
+    public Camera camera;
+
+    private HealthBar healthBar;
 
     //fields
     public float health;
@@ -93,6 +96,9 @@ public partial class Enemy : MonoBehaviour
                 }
                 break;
         }
+
+        //Make health bar face player
+        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, healthBarObject.transform.rotation.w);
 
         if (passiveCooldown > 0)
             passiveCooldown -= Time.deltaTime;
