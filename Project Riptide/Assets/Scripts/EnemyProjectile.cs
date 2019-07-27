@@ -45,8 +45,12 @@ public class EnemyProjectile : MonoBehaviour
     public void OnCollisionEnter(Collision collision)
     {
         //If projectile collides with an obstical destory it 
-        if (collision.gameObject.tag == "Obstical")
+        if (collision.gameObject.tag == "Player")
+        {
+            //Deal damage to the player based on
+            //Projectile's damage
             GameObject.Destroy(gameObject);
+        }
         else
             GameObject.Destroy(gameObject);
     }

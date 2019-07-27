@@ -12,13 +12,11 @@ public class HealthBar : MonoBehaviour
     private float timing;
 
     //health
-    public int maxHealth;
-    public int currentHealth;
-    private float pctHealth;
+    private float maxHealth;
+    private float currentHealth;
 
     //health bar
-    public Image foregroundImage;
-    public float updateSpeed = 0.5f;
+    public Slider slider;
 
     // Start is called before the first frame update
     void Start()
@@ -28,21 +26,37 @@ public class HealthBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timing <= 0f)
+        slider.value = CalculateHealth();
+
+        if(currentHealth <= 0)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                ModifyHealth(-10);
-                timing += .5f;
-            }
-        }
-        else
-        {
-            timing -= Time.deltaTime;
+            //Kill Monster
         }
 
+        if(currentHealth >= maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
     }
 
+    //Calculates percentage of health remaining
+    private float CalculateHealth()
+    {
+        return currentHealth / maxHealth;
+    }
+
+    public void SetMaxHealth(float maxHealth)
+    {
+        this.maxHealth = maxHealth;
+        currentHealth = this.maxHealth;
+    }
+
+    public void UpdateHealth(float currentHealth)
+    {
+        this.currentHealth = currentHealth;
+    }
+
+    /*
     /// <summary>
     /// IEnumerator that changes health bar smoothly
     /// </summary>
@@ -78,6 +92,6 @@ public class HealthBar : MonoBehaviour
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
         HandleHealthChange(currentHealthPct);
     }
-
+    */
 
 }
