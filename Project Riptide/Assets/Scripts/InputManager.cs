@@ -17,8 +17,6 @@ public class InputManager : MonoBehaviour
     public bool currentlySwiping;
     public Vector2 startTouchPos;
     public Vector2 currentTouchPos;
-    public float minSwipeDelta = 100;
-    public float minSwipeSpeed = 1000;
 
     public bool touchingLeft;
     public bool touchingRight;
@@ -26,16 +24,45 @@ public class InputManager : MonoBehaviour
     // ------------GameObjects and visuals-----------
     public GameObject touchVisual;
     private GameObject touchVisualCursor;
-    private GameObject ship;
+    
     public Slider speedSlider;
 
     //---------Multi Tapping-------------------------
     private float multiTapTimer;
     public int tapCounter;
- 
+
+    //REFACTORED VARIABLES ONLY BELOW HERE
+
+    //-----References-----
+    private GameObject ship;
+    private ShipMovementScript movementScript;
+    private CannonFireScript cannonFireScript;
+
+    //-----Multiple touches-----
+    private List<TouchData> currentTouches;
 	public bool mobile = true;
 
-    public float yRot;
+    //-----Config values-----
+
+    /// <summary>
+    /// How close to the side of the screen a touch must be to cause rotation
+    /// </summary>
+    public float turnTouchArea;
+
+    /// <summary>
+    /// The minimum displacement a swipe must have to be considered a swipe
+    /// </summary>
+    public float minSwipeDisplacement = 100;
+
+    /// <summary>
+    /// The minimum speed a swipe must have to be considered a swipe
+    /// </summary>
+    public float minSwipeSpeed = 1000;
+
+    /// <summary>
+    /// The maximum time a tap can be held down and still be considered a tap
+    /// </summary>
+    public float maxTapDuration = 0.5f;
 
     void Start()
     {
@@ -43,15 +70,20 @@ public class InputManager : MonoBehaviour
         touchVisualCursor = gameObject.transform.Find("TouchVisualCursor").gameObject;
         speedSlider = gameObject.transform.Find("ToggleSpeed").GetComponent<Slider>();
         multiTapTimer = 0;
+
         ship = GameObject.Find("/Ship");
+        movementScript = ship.GetComponent<ShipMovementScript>();
+        cannonFireScript = ship.GetComponent<CannonFireScript>();
+
+        currentTouches = new List<TouchData>();
     }
 
     void Update()
     {
-		if(mobile)
-			DetectingMobileInput();
-		else
-			DetectingKeyboardInput();
+        if (mobile)
+            TakeMobileInput();
+        else
+            DetectingKeyboardInput();
     }
 
     void DetectingMobileInput () //This method is responsiable for handing swipe and tapping
@@ -96,7 +128,7 @@ public class InputManager : MonoBehaviour
                         float tapLength = Time.time - touchStartTime;
                         Vector2 tapDisplacement = touch.position - touchStartPosition;
                         
-                        if((tapDisplacement / tapLength).magnitude > minSwipeSpeed && tapDisplacement.magnitude > minSwipeDelta)
+                        if((tapDisplacement / tapLength).magnitude > minSwipeSpeed && tapDisplacement.magnitude > minSwipeDisplacement)
                         {
                             Debug.Log("Swipe");
                             Debug.Log("Swipe speed: " + (tapDisplacement / tapLength).magnitude);
@@ -179,6 +211,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    
     void DetectingKeyboardInput()
     {
         //On first click on Mouse Button.
@@ -196,7 +229,7 @@ public class InputManager : MonoBehaviour
         {
             currentTouchPos = new Vector3(Input.mousePosition.x - gameObject.GetComponent<RectTransform>().rect.width / 2, Input.mousePosition.y - gameObject.GetComponent<RectTransform>().rect.height / 2, 0);
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = currentTouchPos;
-            if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minSwipeDelta || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minSwipeDelta) //If the player has dragged a certain distanceS
+            if (Mathf.Abs(currentTouchPos.x - startTouchPos.x) > minSwipeDisplacement || Mathf.Abs(currentTouchPos.y - startTouchPos.y) > minSwipeDisplacement) //If the player has dragged a certain distanceS
             {
                 //Do stuff while swiping?
                 currentlySwiping = true;
@@ -235,4 +268,161 @@ public class InputManager : MonoBehaviour
             }
         }
     }
+
+    void HandleTouch(TouchData t)
+    {
+        Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
+        if(t.Velocity.magnitude > minSwipeSpeed && t.Displacement.magnitude > minSwipeDisplacement)
+        {
+            //All behavior for when a swipe is completed
+
+            if(Math.Abs(t.Displacement.y) > Math.Abs(t.Displacement.x)) //the swipe is up or down
+            {
+                if(t.Displacement.y < 0) //swipe down
+                {
+                    movementScript.LinearVelocity -= movementScript.linearAcceleration;
+                    Debug.Log("Swipe Down");
+                } else //swipe up
+                {
+                    movementScript.LinearVelocity += movementScript.linearAcceleration;
+                    Debug.Log("Swipe Up");
+                }
+            }
+
+        } else if(t.Duration > maxTapDuration)
+        {
+            //All behavior for when a tap and hold is completed
+
+        } else
+        {
+            //All behavior for when a tap is completed
+            if (t.Position.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+            {
+                cannonFireScript.Fire("debugOneBig");
+            }
+
+            if (t.Position.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
+            {
+                cannonFireScript.Fire("debugTriShot");
+            }
+        }
+    }
+
+    void TakeMobileInput()
+    {
+        //Add any new touches to the touch list
+        foreach(Touch t in Input.touches)
+        {
+            if(t.phase == TouchPhase.Began)
+            {
+                currentTouches.Add(new TouchData(t));
+            }
+        }
+        bool turning = false;
+        //Update all touches that are currently down
+        for(int i = 0; i < currentTouches.Count; i++)
+        {
+            TouchData t = currentTouches[i];
+            t.Update(Input.touches);
+
+            //if the touch has just ended, remove it from the list and perform whatever behavior is appropriate for that touch
+            if (t.phase == TouchPhase.Ended) 
+            {
+                currentTouches.Remove(t);
+                i--;
+                HandleTouch(t);
+                continue;
+            }
+
+            if(t.Duration > maxTapDuration)
+            {
+                if (t.Position.x < turnTouchArea - Screen.width / 2) //turning left
+                {
+                    turning = true;
+                    movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
+                }
+
+                if (t.Position.x > Screen.width / 2 - turnTouchArea) //turning right
+                {
+                    turning = true;
+                    movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
+                }
+            }
+            
+        }
+
+        if(!turning) //ship is not turning, bring rotational velocity back to zero
+        {
+
+            movementScript.RotationalVelocity *= movementScript.rotationalDrag;
+            if(Math.Abs(movementScript.RotationalVelocity) < movementScript.maxRotationalVelocity / 100)
+            {
+                movementScript.RotationalVelocity = 0;
+            }
+        }
+    }
+
+    private class TouchData
+    {
+        private Touch touch;
+        private int index;
+        private float duration;
+        private Vector2 startPosition;
+
+        public TouchPhase phase;
+
+        public Vector2 Displacement
+        {
+            get
+            {
+                return Position - startPosition;
+            }
+        }
+
+        public Vector2 Velocity
+        {
+            get
+            {
+                return Displacement / duration;
+            }
+        }
+
+        public Vector2 Position
+        {
+            get
+            {
+                return touch.position - new Vector2(Screen.width / 2, Screen.height / 2);
+            }
+        }
+
+        public float Duration
+        {
+            get
+            {
+                return duration;
+            }
+        }
+
+        public TouchData(Touch touch)
+        {
+            this.touch = touch;
+            index = touch.fingerId;
+            duration = 0;
+            startPosition = Position;
+        }
+
+        public void Update(Touch[] touches)
+        {
+            foreach (Touch t in touches)
+            {
+                if (t.fingerId == index)
+                {
+                    touch = t;
+                }
+            }
+            duration += touch.deltaTime;
+            phase = touch.phase;
+        }
+    }
 }
+
