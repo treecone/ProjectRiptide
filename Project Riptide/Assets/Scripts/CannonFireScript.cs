@@ -18,18 +18,60 @@ public class CannonFireScript : MonoBehaviour
     {
         if(Input.GetKeyDown("a"))
         {
-            Fire(true);
+            Fire("debugOneBig");
         }
         if(Input.GetKeyDown("d"))
         {
-            Fire(false);
+            Fire("debugTriShot");
         }
     }
 
-    void Fire(bool side)
+    public void Fire(string shotType)
     {
-        Vector3 direction = side ? -transform.right : transform.right;
-        GameObject ball = Instantiate(cannonBall, transform.position + (transform.localScale.x / 2) * direction, Quaternion.identity);
-        ball.GetComponent<Rigidbody>().velocity = direction * fireSpeedHoriz + transform.up * fireSpeedVert;
+        switch(shotType)
+        {
+            case "debugOneBig":
+                CannonShot oneBig = new CannonShot(1, 25, transform.right, 10, 0, 0);
+                oneBig.Fire(cannonBall, transform);
+                break;
+            case "debugTriShot":
+                CannonShot triShot = new CannonShot(3, 10, transform.right, 10, 30, 0);
+                triShot.Fire(cannonBall, transform);
+                break;
+        }
+    }
+
+    private class CannonShot
+    {
+        private int damage;
+        private Vector3 direction;
+        private float fireSpeed;
+        private int count;
+        private float spreadAngle;
+        private float spreadDisplacement;
+
+        public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float spreadAngle, float spreadDisplacement)
+        {
+            this.count = count;
+            this.damage = damage;
+            this.direction = direction;
+            this.fireSpeed = fireSpeed;
+            this.spreadAngle = spreadAngle;
+            this.spreadDisplacement = spreadDisplacement;
+        }
+
+        public void Fire(GameObject cannonBall, Transform shipTransform)
+        {
+            Vector3 angle = Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
+            for(int i = 0; i < count; i++)
+            {
+                GameObject ball = Instantiate(cannonBall, shipTransform.position + (shipTransform.localScale.x / 2) * direction, Quaternion.identity);
+                ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
+                angle = Quaternion.AngleAxis(spreadAngle, Vector3.up) * angle;
+
+                ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
+            }
+            
+        }
     }
 }
