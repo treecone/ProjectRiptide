@@ -14,10 +14,15 @@ public partial class Enemy : MonoBehaviour
     //public fields
     public EnemyType enemyType;
     public GameObject projectile;
+    public GameObject shadow;
+    public GameObject healthBarObject;
+    public Camera camera;
+
+    private HealthBar healthBar;
 
     //fields
-    private int health;
-    private int maxHealth;
+    public float health;
+    private float maxHealth;
     private EnemyState state;
     //player's distance from enemy
     private float playerDistance;
@@ -42,20 +47,24 @@ public partial class Enemy : MonoBehaviour
     private bool[] inSpecial;
     private bool playerCollision;
     private bool obsticalCollision;
+    private bool isRaming;
+    private int ramingDamage;
     private AI HostileAI;
     private AI PassiveAI;
 
     //Fields for collision detection
     public float lengthMult;
     public float widthMult;
+    public float heightMult;
 
-    public int Health { get { return health; } }
+    public float Health { get { return health; } }
 
     // Start is called before the first frame update
     void Start()
     {
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        healthBar = GetComponent<HealthBar>();
         LoadEnemy(enemyType);
     }
 
@@ -88,6 +97,9 @@ public partial class Enemy : MonoBehaviour
                 break;
         }
 
+        //Make health bar face player
+        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, healthBarObject.transform.rotation.w);
+
         if (passiveCooldown > 0)
             passiveCooldown -= Time.deltaTime;
 
@@ -114,11 +126,13 @@ public partial class Enemy : MonoBehaviour
                 specialCooldown = new float[1] { 5.0f };
                 inSpecial = new bool[1] { false };
                 playerCollision = false;
+                isRaming = false;
+                ramingDamage = 15;
                 HostileAI = HostileFollowAndDash;
                 PassiveAI = PassiveWanderRadius;
                 break;
             case EnemyType.KoiBoss:
-                speed = 2.0f;
+                speed = 1.4f;
                 health = 100;
                 maxHealth = 100;
                 timeBetween = 5.0;
@@ -128,24 +142,29 @@ public partial class Enemy : MonoBehaviour
                 hostileRadius = 15.0f;
                 passiveRadius = 60.0f;
                 maxRadius = 240.0f;
-                specialTimer = new float[5] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                inSpecial = new bool[5] { false, false, false, false, false };
+                specialTimer = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                specialCooldown = new float[6] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                inSpecial = new bool[6] { false, false, false, false, false, false };
                 playerCollision = false;
+                isRaming = false;
+                ramingDamage = 20;
                 HostileAI = KoiBossHostile;
                 PassiveAI = PassiveWanderRadius;
                 break;
-
         }
+
+        //Setup health bar
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     /// <summary>
     /// Monster takes damage, if health is 0 they die
     /// </summary>
-    /// <param name="damage">int Amount of damage taken</param>
-    public void TakeDamage(int damage)
+    /// <param name="damage">Amount of damage taken</param>
+    public void TakeDamage(float damage)
     {
         health -= damage;
+        healthBar.UpdateHealth(health);
         if(health <= 0)
         {
             health = 0;
@@ -160,10 +179,10 @@ public partial class Enemy : MonoBehaviour
     {
         //Create rays for hit detection
         RaycastHit hit;
-        Ray rightFRay = new Ray(transform.position + (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray leftFRay = new Ray(transform.position - (transform.right), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray rightSRay = new Ray(transform.position + (transform.right), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
-        Ray leftSRay = new Ray(transform.position - (transform.right), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
+        Ray rightFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray leftFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray rightSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
+        Ray leftSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
         Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
@@ -209,7 +228,14 @@ public partial class Enemy : MonoBehaviour
     public void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.tag == "Player")
+        {
             playerCollision = true;
+            if(isRaming)
+            {
+                //Deal damage to the player
+                isRaming = false;
+            }
+        }
         if (col.gameObject.tag == "Obstical")
             obsticalCollision = true;
     }

@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 	private InputManager inputManager; 
 	private Rigidbody rb;
 
+    private const float MAXTURNSPEED = 1f;
     public float speedLevel = 0f;
     public float rotationSpeed = 0f;
     public float targetVelocity;
@@ -52,18 +53,18 @@ public class PlayerController : MonoBehaviour
         //Rotate the ship ccw.
         if (inputManager.touchingLeft)
         {
-            if(Mathf.Abs(rotationSpeed) < 2)
+            if(Mathf.Abs(rotationSpeed) < MAXTURNSPEED)
             {
-                rotationSpeed -= .002f;
+                rotationSpeed -= .008f;
             }
             transform.Rotate(0, rotationSpeed, 0, Space.Self);
         }
         //Rotate the ship cw
         else if (inputManager.touchingRight)
         {
-            if(Mathf.Abs(rotationSpeed) < 2)
+            if(Mathf.Abs(rotationSpeed) < MAXTURNSPEED)
             {
-                rotationSpeed += .002f;
+                rotationSpeed += .008f;
             }
             transform.Rotate(0, rotationSpeed, 0, Space.Self);
         }
@@ -72,11 +73,11 @@ public class PlayerController : MonoBehaviour
         {
             if(rotationSpeed > 0)
             {
-                rotationSpeed -= .004f;
+                rotationSpeed -= .016f;
             }
             else if(rotationSpeed < 0)
             {
-                rotationSpeed += .004f;
+                rotationSpeed += .016f;
             }
             transform.Rotate(0, rotationSpeed, 0, Space.Self);
         }
@@ -90,7 +91,7 @@ public class PlayerController : MonoBehaviour
         if (inputManager.currentlySwiping && readyForSwipe)
         {
             //Swipe up -- increase speed level.
-            if (inputManager.currentTouchPos.y > inputManager.startTouchPos.y + 25 && speedLevel < 2)
+            if (inputManager.currentTouchPos.y > inputManager.startTouchPos.y + 250 && speedLevel < 2)
             {
                 speedLevel++;
                 targetVelocity = speedLevel * 2.5f;
@@ -98,7 +99,7 @@ public class PlayerController : MonoBehaviour
 
             }
             //Swipe down -- decrease speed level.
-            else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 25 && speedLevel > 0)
+            else if (inputManager.startTouchPos.y > inputManager.currentTouchPos.y + 250 && speedLevel > 0)
             {
                 speedLevel--;
                 targetVelocity = speedLevel * 2.5f;
@@ -118,10 +119,11 @@ public class PlayerController : MonoBehaviour
         rb.velocity = transform.forward * currentVelocity;
         //See if enough time has elapsed to allow swipe.
         timer += Time.deltaTime;
-        if (timer > 1f)
+        if (timer > .25f)
         {
             readyForSwipe = true;
             timer = 0;
+            inputManager.startTouchPos = inputManager.currentTouchPos;
         }
     }
 }
