@@ -5,8 +5,6 @@ using UnityEngine;
 public class CannonFireScript : MonoBehaviour
 {
     public GameObject cannonBall;
-    public float fireSpeedHoriz;
-    public float fireSpeedVert;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,11 +29,11 @@ public class CannonFireScript : MonoBehaviour
         switch(shotType)
         {
             case "debugOneBig":
-                CannonShot oneBig = new CannonShot(1, 25, transform.right, 10, 0, 0);
+                CannonShot oneBig = new CannonShot(1, 10, transform.right, 10, 60, 0);
                 oneBig.Fire(cannonBall, transform);
                 break;
             case "debugTriShot":
-                CannonShot triShot = new CannonShot(3, 10, transform.right, 10, 30, 0);
+                CannonShot triShot = new CannonShot(3, 5, transform.right, 10, 30, 0);
                 triShot.Fire(cannonBall, transform);
                 break;
         }
@@ -43,6 +41,8 @@ public class CannonFireScript : MonoBehaviour
 
     private class CannonShot
     {
+        public float fireSpeedHoriz = 10;
+        public float fireSpeedVert = 4;
         private int damage;
         private Vector3 direction;
         private float fireSpeed;
@@ -66,7 +66,12 @@ public class CannonFireScript : MonoBehaviour
             for(int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, shipTransform.position + (shipTransform.localScale.x / 2) * direction, Quaternion.identity);
-                ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
+
+                //Added by Caden to be able to test player attacking fish, feel free to remove later
+                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + (shipTransform.right * fireSpeedHoriz);
+                //
+
+                //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
                 angle = Quaternion.AngleAxis(spreadAngle, Vector3.up) * angle;
 
                 ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;

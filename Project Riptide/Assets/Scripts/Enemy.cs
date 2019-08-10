@@ -98,7 +98,7 @@ public partial class Enemy : MonoBehaviour
         }
 
         //Make health bar face player
-        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, healthBarObject.transform.rotation.w);
+        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
 
         if (passiveCooldown > 0)
             passiveCooldown -= Time.deltaTime;
@@ -169,6 +169,7 @@ public partial class Enemy : MonoBehaviour
         {
             health = 0;
             //Kill monster
+            Destroy(gameObject);
         }
     }
 

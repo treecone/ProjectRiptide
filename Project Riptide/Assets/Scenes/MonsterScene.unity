@@ -531,7 +531,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!1 &566610761 stripped
 GameObject:
@@ -1044,8 +1044,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cannonBall: {fileID: 6810507575641601458, guid: 2be3efd9ab28a334cabdd927328840ac,
     type: 3}
-  fireSpeedHoriz: 10
-  fireSpeedVert: 2
 --- !u!114 &1656247614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1495,6 +1493,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fish_Model4
       objectReference: {fileID: 0}
+    - target: {fileID: 6999395955324292061, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1564,6 +1567,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9061078739875459992, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
+        type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 1297938975235730221, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
