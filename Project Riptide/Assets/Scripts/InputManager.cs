@@ -40,7 +40,7 @@ public class InputManager : MonoBehaviour
 
     //-----Multiple touches-----
     private List<TouchData> currentTouches;
-	public bool mobile = true;
+	public bool mobile = false;
 
     //-----Config values-----
 
