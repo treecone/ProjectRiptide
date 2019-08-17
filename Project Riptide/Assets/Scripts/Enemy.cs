@@ -234,6 +234,7 @@ public partial class Enemy : MonoBehaviour
             if(isRaming)
             {
                 //Deal damage to the player
+                col.gameObject.GetComponent<PlayerHealth>().TakeDamage(ramingDamage);
                 isRaming = false;
             }
         }
