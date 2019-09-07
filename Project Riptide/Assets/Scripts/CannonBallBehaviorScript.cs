@@ -22,12 +22,13 @@ public class CannonBallBehaviorScript : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        GameObject objectHit = collision.gameObject;
-        HealthBar healthScript = objectHit.GetComponent<HealthBar>();
-        if(healthScript != null)
+        //Test if collision occured with enemy
+        if (collision.gameObject.tag == "Enemy" && collision.relativeVelocity.magnitude > 2)
         {
-            healthScript.TakeDamage(damageDealt);
-            Debug.Log("hit");
+            //Deal damage to enemy and delete projectile
+            collision.gameObject.GetComponentInParent<Enemy>().TakeDamage(damageDealt);
+            Destroy(this.gameObject);
+            Debug.Log("Hit");
         }
     }
 }

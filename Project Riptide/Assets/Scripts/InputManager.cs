@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour
 
     // ------------GameObjects and visuals-----------
     public GameObject touchVisual;
-    private GameObject touchVisualCursor;
+    public GameObject touchVisualCursor;
 
     public Slider speedSlider;
 
@@ -29,7 +29,7 @@ public class InputManager : MonoBehaviour
 
     //-----Multiple touches-----
     private List<TouchData> currentTouches;
-    public bool mobile = true;
+	public bool mobile;
 
     //-----Config values-----
 
@@ -55,9 +55,6 @@ public class InputManager : MonoBehaviour
 
     void Start()
     {
-        touchVisual = gameObject.transform.Find("TouchVisual").gameObject;
-        touchVisualCursor = gameObject.transform.Find("TouchVisualCursor").gameObject;
-        speedSlider = gameObject.transform.Find("ToggleSpeed").GetComponent<Slider>();
 
         ship = GameObject.Find("/Ship");
         movementScript = ship.GetComponent<ShipMovementScript>();
@@ -85,12 +82,14 @@ public class InputManager : MonoBehaviour
             touchVisual.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
 
+            Debug.Log("Mouse Down");
             clickDuration = 0;
         } else if (Input.GetMouseButton(0)) //mouse held
         {
             clickDuration += Time.deltaTime;
             clickCurrentPosition = Input.mousePosition;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickCurrentPosition;
+            Debug.Log("Mouse Held");
         } else if (Input.GetMouseButtonUp(0)) //mouse up 
         {
             Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
@@ -115,6 +114,7 @@ public class InputManager : MonoBehaviour
 
             } else //click behavior
             {
+                Debug.Log(clickCurrentPosition);
                 if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
                 {
                     cannonFireScript.Fire("debugOneBig");
