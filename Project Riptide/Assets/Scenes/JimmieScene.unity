@@ -372,6 +372,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &416455033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 506571360, guid: 08023d8f5d737d546916f57cf3805d62,
+    type: 3}
+  m_PrefabInstance: {fileID: 861039496}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &566610761 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1372910003819952111, guid: e0b3d44798cfea943a848d9971c70919,
@@ -410,12 +422,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonsPressed: 0
-  camera: {fileID: 0}
+  camera: {fileID: 1849770571}
   touchingLeft: 0
   touchingRight: 0
-  touchVisual: {fileID: 0}
-  speedSlider: {fileID: 0}
-  mobile: 1
+  touchVisual: {fileID: 2102049373}
+  touchVisualCursor: {fileID: 1965700493}
+  speedSlider: {fileID: 416455033}
+  mobile: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000
@@ -782,7 +795,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
   m_Navigation:
     m_Mode: 3
     m_SelectOnUp: {fileID: 0}
@@ -1218,6 +1230,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+--- !u!1 &1965700493 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8622532473614572052, guid: 08023d8f5d737d546916f57cf3805d62,
+    type: 3}
+  m_PrefabInstance: {fileID: 861039496}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1985231077 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9061078739875459992, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
@@ -1391,8 +1409,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cannonBall: {fileID: 6810507575641601458, guid: 2be3efd9ab28a334cabdd927328840ac,
     type: 3}
-  fireSpeedHoriz: 10
-  fireSpeedVert: 2
 --- !u!65 &2055122609
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1656,3 +1672,9 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101679043}
   m_CullTransparentMesh: 0
+--- !u!1 &2102049373 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8622532472902346040, guid: 08023d8f5d737d546916f57cf3805d62,
+    type: 3}
+  m_PrefabInstance: {fileID: 861039496}
+  m_PrefabAsset: {fileID: 0}

@@ -53,9 +53,11 @@ public class InputManager : MonoBehaviour
     /// </summary>
     public float maxTapDuration = 0.5f;
 
+    private static Vector3 screenCorrect;
+
     void Start()
     {
-
+        screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
         ship = GameObject.Find("/Ship");
         movementScript = ship.GetComponent<ShipMovementScript>();
         cannonFireScript = ship.GetComponent<CannonFireScript>();
@@ -77,19 +79,27 @@ public class InputManager : MonoBehaviour
         {
             touchVisual.GetComponent<Image>().enabled = true;
             touchVisualCursor.GetComponent<Image>().enabled = true;
-            clickStartPosition = Input.mousePosition;
+            clickStartPosition = Input.mousePosition - screenCorrect;
             clickCurrentPosition = clickStartPosition;
             touchVisual.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
-
-            Debug.Log("Mouse Down");
+            
             clickDuration = 0;
         } else if (Input.GetMouseButton(0)) //mouse held
         {
             clickDuration += Time.deltaTime;
-            clickCurrentPosition = Input.mousePosition;
+            clickCurrentPosition = Input.mousePosition - screenCorrect;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickCurrentPosition;
-            Debug.Log("Mouse Held");
+
+            if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+            {
+                movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
+            }
+
+            if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
+            {
+                movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
+            }
         } else if (Input.GetMouseButtonUp(0)) //mouse up 
         {
             Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;

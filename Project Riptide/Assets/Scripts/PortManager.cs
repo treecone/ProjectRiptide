@@ -23,7 +23,7 @@ public class PortManager : MonoBehaviour
 		//If the escape timer is zero and the player is near the port, then disable player movement
 		if (UIManager.EscapeTimer <= 0 && Vector3.Distance(player.transform.position, transform.position) < 1.5)
 		{
-			player.GetComponent<PlayerController>().enabled = false;
+			player.GetComponent<ShipMovementScript>().enabled = false;
 			PortUI.SetActive(true);
 			player.GetComponent<Rigidbody>().velocity = Vector3.zero;
 			player.transform.position = gameObject.transform.position;

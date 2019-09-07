@@ -40,7 +40,7 @@ public class PortUIManager : MonoBehaviour
 	{
 		EscapeTimer = 5;
 		PortUI.SetActive(false);
-		player.GetComponent<PlayerController>().enabled = true;
+		player.GetComponent<ShipMovementScript>().enabled = true;
 	}
 
 	public void ItemSelected(GameObject obj)
