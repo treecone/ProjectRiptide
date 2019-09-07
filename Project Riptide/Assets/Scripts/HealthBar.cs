@@ -56,6 +56,21 @@ public class HealthBar : MonoBehaviour
         this.currentHealth = currentHealth;
     }
 
+    /// <summary>
+    /// Monster takes damage, if health is 0 they die
+    /// </summary>
+    /// <param name="damage">Amount of damage taken</param>
+    public void TakeDamage(float damage)
+    {
+        currentHealth -= damage;
+        UpdateHealth(currentHealth);
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+            //Kill monster
+        }
+    }
+
     /*
     /// <summary>
     /// IEnumerator that changes health bar smoothly

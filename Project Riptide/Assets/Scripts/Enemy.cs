@@ -157,20 +157,7 @@ public partial class Enemy : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
     }
 
-    /// <summary>
-    /// Monster takes damage, if health is 0 they die
-    /// </summary>
-    /// <param name="damage">Amount of damage taken</param>
-    public void TakeDamage(float damage)
-    {
-        health -= damage;
-        healthBar.UpdateHealth(health);
-        if(health <= 0)
-        {
-            health = 0;
-            //Kill monster
-        }
-    }
+    
 
     /// <summary>
     /// Checks monster collisions with surrounding obsticals

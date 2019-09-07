@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
     /// Detect swiping movement from the player and adjust the ship's speed accordingly
     /// </summary>
     public void SetSpeed()
-    {
+    {/*
         //Check for swiping and eligibility of player swipe.
         if (inputManager.currentlySwiping && readyForSwipe)
         {
@@ -124,6 +124,6 @@ public class PlayerController : MonoBehaviour
             readyForSwipe = true;
             timer = 0;
             inputManager.startTouchPos = inputManager.currentTouchPos;
-        }
+        }*/
     }
 }

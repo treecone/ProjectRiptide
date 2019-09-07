@@ -668,6 +668,14 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
+      propertyPath: camera
+      value: 
+      objectReference: {fileID: 1849770571}
+    - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
+      propertyPath: turnTouchArea
+      value: 300
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
 --- !u!1 &881504462
@@ -1205,10 +1213,9 @@ GameObject:
   - component: {fileID: 2055122611}
   - component: {fileID: 2055122610}
   - component: {fileID: 2055122609}
-  - component: {fileID: 2055122608}
   - component: {fileID: 2055122607}
-  - component: {fileID: 2055122613}
   - component: {fileID: 2055122614}
+  - component: {fileID: 2055122613}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Player
@@ -1232,25 +1239,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &2055122608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055122606}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b2652ed5f3b8c545a2519df8863296c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speedLevel: 0
-  rotationSpeed: 0
-  targetVelocity: 0
-  currentVelocity: 0
-  readyForSwipe: 1
-  startTouchVector: {x: 0, y: 0}
-  currentTouchVector: {x: 0, y: 0}
 --- !u!65 &2055122609
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1331,15 +1319,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2055122606}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a27235009df974bbd474f000711f8f, type: 3}
+  m_Script: {fileID: 11500000, guid: fb9b7d1df68b3ef4da3757c43df041c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationScale: 1
-  readyForSwipe: 1
-  startTouchVector: {x: 0, y: 0}
-  currentTouchVector: {x: 0, y: 0}
+  rotationalAcceleration: 0.1
+  maxRotationalVelocity: 1.2
+  rotationalDrag: 0.98
+  linearAcceleration: 1
+  maxLinearVelocity: 5
 --- !u!114 &2055122614
 MonoBehaviour:
   m_ObjectHideFlags: 0

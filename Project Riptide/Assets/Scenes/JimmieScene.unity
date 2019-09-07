@@ -356,6 +356,35 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &775699034 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4748958056482949485, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 1912085339}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &775699035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775699034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11c389a08d11e7248b867fe110afda0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonsPressed: 0
+  camera: {fileID: 0}
+  touchingLeft: 0
+  touchingRight: 0
+  touchVisual: {fileID: 0}
+  speedSlider: {fileID: 0}
+  mobile: 1
+  turnTouchArea: 300
+  minSwipeDisplacement: 100
+  minSwipeSpeed: 1000
+  maxTapDuration: 0.5
 --- !u!1 &785160417 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1372910003977101114, guid: e0b3d44798cfea943a848d9971c70919,
@@ -521,7 +550,8 @@ PrefabInstance:
       propertyPath: turnTouchArea
       value: 300
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
 --- !u!1 &881504462
 GameObject:
@@ -645,10 +675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760f364ac801178478928d03e78bc328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
-  foregroundImage: {fileID: 0}
-  updateSpeed: 0.5
+  slider: {fileID: 0}
 --- !u!1001 &1849770570
 PrefabInstance:
   m_ObjectHideFlags: 0
