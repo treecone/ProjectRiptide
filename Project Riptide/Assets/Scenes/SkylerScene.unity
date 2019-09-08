@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -3280,7 +3280,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: edfd52828524b984fa9e73bc8db10490, type: 2}
+      objectReference: {fileID: 2100000, guid: dbae5997cc062324f92247720cb01571, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 334168bd521dee3459a38527d0fa8453, type: 3}
 --- !u!1001 &4205270016729573599
@@ -3497,7 +3497,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: edfd52828524b984fa9e73bc8db10490, type: 2}
+      objectReference: {fileID: 2100000, guid: dbae5997cc062324f92247720cb01571, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54320b6ca38072b49ad36938860e7be4, type: 3}
 --- !u!1001 &5995240396679922753
@@ -3729,6 +3729,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: PortUI
+      value: 
+      objectReference: {fileID: 320302274}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: ScrollContent
+      value: 
+      objectReference: {fileID: 334675384}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: ListboxItem
+      value: 
+      objectReference: {fileID: 8959549120842887686, guid: 20b731faa14fb7144b7752d8418996ab,
+        type: 3}
     - target: {fileID: 8516230390850827156, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3784,19 +3797,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: PortUI
-      value: 
-      objectReference: {fileID: 320302274}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: ScrollContent
-      value: 
-      objectReference: {fileID: 334675384}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: ListboxItem
-      value: 
-      objectReference: {fileID: 8959549120842887686, guid: 20b731faa14fb7144b7752d8418996ab,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
 --- !u!1001 &7192417800884997961
@@ -4156,7 +4156,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: edfd52828524b984fa9e73bc8db10490, type: 2}
+      objectReference: {fileID: 2100000, guid: dbae5997cc062324f92247720cb01571, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad71c2791a9db864190d3a754ab4ce76, type: 3}
 --- !u!1001 &8259837861336638482
@@ -4304,11 +4304,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 8622532474592026573, guid: 08023d8f5d737d546916f57cf3805d62,
-        type: 3}
-      propertyPath: m_Name
-      value: Canvas
-      objectReference: {fileID: 0}
     - target: {fileID: 8622532474592026545, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4413,6 +4408,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8622532474592026573, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_Name
+      value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 8622532474592026574, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
