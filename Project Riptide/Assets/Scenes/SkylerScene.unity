@@ -507,13 +507,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b2652ed5f3b8c545a2519df8863296c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedLevel: 0
-  rotationSpeed: 0
-  targetVelocity: 0
-  currentVelocity: 0
-  readyForSwipe: 1
-  startTouchVector: {x: 0, y: 0}
-  currentTouchVector: {x: 79, y: 70}
 --- !u!54 &276101493
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1142,7 +1135,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 2ca329eff7f371240a81c3029e3d0ef5, type: 2}
+      objectReference: {fileID: 2100000, guid: 19a37cb9f168c414794134f23f37298f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53fc42f43e9643148b8f337267dd4df8, type: 3}
 --- !u!1 &721783065
@@ -2987,6 +2980,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1372910002396813509, guid: e0b3d44798cfea943a848d9971c70919,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 00da62312b3909d43971a56a8d38c512, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e0b3d44798cfea943a848d9971c70919, type: 3}
 --- !u!1001 &2172310071156806445
@@ -3691,6 +3689,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: PortUI
+      value: 
+      objectReference: {fileID: 320302274}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: ScrollContent
+      value: 
+      objectReference: {fileID: 334675384}
+    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: ListboxItem
+      value: 
+      objectReference: {fileID: 8959549120842887686, guid: 20b731faa14fb7144b7752d8418996ab,
+        type: 3}
     - target: {fileID: 8516230390850827156, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3746,19 +3757,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: PortUI
-      value: 
-      objectReference: {fileID: 320302274}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: ScrollContent
-      value: 
-      objectReference: {fileID: 334675384}
-    - target: {fileID: 1833633247, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-      propertyPath: ListboxItem
-      value: 
-      objectReference: {fileID: 8959549120842887686, guid: 20b731faa14fb7144b7752d8418996ab,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
 --- !u!1001 &7192417800884997961
@@ -4251,11 +4249,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 8622532474592026573, guid: 08023d8f5d737d546916f57cf3805d62,
-        type: 3}
-      propertyPath: m_Name
-      value: Canvas
-      objectReference: {fileID: 0}
     - target: {fileID: 8622532474592026545, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4360,6 +4353,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8622532474592026573, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_Name
+      value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 8622532474592026574, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
