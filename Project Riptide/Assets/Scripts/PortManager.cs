@@ -5,16 +5,15 @@ using UnityEngine.UI;
 
 public class PortManager : MonoBehaviour
 {
-	private GameObject player;
+	public GameObject player;
 	public GameObject PortUI;
-	public GameObject GameManager;
-	private PortUIManager UIManager; 
+	public PortUIManager UIManager; 
 
     // Start is called before the first frame update
     void Start()
 	{
-		player = GameObject.FindGameObjectWithTag("Player");
-		UIManager = GameManager.GetComponent<PortUIManager>();
+		if(player == null)
+			player = GameObject.FindGameObjectWithTag("Player");
 	}
 
     // Update is called once per frame
