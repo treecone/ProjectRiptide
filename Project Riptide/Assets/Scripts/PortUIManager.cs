@@ -8,7 +8,8 @@ public class PortUIManager : MonoBehaviour
 {
 	private GameObject player;
 
-	public GameObject PortUI;
+	public GameObject PortMainMenu;
+	public GameObject PortDryDockMenu;
 
 	/// <summary>
 	/// Used to give player time to move away from the port after exiting the port menu
@@ -23,7 +24,8 @@ public class PortUIManager : MonoBehaviour
 	void Start()
 	{
 		player = GameObject.FindGameObjectWithTag("Player");
-		PortUI.SetActive(false);
+		PortMainMenu.SetActive(false);
+		PortDryDockMenu.SetActive(false);
 		EscapeTimer = 0;
 	}
 
@@ -39,7 +41,8 @@ public class PortUIManager : MonoBehaviour
 	public void ExitUI()
 	{
 		EscapeTimer = 5;
-		PortUI.SetActive(false);
+		PortMainMenu.SetActive(false);
+
 		player.GetComponent<ShipMovementScript>().enabled = true;
 	}
 
@@ -70,5 +73,21 @@ public class PortUIManager : MonoBehaviour
 				}
 				break;
 		}
+	}
+
+	public void OpenDryDock()
+	{
+		PortMainMenu.SetActive(false);
+		PortDryDockMenu.SetActive(true);
+	}
+	public void OpenShop()
+	{
+		PortMainMenu.SetActive(false);
+
+	}
+	public void MainMenu()
+	{
+		PortMainMenu.SetActive(true);
+		PortDryDockMenu.SetActive(false);
 	}
 }
