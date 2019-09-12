@@ -707,4 +707,38 @@ public partial class Enemy : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Enemy runs away from player in their hostile state
+    /// rather than trying to fight the player
+    /// </summary>
+    public void HostileRunAway()
+    {
+        //If enemy is outside max radius, set to passive
+        if (enemyDistance > maxRadius)
+        {
+            state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //Track player
+            destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
+            //Find the direction the monster should be looking, away from the player
+            lookRotation = Quaternion.LookRotation(transform.position - destination);
+            //Find local forward vector
+            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+            //When monster gets close to an obstical avoid it
+            if (CheckCollision())
+            {
+                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+            }
+
+            //Rotate and move monster
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
+            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        }
+    }
 }

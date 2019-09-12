@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 enum EnemyState { Passive, Hostile }
 public delegate void AI();
-public enum EnemyType { FirstEnemy, KoiBoss }
+public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
 
 public partial class Enemy : MonoBehaviour
 {
@@ -151,6 +151,46 @@ public partial class Enemy : MonoBehaviour
                 HostileAI = KoiBossHostile;
                 PassiveAI = PassiveWanderRadius;
                 break;
+            case EnemyType.DefensiveEnemy:
+                speed = 1.0f;
+                health = 30;
+                maxHealth = 30;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 30.0f;
+                hostileRadius = 0.0f;
+                passiveRadius = 50.0f;
+                maxRadius = 120.0f;
+                specialTimer = new float[1] { 0.0f };
+                specialCooldown = new float[1] { 5.0f };
+                inSpecial = new bool[1] { false };
+                playerCollision = false;
+                isRaming = false;
+                ramingDamage = 15;
+                HostileAI = HostileFollowAndDash;
+                PassiveAI = PassiveWanderRadius;
+                break;
+            case EnemyType.PassiveEnemy:
+                speed = 1.2f;
+                health = 20;
+                maxHealth = 20;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 30.0f;
+                hostileRadius = 10.0f;
+                passiveRadius = 30.0f;
+                maxRadius = 120.0f;
+                specialTimer = new float[1] { 0.0f };
+                specialCooldown = new float[1] { 5.0f };
+                inSpecial = new bool[1] { false };
+                playerCollision = false;
+                isRaming = false;
+                ramingDamage = 5;
+                HostileAI = HostileRunAway;
+                PassiveAI = PassiveWanderRadius;
+                break;
         }
 
         //Setup health bar
@@ -165,6 +205,8 @@ public partial class Enemy : MonoBehaviour
     {
         health -= damage;
         healthBar.UpdateHealth(health);
+        if(state == EnemyState.Passive)
+            state = EnemyState.Hostile;
         if(health <= 0)
         {
             health = 0;
