@@ -16,6 +16,7 @@ public partial class Enemy : MonoBehaviour
     public GameObject projectile;
     public GameObject shadow;
     public GameObject healthBarObject;
+    public GameObject hitbox;
     public Camera camera;
 
     private HealthBar healthBar;
@@ -51,6 +52,7 @@ public partial class Enemy : MonoBehaviour
     private int ramingDamage;
     private AI HostileAI;
     private AI PassiveAI;
+    private List<GameObject> hitboxes;
 
     //Fields for collision detection
     public float lengthMult;
@@ -65,6 +67,7 @@ public partial class Enemy : MonoBehaviour
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
         healthBar = GetComponent<HealthBar>();
+        hitboxes = new List<GameObject>();
         LoadEnemy(enemyType);
     }
 

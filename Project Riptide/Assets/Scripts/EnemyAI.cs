@@ -266,7 +266,12 @@ public partial class Enemy : MonoBehaviour
                     else if (specialTimer[(int)Attack.TripleDash] < 2.0f || (specialTimer[(int)Attack.TripleDash] < 4.0f && specialTimer[(int)Attack.TripleDash] >= 3.0f) ||
                         (specialTimer[(int)Attack.TripleDash] < 6.0f && specialTimer[(int)Attack.TripleDash] >= 5.0f))
                     {
-                        isRaming = true;
+                        if (!isRaming)
+                        {
+                            hitboxes.Add(Instantiate(hitbox, transform));
+                            hitboxes[hitboxes.Count - 1].GetComponent<Hitbox>().SetHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage);
+                            isRaming = true;
+                        }
                         //Find local forward vector
                         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                         CheckCollision();
