@@ -268,23 +268,31 @@ public partial class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// Check for collision with player
+    /// Called when a hitbox is triggered
     /// </summary>
-    /// <param name="col">Collision detected</param>
-    public void OnCollisionEnter(Collision col)
+    /// <param name="collision">GameObject that triggered hitbox</param>
+    public void HitboxTriggered(GameObject collision)
     {
-        if (col.gameObject.tag == "Player")
-        {
+        if (collision.gameObject.tag == "Player")
             playerCollision = true;
-            if(isRaming)
-            {
-                //Deal damage to the player
-                col.gameObject.GetComponent<PlayerHealth>().TakeDamage(ramingDamage);
-                isRaming = false;
-            }
-        }
-        if (col.gameObject.tag == "Obstical")
+        else if (collision.gameObject.tag == "Obstical")
             obsticalCollision = true;
+    }
+
+    /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <returns></returns>
+    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage)
+    {
+        GameObject temp = Instantiate(hitbox, transform);
+        temp.GetComponent<Hitbox>().SetHitbox(position, scale, type, damage);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
     }
 
     /// <summary>

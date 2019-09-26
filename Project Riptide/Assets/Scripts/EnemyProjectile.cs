@@ -7,16 +7,21 @@ public enum MovementPattern { Forward }
 public class EnemyProjectile : MonoBehaviour
 {
     //Fields
+    public GameObject hitbox;
+
     private Vector3 velocity;
     private int damage;
     private float speed;
     private float currLifeSpan;
     private float maxLifeSpan;
     private MovementPattern movementPattern;
+    private GameObject projHitbox;
 
     // Start is called before the first frame update
     void Start()
     {
+        projHitbox = Instantiate(hitbox, transform);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.PlayerHurtbox, damage);
         currLifeSpan = 0.0f;
     }
 
@@ -44,7 +49,7 @@ public class EnemyProjectile : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        //If projectile collides with an obstical destory it 
+        /*//If projectile collides with an obstical destory it 
         if (collision.gameObject.tag == "Player")
         {
             //Deal damage to the player based on
@@ -52,7 +57,7 @@ public class EnemyProjectile : MonoBehaviour
             collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage);
             GameObject.Destroy(gameObject);
         }
-        else
+        else*/
             GameObject.Destroy(gameObject);
     }
 

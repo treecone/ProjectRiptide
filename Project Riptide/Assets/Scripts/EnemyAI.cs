@@ -233,6 +233,11 @@ public partial class Enemy : MonoBehaviour
                 {
                     if (specialTimer[(int)Action.Knockback] < 0.3f)
                     {
+                        if (isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         //Find local forward vector
                         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                         specialTimer[(int)Action.Knockback] += Time.deltaTime;
@@ -253,7 +258,11 @@ public partial class Enemy : MonoBehaviour
                     if (specialTimer[(int)Attack.TripleDash] < 1.0f || (specialTimer[(int)Attack.TripleDash] < 3.0f && specialTimer[(int)Attack.TripleDash] >= 2.0f) ||
                         (specialTimer[(int)Attack.TripleDash] < 5.0f && specialTimer[(int)Attack.TripleDash] >= 4.0f))
                     {
-                        isRaming = false;
+                        if(isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         //Track player
                         destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
                         //Find the direction the monster should be looking
@@ -268,8 +277,7 @@ public partial class Enemy : MonoBehaviour
                     {
                         if (!isRaming)
                         {
-                            hitboxes.Add(Instantiate(hitbox, transform));
-                            hitboxes[hitboxes.Count - 1].GetComponent<Hitbox>().SetHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage);
+                            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage));
                             isRaming = true;
                         }
                         //Find local forward vector
@@ -287,7 +295,11 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if(specialTimer[(int)Attack.TripleDash] < 9.0f && specialTimer[1] >= 6.0f)
                     {
-                        isRaming = false;
+                        if (isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         //Koi does not move for 3 seconds to give player a chance to attack
                         specialTimer[(int)Attack.TripleDash] += Time.deltaTime;
                     }
@@ -388,18 +400,18 @@ public partial class Enemy : MonoBehaviour
                     if (specialCooldown[(int)Action.Active] > 0)
                         specialCooldown[(int)Action.Active] -= Time.deltaTime;
 
-                    /*//Check to see if monster can use triple dash special attack
+                    //Check to see if monster can use triple dash special attack
                     if (playerDistance < 16.0f)
                     {
                         specialCooldown[(int)Attack.TripleDash] -= Time.deltaTime;
-                        if (specialCooldown[int)Action.Active] < 0.0f && specialCooldown[1] < 0.0f && Random.Range(1, 4) == 1)
+                        if (specialCooldown[(int)Action.Active] < 0.0f && specialCooldown[1] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Use cooldown to store original height
                             specialCooldown[5] = transform.position.y;
                             inSpecial[(int)Action.Active] = true;
                             inSpecial[(int)Attack.TripleDash] = true;
                         }
-                    }*/
+                    }
 
                     //Check to see if monster can use underwater attack
                     if (playerDistance < 15.0f)
@@ -414,7 +426,7 @@ public partial class Enemy : MonoBehaviour
                         }
                     }
 
-                    /*//Check to see if player can use charge projectile special attack
+                    //Check to see if player can use charge projectile special attack
                     if (playerDistance < 23.0f)
                     {
                         specialCooldown[(int)Attack.BubbleBlast] -= Time.deltaTime;
@@ -425,7 +437,7 @@ public partial class Enemy : MonoBehaviour
                             inSpecial[(int)Action.Active] = true;
                             inSpecial[(int)Attack.BubbleBlast] = true;
                         }
-                    }*/
+                    }
 
                     //Rotate and move monster
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
@@ -438,6 +450,13 @@ public partial class Enemy : MonoBehaviour
                     {
                         if (specialTimer[(int)Action.Knockback] < 0.3f || specialTimer[(int)Action.Extra] < 1.0f)
                         {
+                            //If enemy was raming, stop and clear hitbox
+                            if (isRaming)
+                            {
+                                GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                                isRaming = false;
+                            }
+
                             //Find local forward vector
                             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                             specialTimer[(int)Action.Knockback] += Time.deltaTime;
@@ -464,7 +483,6 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if(inSpecial[(int)Attack.UnderwaterAttack])
                     {
-                        Debug.Log("In special 4");
                         if(specialTimer[(int)Action.Extra] < 1.0f)
                         {
                             //Stop moving fish if it goes below its original height
@@ -492,7 +510,12 @@ public partial class Enemy : MonoBehaviour
                     //Monster stays still and charges for 2 seconds
                     if (specialTimer[(int)Attack.TripleDash] < 1.0f || (specialTimer[(int)Attack.TripleDash] < 3.0f && specialTimer[1] >= 2.0f) || (specialTimer[(int)Attack.TripleDash] < 5.0f && specialTimer[(int)Attack.TripleDash] >= 4.0f))
                     {
-                        isRaming = false;
+                        //If enemy was raming, stop and clear hitbox
+                        if (isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         //Track player
                         destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
                         //Find the direction the monster should be looking
@@ -505,7 +528,12 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if (specialTimer[(int)Attack.TripleDash] < 2.0f || (specialTimer[(int)Attack.TripleDash] < 4.0f && specialTimer[(int)Attack.TripleDash] >= 3.0f) || (specialTimer[(int)Attack.TripleDash] < 6.0f && specialTimer[(int)Attack.TripleDash] >= 5.0f))
                     {
-                        isRaming = true;
+                        //If enemy is not currently raming, set up raming hitbox
+                        if(!isRaming)
+                        {
+                            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage));
+                            isRaming = true;
+                        }
                         //Find local forward vector
                         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
                         CheckCollision();
@@ -531,7 +559,13 @@ public partial class Enemy : MonoBehaviour
                     }
                     else if(specialTimer[(int)Attack.TripleDash] < 7.0f && specialTimer[(int)Attack.TripleDash] >= 6)
                     {
-                        isRaming = false;
+                        //If enemy was raming, stop and clear hitbox
+                        //If enemy was raming, stop and clear hitbox
+                        if (isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         specialTimer[(int)Attack.TripleDash] += Time.deltaTime;
                         transform.Translate(Vector3.up * Time.deltaTime * 3);
                         shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
@@ -656,10 +690,13 @@ public partial class Enemy : MonoBehaviour
                     {
                         specialTimer[(int)Attack.UnderwaterAttack] += Time.deltaTime;
                     }
+                    //Attack from under water
                     else if(specialTimer[(int)Attack.UnderwaterAttack] < 5.4f && specialTimer[(int)Attack.UnderwaterAttack] >= 4.5f)
                     {
-                        Debug.Log("Using special 2");
-                        Debug.Log(specialTimer[(int)Action.Extra]);
+                        if(!isRaming)
+                        {
+                            hitboxes.Add(CreateHitbox(new Vector3(0, 0.26f, -0.5f), new Vector3(1, 2.3f, 6), HitboxType.PlayerHitbox, ramingDamage);
+                        }
                         specialTimer[(int)Attack.UnderwaterAttack] += Time.deltaTime;
                         specialTimer[(int)Action.Extra] += Time.deltaTime;
                         //Move Koi up and down parabolically
@@ -667,14 +704,13 @@ public partial class Enemy : MonoBehaviour
                         shadow.transform.Translate(new Vector3(0, (64 * specialTimer[(int)Action.Extra] - 32) * Time.deltaTime, 0), Space.World);
                         heightMult += (64 * specialTimer[(int)Action.Extra] - 32) * Time.deltaTime;
 
+                        //If player was hit, start knock back animation
                         if(playerCollision)
                         {
                             specialTimer[(int)Attack.UnderwaterAttack] = 9.5f;
-                            Debug.Log(specialTimer[(int)Action.Extra]);
                             if (specialTimer[(int)Action.Extra] < 0.5)
                             {
                                 specialTimer[(int)Action.Extra] = 1 - specialTimer[5];
-                                Debug.Log(specialTimer[(int)Action.Extra]);
                             }
                             inSpecial[(int)Action.Knockback] = true;
                         }
