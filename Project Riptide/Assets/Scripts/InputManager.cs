@@ -29,8 +29,10 @@ public class InputManager : MonoBehaviour
 
     //-----Multiple touches-----
     private List<TouchData> currentTouches;
-	public bool mobile;
+    public bool mobile;
 
+    //-----Turning----
+    public bool turning;
     //-----Config values-----
 
     /// <summary>
@@ -75,6 +77,7 @@ public class InputManager : MonoBehaviour
 
     void TakeKeyboardInput()
     {
+        turning = false;
         if (Input.GetMouseButtonDown(0)) //mouse down
         {
             touchVisual.GetComponent<Image>().enabled = true;
@@ -83,28 +86,35 @@ public class InputManager : MonoBehaviour
             clickCurrentPosition = clickStartPosition;
             touchVisual.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
-            
+
             clickDuration = 0;
-        } else if (Input.GetMouseButton(0)) //mouse held
+        }
+        else if (Input.GetMouseButton(0)) //mouse held
         {
             clickDuration += Time.deltaTime;
             clickCurrentPosition = Input.mousePosition - screenCorrect;
             touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickCurrentPosition;
 
+
             if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
             {
                 movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
+                turning = true;
             }
 
             if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
             {
                 movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
+                turning = true;
             }
-        } else if (Input.GetMouseButtonUp(0)) //mouse up 
+
+
+        }
+        else if (Input.GetMouseButtonUp(0)) //mouse up 
         {
             Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
             Vector2 clickVelocity = clickDisplacement / clickDuration;
-            if(clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
+            if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
             {
                 if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
                 {
@@ -119,10 +129,12 @@ public class InputManager : MonoBehaviour
                         Debug.Log("Swipe Up");
                     }
                 }
-            } else if (clickDuration > maxTapDuration) //click and hold behavior
+            }
+            else if (clickDuration > maxTapDuration) //click and hold behavior
             {
 
-            } else //click behavior
+            }
+            else //click behavior
             {
                 Debug.Log(clickCurrentPosition);
                 if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
@@ -136,6 +148,12 @@ public class InputManager : MonoBehaviour
                 }
             }
         }
+
+        if (!turning)
+        {
+            movementScript.ApplyDrag();
+        }
+
     }
 
     Vector2 clickStartPosition;
@@ -155,18 +173,21 @@ public class InputManager : MonoBehaviour
                 {
                     movementScript.LinearVelocity -= movementScript.linearAcceleration;
                     Debug.Log("Swipe Down");
-                } else //swipe up
+                }
+                else //swipe up
                 {
                     movementScript.LinearVelocity += movementScript.linearAcceleration;
                     Debug.Log("Swipe Up");
                 }
             }
 
-        } else if (t.Duration > maxTapDuration)
+        }
+        else if (t.Duration > maxTapDuration)
         {
             //All behavior for when a tap and hold is completed
 
-        } else
+        }
+        else
         {
             //All behavior for when a tap is completed
             if (t.Position.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
@@ -190,7 +211,7 @@ public class InputManager : MonoBehaviour
                 currentTouches.Add(new TouchData(t));
             }
         }
-        bool turning = false;
+        turning = false;
         //Update all touches that are currently down
         for (int i = 0; i < currentTouches.Count; i++)
         {
@@ -225,12 +246,7 @@ public class InputManager : MonoBehaviour
 
         if (!turning) //ship is not turning, bring rotational velocity back to zero
         {
-
-            movementScript.RotationalVelocity *= movementScript.rotationalDrag;
-            if (Math.Abs(movementScript.RotationalVelocity) < movementScript.maxRotationalVelocity / 100)
-            {
-                movementScript.RotationalVelocity = 0;
-            }
+            movementScript.ApplyDrag();
         }
     }
 
@@ -296,6 +312,6 @@ public class InputManager : MonoBehaviour
             phase = touch.phase;
         }
     }
-    
+
 }
 
