@@ -695,7 +695,7 @@ public partial class Enemy : MonoBehaviour
                     {
                         if(!isRaming)
                         {
-                            hitboxes.Add(CreateHitbox(new Vector3(0, 0.26f, -0.5f), new Vector3(1, 2.3f, 6), HitboxType.PlayerHitbox, ramingDamage);
+                            hitboxes.Add(CreateHitbox(new Vector3(0, 0.26f, -0.5f), new Vector3(1, 2.3f, 6), HitboxType.PlayerHitbox, ramingDamage));
                         }
                         specialTimer[(int)Attack.UnderwaterAttack] += Time.deltaTime;
                         specialTimer[(int)Action.Extra] += Time.deltaTime;

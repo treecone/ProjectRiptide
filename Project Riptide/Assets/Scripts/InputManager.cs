@@ -14,10 +14,6 @@ public class InputManager : MonoBehaviour
     public bool touchingLeft;
     public bool touchingRight;
 
-    // ------------GameObjects and visuals-----------
-    public GameObject touchVisual;
-    public GameObject touchVisualCursor;
-
     public Slider speedSlider;
 
     //REFACTORED VARIABLES ONLY BELOW HERE
@@ -80,12 +76,8 @@ public class InputManager : MonoBehaviour
         turning = false;
         if (Input.GetMouseButtonDown(0)) //mouse down
         {
-            touchVisual.GetComponent<Image>().enabled = true;
-            touchVisualCursor.GetComponent<Image>().enabled = true;
             clickStartPosition = Input.mousePosition - screenCorrect;
             clickCurrentPosition = clickStartPosition;
-            touchVisual.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
-            touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickStartPosition;
 
             clickDuration = 0;
         }
@@ -93,7 +85,6 @@ public class InputManager : MonoBehaviour
         {
             clickDuration += Time.deltaTime;
             clickCurrentPosition = Input.mousePosition - screenCorrect;
-            touchVisualCursor.GetComponent<RectTransform>().anchoredPosition = clickCurrentPosition;
 
 
             if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
@@ -227,19 +218,17 @@ public class InputManager : MonoBehaviour
                 continue;
             }
 
-            if (t.Duration > maxTapDuration)
+            
+            if (t.Position.x < turnTouchArea - Screen.width / 2) //turning left
             {
-                if (t.Position.x < turnTouchArea - Screen.width / 2) //turning left
-                {
-                    turning = true;
-                    movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
-                }
+                turning = true;
+                movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
+            }
 
-                if (t.Position.x > Screen.width / 2 - turnTouchArea) //turning right
-                {
-                    turning = true;
-                    movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
-                }
+            if (t.Position.x > Screen.width / 2 - turnTouchArea) //turning right
+            {
+                turning = true;
+                movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
             }
 
         }
