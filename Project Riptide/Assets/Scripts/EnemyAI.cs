@@ -718,6 +718,11 @@ public partial class Enemy : MonoBehaviour
                     //Give player 3 seconds to attack if the fish missed
                     else if(specialTimer[(int)Attack.UnderwaterAttack] < 8.4f && specialTimer[(int)Attack.UnderwaterAttack] >= 5.4f)
                     {
+                        if(isRaming)
+                        {
+                            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+                            isRaming = false;
+                        }
                         specialTimer[(int)Attack.UnderwaterAttack] += Time.deltaTime;
                     }
                     //Koi goes all the way back under

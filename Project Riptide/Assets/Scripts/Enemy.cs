@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 enum EnemyState { Passive, Hostile }
 public delegate void AI();
+public delegate bool MonsterAction(float time);
 public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
 
 public partial class Enemy : MonoBehaviour
@@ -49,10 +50,12 @@ public partial class Enemy : MonoBehaviour
     private bool playerCollision;
     private bool obsticalCollision;
     private bool isRaming;
+    private bool inKnockback = false;
     private int ramingDamage;
     private AI HostileAI;
     private AI PassiveAI;
     private List<GameObject> hitboxes;
+    private Queue<MonsterAction> actionQueue;
 
     //Fields for collision detection
     public float lengthMult;
