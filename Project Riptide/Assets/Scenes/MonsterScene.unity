@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -460,10 +460,9 @@ MonoBehaviour:
   camera: {fileID: 0}
   touchingLeft: 0
   touchingRight: 0
-  touchVisual: {fileID: 0}
-  touchVisualCursor: {fileID: 0}
   speedSlider: {fileID: 0}
   mobile: 1
+  turning: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000
@@ -976,18 +975,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &861039498 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8622532473614572052, guid: 08023d8f5d737d546916f57cf3805d62,
-    type: 3}
-  m_PrefabInstance: {fileID: 861039496}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &861039499 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8622532472902346040, guid: 08023d8f5d737d546916f57cf3805d62,
-    type: 3}
-  m_PrefabInstance: {fileID: 861039496}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &881504462
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,11 +1518,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9b7d1df68b3ef4da3757c43df041c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationalAcceleration: 0.1
-  maxRotationalVelocity: 1.2
-  rotationalDrag: 0.98
-  linearAcceleration: 1
-  maxLinearVelocity: 5
+  rotationalAcceleration: 6
+  maxRotationalVelocity: 72
+  rotationalDrag: 0.96
+  linearAcceleration: 60
+  maxLinearVelocity: 300
 --- !u!54 &1656247615
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2044,6 +2031,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147,
         type: 3}
+    - target: {fileID: 1297938975235730218, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
+        type: 3}
+      propertyPath: enemyType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4366791362566570747, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -2132,10 +2124,9 @@ MonoBehaviour:
   camera: {fileID: 1849770571}
   touchingLeft: 0
   touchingRight: 0
-  touchVisual: {fileID: 861039499}
-  touchVisualCursor: {fileID: 861039498}
   speedSlider: {fileID: 861039497}
   mobile: 0
+  turning: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000

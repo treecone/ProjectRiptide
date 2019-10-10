@@ -77,4 +77,9 @@ public class ShipMovementScript : MonoBehaviour
             RotationalVelocity = 0;
         }
     }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
+    }
 }

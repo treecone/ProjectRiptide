@@ -63,20 +63,11 @@ public partial class Enemy : MonoBehaviour
         }
         else
         {
-            //Special[0] is dash attack
+            //If enemy is not in special
             if (!inSpecial[0])
             {
-                //Track player
-                destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
-                //Find the direction the monster should be looking
-                lookRotation = Quaternion.LookRotation(destination - transform.position);
-                //Find local forward vector
-                Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-                //When monster gets close circle player
-                if (!CheckCollision() && playerDistance < 5.0f)
-                {
-                    lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-                }
+                //Follow the player
+                FollowPlayer();
 
                 //Cooldown special while in a 10 units of player
                 if (playerDistance < 10.0f)
@@ -87,50 +78,18 @@ public partial class Enemy : MonoBehaviour
                 if (specialCooldown[0] <= 0)
                 {
                     inSpecial[0] = true;
+                    currTime = 0;
+                    //Load an attack that charges a dash then attacks
+                    actionQueue.Enqueue(DashCharge);
+                    actionQueue.Enqueue(DashAttack);
                 }
-
-                //Rotate and move monster
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-                transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
             }
             else
             {
-                //Monster stays still and charges for 2 seconds
-                if (specialTimer[0] < 2.0f)
-                {
-                    //Track player
-                    destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
-                    //Find the direction the monster should be looking
-                    lookRotation = Quaternion.LookRotation(destination - transform.position);
-                    //Find local forward vector
-                    Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-                    specialTimer[0] += Time.deltaTime;
-                    transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.0f);
-                }
-                //For one second charge at the player
-                else if (specialTimer[0] < 3.0f)
-                {
-                    //Find local forward vector
-                    Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-                    CheckCollision();
-                    //If monster hits player, stop special
-                    if (playerCollision || obsticalCollision)
-                        specialTimer[0] = 5.0f;
-                    specialTimer[0] += Time.deltaTime;
-                    transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
-                }
-                //If the monster hit something, move backwards
-                else if (specialTimer[0] >= 5.0f && specialTimer[0] < 5.3f)
-                {
-                    //Find local forward vector
-                    Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-                    specialTimer[0] += Time.deltaTime;
-                    transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 6);
-                }
-                else
+                //Go through enmeies action queue
+                if (!DoActionQueue())
                 {
                     inSpecial[0] = false;
-                    specialTimer[0] = 0.0f;
                     specialCooldown[0] = 5.0f;
                 }
             }
