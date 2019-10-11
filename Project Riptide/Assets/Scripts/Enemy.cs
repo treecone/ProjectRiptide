@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 enum EnemyState { Passive, Hostile }
 public delegate void AI();
+public delegate bool MonsterAction(float time);
+public delegate Vector3 GetVector();
 public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
 
 public partial class Enemy : MonoBehaviour
@@ -49,10 +51,14 @@ public partial class Enemy : MonoBehaviour
     private bool playerCollision;
     private bool obsticalCollision;
     private bool isRaming;
+    private bool inKnockback = false;
+    private float currTime = 0.0f;
     private int ramingDamage;
     private AI HostileAI;
     private AI PassiveAI;
     private List<GameObject> hitboxes;
+    private Queue<MonsterAction> actionQueue;
+    private GetVector PlayerPosition;
 
     //Fields for collision detection
     public float lengthMult;
@@ -68,6 +74,8 @@ public partial class Enemy : MonoBehaviour
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
         healthBar = GetComponent<HealthBar>();
         hitboxes = new List<GameObject>();
+        actionQueue = new Queue<MonsterAction>();
+        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
         LoadEnemy(enemyType);
     }
 
@@ -75,7 +83,7 @@ public partial class Enemy : MonoBehaviour
     void Update()
     {
         //updates player position
-        playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        playerDistance = Vector3.Distance(transform.position, PlayerPosition());
         enemyDistance = Vector3.Distance(startPos, transform.position);
 
         //checks for states
@@ -268,23 +276,31 @@ public partial class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// Check for collision with player
+    /// Called when a hitbox is triggered
     /// </summary>
-    /// <param name="col">Collision detected</param>
-    public void OnCollisionEnter(Collision col)
+    /// <param name="collision">GameObject that triggered hitbox</param>
+    public void HitboxTriggered(GameObject collision)
     {
-        if (col.gameObject.tag == "Player")
-        {
+        if (collision.gameObject.tag == "Player")
             playerCollision = true;
-            if(isRaming)
-            {
-                //Deal damage to the player
-                col.gameObject.GetComponent<PlayerHealth>().TakeDamage(ramingDamage);
-                isRaming = false;
-            }
-        }
-        if (col.gameObject.tag == "Obstical")
+        else if (collision.gameObject.tag == "Obstical")
             obsticalCollision = true;
+    }
+
+    /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <returns></returns>
+    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage)
+    {
+        GameObject temp = Instantiate(hitbox, transform);
+        temp.GetComponent<Hitbox>().SetHitbox(position, scale, type, damage);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
     }
 
     /// <summary>

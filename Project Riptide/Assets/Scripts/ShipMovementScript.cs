@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -37,8 +38,8 @@ public class ShipMovementScript : MonoBehaviour
     void Update()
     {
         //Apply current rotational and linear velocities
-        transform.Rotate(0, rotationalVelocity, 0, Space.Self);
-        rb.velocity = transform.forward * linearVelocity;
+        transform.Rotate(0, rotationalVelocity * Time.deltaTime, 0, Space.Self);
+        rb.velocity = transform.forward * linearVelocity * Time.deltaTime;
     }
 
     public float RotationalVelocity
@@ -66,5 +67,19 @@ public class ShipMovementScript : MonoBehaviour
             linearVelocity = value;
             if (linearVelocity > maxLinearVelocity) linearVelocity = maxLinearVelocity;
         }
+    }
+
+    public void ApplyDrag()
+    {
+        RotationalVelocity *= rotationalDrag;
+        if (Math.Abs(RotationalVelocity) < maxRotationalVelocity / 100)
+        {
+            RotationalVelocity = 0;
+        }
+    }
+
+    public Vector3 GetPosition()
+    {
+        return transform.position;
     }
 }

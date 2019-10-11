@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum HitboxType { PlayerHitbox, EnemyHitbox, PlayerHurtbox, EnemyHurtbox};
+public delegate void HitboxEnter(GameObject hit);
 
 public class Hitbox : MonoBehaviour
 {
+    public event HitboxEnter OnTrigger;
+
     private HitboxType type;
     private float damage;
 
@@ -36,6 +39,7 @@ public class Hitbox : MonoBehaviour
             if(type == HitboxType.PlayerHurtbox)
             {
                 other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage);
+                OnTrigger(other.gameObject);
             }
         }
         else if(other.gameObject.CompareTag("Enemy"))
@@ -43,6 +47,7 @@ public class Hitbox : MonoBehaviour
             if(type == HitboxType.EnemyHurtbox)
             {
                 other.gameObject.GetComponent<Enemy>().TakeDamage(damage);
+                OnTrigger(other.gameObject);
             }
         }
     }

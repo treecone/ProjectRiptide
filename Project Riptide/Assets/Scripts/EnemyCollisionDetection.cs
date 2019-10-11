@@ -18,6 +18,6 @@ public class EnemyCollisionDetection : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        gameObject.GetComponentInParent<Enemy>().OnCollisionEnter(collision);
+        //gameObject.GetComponentInParent<Enemy>().OnCollisionEnter(collision);
     }
 }
