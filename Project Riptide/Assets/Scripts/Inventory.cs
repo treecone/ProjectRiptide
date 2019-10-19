@@ -61,7 +61,7 @@ public class Inventory : MonoBehaviour
     {
         for(int i = 0; i < inventorySlotSize; i++)
         {
-            GameObject theSlot = Instantiate(Resources.Load("InventorySlot"), this.transform.GetChild(0).transform) as GameObject;
+            GameObject theSlot = Instantiate(Resources.Load("Inventory/InventorySlot"), this.transform.GetChild(0).transform) as GameObject;
             theSlot.name = "InventorySlot_" + i;
             inventorySlots.Add(new ItemSlot(null, 0, theSlot));
         }
