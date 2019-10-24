@@ -14,6 +14,15 @@ public class CameraController : MonoBehaviour
 
     public float smoothSpeed = 10f;
 
+    void Start ()
+    {
+        if(player == null)
+        {
+            player = GameObject.FindWithTag("Player").transform;
+            Debug.LogWarning("No player was assigned to the camera. Default: Player Tag. ");
+        }
+    }
+
     void FixedUpdate()
     {
         //position the camera needs to be in

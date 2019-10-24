@@ -18,7 +18,7 @@ public class ItemDatabase : MonoBehaviour
 
     void Awake()
     {
-        defaultPath = Application.dataPath + "/Resources/Items.json";
+        defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
         jsonString = File.ReadAllText(defaultPath);
         itemData = JsonMapper.ToObject(jsonString);
         ConstructDatabase();
@@ -32,7 +32,7 @@ public class ItemDatabase : MonoBehaviour
         {
             string nameTempString = itemData[i]["name"].ToString();
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
-            if(!Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"))
+            if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"))
             {
                 database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["maxAmount"]));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
