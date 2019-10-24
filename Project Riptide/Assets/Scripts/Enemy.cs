@@ -45,9 +45,8 @@ public partial class Enemy : MonoBehaviour
     private float wanderRadius;
     private float maxRadius;
     private float passiveCooldown;
-    private float[] specialTimer;
     private float[] specialCooldown;
-    private bool[] inSpecial;
+    private bool[] activeStates;
     private bool playerCollision;
     private bool obsticalCollision;
     private bool isRaming;
@@ -133,10 +132,8 @@ public partial class Enemy : MonoBehaviour
                 wanderRadius = 30.0f;
                 hostileRadius = 10.0f;
                 passiveRadius = 50.0f;
-                maxRadius = 120.0f;
-                specialTimer = new float[1] { 0.0f };
                 specialCooldown = new float[1] { 5.0f };
-                inSpecial = new bool[1] { false };
+                activeStates = new bool[1] { false };
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 15;
@@ -154,9 +151,8 @@ public partial class Enemy : MonoBehaviour
                 hostileRadius = 15.0f;
                 passiveRadius = 60.0f;
                 maxRadius = 240.0f;
-                specialTimer = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                specialCooldown = new float[6] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                inSpecial = new bool[6] { false, false, false, false, false, false };
+                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+                activeStates = new bool[2] { false, false};
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 20;
@@ -174,9 +170,8 @@ public partial class Enemy : MonoBehaviour
                 hostileRadius = 0.0f;
                 passiveRadius = 50.0f;
                 maxRadius = 120.0f;
-                specialTimer = new float[1] { 0.0f };
                 specialCooldown = new float[1] { 5.0f };
-                inSpecial = new bool[1] { false };
+                activeStates = new bool[1] { false };
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 15;
@@ -194,9 +189,8 @@ public partial class Enemy : MonoBehaviour
                 hostileRadius = 10.0f;
                 passiveRadius = 30.0f;
                 maxRadius = 120.0f;
-                specialTimer = new float[1] { 0.0f };
                 specialCooldown = new float[1] { 5.0f };
-                inSpecial = new bool[1] { false };
+                activeStates = new bool[1] { false };
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 5;
@@ -268,11 +262,15 @@ public partial class Enemy : MonoBehaviour
     /// </summary>
     public void ResetHostile()
     {
-        for(int i = 0; i > inSpecial.Length; i++)
+        //reset states
+        for(int i = 0; i > activeStates.Length; i++)
         {
-            inSpecial[i] = false;
+            activeStates[i] = false;
+        }
+        //reset cooldowns
+        for (int i = 0; i > specialCooldown.Length; i++)
+        {
             specialCooldown[i] = 0.0f;
-            specialTimer[i] = 0.0f;
         }
     }
 

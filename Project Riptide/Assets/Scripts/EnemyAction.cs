@@ -233,6 +233,11 @@ public partial class Enemy : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Used for KoiBoss, Koi dashes three times at player going above and bellow the water
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
     private bool KoiUnderwaterDash(ref float time)
     {
         if (time == 0.0f)
@@ -284,6 +289,44 @@ public partial class Enemy : MonoBehaviour
             return true;
     }
 
+    /// <summary>
+    /// Used for KoiBoss, Koi comes above water for player to get a chance
+    /// to attack, then goes back under.
+    /// </summary>
+    /// <param name="time">Current Time</param>
+    /// <returns></returns>
+    private bool KoiUnderwaterDashReturn(ref float time)
+    {
+        //Move fish above water
+        if(time < 1.0f)
+        {
+            transform.Translate(Vector3.up * Time.deltaTime * 3);
+            shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
+            heightMult += Vector3.down.y * Time.deltaTime * 3;
+        }
+        else if(time < 4.0f)
+        {
+            //Do nothing, give player chance to attack
+        }
+        //Move fish back underwater
+        else if (transform.position.y > initalPos)
+        {
+            transform.Translate(Vector3.down * Time.deltaTime * 3);
+            shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
+            heightMult += Vector3.up.y * Time.deltaTime * 3;
+        }
+        else
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Used for KoiBoss, moves Koi above water to prepare for 
+    /// bubble blast attack
+    /// </summary>
+    /// <param name="time">Current Time</param>
+    /// <returns></returns>
     private bool KoiBubbleBlastUnderwaterCharge(ref float time)
     {
         transform.Translate(Vector3.up * Time.deltaTime * 3);
@@ -296,6 +339,36 @@ public partial class Enemy : MonoBehaviour
             return true;
     }
 
+    /// <summary>
+    /// Used for KoiBoss, returns koi underwater after bubble blast attack
+    /// Also gives player a chance to attack for 1.5 seconds
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
+    private bool KoiBubbleBlastReturn(ref float time)
+    {
+        if (time < 1.5f)
+        {
+            //Do nothing, give player chance to attack
+        }
+        else if (transform.position.y > initalPos)
+        {
+            transform.Translate(Vector3.down * Time.deltaTime * 3);
+            shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
+            heightMult += Vector3.up.y * Time.deltaTime * 3;
+        }
+        else
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Used for KoiBoss, koi follows player underwater, tries to get
+    /// beneath them.
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
     private bool KoiUnderwaterFollow(ref float time)
     {
         if (time < 4.0f)
@@ -327,10 +400,11 @@ public partial class Enemy : MonoBehaviour
     }
 
     /// <summary>
-    /// WORK IN PROGRESS, FINSIH KNOCKBACK CODING
-    /// DOUBLE CHECK EVERYTHING
+    /// Used for KoiBoss, Koi jumps out of water to attack player
+    /// If they miss, player gets a chance to attack for 3 seconds
+    /// If they hit, Koi goes straight back underwater
     /// </summary>
-    /// <param name="time"></param>
+    /// <param name="time">Current Time</param>
     /// <returns></returns>
     private bool KoiUnderwaterAttack(ref float time)
     {
@@ -357,7 +431,7 @@ public partial class Enemy : MonoBehaviour
                 //Move Koi up and down parabolically
                 transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
                 shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
-                heightMult += (64 * specialTimer[(int)Action.Extra] - 32) * Time.deltaTime;
+                heightMult += (64 * time - 32) * Time.deltaTime;
             }
             //Do knockback if there was a hit
             else
@@ -365,19 +439,66 @@ public partial class Enemy : MonoBehaviour
                 //Stop moving fish if it goes below its original height
                 if (transform.position.y <= initalPos)
                     time = 3.9f;
-
-                transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
-                shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
-                heightMult += (64 * time - 32) * Time.deltaTime;
+                else
+                {
+                    transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
+                    shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
+                    heightMult += (64 * time - 32) * Time.deltaTime;
+                }
             }
         }
-
-        if (time >= 3.9f)
+        //If player was not hit, make the koi go back under water
+        if (time >= 3.9 && !inKnockback)
+        {
+            //Move fish down until its back in original position
+            if (transform.position.y > initalPos)
+            {
+                transform.Translate(Vector3.down * Time.deltaTime * 3);
+                shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
+                heightMult += Vector3.up.y * Time.deltaTime * 3;
+            }
+            else
+            {
+                inKnockback = true;
+            }
+        }
+        //Finish attack
+        else if (time >= 3.9f)
         {
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+            inKnockback = false;
             return false;
         }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Move koi boss back underwater after Underwater Attack.
+    /// Only happens if the Koi did not hit the player
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
+    private bool KoiUnderwaterAttackReturn(ref float time)
+    {
+        if(!inKnockback)
+        {
+            if (transform.position.y > initalPos)
+            {
+                transform.Translate(Vector3.down * Time.deltaTime * 3);
+                shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
+                heightMult += Vector3.up.y * Time.deltaTime * 3;
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
         else
+        {
+            inKnockback = false;
             return true;
+        }
     }
 }
