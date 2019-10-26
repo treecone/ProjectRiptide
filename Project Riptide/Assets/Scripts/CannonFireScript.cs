@@ -62,18 +62,19 @@ public class CannonFireScript : MonoBehaviour
 
         public void Fire(GameObject cannonBall, Transform shipTransform)
         {
-            Vector3 angle = Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
-            for(int i = 0; i < count; i++)
+            Quaternion angle = Quaternion.Euler(0, -spreadAngle * (count - 1) / 2, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
+            for (int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, shipTransform.position + (shipTransform.localScale.x / 2) * direction, Quaternion.identity);
-
-                //Added by Caden to be able to test player attacking fish, feel free to remove later
-                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + (shipTransform.right * fireSpeedHoriz);
-                //
+                ball.SetActive(true);
+                
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
-                angle = Quaternion.AngleAxis(spreadAngle, Vector3.up) * angle;
+                angle *= Quaternion.Euler(0, spreadAngle, 0);
 
+                ball.transform.rotation = angle;
+
+                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + (shipTransform.right * fireSpeedHoriz);
                 ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
             }
             
