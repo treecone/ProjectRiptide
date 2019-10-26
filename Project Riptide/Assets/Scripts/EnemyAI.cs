@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
-public enum State { Active = 0, FormChange = 1}
+public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2}
 
 public partial class Enemy : MonoBehaviour
 {
@@ -199,8 +199,22 @@ public partial class Enemy : MonoBehaviour
                 }
             }
             //Switch to phase 2
-            else if (!activeStates[(int)State.FormChange])
+            else if (!activeStates[(int)State.FormChanged])
             {
+                //Check to see if form changing is just beginning
+                if(!activeStates[(int)State.FormChangeInProgress])
+                {
+                    //Reset any specials the Koi may be in
+                    activeStates[(int)State.Active] = false;
+                    specialCooldown[(int)State.Active] = 5.0f;
+                    isRaming = false;
+                    inKnockback = false;
+                    actionQueue.Clear();
+                    ClearHitboxes();
+                    currTime = 0;
+                    activeStates[(int)State.FormChangeInProgress] = true;
+                }
+
                 if (currTime < 1.0f)
                 {
                     transform.Translate(Vector3.down * Time.deltaTime * 3);
@@ -210,15 +224,7 @@ public partial class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    //Reset any specials the Koi may be in
-                    activeStates[(int)State.Active] = false;
-                    specialCooldown[(int)State.Active] = 5.0f;
-                    isRaming = false;
-                    inKnockback = false;
-                    actionQueue.Clear();
-                    hitboxes.Clear();
-
-                    activeStates[(int)State.FormChange] = true;
+                    activeStates[(int)State.FormChanged] = true;
                 }
             }
             //Phase 2 AI
@@ -237,14 +243,13 @@ public partial class Enemy : MonoBehaviour
                     if (playerDistance < 16.0f)
                     {
                         specialCooldown[(int)Attack.TripleDash] -= Time.deltaTime;
-                        if (specialCooldown[(int)State.Active] < 0.0f && specialCooldown[1] < 0.0f && Random.Range(1, 4) == 1)
+                        if (specialCooldown[(int)State.Active] < 0.0f && specialCooldown[(int)Attack.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Use cooldown to store original height
                             initalPos = transform.position.y;
                             activeStates[(int)State.Active] = true;
                             specialCooldown[(int)State.Active] = 5.0f;
                             specialCooldown[(int)Attack.TripleDash] = 6.0f;
-                            currTime = 0;
                             //Set up triple dash attack
                             actionQueue.Enqueue(KoiDashCharge);
                             actionQueue.Enqueue(KoiUnderwaterDash);
@@ -270,7 +275,6 @@ public partial class Enemy : MonoBehaviour
                             //Set up Underwater attack
                             actionQueue.Enqueue(KoiUnderwaterFollow);
                             actionQueue.Enqueue(KoiUnderwaterAttack);
-                            actionQueue.Enqueue(KoiUnderwaterAttackReturn);
                         }
                     }
 
@@ -299,6 +303,7 @@ public partial class Enemy : MonoBehaviour
                     if (!DoActionQueue())
                     {
                         activeStates[(int)State.Active] = false;
+                        currTime = 0;
                     }
                 }
             }

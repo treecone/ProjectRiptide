@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -484,7 +484,7 @@ RectTransform:
   m_Children:
   - {fileID: 1212731511}
   m_Father: {fileID: 1712334108}
-  m_RootOrder: 7
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1284,7 +1284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645a8dc069ba7049a22399aab9cf9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cannonBall: {fileID: 6810507575641601458, guid: 2be3efd9ab28a334cabdd927328840ac,
+  cannonBall: {fileID: 83568729744095847, guid: ae53b0ef0426ddb49801fedf5575741b,
     type: 3}
 --- !u!114 &1656247614
 MonoBehaviour:
@@ -1599,7 +1599,7 @@ Transform:
   m_LocalScale: {x: 4.6897244, y: 1.3043926, z: 0.66666675}
   m_Children: []
   m_Father: {fileID: 1712334108}
-  m_RootOrder: 6
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
 --- !u!212 &2086322956
 SpriteRenderer:
@@ -1650,38 +1650,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &2091900162 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9061078739875459992, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
-    type: 3}
-  m_PrefabInstance: {fileID: 1297938975568778424}
-  m_PrefabAsset: {fileID: 0}
---- !u!64 &2091900166
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091900162}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: -462981019419857548, guid: 9d307a1d3d8fa934e8a5a0bc1a61f0dc, type: 3}
---- !u!114 &2091900167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2091900162}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b05196c4e618b2c4abf7e1fe0d0399ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1297938975568778424
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1814,7 +1782,7 @@ PrefabInstance:
     - target: {fileID: 1297938975235730218, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
       propertyPath: enemyType
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4366791362566570747, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
