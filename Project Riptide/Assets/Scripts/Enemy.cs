@@ -108,6 +108,9 @@ public partial class Enemy : MonoBehaviour
                 break;
         }
 
+        if (Input.GetKeyDown(KeyCode.Space))
+            TakeDamage(10);
+
         //Make health bar face player
         healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
 
@@ -152,7 +155,7 @@ public partial class Enemy : MonoBehaviour
                 passiveRadius = 60.0f;
                 maxRadius = 240.0f;
                 specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                activeStates = new bool[2] { false, false};
+                activeStates = new bool[3] { false, false, false};
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 20;
@@ -272,6 +275,11 @@ public partial class Enemy : MonoBehaviour
         {
             specialCooldown[i] = 0.0f;
         }
+        isRaming = false;
+        inKnockback = false;
+        actionQueue.Clear();
+        ClearHitboxes();
+        currTime = 0;
     }
 
     /// <summary>
@@ -321,5 +329,22 @@ public partial class Enemy : MonoBehaviour
             damage,
             maxLifeSpan,
             movementPattern);
+    }
+
+    private void ClearHitboxes()
+    {
+        for(int i = 0; i < hitboxes.Count; i++)
+        {
+            GameObject.Destroy(hitboxes[i]);
+        }
+        hitboxes.Clear();
+    }
+
+    /// <summary>
+    /// Returns enemy to inital position on Y axis
+    /// </summary>
+    private void ReturnToInitalPosition()
+    {
+        transform.position = new Vector3(transform.position.x, initalPos, transform.position.z);
     }
 }

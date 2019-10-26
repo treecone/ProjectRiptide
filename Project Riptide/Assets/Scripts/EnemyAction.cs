@@ -272,7 +272,10 @@ public partial class Enemy : MonoBehaviour
 
             //Stop moving fish if it goes below its original height
             if (transform.position.y <= initalPos)
+            {
+                ReturnToInitalPosition();
                 time = 1.0f;
+            }
 
              transform.Translate(new Vector3(0, (-32 * time + 16) * Time.deltaTime, 0));
              shadow.transform.Translate(new Vector3(0, (32 * time - 16) * Time.deltaTime, 0), Space.World);
@@ -298,25 +301,28 @@ public partial class Enemy : MonoBehaviour
     private bool KoiUnderwaterDashReturn(ref float time)
     {
         //Move fish above water
-        if(time < 1.0f)
+        if (time < 1.0f)
         {
             transform.Translate(Vector3.up * Time.deltaTime * 3);
             shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
             heightMult += Vector3.down.y * Time.deltaTime * 3;
         }
-        else if(time < 4.0f)
+        else if (time < 4.0f)
         {
             //Do nothing, give player chance to attack
         }
         //Move fish back underwater
-        else if (transform.position.y > initalPos)
+        else if (transform.position.y >= initalPos)
         {
             transform.Translate(Vector3.down * Time.deltaTime * 3);
             shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
             heightMult += Vector3.up.y * Time.deltaTime * 3;
         }
         else
+        {
+            ReturnToInitalPosition();
             return false;
+        }
 
         return true;
     }
@@ -358,7 +364,10 @@ public partial class Enemy : MonoBehaviour
             heightMult += Vector3.up.y * Time.deltaTime * 3;
         }
         else
+        {
+            ReturnToInitalPosition();
             return false;
+        }
 
         return true;
     }
@@ -410,7 +419,7 @@ public partial class Enemy : MonoBehaviour
     {
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(new Vector3(0, 0.26f, -0.5f), new Vector3(1, 2.3f, 6), HitboxType.PlayerHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position, new Vector3(1, 2.3f, 6), HitboxType.PlayerHurtbox, ramingDamage));
         }
 
         if (time <= 0.9f)
@@ -427,7 +436,6 @@ public partial class Enemy : MonoBehaviour
                     if (time < 0.5f)
                         time = 1.0f - time;
                 }
-                transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
                 //Move Koi up and down parabolically
                 transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
                 shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
@@ -459,6 +467,7 @@ public partial class Enemy : MonoBehaviour
             }
             else
             {
+                ReturnToInitalPosition();
                 inKnockback = true;
             }
         }
@@ -471,34 +480,5 @@ public partial class Enemy : MonoBehaviour
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Move koi boss back underwater after Underwater Attack.
-    /// Only happens if the Koi did not hit the player
-    /// </summary>
-    /// <param name="time">Current time</param>
-    /// <returns></returns>
-    private bool KoiUnderwaterAttackReturn(ref float time)
-    {
-        if(!inKnockback)
-        {
-            if (transform.position.y > initalPos)
-            {
-                transform.Translate(Vector3.down * Time.deltaTime * 3);
-                shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-                heightMult += Vector3.up.y * Time.deltaTime * 3;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else
-        {
-            inKnockback = false;
-            return true;
-        }
     }
 }
