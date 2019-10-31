@@ -5,10 +5,16 @@ using UnityEngine;
 public class CannonBallBehaviorScript : MonoBehaviour
 {
     public int damageDealt;
+    public GameObject hitbox;
+
+    private GameObject projHitbox;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        projHitbox = Instantiate(hitbox, transform);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.PlayerHitbox, damageDealt);
+        projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
     }
 
     // Update is called once per frame
@@ -20,15 +26,9 @@ public class CannonBallBehaviorScript : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    //Destroy projectile upon hitbox activation
+    void DestroyProj(GameObject hit)
     {
-        //Test if collision occured with enemy
-        if (collision.gameObject.tag == "Enemy" && collision.relativeVelocity.magnitude > 2)
-        {
-            //Deal damage to enemy and delete projectile
-            collision.gameObject.GetComponentInParent<Enemy>().TakeDamage(damageDealt);
-            Destroy(this.gameObject);
-            Debug.Log("Hit");
-        }
+        Destroy(gameObject);
     }
 }

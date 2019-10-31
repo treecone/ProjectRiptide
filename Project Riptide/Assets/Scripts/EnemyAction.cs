@@ -81,7 +81,7 @@ public partial class Enemy : MonoBehaviour
     {
         if(time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
         }
 
         if (!inKnockback)
@@ -145,7 +145,7 @@ public partial class Enemy : MonoBehaviour
     {
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
         }
 
         if (!inKnockback)
@@ -242,7 +242,7 @@ public partial class Enemy : MonoBehaviour
     {
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.PlayerHurtbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
         }
 
         if (!inKnockback)
@@ -419,7 +419,7 @@ public partial class Enemy : MonoBehaviour
     {
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position, new Vector3(1, 2.3f, 6), HitboxType.PlayerHurtbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position, new Vector3(1, 2.3f, 6), HitboxType.EnemyHitbox, ramingDamage));
         }
 
         if (time <= 0.9f)

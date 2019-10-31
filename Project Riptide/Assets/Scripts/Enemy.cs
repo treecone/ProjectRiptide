@@ -57,6 +57,7 @@ public partial class Enemy : MonoBehaviour
     private AI HostileAI;
     private AI PassiveAI;
     private List<GameObject> hitboxes;
+    private List<GameObject> hurtboxes;
     private Queue<MonsterAction> actionQueue;
     private GetVector PlayerPosition;
 
@@ -305,7 +306,7 @@ public partial class Enemy : MonoBehaviour
     public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage)
     {
         GameObject temp = Instantiate(hitbox, transform);
-        temp.GetComponent<Hitbox>().SetHitbox(position, scale, type, damage);
+        temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage);
         temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
         return temp;
     }

@@ -9,8 +9,30 @@ public class Hitbox : MonoBehaviour
 {
     public event HitboxEnter OnTrigger;
 
+    [SerializeField]
     private HitboxType type;
+    [SerializeField]
     private float damage;
+    [SerializeField]
+    private GameObject attachedObject;
+
+    /// <summary>
+    /// GameObject Hitbox is attached to
+    /// </summary>
+    public GameObject AttachedObject
+    {
+        get { return attachedObject; }
+    }
+
+    public float Damage
+    {
+        get { return damage; }
+    }
+
+    public HitboxType Type
+    {
+        get { return type; }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -24,8 +46,9 @@ public class Hitbox : MonoBehaviour
         
     }
 
-    public void SetHitbox(Vector3 position, Vector3 size, HitboxType type, float damage)
+    public void SetHitbox(GameObject attached, Vector3 position, Vector3 size, HitboxType type, float damage)
     {
+        attachedObject = attached;
         transform.position = position;
         transform.localScale = size;
         this.type = type;
@@ -34,21 +57,28 @@ public class Hitbox : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        if(other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Hitbox"))
         {
-            if(type == HitboxType.PlayerHurtbox)
+            Hitbox hitbox = other.gameObject.GetComponent<Hitbox>();
+            if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
             {
-                other.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage);
-                OnTrigger?.Invoke(other.gameObject);
+                if (type == HitboxType.EnemyHitbox)
+                {
+                    hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(damage * hitbox.damage);
+                    OnTrigger?.Invoke(hitbox.AttachedObject);
+                }
+            }
+            else if (hitbox.Type == HitboxType.EnemyHurtbox && hitbox.AttachedObject.CompareTag("Enemy"))
+            {
+                if (type == HitboxType.PlayerHitbox)
+                {
+                    //Calculate damage for enemies
+                    hitbox.AttachedObject.GetComponent<Enemy>().TakeDamage(damage * hitbox.damage);
+                    OnTrigger?.Invoke(hitbox.AttachedObject);
+                }
             }
         }
-        else if(other.gameObject.CompareTag("Enemy"))
-        {
-            if(type == HitboxType.EnemyHurtbox)
-            {
-                other.gameObject.GetComponent<Enemy>().TakeDamage(damage);
-                OnTrigger?.Invoke(other.gameObject);
-            }
-        }
+        //else
+           // OnTrigger?.Invoke(other.gameObject);
     }
 }

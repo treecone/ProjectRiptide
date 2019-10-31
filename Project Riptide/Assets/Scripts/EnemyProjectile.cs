@@ -21,7 +21,8 @@ public class EnemyProjectile : MonoBehaviour
     void Start()
     {
         projHitbox = Instantiate(hitbox, transform);
-        projHitbox.GetComponent<Hitbox>().SetHitbox(transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.PlayerHurtbox, damage);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.EnemyHitbox, damage);
+        projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
         currLifeSpan = 0.0f;
     }
 
@@ -47,20 +48,6 @@ public class EnemyProjectile : MonoBehaviour
         }
     }
 
-    public void OnCollisionEnter(Collision collision)
-    {
-        /*//If projectile collides with an obstical destory it 
-        if (collision.gameObject.tag == "Player")
-        {
-            //Deal damage to the player based on
-            //Projectile's damage
-            collision.gameObject.GetComponent<PlayerHealth>().TakeDamage(damage);
-            GameObject.Destroy(gameObject);
-        }
-        else*/
-            GameObject.Destroy(gameObject);
-    }
-
     /// <summary>
     /// Loads projecitle
     /// </summary>
@@ -83,5 +70,11 @@ public class EnemyProjectile : MonoBehaviour
     private void MoveProjectileForward()
     {
         transform.Translate(velocity.normalized * speed);
+    }
+
+    //Destroy projectile upon hitbox activation
+    void DestroyProj(GameObject hit)
+    {
+        Destroy(gameObject);
     }
 }
