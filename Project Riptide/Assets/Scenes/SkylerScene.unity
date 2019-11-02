@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -787,6 +787,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Island2
       objectReference: {fileID: 0}
+    - target: {fileID: 3210281682363527940, guid: eb94993488cd3d24bb1ab340e457f987,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 1933856194597634327, guid: eb94993488cd3d24bb1ab340e457f987,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -867,6 +872,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Island1
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 53fc42f43e9643148b8f337267dd4df8,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 53fc42f43e9643148b8f337267dd4df8,
         type: 3}
@@ -1002,21 +1012,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 01c7a363ac02e6a4fafa073c227fe3d1, type: 3}
@@ -1401,6 +1396,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Island1
       objectReference: {fileID: 0}
+    - target: {fileID: 6320234368262552056, guid: efaddaaabc1a23544a911bfe6eda1cec,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 7056756289230588907, guid: efaddaaabc1a23544a911bfe6eda1cec,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1499,7 +1499,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 00da62312b3909d43971a56a8d38c512, type: 2}
+  - {fileID: 2100000, guid: 82deeed009a06294c8a0bdbb8e483ca1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2758,6 +2758,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sea_Rock1
       objectReference: {fileID: 0}
+    - target: {fileID: 1733498624891501142, guid: 4a4abd17a29c764478fdbcb976d2d4ed,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 3338792438387951685, guid: 4a4abd17a29c764478fdbcb976d2d4ed,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2931,6 +2936,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sea_Rock3
       objectReference: {fileID: 0}
+    - target: {fileID: 5622180612947579979, guid: 1d8e13da770cf30428bcb7f5b8366a32,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 8673553147987420760, guid: 1d8e13da770cf30428bcb7f5b8366a32,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3006,6 +3016,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Island3_Mod
       objectReference: {fileID: 0}
+    - target: {fileID: 5990259150733194974, guid: ab7dad5b2f37ee64b86fc6f07e187d8f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 7312426520095147213, guid: ab7dad5b2f37ee64b86fc6f07e187d8f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3061,6 +3076,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5412617537075413506, guid: ab7dad5b2f37ee64b86fc6f07e187d8f,
+        type: 3}
+      propertyPath: m_Materials.Array.data[6]
+      value: 
+      objectReference: {fileID: 2100000, guid: d78c769c07e46cc43a0b747a8a011e09, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ab7dad5b2f37ee64b86fc6f07e187d8f, type: 3}
 --- !u!4 &2305915455489817633 stripped
@@ -3118,6 +3138,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sea_Rock7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4070753093389255116, guid: d8de4dd6a5086784c93305dba4d35dab,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
       objectReference: {fileID: 0}
     - target: {fileID: 1019328119030215647, guid: d8de4dd6a5086784c93305dba4d35dab,
         type: 3}
@@ -3193,6 +3218,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sea_Rock2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3967083269121776716, guid: 6e55ba02e26c44f4ea05182cebc1998a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
       objectReference: {fileID: 0}
     - target: {fileID: 96458978651860575, guid: 6e55ba02e26c44f4ea05182cebc1998a,
         type: 3}
@@ -3276,6 +3306,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sea_Rock4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866634382932379070, guid: 86cb3613525cb174b9a1f2effd23d20f,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
       objectReference: {fileID: 0}
     - target: {fileID: 5573139833114982317, guid: 86cb3613525cb174b9a1f2effd23d20f,
         type: 3}
@@ -3456,6 +3491,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Sea_Rock5
       objectReference: {fileID: 0}
+    - target: {fileID: 8127944365567492849, guid: c42471908497ca2449b88177aa57eb7a,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
+      objectReference: {fileID: 0}
     - target: {fileID: 5086564604467687650, guid: c42471908497ca2449b88177aa57eb7a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3556,6 +3596,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Sea_Rock6
+      objectReference: {fileID: 0}
+    - target: {fileID: 905474014047937646, guid: 6f87fce320639df49896da9c294c8ab3,
+        type: 3}
+      propertyPath: m_TagString
+      value: Obstical
       objectReference: {fileID: 0}
     - target: {fileID: 4236684424155649661, guid: 6f87fce320639df49896da9c294c8ab3,
         type: 3}
@@ -4983,6 +5028,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[2].m_Target
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8622532472597129470, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8622532473044458053, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
