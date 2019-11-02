@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class PlayerHealth : MonoBehaviour
 {
     public GameObject healthBarObject;
-    public Camera camera;
+    private Camera camera;
 
     private HealthBar healthBar;
     private float maxHealth;
@@ -19,6 +19,7 @@ public class PlayerHealth : MonoBehaviour
         health = 100;
         healthBar = GetComponent<HealthBar>();
         healthBar.SetMaxHealth(100);
+        camera = Camera.main;
     }
 
     private void Update()
