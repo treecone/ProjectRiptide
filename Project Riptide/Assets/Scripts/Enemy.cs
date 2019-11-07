@@ -78,6 +78,7 @@ public partial class Enemy : MonoBehaviour
         actionQueue = new Queue<MonsterAction>();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
         LoadEnemy(enemyType);
+        camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
     }
 
     // Update is called once per frame

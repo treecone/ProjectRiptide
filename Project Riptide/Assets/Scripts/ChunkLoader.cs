@@ -2,42 +2,74 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Region
+{
+    CHINA,
+    NONE
+};
+
 public class ChunkLoader : MonoBehaviour
 {
-    public Chunk[,] chunks;
-    public List<Chunk> visibleChunks;
-    private const float _CHUNKSIDELENGTH = 100;
-    private const float _CHINASIZE = 3;
-    private const int _WORLDSIZE = 3;
-    public GameObject ship;
-    public Vector2 currentChunk;
+    public Region[,] map = new Region[,]{ {Region.NONE, Region.NONE, Region.NONE, Region.NONE, Region.NONE,},             // Blueprint for how to layout the world.
+                                          {Region.NONE, Region.CHINA, Region.CHINA, Region.CHINA, Region.NONE},                                    
+                                          {Region.NONE, Region.CHINA, Region.CHINA, Region.CHINA, Region.NONE},       
+                                          {Region.NONE, Region.CHINA, Region.CHINA, Region.CHINA, Region.NONE },
+                                          {Region.NONE, Region.NONE, Region.NONE, Region.NONE, Region.NONE,}};
+
+    public Chunk[,] chunks;  // List of all the chunk prefabs
+    public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
+    private const float _CHUNKSIDELENGTH = 100; // Base length of each chunk.
+    public GameObject ship; // Player
+    public Vector2 currentChunk; // The array coordinates of the chunk, not real world coordinates!!
+    public Region currentRegion; 
 
     // Start is called before the first frame update
     void Start()
     {
-        chunks = new Chunk[_WORLDSIZE, _WORLDSIZE];
+        currentRegion = Region.CHINA;
+        chunks = new Chunk[map.GetLength(0), map.GetLength(1)];
         ship = GameObject.FindGameObjectWithTag("Player");
         visibleChunks = new List<Chunk>();
-        //Load China Chunks
-        int count = 1;
-        for (int x = 0; x < _CHINASIZE; x++)
+
+        int chinaCount = 1;
+        int noneCount = 1;
+
+        // Iterate through map, which acts as a blueprint for the layout of the world.
+        for (int z = 0; z < map.GetLength(0); z++)
         {
-            for (int z = 0; z < _CHINASIZE; z++)
+            for (int x = 0; x < map.GetLength(1); x++)
             {
-                Chunk c = new Chunk(Instantiate(Resources.Load<GameObject>("Level" + count), new Vector3(x * _CHUNKSIDELENGTH, 0, z * _CHUNKSIDELENGTH), Quaternion.identity), "China", new Vector2(x * _CHUNKSIDELENGTH, z * _CHUNKSIDELENGTH));
+                // Get which region this chunk is a part of.
+                Region r = map[x, z];
+                string pathName = "Chunks";
+                // Take a loot at wich region this chunk is in.
+                switch (r)
+                {
+                    // Set the chunks pathname to the next china chunk.
+                    case Region.CHINA:
+                        {
+                            pathName = "Chunks/china/" + nameof(Region.CHINA).ToLower() + (chinaCount++);
+                            break;
+                        }
+                    // Set the chunks pathname to the next "none" chunk
+                    case Region.NONE:
+                        {
+                            pathName = "Chunks/none/" + nameof(Region.NONE).ToLower() + (noneCount++);
+                            break;
+                        }
+                }
+                Chunk c = new Chunk(Instantiate(Resources.Load<GameObject>(pathName), new Vector3(x * _CHUNKSIDELENGTH, 0, z * _CHUNKSIDELENGTH), Quaternion.identity), map[x, z], new Vector2(x * _CHUNKSIDELENGTH, z * _CHUNKSIDELENGTH));
                 chunks[x, z] = c;
                 chunks[x, z].chunk.SetActive(false);
-                count++;
             }
         }
         //Chunk the player starts in.
-        chunks[0, 0].chunk.SetActive(true);
-        visibleChunks.Add(chunks[0, 0]);
-        currentChunk = new Vector2(0, 0);
+        chunks[1,1].chunk.SetActive(true);
+        visibleChunks.Add(chunks[1, 1]);
+        currentChunk = new Vector2(1, 1);
+        // Physially move the player to the center of that chunk.
+        ship.transform.position = new Vector3(_CHUNKSIDELENGTH * currentChunk.x, 1f, _CHUNKSIDELENGTH * currentChunk.y);
 
-        /* TODO Load other regions chunks
-         * 
-         */
     }
 
     // Update is called once per frame
@@ -67,7 +99,7 @@ public class ChunkLoader : MonoBehaviour
             {
                 Rect chunkBounds = new Rect((x - .5f) * _CHUNKSIDELENGTH, (z - .5f) * _CHUNKSIDELENGTH, _CHUNKSIDELENGTH, _CHUNKSIDELENGTH);
                 // Chunk is valid.
-                if (x >= 0 && z >= 0 && x < _WORLDSIZE && z <_WORLDSIZE && chunks[x,z] != null)
+                if (x >= 0 && z >= 0 && x < map.GetLength(0) && z <map.GetLength(1) && chunks[x,z] != null)
                 {
                     bool close = (DistanceFromChunkCenter(x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                     // Ship was in a different chunk and has now moved into this chunk.
