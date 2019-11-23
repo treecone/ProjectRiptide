@@ -15,7 +15,7 @@ public partial class Enemy : MonoBehaviour
         //Find local forward vector
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
         //When monster gets close circle player
-        if (!CheckCollision() && playerDistance < 5.0f)
+        if (CheckCollision() || playerDistance < 5.0f)
         {
             lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
         }
@@ -339,6 +339,8 @@ public partial class Enemy : MonoBehaviour
         shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
         heightMult += Vector3.down.y * Time.deltaTime * 3;
 
+        //Debug.Log("Moving up");
+
         if (time >= 1.0f)
             return false;
         else
@@ -388,7 +390,7 @@ public partial class Enemy : MonoBehaviour
             lookRotation = Quaternion.LookRotation(destination - transform.position);
             //Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            if (!CheckCollision())
+            if (CheckCollision())
             {
                 lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
             }
@@ -455,6 +457,9 @@ public partial class Enemy : MonoBehaviour
                 }
             }
         }
+        if (time > 0.9 && hitboxes.Count > 0)
+            Destroy(hitboxes[hitboxes.Count - 1]);
+
         //If player was not hit, make the koi go back under water
         if (time >= 3.9 && !inKnockback)
         {
@@ -474,7 +479,6 @@ public partial class Enemy : MonoBehaviour
         //Finish attack
         else if (time >= 3.9f)
         {
-            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
             inKnockback = false;
             return false;
         }

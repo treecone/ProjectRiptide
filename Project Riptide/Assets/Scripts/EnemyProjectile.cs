@@ -75,6 +75,9 @@ public class EnemyProjectile : MonoBehaviour
     //Destroy projectile upon hitbox activation
     void DestroyProj(GameObject hit)
     {
-        Destroy(gameObject);
+        if(hit.tag == "Obstical")
+            Destroy(gameObject);
+        if (hit.tag == "Player")
+            Destroy(gameObject);
     }
 }

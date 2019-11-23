@@ -224,6 +224,7 @@ public partial class Enemy : MonoBehaviour
                 }
                 else
                 {
+                    currTime = 0;
                     activeStates[(int)State.FormChanged] = true;
                 }
             }

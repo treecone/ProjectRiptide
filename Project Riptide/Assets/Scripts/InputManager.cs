@@ -112,12 +112,12 @@ public class InputManager : MonoBehaviour
                     if (clickDisplacement.y < 0) //swipe down
                     {
                         movementScript.LinearVelocity -= movementScript.linearAcceleration;
-                        Debug.Log("Swipe Down");
+                        //Debug.Log("Swipe Down");
                     }
                     else //swipe up
                     {
                         movementScript.LinearVelocity += movementScript.linearAcceleration;
-                        Debug.Log("Swipe Up");
+                        //Debug.Log("Swipe Up");
                     }
                 }
             }
@@ -127,7 +127,7 @@ public class InputManager : MonoBehaviour
             }
             else //click behavior
             {
-                Debug.Log(clickCurrentPosition);
+                //Debug.Log(clickCurrentPosition);
                 if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
                 {
                     cannonFireScript.Fire("debugOneBig");
@@ -153,7 +153,7 @@ public class InputManager : MonoBehaviour
 
     void HandleTouch(TouchData t)
     {
-        Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
+        //Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
         if (t.Velocity.magnitude > minSwipeSpeed && t.Displacement.magnitude > minSwipeDisplacement)
         {
             //All behavior for when a swipe is completed

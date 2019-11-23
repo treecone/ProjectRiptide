@@ -77,6 +77,8 @@ public partial class Enemy : MonoBehaviour
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+            hitbox.OnTrigger += HitboxTriggered;
         LoadEnemy(enemyType);
     }
 
@@ -289,10 +291,14 @@ public partial class Enemy : MonoBehaviour
     /// <param name="collision">GameObject that triggered hitbox</param>
     public void HitboxTriggered(GameObject collision)
     {
-        if (collision.gameObject.tag == "Player")
-            playerCollision = true;
-        else if (collision.gameObject.tag == "Obstical")
+        if (collision.tag == "Obstical")
+        {
             obsticalCollision = true;
+            Debug.Log("Obstical Collision");
+        }
+        if (collision.tag == "Player")
+            playerCollision = true;
+        
     }
 
     /// <summary>

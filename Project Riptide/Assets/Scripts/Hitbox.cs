@@ -78,7 +78,7 @@ public class Hitbox : MonoBehaviour
                 }
             }
         }
-        //else
-           // OnTrigger?.Invoke(other.gameObject);
+        else
+           OnTrigger?.Invoke(other.gameObject);
     }
 }
