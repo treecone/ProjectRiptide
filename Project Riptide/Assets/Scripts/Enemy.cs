@@ -80,6 +80,7 @@ public partial class Enemy : MonoBehaviour
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
             hitbox.OnTrigger += HitboxTriggered;
         LoadEnemy(enemyType);
+        camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
     }
 
     // Update is called once per frame
