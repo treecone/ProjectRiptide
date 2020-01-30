@@ -5,7 +5,7 @@ using UnityEngine;
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2}
 
-public partial class Enemy : MonoBehaviour
+public partial class Enemy : PhysicsScript
 {
     /// <summary>
     /// Moves the monster randomly within a certain radius
@@ -32,7 +32,7 @@ public partial class Enemy : MonoBehaviour
             }
         }
 
-        //Find the direction the monster should be looking
+        /*//Find the direction the monster should be looking
         lookRotation = Quaternion.LookRotation(destination - transform.position);
         //Increment time
         timeCurrent += Time.deltaTime;
@@ -41,7 +41,23 @@ public partial class Enemy : MonoBehaviour
         CheckCollision();
         //Rotate and move monster
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);*/
+
+        //Calculate net force
+        Vector3 netForce = Seek(destination);
+
+        //Check for collision
+        if (CheckCollision() || playerDistance < 5.0f)
+        {
+            netForce = Vector3.Cross(Vector3.up, netForce);
+        }
+
+        //Rotate in towards direction of velocity
+        rotation = Quaternion.LookRotation(velocity);
+
+        timeCurrent += Time.deltaTime;
+
+        ApplyForce(netForce);
     }
 
     /// <summary>
