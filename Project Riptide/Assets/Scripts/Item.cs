@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item
+public struct Item //MADE THIS A STRUCT
 {
 
     public int id; //These are public, and thus not secure...
