@@ -2,27 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class Enemy : MonoBehaviour
+public partial class Enemy : PhysicsScript
 {
     //General method for making the moster follow the player
     //Usually should be used for enemy AI when not in an action
     private void FollowPlayer()
     {
-        //Track player
+        /*//Track player
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         //Find the direction the monster should be looking
         lookRotation = Quaternion.LookRotation(destination - transform.position);
         //Find local forward vector
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
         //When monster gets close circle player
-        if (CheckCollision() || playerDistance < 5.0f)
+        if (!CheckCollision() || playerDistance < 5.0f)
         {
             lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
         }
 
         //Rotate and move monster
         transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);*/
+
+        //Calculate net force
+        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+
+        //Check for collision
+        if (CheckCollision() || playerDistance < 5.0f)
+        {
+            netForce = Vector3.Cross(Vector3.up, netForce);
+        }
+        //Rotate in towards direction of velocity
+        rotation = Quaternion.LookRotation(velocity);
+
+        ApplyForce(netForce);
     }
 
     private bool DoActionQueue()
@@ -58,13 +71,19 @@ public partial class Enemy : MonoBehaviour
     /// <returns></returns>
     private bool DashCharge(ref float time)
     {
+        /* !!!BEFORE PHYSICS!!!
         //Track player
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         //Find the direction the monster should be looking
         lookRotation = Quaternion.LookRotation(destination - transform.position);
         //Find local forward vector
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.0f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.0f);*/
+        if (time == 0)
+            StopMotion();
+
+        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
 
         if (time >= 2.0f)
             return false;
@@ -86,6 +105,7 @@ public partial class Enemy : MonoBehaviour
 
         if (!inKnockback)
         {
+            /* !!!BEFORE PHYSICS !!!
             //Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
             CheckCollision();
@@ -95,14 +115,24 @@ public partial class Enemy : MonoBehaviour
                 inKnockback = true;
                 time = 0.7f;
             }
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
+            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);*/
+
+            //If monster hits player, stop special
+            if (playerCollision || obsticalCollision)
+            {
+                inKnockback = true;
+                time = 0.7f;
+            }
+
+            ApplyForce(new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed * 10);
+            Debug.Log(acceleration);
         }
         //Do knockback if there was a hit
         else
         {
             //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 6);
+            //Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+            ApplyForce(new Vector3(-transform.forward.x, 0, -transform.forward.z).normalized * speed / 3);
         }
 
         if (time >= 1.0f)
@@ -122,13 +152,20 @@ public partial class Enemy : MonoBehaviour
     /// <returns></returns>
     private bool KoiDashCharge(ref float time)
     {
+        /*
         //Track player
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         //Find the direction the monster should be looking
         lookRotation = Quaternion.LookRotation(destination - transform.position);
         //Find local forward vector
         Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);*/
+
+        if (time == 0)
+            StopMotion();
+
+        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
 
         if (time >= 1.0f)
             return false;
@@ -146,11 +183,12 @@ public partial class Enemy : MonoBehaviour
         if (time == 0.0f)
         {
             hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
+            ApplyForce(new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed * 1000);
         }
 
         if (!inKnockback)
         {
-            //Find local forward vector
+            /*//Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
             CheckCollision();
             //If monster hits player, stop special
@@ -159,14 +197,23 @@ public partial class Enemy : MonoBehaviour
                 inKnockback = true;
                 time = 0.7f;
             }
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 3);
+            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 3);*/
+
+            if (playerCollision || obsticalCollision)
+            {
+                StopMotion();
+                inKnockback = true;
+                time = 0.7f;
+            }
+            ApplyFriction(0.5f);
         }
         //Do knockback if there was a hit
         else
         {
             //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
+            //Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
+            //transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
+            ApplyForce(new Vector3(-transform.forward.x, 0, -transform.forward.z) * maxSpeed * 20);
         }
 
         if (time >= 1.0f)
@@ -188,13 +235,19 @@ public partial class Enemy : MonoBehaviour
     {
         if (time < 1.5f)
         {
+            /* BEFORE PHYSICS
             //Track player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             //Find the direction the monster should be looking
             lookRotation = Quaternion.LookRotation(destination - transform.position);
             //Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);*/
+
+            if (time == 0)
+                StopMotion();
+            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
         }
 
         if (time >= 2.0f)

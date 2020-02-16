@@ -11,7 +11,7 @@ public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
 
-public partial class Enemy : MonoBehaviour
+public partial class Enemy : PhysicsScript 
 {
     //public fields
     public EnemyType enemyType;
@@ -69,7 +69,7 @@ public partial class Enemy : MonoBehaviour
     public float Health { get { return health; } }
 
     // Start is called before the first frame update
-    void Start()
+    protected override void Start()
     {
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
@@ -81,10 +81,12 @@ public partial class Enemy : MonoBehaviour
             hitbox.OnTrigger += HitboxTriggered;
         LoadEnemy(enemyType);
         camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
+
+        base.Start();
     }
 
     // Update is called once per frame
-    void Update()
+    protected override void Update()
     {
         //updates player position
         playerDistance = Vector3.Distance(transform.position, PlayerPosition());
@@ -123,6 +125,8 @@ public partial class Enemy : MonoBehaviour
 
         playerCollision = false;
         obsticalCollision = false;
+
+        base.Update();
     }
 
     private void LoadEnemy(EnemyType type)
@@ -248,7 +252,7 @@ public partial class Enemy : MonoBehaviour
         {
             if (hit.collider.CompareTag("Obstical"))
             {
-                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+                //lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
                 return true;
             }
         }
@@ -256,7 +260,7 @@ public partial class Enemy : MonoBehaviour
         {
             if (hit.collider.CompareTag("Obstical"))
             {
-                lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
+                //lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
                 return true;
             }
         }
