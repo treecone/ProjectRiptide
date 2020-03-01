@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
-public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2}
+public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 
 public partial class Enemy : PhysicsScript
 {
@@ -45,6 +45,7 @@ public partial class Enemy : PhysicsScript
 
         //Calculate net force
         Vector3 netForce = Seek(destination);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
 
         //Check for collision
         if (CheckCollision() || playerDistance < 5.0f)
@@ -53,11 +54,13 @@ public partial class Enemy : PhysicsScript
         }
 
         //Rotate in towards direction of velocity
-        rotation = Quaternion.LookRotation(velocity);
+        //rotation = Quaternion.LookRotation(velocity);
+        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
         timeCurrent += Time.deltaTime;
 
         ApplyForce(netForce);
+        ApplyFriction(0.25f);
     }
 
     /// <summary>
@@ -218,7 +221,7 @@ public partial class Enemy : PhysicsScript
             else if (!activeStates[(int)State.FormChanged])
             {
                 //Check to see if form changing is just beginning
-                if(!activeStates[(int)State.FormChangeInProgress])
+                if (!activeStates[(int)State.FormChangeInProgress])
                 {
                     //Reset any specials the Koi may be in
                     activeStates[(int)State.Active] = false;
@@ -228,18 +231,21 @@ public partial class Enemy : PhysicsScript
                     actionQueue.Clear();
                     ClearHitboxes();
                     currTime = 0;
+                    StopMotion();
                     activeStates[(int)State.FormChangeInProgress] = true;
                 }
 
                 if (currTime < 1.0f)
                 {
-                    transform.Translate(Vector3.down * Time.deltaTime * 3);
-                    shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-                    heightMult += Vector3.up.y * Time.deltaTime * 3;
+                    //transform.Translate(Vector3.down * Time.deltaTime * 3);
+                    ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
+                    //shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
+                   // heightMult += Vector3.up.y * Time.deltaTime * 3;
                     currTime += Time.deltaTime;
                 }
                 else
                 {
+                    StopMotion();
                     currTime = 0;
                     activeStates[(int)State.FormChanged] = true;
                 }

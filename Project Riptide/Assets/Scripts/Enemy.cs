@@ -11,7 +11,7 @@ public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
 
-public partial class Enemy : PhysicsScript 
+public partial class Enemy : PhysicsScript
 {
     //public fields
     public EnemyType enemyType;
@@ -42,6 +42,7 @@ public partial class Enemy : PhysicsScript
     private double timeBetween;
     private double timeCurrent;
     private Vector3 startPos;
+    private Vector3 gravity;
     private float wanderRadius;
     private float maxRadius;
     private float passiveCooldown;
@@ -65,6 +66,7 @@ public partial class Enemy : PhysicsScript
     public float lengthMult;
     public float widthMult;
     public float heightMult;
+    public float baseHeightMult;
 
     public float Health { get { return health; } }
 
@@ -99,7 +101,7 @@ public partial class Enemy : PhysicsScript
                 PassiveAI();
                 //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
                 //also make sure enemy is not in a passive cooldown
-                if(playerDistance < hostileRadius && passiveCooldown <= 0)
+                if (playerDistance < hostileRadius && passiveCooldown <= 0)
                 {
                     state = EnemyState.Hostile;
                 }
@@ -123,6 +125,10 @@ public partial class Enemy : PhysicsScript
         if (passiveCooldown > 0)
             passiveCooldown -= Time.deltaTime;
 
+        SetHeightMult();
+        SetShadowPosition();
+        SetHealthBarPosition();
+
         playerCollision = false;
         obsticalCollision = false;
 
@@ -131,7 +137,7 @@ public partial class Enemy : PhysicsScript
 
     private void LoadEnemy(EnemyType type)
     {
-        switch(type)
+        switch (type)
         {
             case EnemyType.FirstEnemy:
                 speed = 1.0f;
@@ -162,8 +168,8 @@ public partial class Enemy : PhysicsScript
                 hostileRadius = 15.0f;
                 passiveRadius = 60.0f;
                 maxRadius = 240.0f;
-                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-                activeStates = new bool[3] { false, false, false};
+                specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+                activeStates = new bool[3] { false, false, false };
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 20;
@@ -213,7 +219,7 @@ public partial class Enemy : PhysicsScript
         //Setup health bar
         healthBar.SetMaxHealth(maxHealth);
     }
-    
+
     /// <summary>
     /// Monster takes damage, if health is 0 they die
     /// </summary>
@@ -222,9 +228,9 @@ public partial class Enemy : PhysicsScript
     {
         health -= damage;
         healthBar.UpdateHealth(health);
-        if(state == EnemyState.Passive)
+        if (state == EnemyState.Passive)
             state = EnemyState.Hostile;
-        if(health <= 0)
+        if (health <= 0)
         {
             health = 0;
             //Kill monster
@@ -239,10 +245,10 @@ public partial class Enemy : PhysicsScript
     {
         //Create rays for hit detection
         RaycastHit hit;
-        Ray rightFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray leftFRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray rightSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
-        Ray leftSRay = new Ray(new Vector3(transform.position.x, transform.position.y + heightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
+        Ray rightFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray leftFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
+        Ray rightSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
+        Ray leftSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
         Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
         Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
@@ -274,7 +280,7 @@ public partial class Enemy : PhysicsScript
     public void ResetHostile()
     {
         //reset states
-        for(int i = 0; i > activeStates.Length; i++)
+        for (int i = 0; i > activeStates.Length; i++)
         {
             activeStates[i] = false;
         }
@@ -303,7 +309,7 @@ public partial class Enemy : PhysicsScript
         }
         if (collision.tag == "Player")
             playerCollision = true;
-        
+
     }
 
     /// <summary>
@@ -345,7 +351,7 @@ public partial class Enemy : PhysicsScript
 
     private void ClearHitboxes()
     {
-        for(int i = 0; i < hitboxes.Count; i++)
+        for (int i = 0; i < hitboxes.Count; i++)
         {
             GameObject.Destroy(hitboxes[i]);
         }
@@ -357,6 +363,71 @@ public partial class Enemy : PhysicsScript
     /// </summary>
     private void ReturnToInitalPosition()
     {
-        transform.position = new Vector3(transform.position.x, initalPos, transform.position.z);
+
+        position = new Vector3(transform.position.x, initalPos, transform.position.z);
+    }
+
+    /// <summary>
+    /// Applys a force to move the enemy in an arc
+    /// </summary>
+    /// <param name="dir">Direction of movement</param>
+    /// <param name="dist">Horizontal distance covered</param>
+    /// <param name="time">Time that the arc takes place</param>
+    /// <param name="gravity">Gravity being applied each frame</param>
+    private void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
+    {
+        float xForce = mass * (dist / (time * Time.deltaTime));
+        float yForce = (-gravity.y * time) / (2 * Time.deltaTime);
+        Vector3 netForce = dir * xForce;
+        netForce += yForce * Vector3.up;
+        ApplyForce(netForce);
+    }
+
+    /// <summary>
+    /// Applys a force to move the enemy in an arc
+    /// </summary>
+    /// <param name="dir">Direction of movement</param>
+    /// <param name="dist">Horizontal distance covered</param>
+    /// <param name="yMax">Maximum vertical distance</param>
+    /// <param name="time">Time that the arc takes place</param>
+    /// <returns>Gravity to be applied each frame</returns>
+    private Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
+    {
+        float xForce = mass * (dist / (time * Time.deltaTime));
+        float gravity = (-8 * mass * yMax) / (time * time);
+        float yForce = (-gravity * time) / (2 * Time.deltaTime);
+        Vector3 netForce = dir * xForce;
+        netForce += yForce * Vector3.up;
+        ApplyForce(netForce);
+        return Vector3.up * gravity;
+    }
+
+    private void ApplyMoveForce(Vector3 dir, float dist, float time)
+    {
+        float moveForce = mass * (dist / (time * Time.deltaTime));
+        Vector3 netForce = dir * moveForce;
+        ApplyForce(netForce);
+    }
+
+    private void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
+    {
+        float moveForce = (2 * mass * dist) / (time * time);
+        Vector3 netForce = dir * moveForce;
+        ApplyForce(netForce);
+    }
+
+    private void SetHeightMult()
+    {
+        heightMult = (transform.worldToLocalMatrix * new Vector3(transform.position.x, baseHeightMult, transform.position.z)).y;
+    }
+
+    private void SetShadowPosition()
+    {
+        shadow.transform.position = new Vector3(transform.position.x, heightMult, transform.position.z);
+    }
+
+    private void SetHealthBarPosition()
+    {
+        healthBarObject.transform.position = new Vector3(transform.position.x, baseHeightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
 }
