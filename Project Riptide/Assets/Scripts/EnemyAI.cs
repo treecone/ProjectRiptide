@@ -32,35 +32,27 @@ public partial class Enemy : PhysicsScript
             }
         }
 
-        /*//Find the direction the monster should be looking
-        lookRotation = Quaternion.LookRotation(destination - transform.position);
-        //Increment time
-        timeCurrent += Time.deltaTime;
-        //Find local forward vector
-        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        CheckCollision();
-        //Rotate and move monster
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);*/
-
         //Calculate net force
         Vector3 netForce = Seek(destination);
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
 
         //Check for collision
-        if (CheckCollision() || playerDistance < 5.0f)
+        /*if (CheckCollision() || playerDistance < 5.0f)
         {
             netForce = Vector3.Cross(Vector3.up, netForce);
+        }*/
+        if(CheckObstacle())
+        {
+            ApplyForce(Steer(AvoidObstacle()) * 2.0f);
         }
 
         //Rotate in towards direction of velocity
-        //rotation = Quaternion.LookRotation(velocity);
         rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
         timeCurrent += Time.deltaTime;
 
         ApplyForce(netForce);
-        ApplyFriction(0.25f);
+        //ApplyFriction(0.25f);
     }
 
     /// <summary>

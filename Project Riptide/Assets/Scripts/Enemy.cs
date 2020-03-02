@@ -67,6 +67,9 @@ public partial class Enemy : PhysicsScript
     public float widthMult;
     public float heightMult;
     public float baseHeightMult;
+    private float halfView = 40.0f;
+    private float viewRange = 10.0f;
+    private Vector3 widthVector;
 
     public float Health { get { return health; } }
 
@@ -83,6 +86,8 @@ public partial class Enemy : PhysicsScript
             hitbox.OnTrigger += HitboxTriggered;
         LoadEnemy(enemyType);
         camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
+
+        widthVector = new Vector3(widthMult, 0, 0);
 
         base.Start();
     }
@@ -158,7 +163,7 @@ public partial class Enemy : PhysicsScript
                 PassiveAI = PassiveWanderRadius;
                 break;
             case EnemyType.KoiBoss:
-                speed = 1.4f;
+                speed = 1.0f;
                 health = 100;
                 maxHealth = 100;
                 timeBetween = 5.0;
@@ -258,6 +263,7 @@ public partial class Enemy : PhysicsScript
         {
             if (hit.collider.CompareTag("Obstical"))
             {
+                Debug.Log("Obstical collision");
                 //lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
                 return true;
             }
@@ -266,6 +272,7 @@ public partial class Enemy : PhysicsScript
         {
             if (hit.collider.CompareTag("Obstical"))
             {
+                Debug.Log("Obstical collision");
                 //lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
                 return true;
             }
@@ -429,5 +436,64 @@ public partial class Enemy : PhysicsScript
     private void SetHealthBarPosition()
     {
         healthBarObject.transform.position = new Vector3(transform.position.x, baseHeightMult + 1.5f * transform.localScale.y, transform.position.z);
+    }
+
+    public bool CheckObstacle()
+    {
+        RaycastHit hit = new RaycastHit();
+        Vector3 detectPosition = new Vector3(transform.position.x, heightMult, transform.position.z);
+        for (int i = 0; i <= halfView; i += 4)
+        {
+            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
+            {
+                return true;
+            }
+            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public Vector3 AvoidObstacle()
+    {
+        Vector3 dir = Vector3.zero;
+        bool found = false;
+
+        Vector3 detectPosition = new Vector3(transform.position.x, heightMult, transform.position.z);
+
+        for (int i = 0; i <= 90; i += 4)
+        {
+            if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange))
+            {
+                if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange + 2.0f))
+                {
+                    //dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
+                    dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+                    found = true;
+                }
+            }
+            if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange))
+            {
+                if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange + 2.0f))
+                {
+                    if (!found || Random.Range(0, 1) == 0)
+                    {
+                        //dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                        dir = Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
+                        found = true;
+                    }
+                }
+            }
+            if (found)
+                return dir;
+        }
+
+        if (Random.Range(0, 1) == 0)
+            return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+        else
+            return Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
     }
 }
