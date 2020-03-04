@@ -441,7 +441,7 @@ public partial class Enemy : PhysicsScript
     public bool CheckObstacle()
     {
         RaycastHit hit = new RaycastHit();
-        Vector3 detectPosition = new Vector3(transform.position.x, heightMult, transform.position.z);
+        Vector3 detectPosition = new Vector3(transform.position.x, 2.0f, transform.position.z);
         for (int i = 0; i <= halfView; i += 4)
         {
             if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
@@ -462,7 +462,7 @@ public partial class Enemy : PhysicsScript
         Vector3 dir = Vector3.zero;
         bool found = false;
 
-        Vector3 detectPosition = new Vector3(transform.position.x, heightMult, transform.position.z);
+        Vector3 detectPosition = new Vector3(transform.position.x, 2.0f, transform.position.z);
 
         for (int i = 0; i <= 90; i += 4)
         {
