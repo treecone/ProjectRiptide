@@ -50,12 +50,12 @@ public class InputManager : MonoBehaviour
 	/// </summary>
 	public float maxTapDuration = 0.5f;
 
-	//private static Vector3 screenCorrect;
+	private static Vector3 screenCorrect;
 
 	void Awake()
 	{
 		camera = Camera.main;
-		//screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
+		screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
 		ship = GameObject.FindWithTag("Player");
 		movementScript = ship.GetComponent<ShipMovementScript>();
 		cannonFireScript = ship.GetComponent<CannonFireScript>();
@@ -66,8 +66,8 @@ public class InputManager : MonoBehaviour
 	{
 		if (mobile)
 			TakeMobileInput();
-		//else
-		//	TakeKeyboardInput();
+		else
+			TakeKeyboardInput();
 	}
 
 	void HandleTouch(TouchData t)
@@ -138,21 +138,8 @@ public class InputManager : MonoBehaviour
 
 
 			iconPoint.anchoredPosition = t.Position;
-			
-			// create ray from the camera and passing through the touch position:
-			Ray ray = camera.ScreenPointToRay(t.Position);
-			
-			// create a logical plane at this object's position and perpendicular to world Y:
-			Plane plane = new Plane(Vector3.up, Vector3.zero);
-			float distance = 0;
 
-			// if plane hit...
-			if (plane.Raycast(ray, out distance))
-			{
-				// get the point pos has the position in the plane you've touched
-				Vector3 pos = ray.GetPoint(distance); 
-				movementScript.Target = pos + new Vector3(-14.4f, 0, 5.9f);
-			}
+			SetTarget(t.Position);
 		}
 	}
 
@@ -218,89 +205,89 @@ public class InputManager : MonoBehaviour
 			phase = touch.phase;
 		}
 	}
+	#region Keyboard Input (deprecated)
 
-}
+	Vector2 clickStartPosition;
+	Vector2 clickCurrentPosition;
+	float clickDuration;
 
-#region Keyboard Input (deprecated)
-/*
-Vector2 clickStartPosition;
-Vector2 clickCurrentPosition;
-float clickDuration;
-
-void TakeKeyboardInput()
-{
-	turning = false;
-	if (Input.GetMouseButtonDown(0)) //mouse down
+	void TakeKeyboardInput()
 	{
-		clickStartPosition = Input.mousePosition - screenCorrect;
-		clickCurrentPosition = clickStartPosition;
-
-		clickDuration = 0;
-	}
-	else if (Input.GetMouseButton(0)) //mouse held
-	{
-		clickDuration += Time.deltaTime;
-		clickCurrentPosition = Input.mousePosition - screenCorrect;
-
-
-		if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+		if (Input.GetMouseButtonDown(0)) //mouse down
 		{
-			movementScript.RotationalVelocity -= movementScript.rotationalAcceleration;
-			turning = true;
+			clickStartPosition = Input.mousePosition - screenCorrect;
+			clickCurrentPosition = clickStartPosition;
+
+			clickDuration = 0;
 		}
-
-		if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
+		else if (Input.GetMouseButton(0)) //mouse held
 		{
-			movementScript.RotationalVelocity += movementScript.rotationalAcceleration;
-			turning = true;
+			clickDuration += Time.deltaTime;
+			clickCurrentPosition = Input.mousePosition - screenCorrect;
+
+
+			if (iconPoint != null)
+				iconPoint.anchoredPosition = clickCurrentPosition;
+
+			SetTarget(clickCurrentPosition);
 		}
-
-
-	}
-	else if (Input.GetMouseButtonUp(0)) //mouse up 
-	{
-		Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
-		Vector2 clickVelocity = clickDisplacement / clickDuration;
-		if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
+		else if (Input.GetMouseButtonUp(0)) //mouse up 
 		{
-			if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
+			Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
+			Vector2 clickVelocity = clickDisplacement / clickDuration;
+			if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
 			{
-				if (clickDisplacement.y < 0) //swipe down
+				if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
 				{
-					movementScript.LinearVelocity -= movementScript.linearAcceleration;
-					//Debug.Log("Swipe Down");
-				}
-				else //swipe up
-				{
-					movementScript.LinearVelocity += movementScript.linearAcceleration;
-					//Debug.Log("Swipe Up");
+					if (clickDisplacement.y < 0) //swipe down
+					{
+						//Debug.Log("Swipe Down");
+					}
+					else //swipe up
+					{
+						//Debug.Log("Swipe Up");
+					}
 				}
 			}
-		}
-		else if (clickDuration > maxTapDuration) //click and hold behavior
-		{
-
-		}
-		else //click behavior
-		{
-			//Debug.Log(clickCurrentPosition);
-			if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+			else if (clickDuration > maxTapDuration) //click and hold behavior
 			{
-				cannonFireScript.Fire("debugOneBig");
-			}
 
-			if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
-			{
-				cannonFireScript.Fire("debugTriShot");
 			}
+			else //click behavior
+			{
+				//Debug.Log(clickCurrentPosition);
+				if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+				{
+					cannonFireScript.Fire("debugOneBig");
+				}
+
+				if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
+				{
+					cannonFireScript.Fire("debugTriShot");
+				}
+			}
+		}
+		else if(clickCurrentPosition != null)
+		{
+			SetTarget(clickCurrentPosition);
 		}
 	}
-
-	if (!turning)
+	#endregion
+	void SetTarget(Vector3 input)
 	{
-		movementScript.ApplyDrag();
-	}
+		// create ray from the camera and passing through the touch position:
+		Ray ray = camera.ScreenPointToRay(input);
 
+		// create a logical plane at this object's position and perpendicular to world Y:
+		Plane plane = new Plane(Vector3.up, Vector3.zero);
+		float distance = 0;
+
+		// if plane hit...
+		if (plane.Raycast(ray, out distance))
+		{
+			// get the point pos has the position in the plane you've touched
+			Vector3 pos = ray.GetPoint(distance) + new Vector3(-14.4f, 0, 5.9f);
+			movementScript.TargetDirection = pos - ship.transform.position;
+		}
+	}
 }
-*/
-#endregion

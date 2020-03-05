@@ -6,9 +6,10 @@ using UnityEngine;
 public class ShipMovementScript : MonoBehaviour
 {
     private Rigidbody rb;
-	public Vector3 Target { get; set;}
+	public Vector3 TargetDirection { get; set;}
     public float maxRotationalVelocity;
     public float maxLinearVelocity;
+	public float linearAccelerationScale = 0.95f;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,18 +19,27 @@ public class ShipMovementScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+		Vector3 Target;
+		float distance = TargetDirection.magnitude;
+
+		if (distance > 2f) 
+			Target = transform.position + TargetDirection.normalized * 5f;
+		else
+			Target = transform.position + TargetDirection.normalized * 0.1f;
+
 		//find the vector pointing from our position to the target
-		Vector3 _direction = (Target - transform.position).normalized;
+		Vector3 moveDirection = (Target - transform.position).normalized;
 
 		//create the rotation we need to be in to look at the target
-		Quaternion _lookRotation = Quaternion.LookRotation(_direction);
+		Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
 
 		//rotate us over time according to speed until we are in the required rotation
-		transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * maxRotationalVelocity);
+		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * maxRotationalVelocity);
 
-		if(Vector3.Distance(Target, transform.position) >= 0.1f)
+		if (distance > 2f)
 		{
-			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity);
+			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity * Mathf.Pow(linearAccelerationScale, -distance));	
 		}
 	}
 
