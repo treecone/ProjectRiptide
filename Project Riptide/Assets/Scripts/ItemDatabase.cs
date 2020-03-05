@@ -34,14 +34,14 @@ public class ItemDatabase : MonoBehaviour
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
             if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"))
             {
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["maxAmount"]));
+                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"]));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
                 //This usually means that we have yet to put the sprite for the item in the game
 
             }
             else
             {
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["maxAmount"]));
+                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"]));
             }
         }
     }
