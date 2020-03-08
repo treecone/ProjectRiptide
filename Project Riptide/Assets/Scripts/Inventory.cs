@@ -6,13 +6,12 @@ using TMPro;
 
 public class Inventory : MonoBehaviour
 {
-    private List<GameObject> inventorySlots;
+    public List<GameObject> inventorySlots;
     private ItemDatabase theDatabase;
     void Start()
     {
         inventorySlots = new List<GameObject>();
         theDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
-        AddItem("nullitem", 20);
     }
 
     //This allows you to add a item using the name/slug or the ID
@@ -24,32 +23,25 @@ public class Inventory : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.I))
         {
             foreach(Transform child in transform)
             {
                 child.gameObject.SetActive(!child.gameObject.activeSelf); //Turning on/off UI
             }
         }
-        if (Input.GetKey(KeyCode.L))
-        {
-            AddItem("nullitem", 1);
-        }
-        if (Input.GetKey(KeyCode.K))
-        {
-            RemoveItem("nullitem", 1);
-        }
         if (Input.GetKey(KeyCode.N))
         {
-            AddItem("stone", 1);
+            AddItem("stone", 8);
         }
         if (Input.GetKey(KeyCode.M))
         {
-            RemoveItem("Stone", 1);
+            RemoveItem("stone", 8);
+
         }
         if (Input.GetKey(KeyCode.J))
         {
-            GameObject lootable = Instantiate(Resources.Load("Lootable"), new Vector3(Random.Range(0,5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
+            GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(Random.Range(0,5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
             lootable.GetComponent<Lootable>().itemStored = theDatabase.GetRandomItem();
             lootable.GetComponent<Lootable>().lightColor = theDatabase.rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
         }
@@ -62,7 +54,7 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
-            if (slot.item == itemToAdd) //Another item with room has been found, does it have room
+            if (slot.item.name == itemToAdd.name && slot.item.amount != slot.item.maxAmount) //Another item with room has been found, does it have room
             {
                 if (slot.item.amount + amountToAdd <= slot.item.maxAmount)
                 {
@@ -79,50 +71,37 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
-        /*
+
         //Adding new item to slot, no previous items were found
-        foreach (GameObject slot in inventorySlots)
-        {
-            if (slot.GetComponent<ItemSlot>().item == null && tempSlot == null) //Trying to find a empty slot to place the new item
-            {
-                tempSlot = slot;
-            }
-        }
-        if(tempSlot != null) //Updating the new slot
-        {
-            tempSlot.item = itemToAdd;
-            tempSlot.item.amount = amountToAddTemp;
-            tempSlot.UpdateSlotVisuals();
-        }
-        else //No slots are avaiable!!!
-        {
-            Debug.LogWarning("[Inventory] No slots avaiable for adding the item: " + itemToAdd.name);
-        }*/
+        GameObject theNewSlot = Instantiate(Resources.Load("inventory/InventorySlot"), gameObject.transform.Find("InventoryScrollRect").Find("Inventory Panel").transform) as GameObject;
+        theNewSlot.GetComponent<ItemSlot>().item = itemToAdd;
+        theNewSlot.GetComponent<ItemSlot>().item.amount = amountToAddTemp;
+        inventorySlots.Add(theNewSlot);
+        theNewSlot.GetComponent<ItemSlot>().UpdateSlotVisuals();
     }
 
     public bool RemoveItem (string itemName, int amount)
     {
+        if(inventorySlots.Count == 0) { Debug.LogWarning("Nothing in inventory, nothing to delete!"); return false; }
         Item itemToAdd = theDatabase.FindItem(itemName);
         for (int i = inventorySlots.Count-1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
-            if (slot.item != null)
+            if (slot.item.name == itemToAdd.name)
             {
-                if (slot.item.name == itemToAdd.name)
+                if (slot.item.amount <= amount)
                 {
-                    if (slot.item.amount <= amount)
-                    {
-                        int newAmount = amount - slot.item.amount;
-                        slot.Clear();
-                        RemoveItem(itemName, newAmount); //Recursive
-                    }
-                    else
-                    {
-                        slot.item.amount -= amount;
-                        slot.UpdateSlotVisuals();
-                    }
-                    return true;
+                    int newAmount = amount - slot.item.amount;
+                    inventorySlots.Remove(slot.gameObject);
+                    slot.Clear();
+                    RemoveItem(itemName, newAmount); //Recursive
                 }
+                else
+                {
+                    slot.item.amount -= amount;
+                    slot.UpdateSlotVisuals();
+                }
+                return true;
             }
         }
         Debug.LogWarning("[Inventory] When removing + " + itemToAdd.name + ", no items of that type were found in the inventory!");

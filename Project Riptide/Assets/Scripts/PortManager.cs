@@ -7,7 +7,6 @@ public class PortManager : MonoBehaviour
 {
 	public GameObject player;
 	public GameObject PortUI;
-	public PortUIManager UIManager; 
 	private bool inPort;
 
     // Start is called before the first frame update
@@ -22,7 +21,7 @@ public class PortManager : MonoBehaviour
     void Update()
     {
 		//If the escape timer is zero and the player is near the port, then disable player movement
-		if (!inPort && UIManager.EscapeTimer <= 0 && Vector3.Distance(player.transform.position, transform.position) < 1.5)
+		if (!inPort && Vector3.Distance(player.transform.position, transform.position) < 1.5)
 		{
 			inPort = true;
 			player.GetComponent<ShipMovementScript>().enabled = false;
