@@ -67,8 +67,8 @@ public partial class Enemy : PhysicsScript
     public float widthMult;
     public float heightMult;
     public float baseHeightMult;
-    private float halfView = 40.0f;
-    private float viewRange = 10.0f;
+    private float halfView = 50.0f;
+    private float viewRange = 15.0f;
     private Vector3 widthVector;
 
     public float Health { get { return health; } }
@@ -170,8 +170,8 @@ public partial class Enemy : PhysicsScript
                 timeCurrent = timeBetween;
                 startPos = transform.position;
                 wanderRadius = 45.0f;
-                hostileRadius = 15.0f;
-                passiveRadius = 60.0f;
+                hostileRadius = 30.0f;
+                passiveRadius = 120.0f;
                 maxRadius = 240.0f;
                 specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
                 activeStates = new bool[3] { false, false, false };
@@ -441,9 +441,11 @@ public partial class Enemy : PhysicsScript
     public bool CheckObstacle()
     {
         RaycastHit hit = new RaycastHit();
-        Vector3 detectPosition = new Vector3(transform.position.x, 2.0f, transform.position.z);
+        Vector3 detectPosition = new Vector3(transform.position.x, 4.5f, transform.position.z);
         for (int i = 0; i <= halfView; i += 4)
         {
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * viewRange, Color.red);
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward * viewRange, Color.red);
             if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
@@ -462,7 +464,7 @@ public partial class Enemy : PhysicsScript
         Vector3 dir = Vector3.zero;
         bool found = false;
 
-        Vector3 detectPosition = new Vector3(transform.position.x, 2.0f, transform.position.z);
+        Vector3 detectPosition = new Vector3(transform.position.x, 4.0f, transform.position.z);
 
         for (int i = 0; i <= 90; i += 4)
         {

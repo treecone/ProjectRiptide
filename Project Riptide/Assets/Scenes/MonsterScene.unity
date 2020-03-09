@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -213,8 +213,8 @@ MonoBehaviour:
   touchingLeft: 0
   touchingRight: 0
   speedSlider: {fileID: 0}
+  iconPoint: {fileID: 0}
   mobile: 1
-  turning: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000
@@ -500,12 +500,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8210748076640493396, guid: 59ea9c24f4295d744a4b3d24a318a75b,
-        type: 3}
-      propertyPath: cannonBall
-      value: 
-      objectReference: {fileID: 83568729744095847, guid: ae53b0ef0426ddb49801fedf5575741b,
-        type: 3}
     - target: {fileID: 8210748076640493403, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
       propertyPath: m_Name
@@ -945,8 +939,8 @@ MonoBehaviour:
   touchingLeft: 0
   touchingRight: 0
   speedSlider: {fileID: 861039497}
+  iconPoint: {fileID: 0}
   mobile: 0
-  turning: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000
