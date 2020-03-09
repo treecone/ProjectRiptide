@@ -23,10 +23,13 @@ public class InputManager : MonoBehaviour
 	private ShipMovementScript movementScript;
 	private CannonFireScript cannonFireScript;
 	public RectTransform iconPoint;
+	public GameObject IconPrefab;
 
 	//-----Multiple touches-----
 	private List<TouchData> currentTouches;
 	public bool mobile;
+	float doubleClickCheck;
+	bool clickOne;
 
 	//-----Config values-----
 
@@ -60,6 +63,14 @@ public class InputManager : MonoBehaviour
 		movementScript = ship.GetComponent<ShipMovementScript>();
 		cannonFireScript = ship.GetComponent<CannonFireScript>();
 		currentTouches = new List<TouchData>();
+		if (iconPoint == null && GameObject.Find("InputIcon"))
+		{
+			iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
+		}
+		else if (iconPoint == null)
+		{
+			iconPoint = Instantiate(IconPrefab, transform).GetComponent<RectTransform>();
+		}
 	}
 
 	void Update()
@@ -68,6 +79,7 @@ public class InputManager : MonoBehaviour
 			TakeMobileInput();
 		else
 			TakeKeyboardInput();
+		doubleClickCheck += Time.deltaTime;
 	}
 
 	void HandleTouch(TouchData t)
@@ -100,6 +112,18 @@ public class InputManager : MonoBehaviour
 		else
 		{
 			//All behavior for when a tap is completed
+			if (clickOne && doubleClickCheck < 0.45f) //double click
+			{
+				clickOne = false;
+				cannonFireScript.Fire(FireType.Target, GetTarget(t.Position));
+			}
+			else if (!clickOne)
+			{
+				clickOne = true;
+			}
+
+			#region Deprecated Code
+			/*
 			if (t.Position.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
 			{
 				cannonFireScript.Fire("debugOneBig");
@@ -109,6 +133,8 @@ public class InputManager : MonoBehaviour
 			{
 				cannonFireScript.Fire("debugTriShot");
 			}
+			*/
+			#endregion
 		}
 	}
 	void TakeMobileInput()
@@ -133,13 +159,18 @@ public class InputManager : MonoBehaviour
 				currentTouches.Remove(t);
 				i--;
 				HandleTouch(t);
+				doubleClickCheck = 0;
 				continue;
 			}
 
+			if (doubleClickCheck > 0.8f)
+			{
+				iconPoint.anchoredPosition = t.Position;
 
-			iconPoint.anchoredPosition = t.Position;
-
-			SetTarget(t.Position);
+				Vector3 pos = GetTarget(t.Position);
+				print(pos - ship.transform.position);
+				movementScript.TargetDirection = pos - ship.transform.position;
+			}
 		}
 	}
 
@@ -189,6 +220,7 @@ public class InputManager : MonoBehaviour
 			this.touch = touch;
 			index = touch.fingerId;
 			duration = 0;
+			print(Position);
 			startPosition = Position;
 		}
 
@@ -223,13 +255,17 @@ public class InputManager : MonoBehaviour
 		else if (Input.GetMouseButton(0)) //mouse held
 		{
 			clickDuration += Time.deltaTime;
-			clickCurrentPosition = Input.mousePosition - screenCorrect;
 
+			if (doubleClickCheck > 0.8f)
+			{
+				clickCurrentPosition = Input.mousePosition - screenCorrect;
 
-			if (iconPoint != null)
-				iconPoint.anchoredPosition = clickCurrentPosition;
+				if (iconPoint != null)
+					iconPoint.anchoredPosition = clickCurrentPosition;
 
-			SetTarget(clickCurrentPosition);
+				Vector3 pos = GetTarget(clickCurrentPosition);
+				movementScript.TargetDirection = pos - ship.transform.position;
+			}
 		}
 		else if (Input.GetMouseButtonUp(0)) //mouse up 
 		{
@@ -256,24 +292,26 @@ public class InputManager : MonoBehaviour
 			else //click behavior
 			{
 				//Debug.Log(clickCurrentPosition);
-				if (clickCurrentPosition.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
+				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
-					cannonFireScript.Fire("debugOneBig");
+					clickOne = false;
+					cannonFireScript.Fire(FireType.Target, GetTarget(clickCurrentPosition));
 				}
-
-				if (clickCurrentPosition.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
+				else if (!clickOne)
 				{
-					cannonFireScript.Fire("debugTriShot");
+					clickOne = true;
 				}
 			}
+			doubleClickCheck = 0;
 		}
-		else if(clickCurrentPosition != null)
+		else if (clickCurrentPosition != null && doubleClickCheck > 1f)
 		{
-			SetTarget(clickCurrentPosition);
+			Vector3 pos = GetTarget(clickCurrentPosition);
+			movementScript.TargetDirection = pos - ship.transform.position;
 		}
 	}
 	#endregion
-	void SetTarget(Vector3 input)
+	Vector3 GetTarget(Vector3 input)
 	{
 		// create ray from the camera and passing through the touch position:
 		Ray ray = camera.ScreenPointToRay(input);
@@ -281,13 +319,14 @@ public class InputManager : MonoBehaviour
 		// create a logical plane at this object's position and perpendicular to world Y:
 		Plane plane = new Plane(Vector3.up, Vector3.zero);
 		float distance = 0;
-
 		// if plane hit...
 		if (plane.Raycast(ray, out distance))
 		{
 			// get the point pos has the position in the plane you've touched
-			Vector3 pos = ray.GetPoint(distance) + new Vector3(-14.4f, 0, 5.9f);
-			movementScript.TargetDirection = pos - ship.transform.position;
+			return ray.GetPoint(distance) + new Vector3(-14.4f, 0, 5.9f);
 		}
+		return ship.transform.position;
 	}
 }
+
+
