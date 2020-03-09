@@ -119,8 +119,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Slider+SliderEvent, Unity.ugui, Version=1.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!1 &8210748076640493403
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,11 +199,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb9b7d1df68b3ef4da3757c43df041c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationalAcceleration: 6
   maxRotationalVelocity: 72
-  rotationalDrag: 0.96
-  linearAcceleration: 60
   maxLinearVelocity: 300
+  linearAccelerationScale: 0.95
 --- !u!114 &8210748076640493396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,7 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645a8dc069ba7049a22399aab9cf9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cannonBall: {fileID: 6810507575641601458, guid: 2be3efd9ab28a334cabdd927328840ac,
+  cannonBall: {fileID: 83568729744095847, guid: ae53b0ef0426ddb49801fedf5575741b,
     type: 3}
 --- !u!114 &8210748076640493397
 MonoBehaviour:
@@ -233,7 +229,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBarObject: {fileID: 8210748076621396172}
-  camera: {fileID: 0}
 --- !u!114 &8210748076640493402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,8 +305,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, Unity.ugui,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -321,6 +314,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &8210748076881627963
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,8 +479,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, Unity.ugui,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -496,6 +488,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &8210748077790610350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -634,6 +627,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -665,6 +659,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8210748076640493394}
     m_Modifications:
+    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Name
+      value: Hurtbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: attachedObject
+      value: 
+      objectReference: {fileID: 8210748076640493403}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: type
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916495, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -729,26 +743,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.x
       value: 1.0392408
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: m_Name
-      value: Hurtbox
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: attachedObject
-      value: 
-      objectReference: {fileID: 8210748076640493403}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: damage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: type
-      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c, type: 3}

@@ -8,7 +8,7 @@ public class ShipMovementScript : MonoBehaviour
     private Rigidbody rb;
 	public Vector3 TargetDirection { get; set;}
     private float maxRotationalVelocity = 9;
-    private float maxLinearVelocity = 1;
+    private float maxLinearVelocity = 2;
 	private float linearAccelerationScale = 1;
     // Start is called before the first frame update
     void Start()
