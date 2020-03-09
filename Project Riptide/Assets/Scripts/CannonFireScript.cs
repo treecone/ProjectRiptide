@@ -59,7 +59,7 @@ public class CannonFireScript : MonoBehaviour
 
 	private class CannonShot
     {
-        public float fireSpeedHoriz = 10;
+        public float fireSpeedHoriz = 15;
         public float fireSpeedVert = 4;
         private int damage;
         private Vector3 direction;
@@ -67,6 +67,7 @@ public class CannonFireScript : MonoBehaviour
         private int count;
         private float spreadAngle;
         private float spreadDisplacement;
+
 
         public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float spreadAngle, float spreadDisplacement)
         {
@@ -91,7 +92,7 @@ public class CannonFireScript : MonoBehaviour
 
                 ball.transform.rotation = angle;
 
-                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + ((direction * 2 + shipTransform.forward)/2 * fireSpeedHoriz);
+				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + ((direction + shipTransform.forward) /2 * fireSpeedHoriz);
                 ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
             }
             

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
+	
+	public Vector3 tempOffset =  new Vector3(-14.4f, 0, 5.9f);
 	//Number of buttons currently being touched on screen, not sure if we'll need this variable but for debug
 	public int buttonsPressed;
 
@@ -313,6 +315,7 @@ public class InputManager : MonoBehaviour
 	#endregion
 	Vector3 GetTarget(Vector3 input)
 	{
+		input += screenCorrect;
 		// create ray from the camera and passing through the touch position:
 		Ray ray = camera.ScreenPointToRay(input);
 
@@ -322,8 +325,10 @@ public class InputManager : MonoBehaviour
 		// if plane hit...
 		if (plane.Raycast(ray, out distance))
 		{
+			Vector3 pos = ray.GetPoint(distance);
+			Debug.DrawLine(ship.transform.position, pos, Color.red);
 			// get the point pos has the position in the plane you've touched
-			return ray.GetPoint(distance) + new Vector3(-14.4f, 0, 5.9f);
+			return ray.GetPoint(distance);
 		}
 		return ship.transform.position;
 	}
