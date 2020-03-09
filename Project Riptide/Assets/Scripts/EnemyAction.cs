@@ -131,14 +131,18 @@ public partial class Enemy : PhysicsScript
     private bool KoiDashCharge(ref float time)
     {
         const float MAX_TIME = 1.0f;
+        const float STALL_TIME = 0.2f;
 
         //Stop motion at begining of charge
         if (time == 0)
             StopMotion();
 
-        //Look towards player
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+        if (time <= MAX_TIME - STALL_TIME)
+        {
+            //Look towards player
+            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+        }
 
         if (time >= MAX_TIME)
             return false;
@@ -201,7 +205,7 @@ public partial class Enemy : PhysicsScript
     private bool KoiBubbleBlastCharge(ref float time)
     {
         const float MAX_TIME = 2.0f;
-        const float STALL_TIME = 0.5f;
+        const float STALL_TIME = 0.1f;
 
         if (time < MAX_TIME - STALL_TIME)
         {
