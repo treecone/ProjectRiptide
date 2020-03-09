@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item 
+[System.Serializable]
+public struct Item 
 {
 
     public int id; //These are public, and thus not secure...
