@@ -164,8 +164,8 @@ public partial class Enemy : PhysicsScript
                 break;
             case EnemyType.KoiBoss:
                 speed = 1.0f;
-                health = 100;
-                maxHealth = 100;
+                health = 200;
+                maxHealth = 200;
                 timeBetween = 5.0;
                 timeCurrent = timeBetween;
                 startPos = transform.position;
