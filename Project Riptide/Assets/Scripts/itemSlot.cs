@@ -21,9 +21,6 @@ public class ItemSlot: MonoBehaviour
 
     public void Clear()
     {
-        item = null;
-        item.amount = 0;
-        gameObject.transform.Find("Item Image").GetComponent<Image>().sprite = null;
-        gameObject.transform.Find("AmountText").GetComponent<TextMeshProUGUI>().text = "";
+        Destroy(gameObject);
     }
 }

@@ -11,6 +11,8 @@ public class Lootable : MonoBehaviour
     private Rigidbody rb;
     public Mesh [] diffrentMeshes;
 
+    private GameObject player;
+
     void Start()
     {
         //Changing Meshes
@@ -43,6 +45,11 @@ public class Lootable : MonoBehaviour
         {
             rb.AddForce(Vector3.up * 10);
             rb.AddForce(rb.velocity * -1 * 3);
+        }
+
+        if (Vector3.Distance(this.transform.position, player.transform.position) < 0.2f)
+        {
+            GameObject.Find("Canvas").transform.Find("InventoryWindows").GetComponent<Inventory>().AddItem("Stone", 8);
         }
     }
 }
