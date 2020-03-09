@@ -10,7 +10,7 @@ public partial class Enemy : PhysicsScript
     {
         //Calculate net force
         Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
         //Check for collision
         /*if (CheckCollision() || playerDistance < 5.0f)
@@ -63,6 +63,8 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool DashCharge(ref float time)
     {
+        const float MAX_TIME = 2.0f;
+
         //Stop motion before charge
         if (time == 0)
             StopMotion();
@@ -71,7 +73,7 @@ public partial class Enemy : PhysicsScript
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
 
-        if (time >= 2.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -84,6 +86,8 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool DashAttack(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
         //Add hitbox at begining
         if (time == 0.0f)
             hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
@@ -107,7 +111,7 @@ public partial class Enemy : PhysicsScript
             ApplyConstantMoveForce(-transform.forward, 10.0f * speed, 0.3f);
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
             hitboxes.RemoveAt(hitboxes.Count - 1);
@@ -125,6 +129,8 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiDashCharge(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
         //Stop motion at begining of charge
         if (time == 0)
             StopMotion();
@@ -133,7 +139,7 @@ public partial class Enemy : PhysicsScript
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -146,10 +152,12 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiDashAttack(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 2.0f * transform.localScale.x, new Vector3(1, 1, 1) * transform.localScale.x, HitboxType.EnemyHitbox, ramingDamage));
             ApplyMoveForce(transform.forward, 30.0f * speed, 1.0f);
         }
 
@@ -172,7 +180,7 @@ public partial class Enemy : PhysicsScript
             //ApplyFriction(0.25f);
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
             hitboxes.RemoveAt(hitboxes.Count - 1);
@@ -191,7 +199,10 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastCharge(ref float time)
     {
-        if (time < 1.5f)
+        const float MAX_TIME = 2.0f;
+        const float STALL_TIME = 0.5f;
+
+        if (time < MAX_TIME - STALL_TIME)
         {
             //Stop motion at start
             if (time == 0)
@@ -202,7 +213,7 @@ public partial class Enemy : PhysicsScript
             rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
         }
 
-        if (time >= 2.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -246,10 +257,12 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterDash(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
         //Start dashing
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 2.0f * transform.localScale.x, new Vector3(1, 1, 1) * transform.localScale.x, HitboxType.EnemyHitbox, ramingDamage));
             gravity = ApplyArcForce(transform.forward, 30.0f * speed, 2f * transform.localScale.y, 1.0f);
         }
 
@@ -261,6 +274,7 @@ public partial class Enemy : PhysicsScript
                 inKnockback = true;
                 velocity.x = 0;
                 velocity.z = 0;
+                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
             }
             ApplyForce(gravity);
             //ApplyFriction(0.25f);
@@ -268,18 +282,17 @@ public partial class Enemy : PhysicsScript
         //Do knockback if there was a hit
         else
         {
-            ApplyConstantMoveForce(-transform.forward, 5.0f * speed, 0.3f);
             ApplyForce(gravity);
 
             //Stop moving fish if it goes below its original height
             if (transform.position.y <= initalPos)
             {
                 ReturnToInitalPosition();
-                time = 1.0f;
+                time = MAX_TIME;
             }
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             StopMotion();
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
@@ -299,12 +312,15 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterDashReturn(ref float time)
     {
+        const float MAX_TIME = 4.0f;
+        const float STALL_TIME = 3.0f;
+
         //Move fish above water
-        if (time < 1.0f)
+        if (time < MAX_TIME - STALL_TIME)
         {
             ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
         }
-        else if (time < 4.0f)
+        else if (time < MAX_TIME)
         {
             StopMotion();
             //Do nothing, give player chance to attack
@@ -332,10 +348,12 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastUnderwaterCharge(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
         //Move fish out of water
         ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             StopMotion();
             return false;
@@ -352,7 +370,9 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastReturn(ref float time)
     {
-        if (time < 1.5f)
+        const float STALL_TIME = 1.5f;
+
+        if (time < STALL_TIME)
         {
             //Do nothing, give player chance to attack
         }
@@ -379,10 +399,13 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterFollow(ref float time)
     {
-        if (time < 4.0f)
+        const float MAX_TIME = 4.5f;
+        const float STALL_TIME = 0.5f;
+
+        if (time < MAX_TIME - STALL_TIME)
         {
             //Calculate net force
-            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 1.5f;
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
 
             //Check for collision
@@ -401,17 +424,17 @@ public partial class Enemy : PhysicsScript
                 rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
             ApplyForce(netForce);
-            ApplyFriction(0.25f);
+            //ApplyFriction(0.25f);
 
             //If fish is right under player, change to attack
             if (playerDistance <= 3.1f)
             {
                 StopMotion();
-                time = 4.0f;
+                time = MAX_TIME - STALL_TIME;
             }
         }
 
-        if (time >= 4.5f)
+        if (time >= MAX_TIME)
         {
             StopMotion();
             return false;
@@ -429,9 +452,11 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterAttack(ref float time)
     {
+        //This one's too complicated to add constant times to work with
+
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position, new Vector3(1, 2.3f, 6), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x, HitboxType.EnemyHitbox, ramingDamage));
             gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
         }
 
