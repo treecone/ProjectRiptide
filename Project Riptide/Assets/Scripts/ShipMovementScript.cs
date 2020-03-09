@@ -7,9 +7,9 @@ public class ShipMovementScript : MonoBehaviour
 {
     private Rigidbody rb;
 	public Vector3 TargetDirection { get; set;}
-    public float maxRotationalVelocity;
-    public float maxLinearVelocity;
-	public float linearAccelerationScale = 0.95f;
+    private float maxRotationalVelocity = 9;
+    private float maxLinearVelocity = 1;
+	private float linearAccelerationScale = 1;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,13 +17,13 @@ public class ShipMovementScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
 		Vector3 Target;
 		float distance = TargetDirection.magnitude;
 
-		if (distance > 2f) 
+		if (distance > 1.5f) 
 			Target = transform.position + TargetDirection.normalized * 5f;
 		else
 			Target = transform.position + TargetDirection.normalized * 0.1f;
@@ -37,7 +37,7 @@ public class ShipMovementScript : MonoBehaviour
 		//rotate us over time according to speed until we are in the required rotation
 		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * maxRotationalVelocity);
 
-		if (distance > 2f)
+		if (distance > 1.5f)
 		{
 			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity * Mathf.Pow(linearAccelerationScale, -distance));	
 		}
