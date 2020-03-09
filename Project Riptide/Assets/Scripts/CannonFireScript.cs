@@ -91,7 +91,7 @@ public class CannonFireScript : MonoBehaviour
 
                 ball.transform.rotation = angle;
 
-                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + (direction * fireSpeedHoriz);
+                ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeedVert) + ((direction * 2 + shipTransform.forward)/2 * fireSpeedHoriz);
                 ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
             }
             
