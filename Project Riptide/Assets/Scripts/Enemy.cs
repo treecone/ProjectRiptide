@@ -238,6 +238,10 @@ public partial class Enemy : PhysicsScript
         if (health <= 0)
         {
             health = 0;
+            //Drop loot
+            GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
+            lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().GetRandomItem();
+            lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
             //Kill monster
             Destroy(gameObject);
         }
@@ -350,7 +354,7 @@ public partial class Enemy : PhysicsScript
             new Quaternion())
             .GetComponent<EnemyProjectile>().LoadProjectile(
             transform.TransformVector(position),
-            speed,
+            0.75f,
             damage,
             maxLifeSpan,
             movementPattern);

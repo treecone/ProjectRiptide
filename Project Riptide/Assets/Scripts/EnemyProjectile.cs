@@ -21,7 +21,7 @@ public class EnemyProjectile : MonoBehaviour
     void Start()
     {
         projHitbox = Instantiate(hitbox, transform);
-        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.EnemyHitbox, damage);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.030f, 0.030f, 0.030f), HitboxType.EnemyHitbox, damage);
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
         currLifeSpan = 0.0f;
     }

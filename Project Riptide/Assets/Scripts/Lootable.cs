@@ -32,7 +32,7 @@ public class Lootable : MonoBehaviour
             gameObject.GetComponent<MeshCollider>().sharedMesh = diffrentMeshes[2];
         }
 
-
+        player = GameObject.FindGameObjectWithTag("Player");
         transform.GetChild(0).GetComponent<SpriteRenderer>().color = lightColor;
         itemName = itemStored.name;
         rb = gameObject.GetComponent<Rigidbody>();
@@ -47,9 +47,10 @@ public class Lootable : MonoBehaviour
             rb.AddForce(rb.velocity * -1 * 3);
         }
 
-        if (Vector3.Distance(this.transform.position, player.transform.position) < 0.2f)
+        if (Vector3.Distance(this.transform.position, player.transform.position) < 2.0f)
         {
             GameObject.Find("Canvas").transform.Find("InventoryWindows").GetComponent<Inventory>().AddItem("Stone", 8);
+            Destroy(gameObject);
         }
     }
 }

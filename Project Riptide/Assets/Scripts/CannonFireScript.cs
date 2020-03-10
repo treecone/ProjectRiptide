@@ -59,7 +59,7 @@ public class CannonFireScript : MonoBehaviour
 
 	private class CannonShot
     {
-        public float fireSpeedHoriz = 15;
+        public float fireSpeedHoriz = 45;
         public float fireSpeedVert = 4;
         private int damage;
         private Vector3 direction;
