@@ -63,13 +63,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c389a08d11e7248b867fe110afda0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tempOffset: {x: -14.4, y: 0, z: 5.9}
   buttonsPressed: 0
   camera: {fileID: 0}
   touchingLeft: 0
   touchingRight: 0
   speedSlider: {fileID: 0}
+  iconPoint: {fileID: 0}
+  IconPrefab: {fileID: 0}
   mobile: 0
-  turning: 0
   turnTouchArea: 300
   minSwipeDisplacement: 100
   minSwipeSpeed: 1000
@@ -88,6 +90,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 0}
   currentChunk: {x: 0, y: 0}
+  currentRegion: 0
 --- !u!114 &5105691598381198447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,10 +100,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 6847726073716374341}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 900a651ce7b3ec54b96270c7703ee256, type: 3}
+  m_Script: {fileID: 11500000, guid: 2095e9f49035f7445b1de0b63dd6978b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PortMainMenu: {fileID: 0}
-  PortDryDockMenu: {fileID: 0}
-  ScrollContent: {fileID: 0}
-  ListboxItem: {fileID: 0}

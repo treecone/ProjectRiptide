@@ -5,34 +5,37 @@ using UnityEngine.UI;
 
 public class PortManager : MonoBehaviour
 {
-	public GameObject player;
-	public GameObject PortUI;
-	private bool inPort;
+	private GameObject player;
+	private GameObject PortUI;
+	public bool inPort;
 
     // Start is called before the first frame update
     void Start()
 	{
 		if(player == null)
 			player = GameObject.FindGameObjectWithTag("Player");
-		inPort = false;
+        PortUI = GameObject.Find("Canvas").transform.Find("PortMainMenu").gameObject;
+        inPort = false;
 	}
 
     // Update is called once per frame
     void Update()
     {
 		//If the escape timer is zero and the player is near the port, then disable player movement
-		if (!inPort && Vector3.Distance(player.transform.position, transform.position) < 1.5)
+		if (!inPort && Vector3.Distance(player.transform.position, transform.position) < 10)
 		{
-			inPort = true;
+            inPort = true;
 			player.GetComponent<ShipMovementScript>().enabled = false;
 			PortUI.SetActive(true);
 			player.GetComponent<Rigidbody>().velocity = Vector3.zero;
-			player.transform.position = gameObject.transform.position;
-		}
-
-		if(Vector3.Distance(player.transform.position, transform.position) > 1.5)
-		{
-			inPort = false;
 		}
 	}
+
+    public void LeavePort ()
+    {
+        inPort = false;
+        player.transform.position = gameObject.transform.position + this.transform.forward * -20;
+        player.GetComponent<ShipMovementScript>().enabled = true;
+        PortUI.SetActive(false);
+    }
 }
