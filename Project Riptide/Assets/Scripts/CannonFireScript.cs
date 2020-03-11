@@ -16,10 +16,10 @@ public class CannonFireScript : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-		if(Input.GetKeyDown(KeyCode.Space))
+		/*if(Input.GetKeyDown(KeyCode.Space))
 		{
 			Fire(FireType.Both);
-		}
+		}*/
     }
 
     public void Fire(FireType shotType)

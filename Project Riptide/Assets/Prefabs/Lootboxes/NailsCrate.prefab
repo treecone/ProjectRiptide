@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3663769733212351239
+--- !u!1 &2924431735284072397
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1831996365321170874}
-  - component: {fileID: 1762922381022303114}
+  - component: {fileID: 8091462939136995256}
+  - component: {fileID: 4410879389687354643}
   m_Layer: 0
   m_Name: LightBeam
   m_TagString: Untagged
@@ -17,27 +17,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!4 &1831996365321170874
+--- !u!4 &8091462939136995256
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3663769733212351239}
+  m_GameObject: {fileID: 2924431735284072397}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2.08, z: 0}
   m_LocalScale: {x: 1, y: 0.5, z: 1}
   m_Children: []
-  m_Father: {fileID: 9089657846611127595}
+  m_Father: {fileID: 265529683321736732}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1762922381022303114
+--- !u!212 &4410879389687354643
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3663769733212351239}
+  m_GameObject: {fileID: 2924431735284072397}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8d54f0b6132d8d44593568a3c92205f0, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.33842143, g: 0.9339623, b: 0.2599235, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &9089657846611127597
+--- !u!1 &7109866704744692922
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,49 +89,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 9089657846611127595}
-  - component: {fileID: 9089657846611127594}
-  - component: {fileID: 9089657846611127593}
-  - component: {fileID: 9089657846611127599}
-  - component: {fileID: 9089657846611127598}
-  - component: {fileID: 5682330843536255963}
+  - component: {fileID: 265529683321736732}
+  - component: {fileID: 3113515569088749273}
+  - component: {fileID: 231444629899557374}
+  - component: {fileID: 2742625071357692150}
+  - component: {fileID: 1968415011319642075}
+  - component: {fileID: 5188409731083813479}
   m_Layer: 0
-  m_Name: Lootable
+  m_Name: NailsCrate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &9089657846611127595
+--- !u!4 &265529683321736732
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.407234, y: 3.57, z: 2.82}
+  m_GameObject: {fileID: 7109866704744692922}
+  m_LocalRotation: {x: 0.020633083, y: 0.122751266, z: 0.10485287, w: 0.98666734}
+  m_LocalPosition: {x: -15.315213, y: 0.04, z: -91.8106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1831996365321170874}
+  - {fileID: 8091462939136995256}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &9089657846611127594
+--- !u!33 &3113515569088749273
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
+  m_GameObject: {fileID: 7109866704744692922}
   m_Mesh: {fileID: 4300000, guid: 1e75f22e82cfae8419184a34c77c8506, type: 3}
---- !u!23 &9089657846611127593
+--- !u!23 &231444629899557374
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
+  m_GameObject: {fileID: 7109866704744692922}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -164,43 +164,43 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &9089657846611127599
+--- !u!114 &2742625071357692150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
+  m_GameObject: {fileID: 7109866704744692922}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8f9da9190214b943a7f68b79e360428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   itemStored:
-    id: 0
-    name: 
-    description: 
-    stackable: 0
-    rarity: 0
-    value: 0
-    slug: 
-    sprite: {fileID: 0}
+    id: 4
+    name: Nails
+    description: It's a bunch of Nails.
+    stackable: 1
+    rarity: 1
+    value: 10
+    slug: nails
+    sprite: {fileID: 21300000, guid: 62469a68dbeb3ee428fa3a056f6d4268, type: 3}
     amount: 0
-    maxAmount: 0
-  lightColor: {r: 0, g: 0, b: 0, a: 0}
-  itemName: 
+    maxAmount: 100
+  lightColor: {r: 0.33842143, g: 0.9339623, b: 0.2599235, a: 1}
+  itemName: Nails
   waterElevation: 0.06
   diffrentMeshes:
   - {fileID: 4300000, guid: 2a9b2d1d327472a4ea863dcb9ff71ca5, type: 3}
   - {fileID: 4300000, guid: 1e75f22e82cfae8419184a34c77c8506, type: 3}
   - {fileID: 4300000, guid: 8075f4c1df4295c49b649ab169b92b4b, type: 3}
---- !u!54 &9089657846611127598
+--- !u!54 &1968415011319642075
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
+  m_GameObject: {fileID: 7109866704744692922}
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
@@ -210,13 +210,13 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!64 &5682330843536255963
+--- !u!64 &5188409731083813479
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9089657846611127597}
+  m_GameObject: {fileID: 7109866704744692922}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1

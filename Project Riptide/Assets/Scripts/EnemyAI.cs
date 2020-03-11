@@ -37,10 +37,6 @@ public partial class Enemy : PhysicsScript
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
 
         //Check for collision
-        /*if (CheckCollision() || playerDistance < 5.0f)
-        {
-            netForce = Vector3.Cross(Vector3.up, netForce);
-        }*/
         if(CheckObstacle())
         {
             ApplyForce(Steer(AvoidObstacle()) * 2.0f);
@@ -121,12 +117,6 @@ public partial class Enemy : PhysicsScript
     /// </summary>
     public void KoiBossHostile()
     {
-        //Special[0]: Counts for any special
-        //Special[1]: triple dash
-        //Special[2]: projectile attack / underwater attack
-        //Special[3]: charged projectile attack
-        //Special[4]: used for koi bouncing backwards after hitting something, not an attack
-
         //If enemy is outside max radius, set to passive
         if (enemyDistance > maxRadius)
         {
@@ -229,10 +219,7 @@ public partial class Enemy : PhysicsScript
 
                 if (currTime < 1.0f)
                 {
-                    //transform.Translate(Vector3.down * Time.deltaTime * 3);
                     ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
-                    //shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-                   // heightMult += Vector3.up.y * Time.deltaTime * 3;
                     currTime += Time.deltaTime;
                 }
                 else

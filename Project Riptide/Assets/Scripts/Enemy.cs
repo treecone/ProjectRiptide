@@ -121,8 +121,8 @@ public partial class Enemy : PhysicsScript
                 break;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-            TakeDamage(10);
+        /*if (Input.GetKeyDown(KeyCode.Space))
+            TakeDamage(10);*/
 
         //Make health bar face player
         healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
@@ -240,7 +240,7 @@ public partial class Enemy : PhysicsScript
             health = 0;
             //Drop loot
             GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
-            lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().GetRandomItem();
+            lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
             lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
             //Kill monster
             Destroy(gameObject);

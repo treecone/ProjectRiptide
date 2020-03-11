@@ -43,13 +43,13 @@ public class Lootable : MonoBehaviour
     {
         if(gameObject.transform.position.y < waterElevation)
         {
-            rb.AddForce(Vector3.up * 10);
+            rb.AddForce(Vector3.up * 30);
             rb.AddForce(rb.velocity * -1 * 3);
         }
 
         if (Vector3.Distance(this.transform.position, player.transform.position) < 2.0f)
         {
-            GameObject.Find("Canvas").transform.Find("InventoryWindows").GetComponent<Inventory>().AddItem("Stone", 8);
+            GameObject.Find("Canvas").transform.Find("InventoryWindows").GetComponent<Inventory>().AddItem(itemStored.name, 8);
             Destroy(gameObject);
         }
     }

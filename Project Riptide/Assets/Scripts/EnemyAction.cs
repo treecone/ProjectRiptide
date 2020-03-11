@@ -13,10 +13,6 @@ public partial class Enemy : PhysicsScript
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
         //Check for collision
-        /*if (CheckCollision() || playerDistance < 5.0f)
-        {
-            netForce = Vector3.Cross(Vector3.up, netForce);
-        }*/
         if (CheckObstacle())
         {
             netForce += Steer(AvoidObstacle()) * 1.0f;
@@ -28,9 +24,13 @@ public partial class Enemy : PhysicsScript
             rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
         ApplyForce(netForce);
-        //ApplyFriction(0.25f);
     }
 
+    /// <summary>
+    /// Go through enemy's action queue and play each action
+    /// Returns false when finished
+    /// </summary>
+    /// <returns></returns>
     private bool DoActionQueue()
     {
         //Go through enmeies action queue
@@ -181,8 +181,7 @@ public partial class Enemy : PhysicsScript
         //Do knockback if there was a hit
         else
         {
-            //ApplyConstantMoveForce(-transform.forward, 2.0f * speed, 0.3f);
-            //ApplyFriction(0.25f);
+            //Do nothing
         }
 
         if (time >= MAX_TIME)
@@ -282,7 +281,6 @@ public partial class Enemy : PhysicsScript
                 ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
             }
             ApplyForce(gravity);
-            //ApplyFriction(0.25f);
         }
         //Do knockback if there was a hit
         else
@@ -414,10 +412,6 @@ public partial class Enemy : PhysicsScript
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
 
             //Check for collision
-            /*if (CheckCollision() || playerDistance < 5.0f)
-            {
-                netForce = Vector3.Cross(Vector3.up, netForce);
-            }*/
             if (CheckObstacle())
             {
                 ApplyForce(Steer(AvoidObstacle()) * 2.0f);
@@ -429,7 +423,6 @@ public partial class Enemy : PhysicsScript
                 rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
             ApplyForce(netForce);
-            //ApplyFriction(0.25f);
 
             //If fish is right under player, change to attack
             if (playerDistance <= 3.1f)
