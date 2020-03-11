@@ -34,7 +34,7 @@ public class PortManager : MonoBehaviour
     public void LeavePort ()
     {
         inPort = false;
-        player.transform.position = gameObject.transform.position + this.transform.forward * -20;
+        player.transform.position = gameObject.transform.position + this.transform.right * -20;
         player.GetComponent<ShipMovementScript>().enabled = true;
         PortUI.SetActive(false);
     }
