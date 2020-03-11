@@ -32,11 +32,11 @@ public class Inventory : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.N))
         {
-            AddItem("stone", 8);
+            AddItem("carpscale", 8);
         }
         if (Input.GetKey(KeyCode.M))
         {
-            RemoveItem("stone", 8);
+            RemoveItem("nails", 8);
 
         }
         if (Input.GetKey(KeyCode.J))
