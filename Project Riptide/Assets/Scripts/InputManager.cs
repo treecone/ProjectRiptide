@@ -77,6 +77,9 @@ public class InputManager : MonoBehaviour
 
 	void Update()
 	{
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
+
 		if (mobile)
 			TakeMobileInput();
 		else
