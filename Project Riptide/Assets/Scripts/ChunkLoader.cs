@@ -21,7 +21,9 @@ public class ChunkLoader : MonoBehaviour
     private const float _CHUNKSIDELENGTH = 100; // Base length of each chunk.
     public GameObject ship; // Player
     public Vector2 currentChunk; // The array coordinates of the chunk, not real world coordinates!!
-    public Region currentRegion; 
+    public Region currentRegion;
+    private bool displayedAllChunks;
+    public bool showAllChunks;
 
     // Start is called before the first frame update
     void Start()
@@ -30,7 +32,8 @@ public class ChunkLoader : MonoBehaviour
         chunks = new Chunk[map.GetLength(0), map.GetLength(1)];
         ship = GameObject.FindGameObjectWithTag("Player");
         visibleChunks = new List<Chunk>();
-
+        showAllChunks = false;
+        displayedAllChunks = false;
         int chinaCount = 1;
         int noneCount = 1;
 
@@ -93,6 +96,44 @@ public class ChunkLoader : MonoBehaviour
     /// </summary>
     public void DisplayChunks()
     {
+        // Display all the chunks
+        if (showAllChunks)
+        {
+            if (!displayedAllChunks)
+            {
+                // Iterate through the 2D array of chunks.
+                for (int i = 0; i < chunks.GetLength(0); i++)
+                {
+                    for (int j = 0; j < chunks.GetLength(1); j++)
+                    {
+                        // Chunk is not visible, make it visible.
+                        if (!visibleChunks.Contains(chunks[i, j]))
+                        {
+                            visibleChunks.Add(chunks[i, j]);
+                            chunks[i, j].chunk.SetActive(true);
+                        }
+                    }
+                }
+                displayedAllChunks = true;
+            }
+            return;
+        }
+        // Hide all the chunks.
+        else if(!showAllChunks && displayedAllChunks)
+        {
+            // Iterate through the 2D array of chunks.
+            for (int i = 0; i < chunks.GetLength(0); i++)
+            {
+                for (int j = 0; j < chunks.GetLength(1); j++)
+                {
+                    chunks[i, j].chunk.SetActive(false);
+                    visibleChunks.Remove(chunks[i, j]);
+                }
+            }
+            displayedAllChunks = false;
+            return;
+        }
+        
         for (int x = (int)(currentChunk.x - 1); x < (int)(currentChunk.x + 2); x++)
         {
             for (int z = (int)(currentChunk.y - 1); z < (int)(currentChunk.y + 2); z++)
