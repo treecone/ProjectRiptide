@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Item //MADE THIS A STRUCT
+[System.Serializable]
+public struct Item 
 {
 
     public int id; //These are public, and thus not secure...
@@ -13,9 +14,10 @@ public class Item //MADE THIS A STRUCT
     public int value;
     public string slug;
     public Sprite sprite;
+    public int amount;
     public int maxAmount;
 
-    public Item(int id, string itemName, string description, bool stackable, int rarity, int value, string slug, Sprite sprite, int maxAmount)
+    public Item(int id, string itemName, string description, bool stackable, int rarity, int value, string slug, Sprite sprite, int amount, int maxAmount)
     {
         this.id = id;
         this.name = itemName;
@@ -25,6 +27,7 @@ public class Item //MADE THIS A STRUCT
         this.value = value;
         this.slug = slug;
         this.sprite = sprite;
+        this.amount = amount;
         this.maxAmount = maxAmount;
     }
 }

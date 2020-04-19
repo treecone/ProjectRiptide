@@ -8,34 +8,27 @@ public partial class Enemy : PhysicsScript
     //Usually should be used for enemy AI when not in an action
     private void FollowPlayer()
     {
-        /*//Track player
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        //Find the direction the monster should be looking
-        lookRotation = Quaternion.LookRotation(destination - transform.position);
-        //Find local forward vector
-        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        //When monster gets close circle player
-        if (!CheckCollision() || playerDistance < 5.0f)
-        {
-            lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-        }
-
-        //Rotate and move monster
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
-        transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);*/
-
         //Calculate net force
         Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
         //Check for collision
-        if (CheckCollision() || playerDistance < 5.0f)
+        /*if (CheckCollision() || playerDistance < 5.0f)
         {
             netForce = Vector3.Cross(Vector3.up, netForce);
+        }*/
+        if (CheckObstacle())
+        {
+            netForce += Steer(AvoidObstacle()) * 1.0f;
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
         }
+
         //Rotate in towards direction of velocity
-        rotation = Quaternion.LookRotation(velocity);
+        if (velocity != Vector3.zero) 
+            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
         ApplyForce(netForce);
+        //ApplyFriction(0.25f);
     }
 
     private bool DoActionQueue()
@@ -71,21 +64,17 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool DashCharge(ref float time)
     {
-        /* !!!BEFORE PHYSICS!!!
-        //Track player
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        //Find the direction the monster should be looking
-        lookRotation = Quaternion.LookRotation(destination - transform.position);
-        //Find local forward vector
-        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.0f);*/
+        const float MAX_TIME = 2.0f;
+
+        //Stop motion before charge
         if (time == 0)
             StopMotion();
 
+        //Look towards player
         destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
 
-        if (time >= 2.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -98,25 +87,14 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool DashAttack(ref float time)
     {
-        if(time == 0.0f)
-        {
+        const float MAX_TIME = 1.0f;
+
+        //Add hitbox at begining
+        if (time == 0.0f)
             hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
-        }
 
         if (!inKnockback)
         {
-            /* !!!BEFORE PHYSICS !!!
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            CheckCollision();
-            //If monster hits player, stop special
-            if (playerCollision || obsticalCollision)
-            {
-                inKnockback = true;
-                time = 0.7f;
-            }
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);*/
-
             //If monster hits player, stop special
             if (playerCollision || obsticalCollision)
             {
@@ -124,20 +102,20 @@ public partial class Enemy : PhysicsScript
                 time = 0.7f;
             }
 
-            ApplyForce(new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed * 10);
-            Debug.Log(acceleration);
+            //Move forwards
+            ApplyConstantMoveForce(transform.forward, 20.0f * speed, 1.0f);
         }
         //Do knockback if there was a hit
         else
         {
-            //Find local forward vector
-            //Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            ApplyForce(new Vector3(-transform.forward.x, 0, -transform.forward.z).normalized * speed / 3);
+            //Move backwards
+            ApplyConstantMoveForce(-transform.forward, 10.0f * speed, 0.3f);
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+            hitboxes.RemoveAt(hitboxes.Count - 1);
             inKnockback = false;
             return false;
         }
@@ -152,22 +130,21 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiDashCharge(ref float time)
     {
-        /*
-        //Track player
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        //Find the direction the monster should be looking
-        lookRotation = Quaternion.LookRotation(destination - transform.position);
-        //Find local forward vector
-        Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);*/
+        const float MAX_TIME = 1.0f;
+        const float STALL_TIME = 0.2f;
 
+        //Stop motion at begining of charge
         if (time == 0)
             StopMotion();
 
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+        if (time <= MAX_TIME - STALL_TIME)
+        {
+            //Look towards player
+            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+        }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -180,46 +157,40 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiDashAttack(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
+        //Add hitbox and start dash
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
-            ApplyForce(new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed * 1000);
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage));
+            ApplyMoveForce(transform.forward, 30.0f * speed, 1.0f);
         }
 
         if (!inKnockback)
         {
-            /*//Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            CheckCollision();
-            //If monster hits player, stop special
             if (playerCollision || obsticalCollision)
             {
-                inKnockback = true;
-                time = 0.7f;
-            }
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 3);*/
-
-            if (playerCollision || obsticalCollision)
-            {
+                //Go into knockback
                 StopMotion();
                 inKnockback = true;
                 time = 0.7f;
+                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
             }
-            ApplyFriction(0.5f);
+            //ApplyFriction(0.25f);
         }
         //Do knockback if there was a hit
         else
         {
-            //Find local forward vector
-            //Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            //transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
-            ApplyForce(new Vector3(-transform.forward.x, 0, -transform.forward.z) * maxSpeed * 20);
+            //ApplyConstantMoveForce(-transform.forward, 2.0f * speed, 0.3f);
+            //ApplyFriction(0.25f);
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+            hitboxes.RemoveAt(hitboxes.Count - 1);
             inKnockback = false;
+            StopMotion();
             return false;
         }
         else
@@ -233,24 +204,21 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastCharge(ref float time)
     {
-        if (time < 1.5f)
-        {
-            /* BEFORE PHYSICS
-            //Track player
-            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            //Find the direction the monster should be looking
-            lookRotation = Quaternion.LookRotation(destination - transform.position);
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 3.0f);*/
+        const float MAX_TIME = 2.0f;
+        const float STALL_TIME = 0.1f;
 
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Stop motion at start
             if (time == 0)
                 StopMotion();
+
+            //Look towards player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
         }
 
-        if (time >= 2.0f)
+        if (time >= MAX_TIME)
             return false;
         else
             return true;
@@ -263,6 +231,7 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastAttack(ref float time)
     {
+        //Spawn projectiles
         SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward);
         SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward);
         SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward);
@@ -293,51 +262,46 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterDash(ref float time)
     {
+        const float MAX_TIME = 1.0f;
+
+        //Start dashing
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage));
+            gravity = ApplyArcForce(transform.forward, 30.0f * speed, 2f * transform.localScale.y, 1.0f);
         }
 
         if (!inKnockback)
         {
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            CheckCollision();
             //If monster hits player, stop special
             if (playerCollision || obsticalCollision)
             {
                 inKnockback = true;
-                if (time < 0.5f)
-                    time = 1.0f - time;
+                velocity.x = 0;
+                velocity.z = 0;
+                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
             }
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 2);
-            //Move fish parabolically
-            transform.Translate(new Vector3(0, (-32 * time + 16) * Time.deltaTime, 0));
-            shadow.transform.Translate(new Vector3(0, (32 * time - 16) * Time.deltaTime, 0), Space.World);
-            heightMult += (32 * time - 16) * Time.deltaTime;
+            ApplyForce(gravity);
+            //ApplyFriction(0.25f);
         }
         //Do knockback if there was a hit
         else
         {
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            transform.Translate(new Vector3(-forward.x, 0, -forward.z) * speed / 4);
+            ApplyForce(gravity);
 
             //Stop moving fish if it goes below its original height
             if (transform.position.y <= initalPos)
             {
                 ReturnToInitalPosition();
-                time = 1.0f;
+                time = MAX_TIME;
             }
-
-             transform.Translate(new Vector3(0, (-32 * time + 16) * Time.deltaTime, 0));
-             shadow.transform.Translate(new Vector3(0, (32 * time - 16) * Time.deltaTime, 0), Space.World);
-             heightMult += (32 * time - 16) * Time.deltaTime;
         }
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
         {
+            StopMotion();
             GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+            hitboxes.RemoveAt(hitboxes.Count - 1);
             inKnockback = false;
             return false;
         }
@@ -353,26 +317,27 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterDashReturn(ref float time)
     {
+        const float MAX_TIME = 4.0f;
+        const float STALL_TIME = 3.0f;
+
         //Move fish above water
-        if (time < 1.0f)
+        if (time < MAX_TIME - STALL_TIME)
         {
-            transform.Translate(Vector3.up * Time.deltaTime * 3);
-            shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
-            heightMult += Vector3.down.y * Time.deltaTime * 3;
+            ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
         }
-        else if (time < 4.0f)
+        else if (time < MAX_TIME)
         {
+            StopMotion();
             //Do nothing, give player chance to attack
         }
         //Move fish back underwater
         else if (transform.position.y >= initalPos)
         {
-            transform.Translate(Vector3.down * Time.deltaTime * 3);
-            shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-            heightMult += Vector3.up.y * Time.deltaTime * 3;
+            ApplyConstantMoveForce(Vector3.down, 2f * transform.localScale.y, 1.0f);
         }
         else
         {
+            StopMotion();
             ReturnToInitalPosition();
             return false;
         }
@@ -388,14 +353,16 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastUnderwaterCharge(ref float time)
     {
-        transform.Translate(Vector3.up * Time.deltaTime * 3);
-        shadow.transform.Translate(Vector3.down * Time.deltaTime * 3, Space.World);
-        heightMult += Vector3.down.y * Time.deltaTime * 3;
+        const float MAX_TIME = 1.0f;
 
-        //Debug.Log("Moving up");
+        //Move fish out of water
+        ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
 
-        if (time >= 1.0f)
+        if (time >= MAX_TIME)
+        {
+            StopMotion();
             return false;
+        }
         else
             return true;
     }
@@ -408,18 +375,20 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastReturn(ref float time)
     {
-        if (time < 1.5f)
+        const float STALL_TIME = 1.5f;
+
+        if (time < STALL_TIME)
         {
             //Do nothing, give player chance to attack
         }
         else if (transform.position.y > initalPos)
         {
-            transform.Translate(Vector3.down * Time.deltaTime * 3);
-            shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-            heightMult += Vector3.up.y * Time.deltaTime * 3;
+            //Move fish back down
+            ApplyConstantMoveForce(Vector3.down, 2f * transform.localScale.y, 1.0f);
         }
         else
         {
+            StopMotion();
             ReturnToInitalPosition();
             return false;
         }
@@ -435,30 +404,46 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterFollow(ref float time)
     {
-        if (time < 4.0f)
+        const float MAX_TIME = 4.5f;
+        const float STALL_TIME = 0.5f;
+
+        if (time < MAX_TIME - STALL_TIME)
         {
-            //Track player
-            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            //Find the direction the monster should be looking
-            lookRotation = Quaternion.LookRotation(destination - transform.position);
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            if (CheckCollision())
+            //Calculate net force
+            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 1.5f;
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
+
+            //Check for collision
+            /*if (CheckCollision() || playerDistance < 5.0f)
             {
-                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
+                netForce = Vector3.Cross(Vector3.up, netForce);
+            }*/
+            if (CheckObstacle())
+            {
+                ApplyForce(Steer(AvoidObstacle()) * 2.0f);
             }
 
-            //Rotate and move monster
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 1.6f);
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 10);
+            //Rotate in towards direction of velocity
+            //rotation = Quaternion.LookRotation(velocity);
+            if (velocity != Vector3.zero)
+                rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+
+            ApplyForce(netForce);
+            //ApplyFriction(0.25f);
 
             //If fish is right under player, change to attack
             if (playerDistance <= 3.1f)
-                time = 4.0f;
+            {
+                StopMotion();
+                time = MAX_TIME - STALL_TIME;
+            }
         }
 
-        if (time >= 4.5f)
+        if (time >= MAX_TIME)
+        {
+            StopMotion();
             return false;
+        }
         else
             return true;
     }
@@ -472,29 +457,24 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiUnderwaterAttack(ref float time)
     {
+        //This one's too complicated to add constant times to work with
+
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position, new Vector3(1, 2.3f, 6), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, ramingDamage));
+            gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
         }
 
         if (time <= 0.9f)
         {
             if (!inKnockback)
             {
-                //Find local forward vector
-                Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-                CheckCollision();
                 //If monster hits player, stop special
                 if (playerCollision || obsticalCollision)
                 {
                     inKnockback = true;
-                    if (time < 0.5f)
-                        time = 1.0f - time;
                 }
-                //Move Koi up and down parabolically
-                transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
-                shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
-                heightMult += (64 * time - 32) * Time.deltaTime;
+                ApplyForce(gravity);
             }
             //Do knockback if there was a hit
             else
@@ -504,27 +484,29 @@ public partial class Enemy : PhysicsScript
                     time = 3.9f;
                 else
                 {
-                    transform.Translate(new Vector3(0, (-64 * time + 32) * Time.deltaTime, 0));
-                    shadow.transform.Translate(new Vector3(0, (64 * time - 32) * Time.deltaTime, 0), Space.World);
-                    heightMult += (64 * time - 32) * Time.deltaTime;
+                    ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
                 }
             }
         }
-        if (time > 0.9 && hitboxes.Count > 0)
+        //At the end of the attack, stop motion and remove hitbox
+        if (time > 0.9f && hitboxes.Count > 0)
+        {
+            StopMotion();
             Destroy(hitboxes[hitboxes.Count - 1]);
+            hitboxes.RemoveAt(hitboxes.Count - 1);
+        }
 
         //If player was not hit, make the koi go back under water
-        if (time >= 3.9 && !inKnockback)
+        if (time >= 3.9f && !inKnockback)
         {
             //Move fish down until its back in original position
             if (transform.position.y > initalPos)
             {
-                transform.Translate(Vector3.down * Time.deltaTime * 3);
-                shadow.transform.Translate(Vector3.up * Time.deltaTime * 3, Space.World);
-                heightMult += Vector3.up.y * Time.deltaTime * 3;
+                ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
             }
             else
             {
+                StopMotion();
                 ReturnToInitalPosition();
                 inKnockback = true;
             }
@@ -532,6 +514,7 @@ public partial class Enemy : PhysicsScript
         //Finish attack
         else if (time >= 3.9f)
         {
+            StopMotion();
             inKnockback = false;
             return false;
         }

@@ -5,78 +5,34 @@ using UnityEngine;
 
 public class ShipMovementScript : MonoBehaviour
 {
-    private Rigidbody rb;
-
-    /// <summary>
-    /// The linear velocity of the ship
-    /// </summary>
-    private float linearVelocity;
-
-    /// <summary>
-    /// The rotational velocity of the ship
-    /// </summary>
-    private float rotationalVelocity;
-
-
-    //-----Configs-----
-    public float rotationalAcceleration;
-    public float maxRotationalVelocity;
-    private float minRotationalVelocity;
-    public float rotationalDrag;
-
-    public float linearAcceleration;
-    public float maxLinearVelocity;
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-
-        minRotationalVelocity = -maxRotationalVelocity;
-    }
-
+	private Vector3 Target;
+	public Vector3 TargetDirection { get; set;}
+    private float maxRotationalVelocity = 9;
+    private float maxLinearVelocity = 2;
+	private float linearAccelerationScale = 1;
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        //Apply current rotational and linear velocities
-        transform.Rotate(0, rotationalVelocity * Time.deltaTime, 0, Space.Self);
-        rb.velocity = transform.forward * linearVelocity * Time.deltaTime;
-    }
+		float distance = TargetDirection.magnitude;
+		if (distance > 2f) 
+			Target = transform.position + TargetDirection.normalized * 5f;
+		else
+			Target = transform.position + TargetDirection.normalized * 0.1f;
 
-    public float RotationalVelocity
-    {
-        get
-        {
-            return rotationalVelocity;
-        }
-        set
-        {
-            rotationalVelocity = value;
-            if (rotationalVelocity > maxRotationalVelocity) rotationalVelocity = maxRotationalVelocity;
-            if (rotationalVelocity < minRotationalVelocity) rotationalVelocity = minRotationalVelocity;
-        }
-    }
+		//find the vector pointing from our position to the target
+		Vector3 moveDirection = (Target - transform.position).normalized;
 
-    public float LinearVelocity
-    {
-        get
-        {
-            return linearVelocity;
-        }
-        set
-        {
-            linearVelocity = value;
-            if (linearVelocity > maxLinearVelocity) linearVelocity = maxLinearVelocity;
-        }
-    }
+		//create the rotation we need to be in to look at the target
+		Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
 
-    public void ApplyDrag()
-    {
-        RotationalVelocity *= rotationalDrag;
-        if (Math.Abs(RotationalVelocity) < maxRotationalVelocity / 100)
-        {
-            RotationalVelocity = 0;
-        }
-    }
+		//rotate us over time according to speed until we are in the required rotation
+		transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * maxRotationalVelocity);
+
+		if (distance > 2f)
+		{
+			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity * Mathf.Pow(linearAccelerationScale, -distance));	
+		}
+	}
 
     public Vector3 GetPosition()
     {

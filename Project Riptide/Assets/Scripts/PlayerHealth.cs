@@ -40,7 +40,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health = 0;
             //Kill Player
-            SceneManager.LoadScene("MonsterScene");
+            SceneManager.LoadScene("DemoScene");
         }
     }
 }
