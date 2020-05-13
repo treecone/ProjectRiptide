@@ -1,22 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 // Represents the name of the region, followed by an underscore and any additional information if needed.
 public enum Region
 {
     CHINA,
     CHINA_KOI,
-    NONE
+    OCEAN
 };
 
 public class ChunkLoader : MonoBehaviour
 {
-    public Region[,] map = new Region[,]{ {Region.NONE, Region.NONE, Region.NONE, Region.NONE, Region.NONE,},             // Blueprint for how to layout the world.
-                                          {Region.NONE, Region.CHINA, Region.CHINA, Region.CHINA, Region.NONE},                                    
-                                          {Region.NONE, Region.CHINA, Region.CHINA_KOI, Region.CHINA, Region.NONE},       
-                                          {Region.NONE, Region.CHINA, Region.CHINA, Region.CHINA, Region.NONE },
-                                          {Region.NONE, Region.NONE, Region.NONE, Region.NONE, Region.NONE,}};
+    public Region[,] map = new Region[,]{ {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN,},             // Blueprint for how to layout the world.
+                                          {Region.OCEAN, Region.CHINA, Region.CHINA, Region.CHINA, Region.OCEAN},                                    
+                                          {Region.OCEAN, Region.CHINA, Region.CHINA_KOI, Region.CHINA, Region.OCEAN},       
+                                          {Region.OCEAN, Region.CHINA, Region.CHINA, Region.CHINA, Region.OCEAN },
+                                          {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN,}};
 
     public Chunk[,] chunks;  // List of all the chunk prefabs
     public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
@@ -30,6 +31,8 @@ public class ChunkLoader : MonoBehaviour
     public string previousRegion;
     public string currentRegion;
 
+    private TextMeshProUGUI regionDisplay;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,7 +42,8 @@ public class ChunkLoader : MonoBehaviour
         visibleChunks = new List<Chunk>();
         showAllChunks = false;
         displayedAllChunks = false;
-
+        // Get the textmeshpro object so we can write to it.
+        regionDisplay = GameObject.Find("Canvas").GetComponent<TextMeshProUGUI>();
         // Iterate through map, which acts as a blueprint for the layout of the world.
         for (int z = 0; z < map.GetLength(0); z++)
         {
@@ -64,9 +68,9 @@ public class ChunkLoader : MonoBehaviour
                             break;
                         }
                     // Set the chunks pathname to the next "none" chunk
-                    case Region.NONE:
+                    case Region.OCEAN:
                         {
-                            pathName = "Chunks/none/" + nameof(Region.NONE).ToLower();
+                            pathName = "Chunks/none/" + nameof(Region.OCEAN).ToLower();
                             break;
                         }
                 }
@@ -94,10 +98,28 @@ public class ChunkLoader : MonoBehaviour
         // Determine if the players has entered a new region.
         if (!currentRegion.Equals(previousRegion))
         {
-            Debug.Log("Switched Region");
-            // Write "Now Entering currentRegion".
+            // Display the text for a few seconds.
+            StartCoroutine(DisplayRegion(currentRegion));
         }
 
+    }
+    private IEnumerator DisplayRegion(string newRegion)
+    {
+        regionDisplay.text = "Now Entering " +newRegion.ToUpper();
+        regionDisplay.enabled = true;
+        Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
+        while(regionDisplay.color.a < 1.0f)
+        {
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 2));
+            yield return null;
+        }
+        yield return new WaitForSeconds(2f);
+        while (regionDisplay.color.a > 0f)
+        {
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 2));
+            yield return null;
+        }
+        regionDisplay.enabled = false;
     }
     /// <summary>
     /// Gets the distance between the ship and the specified chunks center.
@@ -212,12 +234,13 @@ public class ChunkLoader : MonoBehaviour
                     break;
              
                 }
-            case Region.NONE:
+            case Region.OCEAN:
                 {
-                    name = "none";
+                    name = "ocean";
                     break;
                 }
         }
         return name;
     }
+
 }
