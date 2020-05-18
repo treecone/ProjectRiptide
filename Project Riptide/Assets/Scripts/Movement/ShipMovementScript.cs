@@ -10,6 +10,9 @@ public class ShipMovementScript : MonoBehaviour
     private float maxRotationalVelocity = 9;
     private float maxLinearVelocity = 2;
 	private float linearAccelerationScale = 1;
+
+    public float linearVelocity;
+    public ShipUpgrades shipUpgradeScript;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -30,7 +33,9 @@ public class ShipMovementScript : MonoBehaviour
 
 		if (distance > 2f)
 		{
-			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity * Mathf.Pow(linearAccelerationScale, -distance));	
+            Vector3 lastPosition = transform.position;
+			transform.position = Vector3.Lerp(transform.position, Target, Time.deltaTime * maxLinearVelocity * shipUpgradeScript.masterMovementUpgrade.velocity * Mathf.Pow(linearAccelerationScale, -distance));
+            linearVelocity = (lastPosition - transform.position).magnitude;
 		}
 	}
 

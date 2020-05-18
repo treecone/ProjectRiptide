@@ -15,12 +15,18 @@ public class ShipUpgrades : MonoBehaviour
     /// Whenever the player's equipment changes, the upgrades will recalculate. This
     /// should be better performance than checking every frame.
     /// </summary>
-    [SerializeField]
+    /// 
+
+        
     public List<Upgrade> upgrades;
+    public ShotUpgrade masterShotUpgrade;
+    public MovementUpgrade masterMovementUpgrade;
     // Start is called before the first frame update
     void Start()
     {
         upgrades = new List<Upgrade>();
+        masterShotUpgrade = new ShotUpgrade("master shot");
+        masterMovementUpgrade = new MovementUpgrade("master movement");
     }
 
     // Update is called once per frame
@@ -28,9 +34,18 @@ public class ShipUpgrades : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.U))
         {
-            upgrades.Add(new ShotUpgrade("Grape Shot", 0, 2, 0));
+            AddUpgrade(new ShotUpgrade("Grape Shot", 0, 2, 0));
+        }
+        if(Input.GetKeyDown(KeyCode.V))
+        {
+            AddUpgrade(new MovementUpgrade("High Sails", 0.2f));
         }
     }
+    /// <summary>
+    /// Gets all upgrades on the ship of a given type
+    /// </summary>
+    /// <param name="type">The type of upgrade you are looking for </param>
+    /// <returns>A list populated with the upgrades of that type</returns>
     public List<Upgrade> UpgradesOfType(Upgrade.UpgradeType type)
     {
         List<Upgrade> shipUpgrades = new List<Upgrade>();
@@ -43,9 +58,22 @@ public class ShipUpgrades : MonoBehaviour
         }
         return shipUpgrades;
     }
+
+    public void AddUpgrade(Upgrade u)
+    {
+        upgrades.Add(u);
+        Recalculate();
+    }
+    public void Recalculate()
+    {
+        masterShotUpgrade.Recalculate(UpgradesOfType(Upgrade.UpgradeType.Shot));
+        masterMovementUpgrade.Recalculate(UpgradesOfType(Upgrade.UpgradeType.Movement));
+    }
 }
 
-
+/// <summary>
+/// An abstract base class for upgrades
+/// </summary>
 [Serializable]
 public abstract class Upgrade
 {
@@ -53,13 +81,11 @@ public abstract class Upgrade
     public enum UpgradeType { Shot, OnHit, Movement, Special }
     public string name;
     public UpgradeType upgradeType;
-
-    public Upgrade()
-    {
-
-    }
 }
 
+/// <summary>
+/// An upgrade to the ship's shooting power
+/// </summary>
 [Serializable]
 public class ShotUpgrade : Upgrade
 {
@@ -74,5 +100,44 @@ public class ShotUpgrade : Upgrade
         count = _count;
         damage = _damage;
         fireSpeed = _fireSpeed;
+    }
+
+    public void Recalculate(List<Upgrade> shotUpgrades)
+    {
+        count = 0;
+        damage = 0;
+        fireSpeed = 0;
+        foreach(Upgrade u in shotUpgrades)
+        {
+            ShotUpgrade su = (ShotUpgrade)u;
+            count += su.count;
+            damage += su.damage;
+            fireSpeed += su.fireSpeed;
+        }
+    }
+}
+
+/// <summary>
+/// An upgrade to the ship's moving ability
+/// </summary>
+public class MovementUpgrade : Upgrade
+{
+    public float velocity;
+
+    public MovementUpgrade(string _name, float _velocity = 1)
+    {
+        name = _name;
+        upgradeType = UpgradeType.Movement;
+        velocity = _velocity;
+    }
+
+    public void Recalculate(List<Upgrade> movementUpgrades)
+    {
+        velocity = 1;
+        foreach(Upgrade u in movementUpgrades)
+        {
+            MovementUpgrade mu = (MovementUpgrade)u;
+            velocity += mu.velocity;
+        }
     }
 }
