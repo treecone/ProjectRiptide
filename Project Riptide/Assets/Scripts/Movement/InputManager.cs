@@ -15,6 +15,7 @@ public class InputManager : MonoBehaviour
 
 	public bool touchingLeft;
 	public bool touchingRight;
+    private bool startedMove = false;
 
 	public Slider speedSlider;
 
@@ -26,6 +27,8 @@ public class InputManager : MonoBehaviour
 	private CannonFireScript cannonFireScript;
 	public RectTransform iconPoint;
 	public GameObject IconPrefab;
+    public RectTransform iconBase;
+    private float maxIconDist = 500.0f;
 
 	//-----Multiple touches-----
 	private List<TouchData> currentTouches;
@@ -73,6 +76,8 @@ public class InputManager : MonoBehaviour
 		{
 			iconPoint = Instantiate(IconPrefab, transform).GetComponent<RectTransform>();
 		}
+        if (GameObject.Find("InputBase"))
+            iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
 	}
 
 	void Update()
@@ -170,7 +175,17 @@ public class InputManager : MonoBehaviour
 
 			if (doubleClickCheck > 0.8f)
 			{
-				iconPoint.anchoredPosition = t.Position;
+                if(!t.startedMove)
+                {
+                    if(iconBase != null)
+                    {
+                        iconBase.anchoredPosition = t.Position;
+                    }
+                    clickStartPosition = t.Position;
+                    t.startedMove = true;
+                }
+
+                SetPointIcon(t.Position);
 
 				Vector3 pos = GetTarget(t.Position);
 				print(pos - ship.transform.position);
@@ -187,6 +202,7 @@ public class InputManager : MonoBehaviour
 		private Vector2 startPosition;
 
 		public TouchPhase phase;
+        public bool startedMove;
 
 		public Vector2 Displacement
 		{
@@ -260,13 +276,29 @@ public class InputManager : MonoBehaviour
 		else if (Input.GetMouseButton(0)) //mouse held
 		{
 			clickDuration += Time.deltaTime;
+            clickCurrentPosition = Input.mousePosition - screenCorrect;
+            Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
+            if (clickDisplacement.magnitude > 50f && clickDuration > 0.1f)
+                doubleClickCheck = 0.9f;
 
-			if (doubleClickCheck > 0.8f)
+            if (doubleClickCheck > 0.8f)
 			{
+                if(!startedMove)
+                {
+                    clickStartPosition = Input.mousePosition - screenCorrect;
+                    if (iconBase != null)
+                    {
+                        iconBase.anchoredPosition = clickStartPosition;
+                    }
+                    startedMove = true;
+                }
 				clickCurrentPosition = Input.mousePosition - screenCorrect;
 
-				if (iconPoint != null)
-					iconPoint.anchoredPosition = clickCurrentPosition;
+                if (iconPoint != null)
+                {
+                    //iconPoint.anchoredPosition = clickCurrentPosition;
+                    SetPointIcon(clickCurrentPosition);
+                }
 
 				Vector3 pos = GetTarget(clickCurrentPosition);
 				movementScript.TargetDirection = pos - ship.transform.position;
@@ -274,6 +306,7 @@ public class InputManager : MonoBehaviour
 		}
 		else if (Input.GetMouseButtonUp(0)) //mouse up 
 		{
+            startedMove = false;
 			Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
 			Vector2 clickVelocity = clickDisplacement / clickDuration;
 			if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
@@ -300,7 +333,7 @@ public class InputManager : MonoBehaviour
 				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
 					clickOne = false;
-					cannonFireScript.Fire(FireType.Target, GetTarget(clickCurrentPosition));
+					cannonFireScript.Fire(FireType.Target, GetFireTarget(clickCurrentPosition));
 				}
 				else if (!clickOne)
 				{
@@ -316,9 +349,40 @@ public class InputManager : MonoBehaviour
 		}
 	}
 	#endregion
-	Vector3 GetTarget(Vector3 input)
+	Vector3 GetTarget(Vector2 input)
 	{
-		input += screenCorrect;
+        /*input += screenCorrect;
+		// create ray from the camera and passing through the touch position:
+		Ray ray = camera.ScreenPointToRay(input);
+
+		// create a logical plane at this object's position and perpendicular to world Y:
+		Plane plane = new Plane(Vector3.up, Vector3.zero);
+		float distance = 0;
+		// if plane hit...
+		if (plane.Raycast(ray, out distance))
+		{
+			Vector3 pos = ray.GetPoint(distance);
+			Debug.DrawLine(ship.transform.position, pos, Color.red);
+			// get the point pos has the position in the plane you've touched
+			return ray.GetPoint(distance);
+		}*/
+        Vector2 distVec = input - clickStartPosition;
+        float dist = distVec.magnitude;
+        distVec.Normalize();
+        distVec *= 20.0f;
+        Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
+        if (dist > maxIconDist)
+            movementScript.speedScale = 1.0f;
+        else
+            movementScript.speedScale = dist / maxIconDist;
+        return targetPos;
+
+        //return ship.transform.position;
+	}
+
+    Vector3 GetFireTarget(Vector3 input)
+    {
+        input += screenCorrect;
 		// create ray from the camera and passing through the touch position:
 		Ray ray = camera.ScreenPointToRay(input);
 
@@ -333,8 +397,22 @@ public class InputManager : MonoBehaviour
 			// get the point pos has the position in the plane you've touched
 			return ray.GetPoint(distance);
 		}
-		return ship.transform.position;
-	}
+        return ship.transform.position;
+    }
+
+    void SetPointIcon(Vector2 pos)
+    {
+        float dist = Vector2.Distance(pos, clickStartPosition);
+        if (dist <= maxIconDist)
+            iconPoint.anchoredPosition = pos;
+        else
+        {
+            Vector2 distVec = pos - clickStartPosition;
+            distVec.Normalize();
+            distVec *= maxIconDist;
+            iconPoint.anchoredPosition = clickStartPosition + distVec;
+        }
+    }
 }
 
 

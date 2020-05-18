@@ -9,7 +9,7 @@ enum EnemyState { Passive, Hostile }
 public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
-public enum EnemyType { FirstEnemy, KoiBoss, DefensiveEnemy, PassiveEnemy }
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3}
 
 public partial class Enemy : PhysicsScript
 {

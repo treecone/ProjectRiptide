@@ -23,7 +23,12 @@ public class CameraController : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
+    void Update()
+    {
+
+    }
+
+    public void UpdateCamera()
     {
         //position the camera needs to be in
         Vector3 smoothingPosition = player.position + offset;

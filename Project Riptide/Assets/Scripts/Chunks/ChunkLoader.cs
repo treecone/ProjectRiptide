@@ -2,22 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using LitJson;
 
 // Represents the name of the region, followed by an underscore and any additional information if needed.
 public enum Region
 {
     CHINA,
     CHINA_KOI,
+    CHINA_ISLAND1,
+    CHINA_ISLAND2,
+    CHINA_ISLAND3,
     OCEAN
 };
 
 public class ChunkLoader : MonoBehaviour
 {
     public Region[,] map = new Region[,]{ {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN,},             // Blueprint for how to layout the world.
-                                          {Region.OCEAN, Region.CHINA, Region.CHINA, Region.CHINA, Region.OCEAN},                                    
-                                          {Region.OCEAN, Region.CHINA, Region.CHINA_KOI, Region.CHINA, Region.OCEAN},       
-                                          {Region.OCEAN, Region.CHINA, Region.CHINA, Region.CHINA, Region.OCEAN },
-                                          {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN,}};
+                                          {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.OCEAN},                                    
+                                          {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_KOI, Region.CHINA_ISLAND1, Region.OCEAN},       
+                                          {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.OCEAN},
+                                          {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN}};
 
     public Chunk[,] chunks;  // List of all the chunk prefabs
     public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
@@ -67,6 +71,11 @@ public class ChunkLoader : MonoBehaviour
                             pathName = "Chunks/china/" + nameof(Region.CHINA_KOI).ToLower();
                             break;
                         }
+                    case Region.CHINA_ISLAND1:
+                        {
+                            pathName = "Chunks/china/" + nameof(Region.CHINA_ISLAND1).ToLower();
+                            break;
+                        }
                     // Set the chunks pathname to the next "none" chunk
                     case Region.OCEAN:
                         {
@@ -95,7 +104,7 @@ public class ChunkLoader : MonoBehaviour
     {
         previousRegion = currentRegion;
         DisplayChunks();
-        // Determine if the players has entered a new region.
+        //Determine if the players has entered a new region.
         if (!currentRegion.Equals(previousRegion))
         {
             // Display the text for a few seconds.
@@ -103,6 +112,7 @@ public class ChunkLoader : MonoBehaviour
         }
 
     }
+    // Fade in and out for region switching.
     private IEnumerator DisplayRegion(string newRegion)
     {
         regionDisplay.text = "Now Entering " +newRegion.ToUpper();
@@ -110,13 +120,13 @@ public class ChunkLoader : MonoBehaviour
         Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
         while(regionDisplay.color.a < 1.0f)
         {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 2));
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
             yield return null;
         }
         yield return new WaitForSeconds(2f);
         while (regionDisplay.color.a > 0f)
         {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 2));
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
             yield return null;
         }
         regionDisplay.enabled = false;
@@ -137,7 +147,7 @@ public class ChunkLoader : MonoBehaviour
     /// </summary>
     public void DisplayChunks()
     {
-        // Display all the chunks
+        //// Display all the chunks
         if (showAllChunks)
         {
             if (!displayedAllChunks)
@@ -160,7 +170,7 @@ public class ChunkLoader : MonoBehaviour
             return;
         }
         // Hide all the chunks.
-        else if(!showAllChunks && displayedAllChunks)
+        else if (!showAllChunks && displayedAllChunks)
         {
             // Iterate through the 2D array of chunks.
             for (int i = 0; i < chunks.GetLength(0); i++)
@@ -174,43 +184,44 @@ public class ChunkLoader : MonoBehaviour
             displayedAllChunks = false;
             return;
         }
-        
-        for (int x = (int)(currentChunkPosition.x - 1); x < (int)(currentChunkPosition.x + 2); x++)
+        // The current chunk position before the loop executes and potentially alters the current chunk positon.
+        Vector2 stashedChunkPos = currentChunkPosition;
+        // Check the 8 surrounding chunks.
+        for (int x = (int)(stashedChunkPos.x - 1); x < (int)(stashedChunkPos.x + 2); x++)
         {
-            for (int z = (int)(currentChunkPosition.y - 1); z < (int)(currentChunkPosition.y + 2); z++)
+            for (int z = (int)(stashedChunkPos.y - 1); z < (int)(stashedChunkPos.y + 2); z++)
             {
+                // This is the current chunk so skip over it.
+                if (stashedChunkPos.x == x && stashedChunkPos.y == z)
+                {
+                    continue;
+                }
+                // The bounds of this chunk.
                 Rect chunkBounds = new Rect((x - .5f) * _CHUNKSIDELENGTH, (z - .5f) * _CHUNKSIDELENGTH, _CHUNKSIDELENGTH, _CHUNKSIDELENGTH);
                 // Chunk is valid.
-                if (x >= 0 && z >= 0 && x < map.GetLength(0) && z <map.GetLength(1) && chunks[x,z] != null)
+                if (x >= 0 && z >= 0 && x < map.GetLength(0) && z < map.GetLength(1) && chunks[x,z] != null)
                 {
+                    // If the chunk is close enough to render.
                     bool close = (DistanceFromChunkCenter(x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
-                    // Ship was in a different chunk and has now moved into this chunk.
-                    if ((currentChunkPosition.x != x || currentChunkPosition.y != z) && chunkBounds.Contains(new Vector2(ship.transform.position.x, ship.transform.position.z)))
+                    bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
+                    // Chunk is close enough to render so do so.
+                    if (close && !inVisibleChunks)
+                    {
+                        chunks[x, z].chunk.SetActive(true);
+                        visibleChunks.Add(chunks[x, z]);
+                    }
+                    // Chunk is no longer within viewing distance of the ship, so unload it.
+                    if (!close && inVisibleChunks)
+                    {
+                        chunks[x, z].chunk.SetActive(false);
+                        visibleChunks.Remove(chunks[x, z]);
+                    }
+                    // Ship was in a different chunk and has now moved into this chunk, make it the current chunk.
+                    if ((stashedChunkPos.x != x || stashedChunkPos.y != z) && chunkBounds.Contains(new Vector2(ship.transform.position.x, ship.transform.position.z)))
                     {
                         // Set current chunk to the chunk the ships in.
                         currentChunkPosition = new Vector2(x, z);
                         currentRegion = GetRegionName(chunks[x, z].region);
-                        chunks[x, z].chunk.SetActive(true);
-                        visibleChunks.Add(chunks[x, z]);
-                    }
-                    // If its the current chunk, skip over it.
-                    else if(currentChunkPosition.x == x && currentChunkPosition.y == z)
-                    {
-                        continue;
-                    }
-                    // Ship is within viewing distance of the chunk, and it is currently not being displayed.
-                    else if (close && !visibleChunks.Contains(chunks[x, z]))
-                    {
-                        // Show the chunk.
-                        chunks[x, z].chunk.SetActive(true);
-                        visibleChunks.Add(chunks[x, z]);
-                        chunks[x, z].chunk.SetActive(false);
-                        visibleChunks.Remove(chunks[x, z]);
-                    }
-                    else if(!close && visibleChunks.Contains(chunks[x, z]))
-                    {
-                        chunks[x, z].chunk.SetActive(false);
-                        visibleChunks.Remove(chunks[x, z]);
                     }
                 }
             }
@@ -233,6 +244,11 @@ public class ChunkLoader : MonoBehaviour
                     name = "china";
                     break;
              
+                }
+            case Region.CHINA_ISLAND1:
+                {
+                    name = "china";
+                    break;
                 }
             case Region.OCEAN:
                 {
