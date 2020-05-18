@@ -35,8 +35,10 @@ public class ShipMovementScript : PhysicsScript
 		//find the vector pointing from our position to the target
 		Vector3 moveDirection = (Target - transform.position).normalized;
 
-		//create the rotation we need to be in to look at the target
-		Quaternion lookRotation = Quaternion.LookRotation(moveDirection);
+        //create the rotation we need to be in to look at the target
+        Quaternion lookRotation = rotation;
+        if(moveDirection.sqrMagnitude != 0)
+		    lookRotation = Quaternion.LookRotation(moveDirection);
 
         //Rotate based on target location
         if (rotation != lookRotation)
