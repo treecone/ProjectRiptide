@@ -333,7 +333,6 @@ public class InputManager : MonoBehaviour
 				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
 					clickOne = false;
-                    Debug.Log("Firing");
 					cannonFireScript.Fire(FireType.Target, GetFireTarget(clickCurrentPosition));
 				}
 				else if (!clickOne)

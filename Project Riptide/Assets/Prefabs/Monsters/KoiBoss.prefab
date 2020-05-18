@@ -65,8 +65,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, Unity.ugui,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -76,6 +74,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &39053673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,8 +311,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.Slider+SliderEvent, Unity.ugui, Version=1.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!1 &1413301193
 GameObject:
   m_ObjectHideFlags: 0
@@ -377,8 +374,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, Unity.ugui,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
@@ -388,6 +383,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1851869206
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,6 +464,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -530,7 +527,7 @@ Transform:
   m_GameObject: {fileID: 6999395955324292061}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 2.52525, y: 2.52525, z: 2.52525}
   m_Children:
   - {fileID: 8983734753773988109}
   - {fileID: 2086322955}
@@ -553,8 +550,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62649f338f700a6459119c1bf0e8e407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 0
-  maxSpeed: 0
+  mass: 1
+  maxSpeed: 1.5
   enemyType: 1
   projectile: {fileID: 1807429604883853674, guid: 0a043637e4fac3944a273d1f8efb9c3d,
     type: 3}
@@ -566,6 +563,7 @@ MonoBehaviour:
   lengthMult: 5
   widthMult: 0.85
   heightMult: 0
+  baseHeightMult: 0
 --- !u!114 &1712334109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,11 +584,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6303210241429338574}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: c15b33198a4c77e458d9ec5fe7914e40,
+    - target: {fileID: -7780734103960978560, guid: c15b33198a4c77e458d9ec5fe7914e40,
         type: 3}
-      propertyPath: m_Name
-      value: FishMonster
-      objectReference: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e8c8760cf91f7e344b096fe4aaa5b499, type: 2}
     - target: {fileID: -4216859302048453862, guid: c15b33198a4c77e458d9ec5fe7914e40,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -656,11 +654,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.99999976
       objectReference: {fileID: 0}
-    - target: {fileID: -7780734103960978560, guid: c15b33198a4c77e458d9ec5fe7914e40,
+    - target: {fileID: -927199367670048503, guid: c15b33198a4c77e458d9ec5fe7914e40,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: e8c8760cf91f7e344b096fe4aaa5b499, type: 2}
+      propertyPath: m_Name
+      value: FishMonster
+      objectReference: {fileID: 0}
     - target: {fileID: -444521105353760620, guid: c15b33198a4c77e458d9ec5fe7914e40,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -691,6 +689,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6303210241429338574}
     m_Modifications:
+    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Name
+      value: HurtboxBody
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: damage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: attachedObject
+      value: 
+      objectReference: {fileID: 6999395955324292061}
     - target: {fileID: 7583904746337916495, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -756,26 +774,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 2.8686
       objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: m_Name
-      value: HurtboxBody
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: type
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: damage
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: attachedObject
-      value: 
-      objectReference: {fileID: 6999395955324292061}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c, type: 3}
 --- !u!4 &6085025434224507579 stripped
@@ -791,6 +789,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6303210241429338574}
     m_Modifications:
+    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Name
+      value: HurtboxTail
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: damage
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: attachedObject
+      value: 
+      objectReference: {fileID: 6999395955324292061}
     - target: {fileID: 7583904746337916495, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -861,26 +879,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1.726074
       objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: m_Name
-      value: HurtboxTail
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: type
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: damage
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: attachedObject
-      value: 
-      objectReference: {fileID: 6999395955324292061}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c, type: 3}
 --- !u!4 &6285888865819060551 stripped
@@ -896,6 +894,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6303210241429338574}
     m_Modifications:
+    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Name
+      value: HurtboxHead
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: type
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: damage
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: attachedObject
+      value: 
+      objectReference: {fileID: 6999395955324292061}
     - target: {fileID: 7583904746337916495, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -966,26 +984,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.7724662
       objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916482, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: m_Name
-      value: HurtboxHead
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: type
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: damage
-      value: 1.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
-        type: 3}
-      propertyPath: attachedObject
-      value: 
-      objectReference: {fileID: 6999395955324292061}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c, type: 3}
 --- !u!4 &840647768181334762 stripped
