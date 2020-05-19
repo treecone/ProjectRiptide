@@ -8,6 +8,7 @@ public delegate void HitboxEnter(GameObject hit);
 public class Hitbox : MonoBehaviour
 {
     public event HitboxEnter OnTrigger;
+    public event HitboxEnter OnStay;
 
     [SerializeField]
     private HitboxType type;
@@ -80,5 +81,10 @@ public class Hitbox : MonoBehaviour
         }
         else
            OnTrigger?.Invoke(other.gameObject);
+    }
+
+    public void OnTriggerStay(Collider other)
+    {
+        OnStay?.Invoke(other.gameObject);
     }
 }
