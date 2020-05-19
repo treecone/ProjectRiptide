@@ -25,8 +25,8 @@ public class CannonFireScript : MonoBehaviour
 		}*/
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Fire");
-            Fire(-transform.right);
+            //Debug.Log("Fire");
+            //Fire(-transform.right);
         }
     }
 

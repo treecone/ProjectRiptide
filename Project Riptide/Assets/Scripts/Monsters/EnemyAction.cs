@@ -9,7 +9,32 @@ public partial class Enemy : PhysicsScript
     private void FollowPlayer()
     {
         //Calculate net force
-        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 2.0f;
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
+
+        //Check for collision
+        if (CheckObstacle())
+        {
+            netForce += Steer(AvoidObstacle()) * 5.0f;
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+        }
+
+        //Rotate in towards direction of velocity
+        if (velocity != Vector3.zero) 
+            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+
+        ApplyForce(netForce);
+    }
+
+    private void CirclePlayer()
+    {
+        Debug.Log("Circle Player");
+        //Calculate net force
+        Vector3 netForce = PlayerPosition() - transform.position;
+        netForce = new Vector3(netForce.x, 0, netForce.z);
+        netForce.Normalize();
+        netForce *= 4.0f;
+        netForce = Vector3.Cross(Vector3.up, netForce);
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
         //Check for collision
@@ -20,7 +45,7 @@ public partial class Enemy : PhysicsScript
         }
 
         //Rotate in towards direction of velocity
-        if (velocity != Vector3.zero) 
+        if (velocity != Vector3.zero)
             rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
         ApplyForce(netForce);
@@ -99,6 +124,13 @@ public partial class Enemy : PhysicsScript
             if (playerCollision || obsticalCollision)
             {
                 inKnockback = true;
+                if(playerCollision)
+                {
+                    Vector3 knockback = PlayerPosition() - transform.position;
+                    knockback.Normalize();
+                    knockback *= 40.0f;
+                    SendKnockback(knockback);
+                }
                 time = 0.7f;
             }
 
@@ -162,7 +194,7 @@ public partial class Enemy : PhysicsScript
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage));
+            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * speed, 1.0f);
         }
 
@@ -275,6 +307,15 @@ public partial class Enemy : PhysicsScript
             //If monster hits player, stop special
             if (playerCollision || obsticalCollision)
             {
+                //If colliding with a player, give knockback
+                if (playerCollision)
+                {
+                    Vector3 knockback = PlayerPosition() - transform.position;
+                    knockback.y = 0;
+                    knockback.Normalize();
+                    knockback *= 500.0f;
+                    SendKnockback(knockback);
+                }
                 inKnockback = true;
                 velocity.x = 0;
                 velocity.z = 0;
@@ -408,23 +449,22 @@ public partial class Enemy : PhysicsScript
         if (time < MAX_TIME - STALL_TIME)
         {
             //Calculate net force
-            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 1.5f;
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * maxSpeed;
+            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 4.0f;
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
             //Check for collision
             if (CheckObstacle())
             {
-                ApplyForce(Steer(AvoidObstacle()) * 2.0f);
+                netForce += Steer(AvoidObstacle()) * 5.0f;
+                netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
             }
 
             //Rotate in towards direction of velocity
-            //rotation = Quaternion.LookRotation(velocity);
             if (velocity != Vector3.zero)
                 rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
 
-            ApplyForce(netForce);
+            ApplyForce(netForce * 10.0f);
 
-            //If fish is right under player, change to attack
             if (playerDistance <= 3.1f)
             {
                 StopMotion();
@@ -465,6 +505,7 @@ public partial class Enemy : PhysicsScript
                 //If monster hits player, stop special
                 if (playerCollision || obsticalCollision)
                 {
+                    StopMotion();
                     inKnockback = true;
                 }
                 ApplyForce(gravity);
@@ -474,7 +515,10 @@ public partial class Enemy : PhysicsScript
             {
                 //Stop moving fish if it goes below its original height
                 if (transform.position.y <= initalPos)
+                {
+                    ReturnToInitalPosition();
                     time = 3.9f;
+                }
                 else
                 {
                     ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);

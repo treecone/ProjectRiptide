@@ -13,7 +13,7 @@ public class CannonBallBehaviorScript : MonoBehaviour
     void Start()
     {
         projHitbox = Instantiate(hitbox, transform);
-        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.015f, 0.015f, 0.015f), HitboxType.PlayerHitbox, damageDealt);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(transform.localScale.x * 2, transform.localScale.y * 2, transform.localScale.z * 2), HitboxType.PlayerHitbox, damageDealt);
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
     }
 
