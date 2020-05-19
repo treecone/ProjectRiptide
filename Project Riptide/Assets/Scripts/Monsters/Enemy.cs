@@ -82,7 +82,10 @@ public partial class Enemy : PhysicsScript
         actionQueue = new Queue<MonsterAction>();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
             hitbox.OnTrigger += HitboxTriggered;
+            hitbox.OnStay += OnObsticalCollision;
+        }
         LoadEnemy(enemyType);
         camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
 
@@ -490,5 +493,17 @@ public partial class Enemy : PhysicsScript
             return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
         else
             return Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
+    }
+
+    public void OnObsticalCollision(GameObject obstical)
+    {
+        if (obstical.tag == "Obstical")
+        {
+            StopMotion();
+            Vector3 backForce = transform.position - obstical.transform.position;
+            backForce.Normalize();
+            backForce *= 30.0f;
+            ApplyForce(backForce);
+        }
     }
 }
