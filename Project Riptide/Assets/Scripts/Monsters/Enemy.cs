@@ -525,4 +525,9 @@ public partial class Enemy : PhysicsScript
             ApplyForce(backForce);
         }
     }
+
+    public void TakeKnockback(Vector3 knockback)
+    {
+        ApplyForce(knockback);
+    }
 }

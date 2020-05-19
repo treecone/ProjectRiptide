@@ -307,15 +307,6 @@ public partial class Enemy : PhysicsScript
             //If monster hits player, stop special
             if (playerCollision || obsticalCollision)
             {
-                //If colliding with a player, give knockback
-                if (playerCollision)
-                {
-                    Vector3 knockback = PlayerPosition() - transform.position;
-                    knockback.y = 0;
-                    knockback.Normalize();
-                    knockback *= 500.0f;
-                    SendKnockback(knockback);
-                }
                 inKnockback = true;
                 velocity.x = 0;
                 velocity.z = 0;
