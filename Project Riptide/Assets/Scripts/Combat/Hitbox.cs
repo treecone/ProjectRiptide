@@ -94,6 +94,12 @@ public class Hitbox : MonoBehaviour
             {
                 if (type == HitboxType.PlayerHitbox)
                 {
+                    //Add knockback if there is any
+                    if (launchStrength != 0)
+                    {
+                        Vector3 knockback = Quaternion.Euler(0, launchAngle.x, -launchAngle.y) * transform.forward * launchStrength;
+                        hitbox.AttachedObject.GetComponent<Enemy>().TakeKnockback(knockback);
+                    }
                     //Calculate damage for enemies
                     hitbox.AttachedObject.GetComponent<Enemy>().TakeDamage(damage * hitbox.damage);
                     OnTrigger?.Invoke(hitbox.AttachedObject);
