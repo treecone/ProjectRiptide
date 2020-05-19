@@ -41,6 +41,15 @@ public class Upgrades : MonoBehaviour
         {
             AddUpgrade(new Upgrade("High Sails", new { shipSpeed = 0.2f }));
         }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            AddUpgrade(new Upgrade("Extra Cannons", new { count = 1 }));
+        }
+        if(Input.GetKeyDown(KeyCode.Q))
+        {
+            upgrades.Clear();
+            Recalculate();
+        }
     }
 
     public void AddUpgrade(Upgrade u)
@@ -122,6 +131,10 @@ public class Upgrade
 
 public class MasterUpgrade : Upgrade
 {
+    /// <summary>
+    /// The upgrades that make up the Master Upgrade at the time
+    /// </summary>
+    List<Upgrade> componentUpgrades;
 
     public MasterUpgrade() : base("master upgrade", null)
     {
@@ -133,6 +146,8 @@ public class MasterUpgrade : Upgrade
     /// </summary>
     public void Recalculate(List<Upgrade> upgrades)
     {
+        componentUpgrades = upgrades;
+        upgradeInfo.Clear();
         foreach(Upgrade upgrade in upgrades)
         {
             foreach(string category in upgrade.upgradeInfo.Keys)
