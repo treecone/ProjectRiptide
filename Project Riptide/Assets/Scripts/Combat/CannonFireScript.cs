@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum FireType { Right, Left, Both, Big, Tri, Target};
-
 public class CannonFireScript : MonoBehaviour
 {
     public float cannonBallSizeScale;
@@ -19,61 +17,30 @@ public class CannonFireScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		/*if(Input.GetKeyDown(KeyCode.Space))
-		{
-			Fire(FireType.Both);
-		}*/
         if(Input.GetKeyDown(KeyCode.Space))
         {
             //Debug.Log("Fire");
-            //Fire(-transform.right);
+            Fire(-transform.right);
         }
     }
 
+    public void Fire(string debugShotType)
+    {
+        switch(debugShotType)
+        {
+            case "right":
+                Fire(transform.right);
+                break;
+        }
+    }
     public void Fire(Vector3 direction)
     {
         CannonShot shot = new CannonShot(direction, shipUpgradeScript.masterUpgrade);
         shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
-    public void Fire(FireType shotType)
-    {
-        switch(shotType)
-        {
-            case FireType.Big:
-                CannonShot oneBig = new CannonShot(1, 10, transform.right, 40, 0.1f, 60);
-                oneBig.Fire(cannonBall, gameObject, cannonBallSizeScale);
-                break;
-            case FireType.Tri:
-                CannonShot triShot = new CannonShot(3, 5, transform.right, 40, 0.1f, 30);
-                triShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
-                break;
-			case FireType.Both:
-				CannonShot left = new CannonShot(1, 5, -transform.right, 40, 0.1f, 30);
-				CannonShot right = new CannonShot(1, 5, transform.right, 40, 0.1f, 30);
-				left.Fire(cannonBall, gameObject, cannonBallSizeScale);
-				right.Fire(cannonBall, gameObject, cannonBallSizeScale);
-				break;
-		}
-	}
-	public void Fire(FireType shotType, Vector3 target)
-	{
-		Vector3 direction = target - transform.position;
-		float angle = Vector3.Angle(transform.forward, direction);
-		if (angle < 15)
-			return;
-		switch (shotType)
-		{
-			case FireType.Target:
-				CannonShot shot = new CannonShot(1, 5, direction.normalized, 40, 0.1f, 30);
-				shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
-				break;
-		}
-	}
-
 	public class CannonShot
     {
-
         private int damage;
         private Vector3 direction;
         private float fireSpeed;
@@ -81,7 +48,7 @@ public class CannonFireScript : MonoBehaviour
         private int count;
         private float spreadAngle;
         
-
+        //this doesn't really get used but it'll stay in just in case for now
         public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float verticalRatio, float spreadAngle)
         {
             this.count = count;
@@ -98,7 +65,7 @@ public class CannonFireScript : MonoBehaviour
             this.damage = 1 + (int)upgrade["damage"];
             this.direction = direction;
             this.fireSpeed = 40 + upgrade["fireSpeed"];
-            this.verticalRatio = 0.1f;
+            this.verticalRatio = 0.1f + upgrade["verticalRatio"];
             this.spreadAngle = 20;
         }
 
@@ -113,6 +80,7 @@ public class CannonFireScript : MonoBehaviour
             {
                 trueSpreadAngle = spreadAngle / (count - 1);
             }
+            //currently only shoots right, gotta fix to actually account for direction
             Quaternion angle = Quaternion.Euler(0, (-trueSpreadAngle * (count - 1) / 2) + ship.transform.rotation.eulerAngles.y + 90, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
             for (int i = 0; i < count; i++)
             {

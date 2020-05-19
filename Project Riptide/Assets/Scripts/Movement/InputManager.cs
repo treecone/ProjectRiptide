@@ -125,7 +125,7 @@ public class InputManager : MonoBehaviour
 			if (clickOne && doubleClickCheck < 0.45f) //double click
 			{
 				clickOne = false;
-				cannonFireScript.Fire(FireType.Target, GetTarget(t.Position));
+				cannonFireScript.Fire("both");
 			}
 			else if (!clickOne)
 			{
@@ -341,7 +341,7 @@ public class InputManager : MonoBehaviour
 				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
 					clickOne = false;
-					cannonFireScript.Fire(FireType.Target, GetFireTarget(clickCurrentPosition));
+					cannonFireScript.Fire("right");
 				}
 				else if (!clickOne)
 				{

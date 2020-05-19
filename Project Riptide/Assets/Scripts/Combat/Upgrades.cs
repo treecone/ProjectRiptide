@@ -45,6 +45,10 @@ public class Upgrades : MonoBehaviour
         {
             AddUpgrade(new Upgrade("Extra Cannons", new { count = 1 }));
         }
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            AddUpgrade(new Upgrade("Lob Shot", new { verticalRatio = 0.2f }));
+        }
         if(Input.GetKeyDown(KeyCode.Q))
         {
             upgrades.Clear();
@@ -91,7 +95,11 @@ public class Upgrade
     /// count       - The amount of cannonballs that are fired
     /// damage      - The amount of damage each cannonball does
     /// fireSpeed   - The physical speed the cannonball comes out at
+    /// verticalRatio- The ratio of the vertical component of the shot velocity to the horizontal
+    ///                At the moment, if you increase this, horizontal speed will not decrease
+    ///                to accomodate for it, so the cannonball will go super far
     /// shipSpeed    - The ship's movement speed
+    /// 
     /// </param>
     public Upgrade(string _name, object data)
     {
