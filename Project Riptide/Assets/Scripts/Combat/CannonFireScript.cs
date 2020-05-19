@@ -6,6 +6,7 @@ public enum FireType { Right, Left, Both, Big, Tri, Target};
 
 public class CannonFireScript : MonoBehaviour
 {
+    public float cannonBallSizeScale;
     public GameObject cannonBall;
     public ShipUpgrades shipUpgradeScript;
 
@@ -32,7 +33,7 @@ public class CannonFireScript : MonoBehaviour
     public void Fire(Vector3 direction)
     {
         CannonShot shot = new CannonShot(direction, shipUpgradeScript.masterShotUpgrade);
-        shot.Fire(cannonBall, gameObject);
+        shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
     public void Fire(FireType shotType)
@@ -41,17 +42,17 @@ public class CannonFireScript : MonoBehaviour
         {
             case FireType.Big:
                 CannonShot oneBig = new CannonShot(1, 10, transform.right, 40, 0.1f, 60);
-                oneBig.Fire(cannonBall, gameObject);
+                oneBig.Fire(cannonBall, gameObject, cannonBallSizeScale);
                 break;
             case FireType.Tri:
                 CannonShot triShot = new CannonShot(3, 5, transform.right, 40, 0.1f, 30);
-                triShot.Fire(cannonBall, gameObject);
+                triShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
                 break;
 			case FireType.Both:
 				CannonShot left = new CannonShot(1, 5, -transform.right, 40, 0.1f, 30);
 				CannonShot right = new CannonShot(1, 5, transform.right, 40, 0.1f, 30);
-				left.Fire(cannonBall, gameObject);
-				right.Fire(cannonBall, gameObject);
+				left.Fire(cannonBall, gameObject, cannonBallSizeScale);
+				right.Fire(cannonBall, gameObject, cannonBallSizeScale);
 				break;
 		}
 	}
@@ -65,7 +66,7 @@ public class CannonFireScript : MonoBehaviour
 		{
 			case FireType.Target:
 				CannonShot shot = new CannonShot(1, 5, direction.normalized, 40, 0.1f, 30);
-				shot.Fire(cannonBall, gameObject);
+				shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
 				break;
 		}
 	}
@@ -101,13 +102,13 @@ public class CannonFireScript : MonoBehaviour
             this.spreadAngle = 30;
         }
 
-        public void Fire(GameObject cannonBall, GameObject ship)
+        public void Fire(GameObject cannonBall, GameObject ship, float cannonBallSizeScale)
         {
             Quaternion angle = Quaternion.Euler(0, -spreadAngle * (count - 1) / 2, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
             for (int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, ship.transform.position + (ship.transform.localScale.x / 2) * direction, Quaternion.identity);
-                ball.transform.localScale = new Vector3(20 * damage, 20 * damage, 20 * damage);
+                ball.transform.localScale = new Vector3(cannonBallSizeScale * damage, cannonBallSizeScale * damage, cannonBallSizeScale * damage);
                 ball.SetActive(true);
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
