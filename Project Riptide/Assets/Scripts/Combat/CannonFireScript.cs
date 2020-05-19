@@ -8,7 +8,7 @@ public class CannonFireScript : MonoBehaviour
 {
     public float cannonBallSizeScale;
     public GameObject cannonBall;
-    public ShipUpgrades shipUpgradeScript;
+    public Upgrades shipUpgradeScript;
 
     // Start is called before the first frame update
     void Start()
@@ -32,7 +32,7 @@ public class CannonFireScript : MonoBehaviour
 
     public void Fire(Vector3 direction)
     {
-        CannonShot shot = new CannonShot(direction, shipUpgradeScript.masterShotUpgrade);
+        CannonShot shot = new CannonShot(direction, shipUpgradeScript.masterUpgrade);
         shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
@@ -92,12 +92,12 @@ public class CannonFireScript : MonoBehaviour
             this.spreadAngle = spreadAngle;
         }
 
-        public CannonShot(Vector3 direction, ShotUpgrade upgrade)
+        public CannonShot(Vector3 direction, Upgrade upgrade)
         {
-            this.count = 1 + upgrade.count;
-            this.damage = 1 + upgrade.damage;
+            this.count = 1 + (int)upgrade["count"];
+            this.damage = 1 + (int)upgrade["damage"];
             this.direction = direction;
-            this.fireSpeed = 40 + upgrade.fireSpeed;
+            this.fireSpeed = 40 + upgrade["fireSpeed"];
             this.verticalRatio = 0.1f;
             this.spreadAngle = 30;
         }
