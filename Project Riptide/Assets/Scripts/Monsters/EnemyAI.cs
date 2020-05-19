@@ -133,7 +133,10 @@ public partial class Enemy : PhysicsScript
                 //If the Koi is not in any special
                 if (!activeStates[(int)State.Active])
                 {
-                    FollowPlayer();
+                    if (playerDistance > 6.0f)
+                        FollowPlayer();
+                    else
+                        CirclePlayer();
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
                     if (specialCooldown[(int)State.Active] > 0)
@@ -239,7 +242,10 @@ public partial class Enemy : PhysicsScript
                 //If the Koi is not in any special
                 if (!activeStates[(int)State.Active])
                 {
-                    FollowPlayer();
+                    if (playerDistance > 10.0f)
+                        FollowPlayer();
+                    else
+                        CirclePlayer();
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
                     if (specialCooldown[(int)State.Active] > 0)

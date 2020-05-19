@@ -127,9 +127,15 @@ public class ShipMovementScript : PhysicsScript
         {
             StopMotion();
             Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 20.0f;
             ApplyForce(backForce);
         }
+    }
+
+    public void TakeKnockback(Vector3 knockback)
+    {
+        ApplyForce(knockback);
     }
 }

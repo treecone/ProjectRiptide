@@ -9,6 +9,7 @@ enum EnemyState { Passive, Hostile }
 public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
+public delegate void GiveVector(Vector3 vec);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3}
 
 public partial class Enemy : PhysicsScript
@@ -60,14 +61,15 @@ public partial class Enemy : PhysicsScript
     private List<GameObject> hurtboxes;
     private Queue<MonsterAction> actionQueue;
     private GetVector PlayerPosition;
+    private GiveVector SendKnockback;
 
     //Fields for collision detection
     public float lengthMult;
     public float widthMult;
     public float heightMult;
     public float baseHeightMult;
-    private float halfView = 90.0f;
-    private float viewRange = 25.0f;
+    private float halfView = 55.0f;
+    private float viewRange = 20.0f;
     private Vector3 widthVector;
 
     public float Health { get { return health; } }
@@ -81,6 +83,7 @@ public partial class Enemy : PhysicsScript
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
+        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
@@ -123,8 +126,8 @@ public partial class Enemy : PhysicsScript
                 break;
         }
 
-        /*if (Input.GetKeyDown(KeyCode.Space))
-            TakeDamage(10);*/
+        if (Input.GetKeyDown(KeyCode.Space))
+            TakeDamage(10);
 
         //Make health bar face player
         healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
@@ -341,6 +344,24 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <param name="launchAngle">Angle that hitbox will launch player</param>
+    /// <param name="launchStrength">Strength at which player will be launched</param>
+    /// <returns></returns>
+    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject temp = Instantiate(hitbox, transform);
+        temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage, launchAngle, launchStrength);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
+    }
+
+    /// <summary>
     /// Spawns an enemy projectile
     /// </summary>
     /// <param name="position">Position relative to enemy</param>
@@ -470,13 +491,13 @@ public partial class Enemy : PhysicsScript
 
         for (int i = 0; i <= 90; i += 4)
         {
-            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                  dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
                  //dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
                  found = true;
             }
-            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(-widthVector), widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(-widthVector), widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 if (!found || Random.Range(0, 1) == 0)
                 {
@@ -489,10 +510,7 @@ public partial class Enemy : PhysicsScript
                 return dir;
         }
 
-        if (Random.Range(0, 1) == 0)
-            return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
-        else
-            return Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
+        return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
     }
 
     public void OnObsticalCollision(GameObject obstical)
@@ -501,8 +519,9 @@ public partial class Enemy : PhysicsScript
         {
             StopMotion();
             Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 30.0f;
+            backForce *= 20.0f;
             ApplyForce(backForce);
         }
     }
