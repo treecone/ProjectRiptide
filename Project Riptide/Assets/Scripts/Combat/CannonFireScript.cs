@@ -99,12 +99,21 @@ public class CannonFireScript : MonoBehaviour
             this.direction = direction;
             this.fireSpeed = 40 + upgrade["fireSpeed"];
             this.verticalRatio = 0.1f;
-            this.spreadAngle = 30;
+            this.spreadAngle = 20;
         }
 
         public void Fire(GameObject cannonBall, GameObject ship, float cannonBallSizeScale)
         {
-            Quaternion angle = Quaternion.Euler(0, -spreadAngle * (count - 1) / 2, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
+            float trueSpreadAngle;
+            if (count == 1)
+            {
+                trueSpreadAngle = 0;
+            }
+            else
+            {
+                trueSpreadAngle = spreadAngle / (count - 1);
+            }
+            Quaternion angle = Quaternion.Euler(0, (-trueSpreadAngle * (count - 1) / 2) + ship.transform.rotation.eulerAngles.y + 90, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
             for (int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, ship.transform.position + (ship.transform.localScale.x / 2) * direction, Quaternion.identity);
@@ -112,13 +121,15 @@ public class CannonFireScript : MonoBehaviour
                 ball.SetActive(true);
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
-                angle *= Quaternion.Euler(0, spreadAngle, 0);
+                
 
                 ball.transform.rotation = angle;
 
                 
-				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * verticalRatio) + (direction * fireSpeed) + (ship.GetComponent<ShipMovementScript>().linearVelocity * 5 * ship.transform.forward);
+				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * verticalRatio) + (ball.transform.forward * fireSpeed) + (ship.GetComponent<ShipMovementScript>().linearVelocity * 5 * ship.transform.forward);
                 ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
+
+                angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
             }
             
         }
