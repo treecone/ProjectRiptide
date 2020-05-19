@@ -18,7 +18,7 @@ public class ShipMovementScript : PhysicsScript
 	private float linearAccelerationScale = 1;
 
     public float linearVelocity;
-    public ShipUpgrades shipUpgradeScript;
+    public Upgrades shipUpgradeScript;
     private bool rotatePositive = true;
 
     private Hitbox playerHurtbox;
