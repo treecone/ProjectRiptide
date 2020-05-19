@@ -66,7 +66,7 @@ public class ShipMovementScript : PhysicsScript
         //Calculate force moving towards desired location
         Vector3 netForce = GetConstantMoveForce(moveDirection, maxShipSpeed * speedScale, 1.0f);
         //Add force moving forwards
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * 3.0f;
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * maxShipSpeed * 1.5f * speedScale;
         Debug.DrawLine(position, position + netForce, Color.blue);
         Debug.DrawLine(position, position + moveDirection * 10.0f, Color.black);
 
@@ -75,7 +75,7 @@ public class ShipMovementScript : PhysicsScript
         //Apply Friction
         ApplyFriction(0.75f);
         //Apply force against the side of the ship, reduces drift
-        ApplyCounterSideForce(0.99f);
+        ApplyCounterSideForce(98.0f);
         base.Update();
         //Update camera
         camera.UpdateCamera();

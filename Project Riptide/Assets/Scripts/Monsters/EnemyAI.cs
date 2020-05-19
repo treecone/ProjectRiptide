@@ -224,6 +224,10 @@ public partial class Enemy : PhysicsScript
                 }
                 else
                 {
+                    //Change obstical detection position
+                    Transform detect = transform.GetChild(transform.childCount - 1);
+                    detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
+
                     StopMotion();
                     currTime = 0;
                     activeStates[(int)State.FormChanged] = true;
@@ -335,10 +339,10 @@ public partial class Enemy : PhysicsScript
             //Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
             //When monster gets close to an obstical avoid it
-            if (CheckCollision())
+            /*if (CheckCollision())
             {
                 lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-            }
+            }*/
 
             //Rotate and move monster
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
