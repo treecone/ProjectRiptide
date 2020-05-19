@@ -173,7 +173,14 @@ public class InputManager : MonoBehaviour
 				continue;
 			}
 
-			if (doubleClickCheck > 0.8f)
+            if (doubleClickCheck <= 0.8)
+            {
+                t.time += Time.deltaTime;
+                if (t.Displacement.magnitude > 50f && t.time > 0.1f)
+                    doubleClickCheck = 0.9f;
+            }
+
+            if (doubleClickCheck > 0.8f)
 			{
                 if(!t.startedMove)
                 {
@@ -203,6 +210,7 @@ public class InputManager : MonoBehaviour
 
 		public TouchPhase phase;
         public bool startedMove;
+        public float time = 0.0f;
 
 		public Vector2 Displacement
 		{

@@ -15,7 +15,7 @@ public partial class Enemy : PhysicsScript
         //Check for collision
         if (CheckObstacle())
         {
-            netForce += Steer(AvoidObstacle()) * 1.0f;
+            netForce += Steer(AvoidObstacle()) * 2.0f;
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
         }
 

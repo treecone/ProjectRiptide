@@ -16,7 +16,6 @@ public partial class Enemy : PhysicsScript
     //public fields
     public EnemyType enemyType;
     public GameObject projectile;
-    public GameObject shadow;
     public GameObject healthBarObject;
     public GameObject hitbox;
     public Camera camera;
@@ -67,8 +66,8 @@ public partial class Enemy : PhysicsScript
     public float widthMult;
     public float heightMult;
     public float baseHeightMult;
-    private float halfView = 50.0f;
-    private float viewRange = 15.0f;
+    private float halfView = 90.0f;
+    private float viewRange = 25.0f;
     private Vector3 widthVector;
 
     public float Health { get { return health; } }
@@ -131,7 +130,6 @@ public partial class Enemy : PhysicsScript
             passiveCooldown -= Time.deltaTime;
 
         SetHeightMult();
-        SetShadowPosition();
         SetHealthBarPosition();
 
         playerCollision = false;
@@ -250,7 +248,7 @@ public partial class Enemy : PhysicsScript
     /// <summary>
     /// Checks monster collisions with surrounding obsticals
     /// </summary>
-    public bool CheckCollision()
+    /*public bool CheckCollision()
     {
         //Create rays for hit detection
         RaycastHit hit;
@@ -283,7 +281,7 @@ public partial class Enemy : PhysicsScript
         }
 
         return false;
-    }
+    }*/
 
     /// <summary>
     /// Resets enemy's hostile AI values
@@ -432,11 +430,6 @@ public partial class Enemy : PhysicsScript
         heightMult = (transform.worldToLocalMatrix * new Vector3(transform.position.x, baseHeightMult, transform.position.z)).y;
     }
 
-    private void SetShadowPosition()
-    {
-        shadow.transform.position = new Vector3(transform.position.x, heightMult, transform.position.z);
-    }
-
     private void SetHealthBarPosition()
     {
         healthBarObject.transform.position = new Vector3(transform.position.x, baseHeightMult + 1.5f * transform.localScale.y, transform.position.z);
@@ -445,7 +438,7 @@ public partial class Enemy : PhysicsScript
     public bool CheckObstacle()
     {
         RaycastHit hit = new RaycastHit();
-        Vector3 detectPosition = new Vector3(transform.position.x, 4.5f, transform.position.z);
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         for (int i = 0; i <= halfView; i += 4)
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * viewRange, Color.red);
@@ -465,32 +458,28 @@ public partial class Enemy : PhysicsScript
 
     public Vector3 AvoidObstacle()
     {
+        Debug.Log("Avoiding Obstacle");
         Vector3 dir = Vector3.zero;
         bool found = false;
 
-        Vector3 detectPosition = new Vector3(transform.position.x, 4.0f, transform.position.z);
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        RaycastHit hit;
 
         for (int i = 0; i <= 90; i += 4)
         {
-            if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange))
+            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
             {
-                if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange + 2.0f))
-                {
-                    //dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
-                    dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
-                    found = true;
-                }
+                 dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
+                 //dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+                 found = true;
             }
-            if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange))
+            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(-widthVector), widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
             {
-                if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange + 2.0f))
+                if (!found || Random.Range(0, 1) == 0)
                 {
-                    if (!found || Random.Range(0, 1) == 0)
-                    {
-                        //dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
-                        dir = Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
-                        found = true;
-                    }
+                    dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                    //dir = Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
+                    found = true;
                 }
             }
             if (found)
