@@ -252,44 +252,6 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
-    /// Checks monster collisions with surrounding obsticals
-    /// </summary>
-    /*public bool CheckCollision()
-    {
-        //Create rays for hit detection
-        RaycastHit hit;
-        Ray rightFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray leftFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray rightSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
-        Ray leftSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
-        Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
-        Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
-        Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
-        Debug.DrawRay(leftSRay.origin, leftSRay.direction * lengthMult / 6, Color.black);
-        //Check for collision and change rotation accodingly 
-        if (Physics.Raycast(leftFRay, out hit, 5.0f) || Physics.Raycast(leftSRay, out hit, 1.0f))
-        {
-            if (hit.collider.CompareTag("Obstical"))
-            {
-                Debug.Log("Obstical collision");
-                //lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-                return true;
-            }
-        }
-        else if (Physics.Raycast(rightFRay, out hit, 5.0f) || Physics.Raycast(rightSRay, out hit, 1.0f))
-        {
-            if (hit.collider.CompareTag("Obstical"))
-            {
-                Debug.Log("Obstical collision");
-                //lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
-                return true;
-            }
-        }
-
-        return false;
-    }*/
-
-    /// <summary>
     /// Resets enemy's hostile AI values
     /// </summary>
     public void ResetHostile()
@@ -382,6 +344,31 @@ public partial class Enemy : PhysicsScript
             movementPattern);
     }
 
+    /// <summary>
+    /// Spawns an enemy projectile
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="speed">Speed of projectile</param>
+    /// <param name="damage">Damage projectile inflicts</param>
+    /// <param name="maxLifeSpan">Max life span of projectile</param>
+    /// <param name="movementPattern">Movement pattern of projectile</param>
+    /// <param name="launchAngle">Angle that hitbox will launch player</param>
+    /// <param name="launchStrength">Strength at which player will be launched</param>
+    private void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject.Instantiate(projectile,
+            transform.position + transform.TransformVector(position),
+            new Quaternion())
+            .GetComponent<EnemyProjectile>().LoadProjectile(
+            transform.TransformVector(position),
+            0.75f,
+            damage,
+            maxLifeSpan,
+            movementPattern,
+            launchAngle,
+            launchStrength);
+    }
+
     private void ClearHitboxes()
     {
         for (int i = 0; i < hitboxes.Count; i++)
@@ -435,6 +422,13 @@ public partial class Enemy : PhysicsScript
         return Vector3.up * gravity;
     }
 
+    /// <summary>
+    /// Applies a force to move in a direction at a specified speed
+    /// Applied only once
+    /// </summary>
+    /// <param name="dir">Direction of movment</param>
+    /// <param name="dist">Distance moved over time frame</param>
+    /// <param name="time">Time frame to move dstance</param>
     private void ApplyMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = mass * (dist / (time * Time.deltaTime));
@@ -442,6 +436,13 @@ public partial class Enemy : PhysicsScript
         ApplyForce(netForce);
     }
 
+    /// <summary>
+    /// Applies a force to move in a direction at a specified speed
+    /// Needs to be applied each frame
+    /// </summary>
+    /// <param name="dir">Direction of movement</param>
+    /// <param name="dist">Distance moved over time frame</param>
+    /// <param name="time">Time frame to move distance</param>
     private void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = (2 * mass * dist) / (time * time);
@@ -449,16 +450,26 @@ public partial class Enemy : PhysicsScript
         ApplyForce(netForce);
     }
 
+    /// <summary>
+    /// Sets the height mulitplier
+    /// </summary>
     private void SetHeightMult()
     {
         heightMult = (transform.worldToLocalMatrix * new Vector3(transform.position.x, baseHeightMult, transform.position.z)).y;
     }
 
+    /// <summary>
+    /// Sets position of health bar above enemy
+    /// </summary>
     private void SetHealthBarPosition()
     {
         healthBarObject.transform.position = new Vector3(transform.position.x, baseHeightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
 
+    /// <summary>
+    /// Checks if there is an obstical in the enemy's path
+    /// </summary>
+    /// <returns>If enemy's path is interuptted</returns>
     public bool CheckObstacle()
     {
         RaycastHit hit = new RaycastHit();
@@ -476,35 +487,43 @@ public partial class Enemy : PhysicsScript
                 return true;
             }
         }
+        /*if(Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, transform.forward, out hit, viewRange * 1.5f))
+        {
+            return true;
+        }*/
 
         return false;
     }
 
+    /// <summary>
+    /// Find direction to avoid obstacle
+    /// </summary>
+    /// <returns>Direction to avoid obstacle</returns>
     public Vector3 AvoidObstacle()
     {
-        Debug.Log("Avoiding Obstacle");
+        //Debug.Log("Avoiding Obstacle");
         Vector3 dir = Vector3.zero;
         bool found = false;
 
         Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         RaycastHit hit;
 
+        //Check 90 degrees for a path to avoid obstacle
         for (int i = 0; i <= 90; i += 4)
         {
+            //Check right side for path
             if (!Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
+                //Set direction if path is found
                  dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
-                 //dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
                  found = true;
             }
+            //Check left side for path
             if (!Physics.SphereCast(detectPosition + transform.TransformDirection(-widthVector), widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
-                if (!found || Random.Range(0, 1) == 0)
-                {
-                    dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
-                    //dir = Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
-                    found = true;
-                }
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                found = true;
             }
             if (found)
                 return dir;
@@ -513,6 +532,11 @@ public partial class Enemy : PhysicsScript
         return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
     }
 
+    /// <summary>
+    /// Called when inside an obstacle
+    /// Move enemy after the obstacle
+    /// </summary>
+    /// <param name="obstical">GameObject colliding with</param>
     public void OnObsticalCollision(GameObject obstical)
     {
         if (obstical.tag == "Obstical")
@@ -526,6 +550,10 @@ public partial class Enemy : PhysicsScript
         }
     }
 
+    /// <summary>
+    /// Take knockback from an outside source
+    /// </summary>
+    /// <param name="knockback">Knockback force</param>
     public void TakeKnockback(Vector3 knockback)
     {
         ApplyForce(knockback);
