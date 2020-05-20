@@ -9,26 +9,33 @@ public partial class Enemy : PhysicsScript
     private void FollowPlayer()
     {
         //Calculate net force
-        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 2.0f;
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
+        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+        //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
 
         //Check for collision
         if (CheckObstacle())
         {
-            netForce += Steer(AvoidObstacle()) * 10.0f;
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+            Vector3 avoidForce = Steer(AvoidObstacle()) * 3.0f;
+            netForce += avoidForce;
+            //Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
         }
 
         //Rotate in towards direction of velocity
-        if (velocity != Vector3.zero) 
-            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
-
+        if (velocity != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+        }
+        //Debug.DrawLine(transform.position, transform.position + netForce, Color.red);
         ApplyForce(netForce);
     }
 
+    //General method for making the moster circle around the player
+    //Used when monster is too close to player
     private void CirclePlayer()
     {
-        Debug.Log("Circle Player");
         //Calculate net force
         Vector3 netForce = PlayerPosition() - transform.position;
         netForce = new Vector3(netForce.x, 0, netForce.z);
@@ -40,13 +47,16 @@ public partial class Enemy : PhysicsScript
         //Check for collision
         if (CheckObstacle())
         {
-            netForce += Steer(AvoidObstacle()) * 2.0f;
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+            netForce += Steer(AvoidObstacle()) * 3.0f;
+            //netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
         }
 
         //Rotate in towards direction of velocity
         if (velocity != Vector3.zero)
-            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+        }
 
         ApplyForce(netForce);
     }
@@ -156,6 +166,23 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
+    /// Transition to charge attack by slowing down
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
+    private bool KoiStopTransition(ref float time)
+    {
+        const float MAX_TIME = 0.25f;
+
+        ApplyFriction(0.50f);
+
+        if (time >= MAX_TIME)
+            return false;
+        else
+            return true;
+    }
+
+    /// <summary>
     /// Used for KoiBoss, Charges a dash for 1 second
     /// </summary>
     /// <param name="time">Current time</param>
@@ -173,7 +200,9 @@ public partial class Enemy : PhysicsScript
         {
             //Look towards player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+            Quaternion desiredRotation = Quaternion.LookRotation(destination - transform.position);
+            SetSmoothRotation(desiredRotation, 2.0f, 1.0f, 4.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
         if (time >= MAX_TIME)
@@ -246,7 +275,9 @@ public partial class Enemy : PhysicsScript
 
             //Look towards player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 3.0f);
+            Quaternion desiredRotation = Quaternion.LookRotation(destination - transform.position);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
         if (time >= MAX_TIME)
@@ -440,21 +471,25 @@ public partial class Enemy : PhysicsScript
         if (time < MAX_TIME - STALL_TIME)
         {
             //Calculate net force
-            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)) * 4.0f;
+            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+            //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
             //Check for collision
             if (CheckObstacle())
             {
-                netForce += Steer(AvoidObstacle()) * 5.0f;
-                netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+                netForce += Steer(AvoidObstacle()) * 3.0f;
+                //netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
             }
 
             //Rotate in towards direction of velocity
             if (velocity != Vector3.zero)
-                rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+            {
+                Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+                SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            }
 
-            ApplyForce(netForce * 10.0f);
+            ApplyForce(netForce);
 
             if (playerDistance <= 3.1f)
             {

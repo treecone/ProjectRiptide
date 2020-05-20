@@ -153,6 +153,7 @@ public partial class Enemy : PhysicsScript
                             specialCooldown[(int)Attack.TripleDash] = 6.0f;
                             currTime = 0;
                             //Set up triple dash attack
+                            actionQueue.Enqueue(KoiStopTransition);
                             actionQueue.Enqueue(KoiDashCharge);
                             actionQueue.Enqueue(KoiDashAttack);
                             actionQueue.Enqueue(KoiDashCharge);
@@ -188,6 +189,7 @@ public partial class Enemy : PhysicsScript
                             specialCooldown[(int)Attack.BubbleBlast] = 8.0f;
                             currTime = 0;
                             //Set up bubble blast attack
+                            actionQueue.Enqueue(KoiStopTransition);
                             actionQueue.Enqueue(KoiBubbleBlastCharge);
                             actionQueue.Enqueue(KoiBubbleBlastAttack);
                         }

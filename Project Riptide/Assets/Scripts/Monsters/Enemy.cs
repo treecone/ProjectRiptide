@@ -72,6 +72,9 @@ public partial class Enemy : PhysicsScript
     private float viewRange = 20.0f;
     private Vector3 widthVector;
 
+    //Smooth rotation stuff
+    private float rotationalVeloctiy = 0.5f;
+
     public float Health { get { return health; } }
 
     // Start is called before the first frame update
@@ -512,17 +515,19 @@ public partial class Enemy : PhysicsScript
         for (int i = 0; i <= 90; i += 4)
         {
             //Check right side for path
-            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                  dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
                  found = true;
             }
             //Check left side for path
-            if (!Physics.SphereCast(detectPosition + transform.TransformDirection(-widthVector), widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                 dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
                 found = true;
             }
             if (found)
@@ -530,6 +535,48 @@ public partial class Enemy : PhysicsScript
         }
 
         return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+    }
+
+    /// <summary>
+    /// Find direction to avoid obstacle
+    /// </summary>
+    /// <returns>Direction to avoid obstacle</returns>
+    public Vector3 AvoidObstacle(Vector3 targetDir)
+    {
+        //Debug.Log("Avoiding Obstacle");
+        Vector3 dir = Vector3.zero;
+        bool found = false;
+
+        targetDir = new Vector3(targetDir.x, 0, targetDir.z);
+        targetDir.Normalize();
+
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        RaycastHit hit;
+
+        //Check 90 degrees for a path to avoid obstacle
+        for (int i = 0; i <= 90; i += 4)
+        {
+            //Check right side for path
+            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, viewRange * 1.5f))
+            {
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(i, Vector3.up) * targetDir;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
+                found = true;
+            }
+            //Check left side for path
+            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, viewRange * 1.5f))
+            {
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(-i, Vector3.up) * targetDir;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
+                found = true;
+            }
+            if (found)
+                return dir;
+        }
+
+        return Quaternion.AngleAxis(90, Vector3.up) * targetDir;
     }
 
     /// <summary>
@@ -545,7 +592,7 @@ public partial class Enemy : PhysicsScript
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 20.0f;
+            backForce *= 50.0f;
             ApplyForce(backForce);
         }
     }
@@ -557,5 +604,35 @@ public partial class Enemy : PhysicsScript
     public void TakeKnockback(Vector3 knockback)
     {
         ApplyForce(knockback);
+    }
+
+    public void SetSmoothRotation(Quaternion desiredRotation, float rotationalAcceleration, float minRotationalVelocity, float maxRotationalVelocity)
+    {
+        //Rotate based on target location
+        if (rotation != desiredRotation)
+        {
+            //If rotation is close to desired location, slow down rotation
+            if (Quaternion.Angle(rotation, desiredRotation) < 45.0f)
+            {
+                rotationalVeloctiy += rotationalVeloctiy * -0.80f * Time.deltaTime;
+                //Make sure rotation stay's above minium value
+                if (rotationalVeloctiy < minRotationalVelocity)
+                    rotationalVeloctiy = minRotationalVelocity;
+            }
+            //Else speed up rotation
+            else
+            {
+                rotationalVeloctiy += rotationalAcceleration * Time.deltaTime;
+                //Make sure rotation stay's below maximum value
+                if (rotationalVeloctiy > maxRotationalVelocity)
+                    rotationalVeloctiy = maxRotationalVelocity;
+            }
+
+            //Update rotation
+            rotation = Quaternion.RotateTowards(rotation, desiredRotation, rotationalVeloctiy);
+        }
+        //Reset velocity when not rotating
+        else
+            rotationalVeloctiy = minRotationalVelocity;
     }
 }
