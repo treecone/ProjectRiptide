@@ -49,7 +49,7 @@ public class PhysicsScript : MonoBehaviour
     {
         //Set up desired velocity
         desiredVelocity = desiredVelocity.normalized;
-        desiredVelocity *= maxSpeed;
+        desiredVelocity *= velocity.magnitude;
 
         //Calc steering force
         Vector3 steeringForce = desiredVelocity - velocity;
