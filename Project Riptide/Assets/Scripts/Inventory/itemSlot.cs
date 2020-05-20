@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class ItemSlot: MonoBehaviour
+public class ItemSlot : MonoBehaviour
 {
     public Item item;
 

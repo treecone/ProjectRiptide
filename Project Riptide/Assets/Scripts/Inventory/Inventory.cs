@@ -39,6 +39,17 @@ public class Inventory : MonoBehaviour
             RemoveItem("nails", 8);
 
         }
+        if(Input.GetKeyDown(KeyCode.C))
+        {
+            AddItem("woodencannon", 1);
+        }
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            foreach(GameObject slot in inventorySlots)
+            {
+                slot.GetComponent<ItemSlot>().item.equipped = true;
+            }
+        }
         if (Input.GetKey(KeyCode.J))
         {
             GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(Random.Range(0,5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
@@ -115,4 +126,19 @@ public class Inventory : MonoBehaviour
             otherInventory.AddItem(itemName, amount);
         }
     }
+
+    public int CountOf(string itemName)
+    {
+        int count = 0;
+        for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
+        {
+            ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
+            if (slot.item.name == itemName)
+            {
+                count += slot.item.amount;
+            }
+        }
+        return count;
+    }
+    
 }

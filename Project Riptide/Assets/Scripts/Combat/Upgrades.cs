@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LitJson;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,6 +21,7 @@ public class Upgrades : MonoBehaviour
     /// </summary>
     /// 
 
+    public Inventory inventory;
         
     public List<Upgrade> upgrades;
     public MasterUpgrade masterUpgrade;
@@ -32,7 +34,7 @@ public class Upgrades : MonoBehaviour
 
     // Some debug upgrades that could be added
     void Update()
-    {
+    {/*
         if(Input.GetKeyDown(KeyCode.U))
         {
             AddUpgrade(new Upgrade("Grape Shot", new { damage = 3 }));
@@ -53,6 +55,11 @@ public class Upgrades : MonoBehaviour
         {
             upgrades.Clear();
             Recalculate();
+        }*/
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            Recalculate();
         }
     }
 
@@ -63,12 +70,23 @@ public class Upgrades : MonoBehaviour
     }
     public void Recalculate()
     {
-        masterUpgrade.Recalculate(upgrades);
+        List<Upgrade> equippedUpgrades = new List<Upgrade>();
+        for (int i = 0; i < inventory.inventorySlots.Count; i++) {
+            Item item = inventory.inventorySlots[i].GetComponent<ItemSlot>().item;
+            if (item.equipped == true)
+            {
+                foreach(Upgrade u in item.upgrades)
+                {
+                    equippedUpgrades.Add(u);
+                }
+            }
+        }
+        masterUpgrade.Recalculate(equippedUpgrades);
     }
 }
 
 /// <summary>
-/// An abstract base class for upgrades
+/// A base class for upgrades
 /// </summary>
 [Serializable]
 public class Upgrade
@@ -114,6 +132,12 @@ public class Upgrade
                 upgradeInfo.Add(pd.Name, f);
             }
         }
+    }
+
+    public Upgrade(string _name, Dictionary<string, float> data)
+    {
+        name = _name;
+        upgradeInfo = data;
     }
 
     /// <summary>

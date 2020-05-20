@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using LitJson;
+using System;
 
 //USING LITJSON
 public class ItemDatabase : MonoBehaviour
@@ -18,7 +19,7 @@ public class ItemDatabase : MonoBehaviour
 
     void Awake()
     {
-        defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
+        defaultPath = Application.dataPath + "/Resources/Inventory/ItemsWithUpgrades.json";
         jsonString = File.ReadAllText(defaultPath);
         itemData = JsonMapper.ToObject(jsonString);
         ConstructDatabase();
@@ -31,10 +32,26 @@ public class ItemDatabase : MonoBehaviour
         for (int i = 0; i < itemData.Count; i++)
         {
             string nameTempString = itemData[i]["name"].ToString();
+
+            //Parses the item's upgrades
+            List<Upgrade> upgrades = new List<Upgrade>();
+            for(int j = 0; j < itemData[i]["upgrades"].Count; j++)
+            {
+                JsonData upgradeData = itemData[i]["upgrades"][j];
+                string name = (string)upgradeData["name"];
+                Dictionary<string, float> upgradeInfo = new Dictionary<string, float>();
+                foreach(string key in upgradeData["data"].Keys)
+                {
+                    upgradeInfo[key] = Convert.ToSingle(upgradeData["data"][key].ToString());
+                }
+                upgrades.Add(new Upgrade(name, upgradeInfo));
+            }
+
+
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
             if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"))
             {
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"]));
+                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"], upgrades));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
                 //This usually means that we have yet to put the sprite for the item in the game
 
@@ -42,7 +59,7 @@ public class ItemDatabase : MonoBehaviour
             else
             {
                 //Delete this?
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"]));
+                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (bool)itemData[i]["stackable"], (int)itemData[i]["rarity"], (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"), (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"], upgrades));
             }
         }
     }
@@ -79,7 +96,7 @@ public class ItemDatabase : MonoBehaviour
 
     public Item GetRandomItem ()
     {
-        return database[Random.Range(0, database.Count)];
+        return database[UnityEngine.Random.Range(0, database.Count)];
     }
 
     //Refrences -------------------------------------------------------------------------------------------------------------------------------
