@@ -35,8 +35,10 @@ public class CannonFireScript : MonoBehaviour
     }
     public void Fire(Vector3 direction)
     {
-        CannonShot shot = new CannonShot(direction, shipUpgradeScript.masterUpgrade);
-        shot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        CannonShot rightShot = new CannonShot(direction, 90, shipUpgradeScript.masterUpgrade);
+        CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
+        leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
 	public class CannonShot
@@ -44,27 +46,30 @@ public class CannonFireScript : MonoBehaviour
         private int damage;
         private Vector3 direction;
         private float fireSpeed;
+        private float fireAngle;
         private float verticalRatio;
         private int count;
         private float spreadAngle;
         
         //this doesn't really get used but it'll stay in just in case for now
-        public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float verticalRatio, float spreadAngle)
+        public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float fireAngle, float verticalRatio, float spreadAngle)
         {
             this.count = count;
             this.damage = damage;
             this.direction = direction;
             this.fireSpeed = fireSpeed;
+            this.fireAngle = fireAngle;
             this.verticalRatio = verticalRatio;
             this.spreadAngle = spreadAngle;
         }
 
-        public CannonShot(Vector3 direction, Upgrade upgrade)
+        public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
             this.count = 1 + (int)upgrade["count"];
             this.damage = 1 + (int)upgrade["damage"];
             this.direction = direction;
             this.fireSpeed = 40 + upgrade["fireSpeed"];
+            this.fireAngle = fireAngle;
             this.verticalRatio = 0.1f + upgrade["verticalRatio"];
             this.spreadAngle = 20;
         }
@@ -81,11 +86,11 @@ public class CannonFireScript : MonoBehaviour
                 trueSpreadAngle = spreadAngle / (count - 1);
             }
             //currently only shoots right, gotta fix to actually account for direction
-            Quaternion angle = Quaternion.Euler(0, (-trueSpreadAngle * (count - 1) / 2) + ship.transform.rotation.eulerAngles.y + 90, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
+            Quaternion angle = Quaternion.Euler(0, (-trueSpreadAngle * (count - 1) / 2) + ship.transform.rotation.eulerAngles.y + fireAngle, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
             for (int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, ship.transform.position + (ship.transform.localScale.x / 2) * direction, Quaternion.identity);
-                ball.transform.localScale = new Vector3(cannonBallSizeScale * damage, cannonBallSizeScale * damage, cannonBallSizeScale * damage);
+                ball.transform.localScale = new Vector3(cannonBallSizeScale * Mathf.Sqrt(damage), cannonBallSizeScale * Mathf.Sqrt(damage), cannonBallSizeScale * Mathf.Sqrt(damage));
                 ball.SetActive(true);
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
