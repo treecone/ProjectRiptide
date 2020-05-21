@@ -189,7 +189,7 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiDashCharge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = 1.5f;
         const float STALL_TIME = 0.2f;
 
         //Stop motion at begining of charge
@@ -201,7 +201,7 @@ public partial class Enemy : PhysicsScript
             //Look towards player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             Quaternion desiredRotation = Quaternion.LookRotation(destination - transform.position);
-            SetSmoothRotation(desiredRotation, 2.0f, 1.0f, 4.0f);
+            SetSmoothRotation(desiredRotation, 1.5f, 1.0f, 4.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
@@ -581,6 +581,62 @@ public partial class Enemy : PhysicsScript
             inKnockback = false;
             return false;
         }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Used for Rock Crab
+    /// Crab flings itself forward towards the player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    private bool CrabRockFling(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        //Start dashing
+        if (time == 0.0f)
+        {
+            hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, ramingDamage, new Vector2(90, 0), 1000));
+            gravity = ApplyArcForce(transform.forward, playerDistance * speed, 2f * transform.localScale.y, 1.0f);
+        }
+
+        if (!inKnockback)
+        {
+            //If monster hits player, stop special
+            if (playerCollision || obsticalCollision)
+            {
+                inKnockback = true;
+                velocity.x = 0;
+                velocity.z = 0;
+                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
+            }
+            ApplyForce(gravity);
+        }
+        //Do knockback if there was a hit
+        else
+        {
+            ApplyForce(gravity);
+
+            //Stop moving fish if it goes below its original height
+            if (transform.position.y <= initalPos)
+            {
+                time = MAX_TIME;
+            }
+        }
+
+        if (time >= MAX_TIME)
+        {
+            ReturnToInitalPosition();
+            StopMotion();
+            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
+            hitboxes.RemoveAt(hitboxes.Count - 1);
+            inKnockback = false;
+            return false;
+        }
+        else
+            return true;
 
         return true;
     }
