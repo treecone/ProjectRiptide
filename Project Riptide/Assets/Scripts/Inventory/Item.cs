@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public struct Item 
+public class Item 
 {
 
     public int id; //These are public, and thus not secure...

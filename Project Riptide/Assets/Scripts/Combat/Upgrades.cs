@@ -63,16 +63,26 @@ public class Upgrades : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Directly adds an upgrade to the ship
+    /// </summary>
+    /// <param name="u">The upgrade to add</param>
     public void AddUpgrade(Upgrade u)
     {
         upgrades.Add(u);
         Recalculate();
     }
-    public void Recalculate()
+
+    /// <summary>
+    /// Recalculates the Master Upgrade, a sum of all upgrades on equipped items.
+    /// 
+    /// Other parts of the code trying to get upgrade values should reference the master upgrade
+    /// </summary>
+    private void Recalculate()
     {
         List<Upgrade> equippedUpgrades = new List<Upgrade>();
-        for (int i = 0; i < inventory.inventorySlots.Count; i++) {
-            Item item = inventory.inventorySlots[i].GetComponent<ItemSlot>().item;
+        for (int i = 0; i < inventory.Size; i++) {
+            Item item = inventory[i];
             if (item.equipped == true)
             {
                 foreach(Upgrade u in item.upgrades)
