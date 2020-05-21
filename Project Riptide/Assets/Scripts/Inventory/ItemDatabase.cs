@@ -19,7 +19,7 @@ public class ItemDatabase : MonoBehaviour
 
     void Awake()
     {
-        defaultPath = Application.dataPath + "/Resources/Inventory/ItemsWithUpgrades.json";
+        defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
         jsonString = File.ReadAllText(defaultPath);
         itemData = JsonMapper.ToObject(jsonString);
         ConstructDatabase();

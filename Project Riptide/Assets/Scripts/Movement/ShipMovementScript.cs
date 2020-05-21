@@ -14,7 +14,7 @@ public class ShipMovementScript : PhysicsScript
 	private Vector3 Target;
 	public Vector3 TargetDirection { get; set;}
     public float speedScale = 1.0f;
-    private float rotationalVeloctiy = 0.20f;
+    private float rotationalVelocity = 0.20f;
     private float rotationalAcceleration = 0.6f;
 
     public Upgrades shipUpgradeScript;
@@ -48,31 +48,31 @@ public class ShipMovementScript : PhysicsScript
             //If rotation is close to desired location, slow down rotation
             if(Quaternion.Angle(rotation, lookRotation) < 45.0f)
             {
-                rotationalVeloctiy += rotationalVeloctiy * -0.80f * Time.deltaTime;
+                rotationalVelocity += rotationalVelocity * -0.80f * Time.deltaTime;
                 //Make sure rotation stay's above minium value
-                if (rotationalVeloctiy < MIN_ROTATIONAL_VELOCITY)
-                    rotationalVeloctiy = MIN_ROTATIONAL_VELOCITY;
+                if (rotationalVelocity < MIN_ROTATIONAL_VELOCITY)
+                    rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
             }
             //Else speed up rotation
             else
             {
-                rotationalVeloctiy += rotationalAcceleration * Time.deltaTime;
+                rotationalVelocity += rotationalAcceleration * Time.deltaTime;
                 //Make sure rotation stay's below maximum value
-                if (rotationalVeloctiy > MAX_ROTATIONAL_VELOCITY)
-                    rotationalVeloctiy = MAX_ROTATIONAL_VELOCITY;
+                if (rotationalVelocity > MAX_ROTATIONAL_VELOCITY)
+                    rotationalVelocity = MAX_ROTATIONAL_VELOCITY;
             }
 
             //Update rotation
-            rotation = Quaternion.RotateTowards(rotation, lookRotation, rotationalVeloctiy);
+            rotation = Quaternion.RotateTowards(rotation, lookRotation, rotationalVelocity);
         }
         //Reset velocity when not rotating
         else
-            rotationalVeloctiy = MIN_ROTATIONAL_VELOCITY;
+            rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
 
         //Check if rotating direction has changed, if so reset rotation velocity
         if((Vector3.Cross(transform.forward, moveDirection).y < 0 && rotatePositive) || (Vector3.Cross(transform.forward, moveDirection).y > 0 && !rotatePositive))
         {
-            rotationalVeloctiy = MIN_ROTATIONAL_VELOCITY;
+            rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
             rotatePositive = !rotatePositive;
         }
 
@@ -84,7 +84,7 @@ public class ShipMovementScript : PhysicsScript
             //Add force moving towards desired location based on ship speed and speed scale
             netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * speedScale, 1.0f);
             //Add force moving forwards
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * speedScale;
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * speedScale * (1.0f + shipUpgradeScript.masterUpgrade["shipSpeed"]);
         }
         //Draw debug lines for net force and move direction
         Debug.DrawLine(position, position + netForce, Color.blue);
@@ -168,6 +168,6 @@ public class ShipMovementScript : PhysicsScript
     /// <param name="knockback">Knockback Force</param>
     public void TakeKnockback(Vector3 knockback)
     {
-        ApplyForce(knockback);
+        ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade["hardiness"]));
     }
 }

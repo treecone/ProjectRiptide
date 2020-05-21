@@ -9,6 +9,7 @@ public class Inventory : MonoBehaviour
     public List<Item> items;
     public List<GameObject> inventorySlots;
     private ItemDatabase theDatabase;
+    public Upgrades shipUpgradeScript;
     void Start()
     {
         items = new List<Item>();
@@ -40,16 +41,21 @@ public class Inventory : MonoBehaviour
             RemoveItem("nails", 8);
 
         }
-        if(Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.Z))
         {
             AddItem("woodencannon", 1);
         }
-        if(Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.X))
         {
-            foreach(GameObject slot in inventorySlots)
-            {
-                slot.GetComponent<ItemSlot>().item.equipped = true;
-            }
+            AddItem("scalemailhull", 1);
+        }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AddItem("silksails", 1);
+        }
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            AddItem("grapeshot", 1);
         }
         if (Input.GetKey(KeyCode.J))
         {
@@ -100,6 +106,7 @@ public class Inventory : MonoBehaviour
         items[items.Count - 1].amount = amountToAddTemp;
 
         newSlot.GetComponent<ItemSlot>().UpdateSlotVisuals();
+        shipUpgradeScript.Recalculate();
     }
 
     /// <summary>
@@ -134,6 +141,7 @@ public class Inventory : MonoBehaviour
             }
         }
         Debug.LogWarning("[Inventory] When removing " + amount + " of " + itemToRemove.name + ", not enough items of that type were found in the inventory!");
+        shipUpgradeScript.Recalculate();
         return false;
     }
 

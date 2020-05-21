@@ -32,7 +32,7 @@ public class Item
         this.amount = amount;
         this.maxAmount = maxAmount;
         this.upgrades = upgrades;
-        this.equipped = false;
+        this.equipped = true;
     }
 }
 

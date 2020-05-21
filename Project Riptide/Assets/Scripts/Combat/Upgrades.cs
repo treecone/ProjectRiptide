@@ -78,7 +78,7 @@ public class Upgrades : MonoBehaviour
     /// 
     /// Other parts of the code trying to get upgrade values should reference the master upgrade
     /// </summary>
-    private void Recalculate()
+    public void Recalculate()
     {
         List<Upgrade> equippedUpgrades = new List<Upgrade>();
         for (int i = 0; i < inventory.Size; i++) {
@@ -127,6 +127,7 @@ public class Upgrade
     ///                At the moment, if you increase this, horizontal speed will not decrease
     ///                to accomodate for it, so the cannonball will go super far
     /// shipSpeed    - The ship's movement speed
+    /// hardiness   - The amount of knockback reduction the ship has (2 hardiness means you take 1/2 knockback, etc)
     /// 
     /// </param>
     public Upgrade(string _name, object data)
