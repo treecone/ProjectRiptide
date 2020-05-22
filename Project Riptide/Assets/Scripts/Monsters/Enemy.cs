@@ -5,7 +5,7 @@ using UnityEngine;
 /// Caden Messenger, Mira Antolovich
 /// 4/6/2019
 /// </summary>
-enum EnemyState { Passive, Hostile }
+public enum EnemyState { Passive, Hostile }
 public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
@@ -26,7 +26,10 @@ public partial class Enemy : PhysicsScript
     //fields
     public float health;
     private float maxHealth;
-    private EnemyState state;
+
+    [HideInInspector]
+    public EnemyState state;
+
     //player's distance from enemy
     private float playerDistance;
     //monsters distance from start position
