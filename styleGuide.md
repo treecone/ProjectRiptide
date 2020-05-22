@@ -98,7 +98,7 @@ Methods are written in **PascalCase**. For example `DoSomething()`.
 
 ### Fields
 
-All non-static fields are written **camelCase**. Per Unity convention, this includes **public fields** as well.
+All private and protected fields are written **camelCase**, beginning with an underscore. Public fields  are written in **camelCase** as well, with no underscore.
 
 For example:
 
@@ -107,21 +107,21 @@ public class MyClass
 {
     public int publicField;
     int packagePrivate;
-    private int myPrivate;
-    protected int myProtected;
+    private int _myPrivate;
+    protected int _myProtected;
 }
 ```
 
 **AVOID:**
 
 ```csharp
-private int _myPrivateVariable
+private int myPrivateVariable
 ```
 
 **PREFER:**
 
 ```csharp
-private int myPrivateVariable
+private int _myPrivateVariable
 ```
 
 Static fields are the exception and should be written in **PascalCase**:
