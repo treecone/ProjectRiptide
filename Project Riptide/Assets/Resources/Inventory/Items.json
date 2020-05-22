@@ -1,18 +1,19 @@
 [
 
-	/*
+  /*
   Items will have rarity, and have 4 levels in between which can be upgraded with gear
 	*/
   {
-  	"id" : 0,
-  	"name" : "NullItem",
-  	"description" : "It's a perfectly null item, perhaps a bit too perfect...",
-  	"stackable": true,
-  	"rarity": 0,
-  	"value": 1,
+    "id": 0,
+    "name": "NullItem",
+    "description": "It's a perfectly null item, perhaps a bit too perfect...",
+    "stackable": true,
+    "rarity": 0,
+    "value": 1,
     "slug": "nullitem",
     "amount": 0,
-  	"maxAmount" : 100
+    "maxAmount": 100,
+    "upgrades": []
   },
   {
     "id": 1,
@@ -23,7 +24,8 @@
     "value": 10,
     "slug": "stone",
     "amount": 0,
-    "maxAmount": 64
+    "maxAmount": 64,
+    "upgrades": []
   },
   {
     "id": 2,
@@ -34,7 +36,8 @@
     "value": 10,
     "slug": "wood",
     "amount": 0,
-    "maxAmount": 64
+    "maxAmount": 64,
+    "upgrades": []
   },
   {
     "id": 3,
@@ -45,7 +48,8 @@
     "value": 10,
     "slug": "carpscale",
     "amount": 0,
-    "maxAmount": 64
+    "maxAmount": 64,
+    "upgrades": []
   },
   {
     "id": 4,
@@ -56,6 +60,83 @@
     "value": 10,
     "slug": "nails",
     "amount": 0,
-    "maxAmount": 100
+    "maxAmount": 100,
+    "upgrades": []
+  },
+  {
+    "id": 5,
+    "name": "Wooden Cannon",
+    "description": "A simple wooden cannon",
+    "stackable": false,
+    "rarity": 2,
+    "value": 50,
+    "slug": "woodencannon",
+    "amount": 0,
+    "maxAmount": 1,
+    "upgrades": [
+      {
+        "name": "Simple Shots",
+        "data": {
+          "damage": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Scalemail Hull",
+    "description": "An advanced ship hull reinforced with carp scales",
+    "stackable": false,
+    "rarity": 3,
+    "value": 100,
+    "slug": "scalemailhull",
+    "amount": 0,
+    "maxAmount": 1,
+    "upgrades": [
+      {
+        "name": "Knockback Resistance",
+        "data": {
+          "hardiness": 0.5
+        }
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Silk Sails",
+    "description": "Refined silken sails, optimized for speed",
+    "stackable": false,
+    "rarity": 3,
+    "value": 100,
+    "slug": "silksails",
+    "amount": 0,
+    "maxAmount": 1,
+    "upgrades": [
+      {
+        "name": "Swiftness",
+        "data": {
+          "shipSpeed": 0.2
+        }
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Grape Shot",
+    "description": "A collection of iron balls fired together from a cannon",
+    "stackable": false,
+    "rarity": 2,
+    "value": 20,
+    "slug": "grapeshot",
+    "amount": 0,
+    "maxAmount": 1,
+    "upgrades": [
+      {
+        "name": "Extra shots",
+        "data": {
+          "count":  1
+        }
+      }
+    ]
   }
 ]

@@ -5,7 +5,7 @@ using UnityEngine;
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     /// <summary>
     /// Moves the monster randomly within a certain radius
@@ -49,6 +49,14 @@ public partial class Enemy : PhysicsScript
 
         ApplyForce(netForce);
         //ApplyFriction(0.25f);
+    }
+
+    /// <summary>
+    /// Passive enemy AI where the enemy does not move while passive
+    /// </summary>
+    public void PassiveDoNothing()
+    {
+        //Do nothing
     }
 
     /// <summary>
@@ -133,7 +141,10 @@ public partial class Enemy : PhysicsScript
                 //If the Koi is not in any special
                 if (!activeStates[(int)State.Active])
                 {
-                    FollowPlayer();
+                    if (playerDistance > 6.0f)
+                        FollowPlayer();
+                    else
+                        CirclePlayer();
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
                     if (specialCooldown[(int)State.Active] > 0)
@@ -150,6 +161,7 @@ public partial class Enemy : PhysicsScript
                             specialCooldown[(int)Attack.TripleDash] = 6.0f;
                             currTime = 0;
                             //Set up triple dash attack
+                            actionQueue.Enqueue(KoiStopTransition);
                             actionQueue.Enqueue(KoiDashCharge);
                             actionQueue.Enqueue(KoiDashAttack);
                             actionQueue.Enqueue(KoiDashCharge);
@@ -185,6 +197,9 @@ public partial class Enemy : PhysicsScript
                             specialCooldown[(int)Attack.BubbleBlast] = 8.0f;
                             currTime = 0;
                             //Set up bubble blast attack
+                            actionQueue.Enqueue(KoiStopTransition);
+                            actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
+                            actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
                             actionQueue.Enqueue(KoiBubbleBlastCharge);
                             actionQueue.Enqueue(KoiBubbleBlastAttack);
                         }
@@ -215,15 +230,24 @@ public partial class Enemy : PhysicsScript
                     currTime = 0;
                     StopMotion();
                     activeStates[(int)State.FormChangeInProgress] = true;
+                    animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+                    initalPos = transform.position.y;
                 }
+
 
                 if (currTime < 1.0f)
                 {
-                    ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
+                    ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
                     currTime += Time.deltaTime;
                 }
                 else
                 {
+                    //Change obstical detection position
+                    Transform detect = transform.GetChild(transform.childCount - 1);
+                    detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
+                    //initalPos = initalPos - 1.0f * transform.localScale.y;
+                    //ReturnToInitalPosition();
+
                     StopMotion();
                     currTime = 0;
                     activeStates[(int)State.FormChanged] = true;
@@ -235,7 +259,10 @@ public partial class Enemy : PhysicsScript
                 //If the Koi is not in any special
                 if (!activeStates[(int)State.Active])
                 {
-                    FollowPlayer();
+                    if (playerDistance > 10.0f)
+                        FollowPlayer();
+                    else
+                        CirclePlayer();
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
                     if (specialCooldown[(int)State.Active] > 0)
@@ -310,6 +337,7 @@ public partial class Enemy : PhysicsScript
                 }
             }
         }
+        animator.SetFloat(animParm[(int)CarpAnim.Velocity], velocity.sqrMagnitude);
     }
 
     /// <summary>
@@ -335,14 +363,59 @@ public partial class Enemy : PhysicsScript
             //Find local forward vector
             Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
             //When monster gets close to an obstical avoid it
-            if (CheckCollision())
+            /*if (CheckCollision())
             {
                 lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-            }
+            }*/
 
             //Rotate and move monster
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
             transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        }
+    }
+
+    public void HostileRockCrab()
+    {
+        //If enemy is outside max radius, set to passive
+        if (enemyDistance > maxRadius)
+        {
+            state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If enemy is not in special
+            if (!activeStates[(int)State.Active])
+            {
+                //Follow the player
+                FollowPlayer();
+
+                //Cooldown special while in a 10 units of player
+                if (playerDistance < 20.0f)
+                {
+                    specialCooldown[(int)State.Active] -= Time.deltaTime;
+                }
+                //If cooldown is finished, switch to special
+                if (specialCooldown[(int)State.Active] <= 0)
+                {
+                    activeStates[(int)State.Active] = true;
+                    currTime = 0;
+                    initalPos = transform.position.y;
+                    //Load an attack that charges a dash then attacks
+                    actionQueue.Enqueue(CrabRockFling);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    activeStates[(int)State.Active] = false;
+                    specialCooldown[(int)State.Active] = 5.0f;
+                }
+            }
         }
     }
 }

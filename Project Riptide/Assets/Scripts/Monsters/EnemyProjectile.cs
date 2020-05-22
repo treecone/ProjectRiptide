@@ -14,6 +14,8 @@ public class EnemyProjectile : MonoBehaviour
     private float speed;
     private float currLifeSpan;
     private float maxLifeSpan;
+    private Vector2 launchAngle;
+    private float launchStrength;
     private MovementPattern movementPattern;
     private GameObject projHitbox;
 
@@ -21,7 +23,7 @@ public class EnemyProjectile : MonoBehaviour
     void Start()
     {
         projHitbox = Instantiate(hitbox, transform);
-        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(0.030f, 0.030f, 0.030f), HitboxType.EnemyHitbox, damage);
+        projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z), HitboxType.EnemyHitbox, damage, launchAngle, launchStrength);
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
         currLifeSpan = 0.0f;
     }
@@ -62,6 +64,26 @@ public class EnemyProjectile : MonoBehaviour
         this.damage = damage;
         this.maxLifeSpan = maxLifeSpan;
         this.movementPattern = movementPattern;
+    }
+
+    /// <summary>
+    /// Loads projecitle
+    /// </summary>
+    /// <param name="velocity">Direction of projectile</param>
+    /// <param name="speed">Speed of projectile</param>
+    /// <param name="damage">Damage projectile inflicts</param>
+    /// <param name="maxLifeSpan">Max life span of projectile</param>
+    /// <param name="launchAngle">Knockback angle for player</param>
+    /// <param name="launchStrength">Knockback strength</param>
+    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    {
+        this.velocity = velocity;
+        this.speed = speed;
+        this.damage = damage;
+        this.maxLifeSpan = maxLifeSpan;
+        this.movementPattern = movementPattern;
+        this.launchAngle = launchAngle;
+        this.launchStrength = launchStrength;
     }
 
     /// <summary>

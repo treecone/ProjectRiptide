@@ -33,7 +33,7 @@ public class Lootable : MonoBehaviour
         }
 
         player = GameObject.FindGameObjectWithTag("Player");
-        transform.GetChild(0).GetComponent<SpriteRenderer>().color = lightColor;
+        //transform.GetChild(0).GetComponent<SpriteRenderer>().color = lightColor;
         itemName = itemStored.name;
         rb = gameObject.GetComponent<Rigidbody>();
         rb.AddTorque(new Vector3(Random.Range(0, 0.25f), Random.Range(0, 0.25f), Random.Range(0, 0.25f)) * 1);

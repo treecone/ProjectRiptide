@@ -9,14 +9,16 @@ public enum EnemyState { Passive, Hostile }
 public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3}
+public delegate void GiveVector(Vector3 vec);
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4}
+public enum Anim { Die = 0};
+public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     //public fields
     public EnemyType enemyType;
     public GameObject projectile;
-    public GameObject shadow;
     public GameObject healthBarObject;
     public GameObject hitbox;
     public Camera camera;
@@ -64,15 +66,27 @@ public partial class Enemy : PhysicsScript
     private List<GameObject> hurtboxes;
     private Queue<MonsterAction> actionQueue;
     private GetVector PlayerPosition;
+    private GiveVector SendKnockback;
+
+    //Animation
+    private Animator animator;
+    private int[] animParm;
+
+    //Death
+    bool dying = false;
+    int deathAnim;
 
     //Fields for collision detection
     public float lengthMult;
     public float widthMult;
     public float heightMult;
     public float baseHeightMult;
-    private float halfView = 50.0f;
-    private float viewRange = 15.0f;
+    private float halfView = 55.0f;
+    private float viewRange = 20.0f;
     private Vector3 widthVector;
+
+    //Smooth rotation stuff
+    private float rotationalVeloctiy = 0.5f;
 
     public float Health { get { return health; } }
 
@@ -82,13 +96,19 @@ public partial class Enemy : PhysicsScript
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
         healthBar = GetComponent<HealthBar>();
+        healthBarObject.SetActive(false);
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
-        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
+        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().GetPosition;
+        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
             hitbox.OnTrigger += HitboxTriggered;
+            hitbox.OnStay += OnObsticalCollision;
+        }
         LoadEnemy(enemyType);
         camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
+        animator = GetComponentInChildren<Animator>();
 
         widthVector = new Vector3(widthMult, 0, 0);
 
@@ -98,51 +118,66 @@ public partial class Enemy : PhysicsScript
     // Update is called once per frame
     protected override void Update()
     {
-        //updates player position
-        playerDistance = Vector3.Distance(transform.position, PlayerPosition());
-        enemyDistance = Vector3.Distance(startPos, transform.position);
-
-        //checks for states
-        switch (state)
+        if (!dying)
         {
-            case EnemyState.Passive:
-                PassiveAI();
-                //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
-                //also make sure enemy is not in a passive cooldown
-                if (playerDistance < hostileRadius && passiveCooldown <= 0)
-                {
-                    state = EnemyState.Hostile;
-                }
-                break;
-            case EnemyState.Hostile:
-                HostileAI();
-                //check for passive behavior trigger, if you get far enough away
-                if (playerDistance >= passiveRadius)
-                {
-                    state = EnemyState.Passive;
-                }
-                break;
+            //updates player position
+            playerDistance = Vector3.Distance(transform.position, PlayerPosition());
+            enemyDistance = Vector3.Distance(startPos, transform.position);
+
+            //checks for states
+            switch (state)
+            {
+                case EnemyState.Passive:
+                    PassiveAI();
+                    //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
+                    //also make sure enemy is not in a passive cooldown
+                    if (playerDistance < hostileRadius && passiveCooldown <= 0)
+                    {
+                        healthBarObject.SetActive(true);
+                        state = EnemyState.Hostile;
+                    }
+                    break;
+                case EnemyState.Hostile:
+                    HostileAI();
+                    //check for passive behavior trigger, if you get far enough away
+                    if (playerDistance >= passiveRadius)
+                    {
+                        healthBarObject.SetActive(false);
+                        state = EnemyState.Passive;
+                    }
+                    break;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                TakeDamage(10);
+
+            //Make health bar face player
+            healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
+
+            if (passiveCooldown > 0)
+                passiveCooldown -= Time.deltaTime;
+
+            SetHeightMult();
+            SetHealthBarPosition();
+
+            playerCollision = false;
+            obsticalCollision = false;
+
+            base.Update();
         }
-
-        /*if (Input.GetKeyDown(KeyCode.Space))
-            TakeDamage(10);*/
-
-        //Make health bar face player
-        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
-
-        if (passiveCooldown > 0)
-            passiveCooldown -= Time.deltaTime;
-
-        SetHeightMult();
-        SetShadowPosition();
-        SetHealthBarPosition();
-
-        playerCollision = false;
-        obsticalCollision = false;
-
-        base.Update();
+        else
+        {
+            if(!animator.IsInTransition(0) && !animator.GetCurrentAnimatorStateInfo(0).IsTag("death"))
+            {
+                DestroyEnemy();
+            }
+        }
     }
 
+    /// <summary>
+    /// Loads an enemy of the specified type
+    /// </summary>
+    /// <param name="type">Type of enemy</param>
     private void LoadEnemy(EnemyType type)
     {
         switch (type)
@@ -178,6 +213,13 @@ public partial class Enemy : PhysicsScript
                 maxRadius = 240.0f;
                 specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
                 activeStates = new bool[3] { false, false, false };
+                animParm = new int[6] {
+                    Animator.StringToHash("die"),
+                    Animator.StringToHash("swimSpeed"),
+                    Animator.StringToHash("dive"),
+                    Animator.StringToHash("shoot"),
+                    Animator.StringToHash("uAttack"),
+                    Animator.StringToHash("velocity")};
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 20;
@@ -222,6 +264,25 @@ public partial class Enemy : PhysicsScript
                 HostileAI = HostileRunAway;
                 PassiveAI = PassiveWanderRadius;
                 break;
+            case EnemyType.CrabRock:
+                speed = 0.8f;
+                health = 50;
+                maxHealth = 50;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 45.0f;
+                hostileRadius = 10.0f;
+                passiveRadius = 130.0f;
+                maxRadius = 240.0f;
+                specialCooldown = new float[1] { 5.0f };
+                activeStates = new bool[1] { false};
+                playerCollision = false;
+                isRaming = false;
+                ramingDamage = 20;
+                HostileAI = HostileRockCrab;
+                PassiveAI = PassiveDoNothing;
+                break;
         }
 
         //Setup health bar
@@ -237,55 +298,32 @@ public partial class Enemy : PhysicsScript
         health -= damage;
         healthBar.UpdateHealth(health);
         if (state == EnemyState.Passive)
+        {
+            healthBarObject.SetActive(true);
             state = EnemyState.Hostile;
+        }
         if (health <= 0)
         {
             health = 0;
-            //Drop loot
-            GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
-            lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
-            lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
-            //Kill monster
-            Destroy(gameObject);
+            if(animator != null)
+            {
+                animator.SetTrigger(animParm[(int)Anim.Die]);
+                deathAnim = Animator.StringToHash("death");
+            }
+            dying = true;
         }
     }
 
     /// <summary>
-    /// Checks monster collisions with surrounding obsticals
+    /// Destorys the enemy and drops loot
     /// </summary>
-    public bool CheckCollision()
+    public void DestroyEnemy()
     {
-        //Create rays for hit detection
-        RaycastHit hit;
-        Ray rightFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray leftFRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(transform.forward.x, 0, transform.forward.z) * lengthMult);
-        Ray rightSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) + (transform.right * widthMult), new Vector3(transform.right.x, 0, transform.right.z) * lengthMult / 6);
-        Ray leftSRay = new Ray(new Vector3(transform.position.x, baseHeightMult, transform.position.z) - (transform.right * widthMult), new Vector3(-transform.right.x, 0, -transform.right.z) * lengthMult / 6);
-        Debug.DrawRay(rightFRay.origin, rightFRay.direction * lengthMult, Color.black);
-        Debug.DrawRay(leftFRay.origin, leftFRay.direction * lengthMult, Color.black);
-        Debug.DrawRay(rightSRay.origin, rightSRay.direction * lengthMult / 6, Color.black);
-        Debug.DrawRay(leftSRay.origin, leftSRay.direction * lengthMult / 6, Color.black);
-        //Check for collision and change rotation accodingly 
-        if (Physics.Raycast(leftFRay, out hit, 5.0f) || Physics.Raycast(leftSRay, out hit, 1.0f))
-        {
-            if (hit.collider.CompareTag("Obstical"))
-            {
-                Debug.Log("Obstical collision");
-                //lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-                return true;
-            }
-        }
-        else if (Physics.Raycast(rightFRay, out hit, 5.0f) || Physics.Raycast(rightSRay, out hit, 1.0f))
-        {
-            if (hit.collider.CompareTag("Obstical"))
-            {
-                Debug.Log("Obstical collision");
-                //lookRotation = Quaternion.LookRotation(Vector3.Cross(transform.forward, Vector3.up));
-                return true;
-            }
-        }
-
-        return false;
+        GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
+        lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
+        lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
+        //Kill monster
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -343,6 +381,24 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <param name="launchAngle">Angle that hitbox will launch player</param>
+    /// <param name="launchStrength">Strength at which player will be launched</param>
+    /// <returns></returns>
+    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject temp = Instantiate(hitbox, transform);
+        temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage, launchAngle, launchStrength);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
+    }
+
+    /// <summary>
     /// Spawns an enemy projectile
     /// </summary>
     /// <param name="position">Position relative to enemy</param>
@@ -361,6 +417,31 @@ public partial class Enemy : PhysicsScript
             damage,
             maxLifeSpan,
             movementPattern);
+    }
+
+    /// <summary>
+    /// Spawns an enemy projectile
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="speed">Speed of projectile</param>
+    /// <param name="damage">Damage projectile inflicts</param>
+    /// <param name="maxLifeSpan">Max life span of projectile</param>
+    /// <param name="movementPattern">Movement pattern of projectile</param>
+    /// <param name="launchAngle">Angle that hitbox will launch player</param>
+    /// <param name="launchStrength">Strength at which player will be launched</param>
+    private void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject.Instantiate(projectile,
+            transform.position + transform.TransformVector(position),
+            new Quaternion())
+            .GetComponent<EnemyProjectile>().LoadProjectile(
+            transform.TransformVector(position),
+            0.75f,
+            damage,
+            maxLifeSpan,
+            movementPattern,
+            launchAngle,
+            launchStrength);
     }
 
     private void ClearHitboxes()
@@ -416,6 +497,13 @@ public partial class Enemy : PhysicsScript
         return Vector3.up * gravity;
     }
 
+    /// <summary>
+    /// Applies a force to move in a direction at a specified speed
+    /// Applied only once
+    /// </summary>
+    /// <param name="dir">Direction of movment</param>
+    /// <param name="dist">Distance moved over time frame</param>
+    /// <param name="time">Time frame to move dstance</param>
     private void ApplyMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = mass * (dist / (time * Time.deltaTime));
@@ -423,6 +511,13 @@ public partial class Enemy : PhysicsScript
         ApplyForce(netForce);
     }
 
+    /// <summary>
+    /// Applies a force to move in a direction at a specified speed
+    /// Needs to be applied each frame
+    /// </summary>
+    /// <param name="dir">Direction of movement</param>
+    /// <param name="dist">Distance moved over time frame</param>
+    /// <param name="time">Time frame to move distance</param>
     private void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = (2 * mass * dist) / (time * time);
@@ -430,79 +525,151 @@ public partial class Enemy : PhysicsScript
         ApplyForce(netForce);
     }
 
+    /// <summary>
+    /// Sets the height mulitplier
+    /// </summary>
     private void SetHeightMult()
     {
         heightMult = (transform.worldToLocalMatrix * new Vector3(transform.position.x, baseHeightMult, transform.position.z)).y;
     }
 
-    private void SetShadowPosition()
-    {
-        shadow.transform.position = new Vector3(transform.position.x, heightMult, transform.position.z);
-    }
-
+    /// <summary>
+    /// Sets position of health bar above enemy
+    /// </summary>
     private void SetHealthBarPosition()
     {
         healthBarObject.transform.position = new Vector3(transform.position.x, baseHeightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
 
+    /// <summary>
+    /// Checks if there is an obstical in the enemy's path
+    /// </summary>
+    /// <returns>If enemy's path is interuptted</returns>
     public bool CheckObstacle()
     {
         RaycastHit hit = new RaycastHit();
-        Vector3 detectPosition = new Vector3(transform.position.x, 4.5f, transform.position.z);
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         for (int i = 0; i <= halfView; i += 4)
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward * viewRange, Color.red);
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
         }
+        /*if(Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, transform.forward, out hit, viewRange * 1.5f))
+        {
+            return true;
+        }*/
 
         return false;
     }
 
+    /// <summary>
+    /// Find direction to avoid obstacle
+    /// </summary>
+    /// <returns>Direction to avoid obstacle</returns>
     public Vector3 AvoidObstacle()
     {
+        //Debug.Log("Avoiding Obstacle");
         Vector3 dir = Vector3.zero;
         bool found = false;
 
-        Vector3 detectPosition = new Vector3(transform.position.x, 4.0f, transform.position.z);
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        RaycastHit hit;
 
+        //Check 90 degrees for a path to avoid obstacle
         for (int i = 0; i <= 90; i += 4)
         {
-            if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange))
+            //Check right side for path
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
-                if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(i, Vector3.up) * transform.forward, viewRange + 2.0f))
-                {
-                    //dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
-                    dir = Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
-                    found = true;
-                }
+                //Set direction if path is found
+                 dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
+                 found = true;
             }
-            if (!Physics.Raycast(detectPosition + transform.TransformDirection(-widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange))
+            //Check left side for path
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
-                if (!Physics.Raycast(detectPosition + transform.TransformDirection(widthVector), Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, viewRange + 2.0f))
-                {
-                    if (!found || Random.Range(0, 1) == 0)
-                    {
-                        //dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
-                        dir = Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
-                        found = true;
-                    }
-                }
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
+                found = true;
             }
             if (found)
                 return dir;
         }
 
-        if (Random.Range(0, 1) == 0)
-            return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+        return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+    }
+
+    /// <summary>
+    /// Called when inside an obstacle
+    /// Move enemy after the obstacle
+    /// </summary>
+    /// <param name="obstical">GameObject colliding with</param>
+    public void OnObsticalCollision(GameObject obstical)
+    {
+        if (obstical.tag == "Obstical")
+        {
+            StopMotion();
+            Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
+            backForce.Normalize();
+            backForce *= 200.0f;
+            ApplyForce(backForce);
+        }
+    }
+
+    /// <summary>
+    /// Take knockback from an outside source
+    /// </summary>
+    /// <param name="knockback">Knockback force</param>
+    public void TakeKnockback(Vector3 knockback)
+    {
+        ApplyForce(knockback);
+    }
+
+    /// <summary>
+    /// Rotates monster smoothly towards desired rotation
+    /// </summary>
+    /// <param name="desiredRotation">Desired Rotation</param>
+    /// <param name="rotationalAcceleration">Rotational Acceleration</param>
+    /// <param name="minRotationalVelocity">Minimum Rotational Velocity</param>
+    /// <param name="maxRotationalVelocity">Maximum Rotational Velocity</param>
+    public void SetSmoothRotation(Quaternion desiredRotation, float rotationalAcceleration, float minRotationalVelocity, float maxRotationalVelocity)
+    {
+        //Rotate based on target location
+        if (rotation != desiredRotation)
+        {
+            //If rotation is close to desired location, slow down rotation
+            if (Quaternion.Angle(rotation, desiredRotation) < 45.0f)
+            {
+                rotationalVeloctiy += rotationalVeloctiy * -0.80f * Time.deltaTime;
+                //Make sure rotation stay's above minium value
+                if (rotationalVeloctiy < minRotationalVelocity)
+                    rotationalVeloctiy = minRotationalVelocity;
+            }
+            //Else speed up rotation
+            else
+            {
+                rotationalVeloctiy += rotationalAcceleration * Time.deltaTime;
+                //Make sure rotation stay's below maximum value
+                if (rotationalVeloctiy > maxRotationalVelocity)
+                    rotationalVeloctiy = maxRotationalVelocity;
+            }
+
+            //Update rotation
+            rotation = Quaternion.RotateTowards(rotation, desiredRotation, rotationalVeloctiy);
+        }
+        //Reset velocity when not rotating
         else
-            return Quaternion.AngleAxis(-90, Vector3.up) * transform.forward;
+            rotationalVeloctiy = minRotationalVelocity;
     }
 }

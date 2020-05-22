@@ -23,12 +23,12 @@ public class InputManager : MonoBehaviour
 
 	//-----References-----
 	private GameObject ship;
-	private ShipMovementScript movementScript;
-	private CannonFireScript cannonFireScript;
+	private ShipMovement movementScript;
+	private CannonFire cannonFireScript;
 	public RectTransform iconPoint;
 	public GameObject IconPrefab;
     public RectTransform iconBase;
-    private float maxIconDist = 500.0f;
+    private const float MAX_ICON_DIST = 500.0f;
 
 	//-----Multiple touches-----
 	private List<TouchData> currentTouches;
@@ -63,10 +63,10 @@ public class InputManager : MonoBehaviour
 	void Awake()
 	{
 		camera = Camera.main;
-		screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
+        screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
 		ship = GameObject.FindWithTag("Player");
-		movementScript = ship.GetComponent<ShipMovementScript>();
-		cannonFireScript = ship.GetComponent<CannonFireScript>();
+		movementScript = ship.GetComponent<ShipMovement>();
+		cannonFireScript = ship.GetComponent<CannonFire>();
 		currentTouches = new List<TouchData>();
 		if (iconPoint == null && GameObject.Find("InputIcon"))
 		{
@@ -82,9 +82,11 @@ public class InputManager : MonoBehaviour
 
 	void Update()
 	{
+        //Quit if pressing escape
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
 
+        //Take input depending on device
 		if (mobile)
 			TakeMobileInput();
 		else
@@ -125,7 +127,7 @@ public class InputManager : MonoBehaviour
 			if (clickOne && doubleClickCheck < 0.45f) //double click
 			{
 				clickOne = false;
-				cannonFireScript.Fire(FireType.Target, GetTarget(t.Position));
+				cannonFireScript.Fire("both");
 			}
 			else if (!clickOne)
 			{
@@ -133,7 +135,7 @@ public class InputManager : MonoBehaviour
 			}
 
 			#region Deprecated Code
-			/*
+            /*
 			if (t.Position.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
 			{
 				cannonFireScript.Fire("debugOneBig");
@@ -142,11 +144,11 @@ public class InputManager : MonoBehaviour
 			if (t.Position.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
 			{
 				cannonFireScript.Fire("debugTriShot");
-			}
-			*/
+			}*/
 			#endregion
 		}
 	}
+
 	void TakeMobileInput()
 	{
 		//Add any new touches to the touch list
@@ -168,25 +170,39 @@ public class InputManager : MonoBehaviour
 			{
 				currentTouches.Remove(t);
 				i--;
-				HandleTouch(t);
+				//HandleTouch(t);
 				doubleClickCheck = 0;
 				continue;
 			}
 
-			if (doubleClickCheck > 0.8f)
+            //If double click is still being tested for
+            if (doubleClickCheck <= 0.8)
+            {
+                //Increment time of touch
+                t.time += Time.deltaTime;
+                //If touch displacment is big enough and at least some time has passed, stop looking for double tap
+                if (t.Displacement.magnitude > 50f && t.time > 0.1f)
+                    doubleClickCheck = 0.9f;
+            }
+
+            //If no longer checking for double click
+            //Treat touch for movement
+            if (doubleClickCheck > 0.8f)
 			{
+                //If move just started
                 if(!t.startedMove)
                 {
+                    //Set position of move icon base
                     if(iconBase != null)
-                    {
                         iconBase.anchoredPosition = t.Position;
-                    }
                     clickStartPosition = t.Position;
                     t.startedMove = true;
                 }
 
+                //Set position of move icon
                 SetPointIcon(t.Position);
 
+                //Get direction to move the player in
 				Vector3 pos = GetTarget(t.Position);
 				print(pos - ship.transform.position);
 				movementScript.TargetDirection = pos - ship.transform.position;
@@ -194,6 +210,9 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
+    /// <summary>
+    /// Handles information related to mobile touches
+    /// </summary>
 	private class TouchData
 	{
 		private Touch touch;
@@ -203,7 +222,11 @@ public class InputManager : MonoBehaviour
 
 		public TouchPhase phase;
         public bool startedMove;
+        public float time = 0.0f;
 
+        /// <summary>
+        /// Displacement from starting touch
+        /// </summary>
 		public Vector2 Displacement
 		{
 			get
@@ -212,6 +235,9 @@ public class InputManager : MonoBehaviour
 			}
 		}
 
+        /// <summary>
+        /// Velocity of touch movement
+        /// </summary>
 		public Vector2 Velocity
 		{
 			get
@@ -220,6 +246,9 @@ public class InputManager : MonoBehaviour
 			}
 		}
 
+        /// <summary>
+        /// Position of the touch on the screen
+        /// </summary>
 		public Vector2 Position
 		{
 			get
@@ -228,6 +257,9 @@ public class InputManager : MonoBehaviour
 			}
 		}
 
+        /// <summary>
+        /// Length of time touch is active
+        /// </summary>
 		public float Duration
 		{
 			get
@@ -236,6 +268,10 @@ public class InputManager : MonoBehaviour
 			}
 		}
 
+        /// <summary>
+        /// Creates touch data from a touch
+        /// </summary>
+        /// <param name="touch">Touch input</param>
 		public TouchData(Touch touch)
 		{
 			this.touch = touch;
@@ -245,6 +281,10 @@ public class InputManager : MonoBehaviour
 			startPosition = Position;
 		}
 
+        /// <summary>
+        /// Update touch data
+        /// </summary>
+        /// <param name="touches"></param>
 		public void Update(Touch[] touches)
 		{
 			foreach (Touch t in touches)
@@ -258,33 +298,42 @@ public class InputManager : MonoBehaviour
 			phase = touch.phase;
 		}
 	}
-	#region Keyboard Input (deprecated)
 
 	Vector2 clickStartPosition;
 	Vector2 clickCurrentPosition;
 	float clickDuration;
 
+    /// <summary>
+    /// Takes keyboard input from player
+    /// </summary>
 	void TakeKeyboardInput()
 	{
+        //Mouse initally pressed
 		if (Input.GetMouseButtonDown(0)) //mouse down
 		{
+            //Set start position of click
 			clickStartPosition = Input.mousePosition - screenCorrect;
 			clickCurrentPosition = clickStartPosition;
 
 			clickDuration = 0;
 		}
+        //Mouse is being held
 		else if (Input.GetMouseButton(0)) //mouse held
 		{
 			clickDuration += Time.deltaTime;
             clickCurrentPosition = Input.mousePosition - screenCorrect;
             Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
+            //If click has moved enough and enough time has passed, stop checking for double click
             if (clickDisplacement.magnitude > 50f && clickDuration > 0.1f)
                 doubleClickCheck = 0.9f;
-
+            
+            //If click is not a double click, handle it as movement
             if (doubleClickCheck > 0.8f)
 			{
+                //If movement just started
                 if(!startedMove)
                 {
+                    //Set position of icon base
                     clickStartPosition = Input.mousePosition - screenCorrect;
                     if (iconBase != null)
                     {
@@ -294,21 +343,22 @@ public class InputManager : MonoBehaviour
                 }
 				clickCurrentPosition = Input.mousePosition - screenCorrect;
 
+                //Pet position of movement icon
                 if (iconPoint != null)
-                {
-                    //iconPoint.anchoredPosition = clickCurrentPosition;
                     SetPointIcon(clickCurrentPosition);
-                }
 
+                //Get direction of movement for player
 				Vector3 pos = GetTarget(clickCurrentPosition);
 				movementScript.TargetDirection = pos - ship.transform.position;
 			}
 		}
+        //If mouse is released
 		else if (Input.GetMouseButtonUp(0)) //mouse up 
 		{
             startedMove = false;
 			Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
 			Vector2 clickVelocity = clickDisplacement / clickDuration;
+            //Check for swipe
 			if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
 			{
 				if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
@@ -323,18 +373,21 @@ public class InputManager : MonoBehaviour
 					}
 				}
 			}
+            //Check for click and hold
 			else if (clickDuration > maxTapDuration) //click and hold behavior
 			{
 
 			}
+            //Check for click
 			else //click behavior
 			{
-				//Debug.Log(clickCurrentPosition);
+				//If double click, fire
 				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
 					clickOne = false;
-					cannonFireScript.Fire(FireType.Target, GetFireTarget(clickCurrentPosition));
+					cannonFireScript.Fire("right");
 				}
+                //If first click, remember
 				else if (!clickOne)
 				{
 					clickOne = true;
@@ -348,38 +401,37 @@ public class InputManager : MonoBehaviour
 			movementScript.TargetDirection = pos - ship.transform.position;
 		}
 	}
-	#endregion
+
+    /// <summary>
+    /// Finds direction to move player towards
+    /// </summary>
+    /// <param name="input">Position of click on screen</param>
+    /// <returns>Direction to move player towards</returns>
 	Vector3 GetTarget(Vector2 input)
 	{
-        /*input += screenCorrect;
-		// create ray from the camera and passing through the touch position:
-		Ray ray = camera.ScreenPointToRay(input);
-
-		// create a logical plane at this object's position and perpendicular to world Y:
-		Plane plane = new Plane(Vector3.up, Vector3.zero);
-		float distance = 0;
-		// if plane hit...
-		if (plane.Raycast(ray, out distance))
-		{
-			Vector3 pos = ray.GetPoint(distance);
-			Debug.DrawLine(ship.transform.position, pos, Color.red);
-			// get the point pos has the position in the plane you've touched
-			return ray.GetPoint(distance);
-		}*/
+        //Find direction of input from click start pos
         Vector2 distVec = input - clickStartPosition;
+        //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
         distVec *= 20.0f;
+
+        //Find the location to move player towards based on player's location
         Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
-        if (dist > maxIconDist)
+
+        //Set speed scale based on how far click is from starting click
+        if (dist > MAX_ICON_DIST)
             movementScript.speedScale = 1.0f;
         else
-            movementScript.speedScale = dist / maxIconDist;
+            movementScript.speedScale = dist / MAX_ICON_DIST;
         return targetPos;
-
-        //return ship.transform.position;
 	}
 
+    /// <summary>
+    /// Finds direction to shoot towards based on click
+    /// </summary>
+    /// <param name="input">Click position on screen</param>
+    /// <returns>Direction to fire towards</returns>
     Vector3 GetFireTarget(Vector3 input)
     {
         input += screenCorrect;
@@ -400,16 +452,23 @@ public class InputManager : MonoBehaviour
         return ship.transform.position;
     }
 
+    /// <summary>
+    /// Sets the position of the movement icon
+    /// </summary>
+    /// <param name="pos">Position of click</param>
     void SetPointIcon(Vector2 pos)
     {
+        //Find distance of click from starting click
         float dist = Vector2.Distance(pos, clickStartPosition);
-        if (dist <= maxIconDist)
+        //If distance is less than max icon distance, set icon to pos
+        if (dist <= MAX_ICON_DIST)
             iconPoint.anchoredPosition = pos;
+        //Else, find point on circle to place icon
         else
         {
             Vector2 distVec = pos - clickStartPosition;
             distVec.Normalize();
-            distVec *= maxIconDist;
+            distVec *= MAX_ICON_DIST;
             iconPoint.anchoredPosition = clickStartPosition + distVec;
         }
     }
