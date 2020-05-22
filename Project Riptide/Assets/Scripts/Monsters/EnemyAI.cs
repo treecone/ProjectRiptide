@@ -52,6 +52,14 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
+    /// Passive enemy AI where the enemy does not move while passive
+    /// </summary>
+    public void PassiveDoNothing()
+    {
+        //Do nothing
+    }
+
+    /// <summary>
     /// Most moves towards the player and circles him
     /// On certain intervals the monster will charge up
     /// and dash at the player then continue to circle them.
@@ -355,6 +363,51 @@ public partial class Enemy : PhysicsScript
             //Rotate and move monster
             transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 0.4f);
             transform.Translate(new Vector3(forward.x, 0, forward.z) * speed / 40);
+        }
+    }
+
+    public void HostileRockCrab()
+    {
+        //If enemy is outside max radius, set to passive
+        if (enemyDistance > maxRadius)
+        {
+            state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If enemy is not in special
+            if (!activeStates[(int)State.Active])
+            {
+                //Follow the player
+                FollowPlayer();
+
+                //Cooldown special while in a 10 units of player
+                if (playerDistance < 20.0f)
+                {
+                    specialCooldown[(int)State.Active] -= Time.deltaTime;
+                }
+                //If cooldown is finished, switch to special
+                if (specialCooldown[(int)State.Active] <= 0)
+                {
+                    activeStates[(int)State.Active] = true;
+                    currTime = 0;
+                    initalPos = transform.position.y;
+                    //Load an attack that charges a dash then attacks
+                    actionQueue.Enqueue(CrabRockFling);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    activeStates[(int)State.Active] = false;
+                    specialCooldown[(int)State.Active] = 5.0f;
+                }
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4}
 
 public partial class Enemy : PhysicsScript
 {
@@ -83,6 +83,7 @@ public partial class Enemy : PhysicsScript
         state = EnemyState.Passive;
         playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
         healthBar = GetComponent<HealthBar>();
+        healthBarObject.SetActive(false);
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
         PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
@@ -116,6 +117,7 @@ public partial class Enemy : PhysicsScript
                 //also make sure enemy is not in a passive cooldown
                 if (playerDistance < hostileRadius && passiveCooldown <= 0)
                 {
+                    healthBarObject.SetActive(true);
                     state = EnemyState.Hostile;
                 }
                 break;
@@ -124,6 +126,7 @@ public partial class Enemy : PhysicsScript
                 //check for passive behavior trigger, if you get far enough away
                 if (playerDistance >= passiveRadius)
                 {
+                    healthBarObject.SetActive(false);
                     state = EnemyState.Passive;
                 }
                 break;
@@ -147,6 +150,10 @@ public partial class Enemy : PhysicsScript
         base.Update();
     }
 
+    /// <summary>
+    /// Loads an enemy of the specified type
+    /// </summary>
+    /// <param name="type">Type of enemy</param>
     private void LoadEnemy(EnemyType type)
     {
         switch (type)
@@ -226,6 +233,25 @@ public partial class Enemy : PhysicsScript
                 HostileAI = HostileRunAway;
                 PassiveAI = PassiveWanderRadius;
                 break;
+            case EnemyType.CrabRock:
+                speed = 0.8f;
+                health = 50;
+                maxHealth = 50;
+                timeBetween = 5.0;
+                timeCurrent = timeBetween;
+                startPos = transform.position;
+                wanderRadius = 45.0f;
+                hostileRadius = 10.0f;
+                passiveRadius = 130.0f;
+                maxRadius = 240.0f;
+                specialCooldown = new float[1] { 5.0f };
+                activeStates = new bool[1] { false};
+                playerCollision = false;
+                isRaming = false;
+                ramingDamage = 20;
+                HostileAI = HostileRockCrab;
+                PassiveAI = PassiveDoNothing;
+                break;
         }
 
         //Setup health bar
@@ -241,7 +267,10 @@ public partial class Enemy : PhysicsScript
         health -= damage;
         healthBar.UpdateHealth(health);
         if (state == EnemyState.Passive)
+        {
+            healthBarObject.SetActive(true);
             state = EnemyState.Hostile;
+        }
         if (health <= 0)
         {
             health = 0;
@@ -538,48 +567,6 @@ public partial class Enemy : PhysicsScript
     }
 
     /// <summary>
-    /// Find direction to avoid obstacle
-    /// </summary>
-    /// <returns>Direction to avoid obstacle</returns>
-    public Vector3 AvoidObstacle(Vector3 targetDir)
-    {
-        //Debug.Log("Avoiding Obstacle");
-        Vector3 dir = Vector3.zero;
-        bool found = false;
-
-        targetDir = new Vector3(targetDir.x, 0, targetDir.z);
-        targetDir.Normalize();
-
-        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
-        RaycastHit hit;
-
-        //Check 90 degrees for a path to avoid obstacle
-        for (int i = 0; i <= 90; i += 4)
-        {
-            //Check right side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, viewRange * 1.5f))
-            {
-                //Set direction if path is found
-                dir = Quaternion.AngleAxis(i, Vector3.up) * targetDir;
-                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
-                found = true;
-            }
-            //Check left side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, viewRange * 1.5f))
-            {
-                //Set direction if path is found
-                dir = Quaternion.AngleAxis(-i, Vector3.up) * targetDir;
-                Debug.DrawLine(transform.position, transform.position + dir * viewRange * 1.5f, Color.yellow);
-                found = true;
-            }
-            if (found)
-                return dir;
-        }
-
-        return Quaternion.AngleAxis(90, Vector3.up) * targetDir;
-    }
-
-    /// <summary>
     /// Called when inside an obstacle
     /// Move enemy after the obstacle
     /// </summary>
@@ -592,7 +579,7 @@ public partial class Enemy : PhysicsScript
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 50.0f;
+            backForce *= 200.0f;
             ApplyForce(backForce);
         }
     }
@@ -606,6 +593,13 @@ public partial class Enemy : PhysicsScript
         ApplyForce(knockback);
     }
 
+    /// <summary>
+    /// Rotates monster smoothly towards desired rotation
+    /// </summary>
+    /// <param name="desiredRotation">Desired Rotation</param>
+    /// <param name="rotationalAcceleration">Rotational Acceleration</param>
+    /// <param name="minRotationalVelocity">Minimum Rotational Velocity</param>
+    /// <param name="maxRotationalVelocity">Maximum Rotational Velocity</param>
     public void SetSmoothRotation(Quaternion desiredRotation, float rotationalAcceleration, float minRotationalVelocity, float maxRotationalVelocity)
     {
         //Rotate based on target location

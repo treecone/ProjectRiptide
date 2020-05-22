@@ -63,7 +63,7 @@ public class InputManager : MonoBehaviour
 	void Awake()
 	{
 		camera = Camera.main;
-		screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
+        screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
 		ship = GameObject.FindWithTag("Player");
 		movementScript = ship.GetComponent<ShipMovementScript>();
 		cannonFireScript = ship.GetComponent<CannonFireScript>();
