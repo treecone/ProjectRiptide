@@ -225,6 +225,7 @@ public partial class Enemy : PhysicsScript
         {
             hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * speed, 1.0f);
+            animator.SetFloat(animParm[(int)CarpAnim.SwimSpeed], 2.0f);
         }
 
         if (!inKnockback)
@@ -251,10 +252,66 @@ public partial class Enemy : PhysicsScript
             hitboxes.RemoveAt(hitboxes.Count - 1);
             inKnockback = false;
             StopMotion();
+            animator.SetFloat(animParm[(int)CarpAnim.SwimSpeed], 1.0f);
             return false;
         }
         else
             return true;
+    }
+
+    /// <summary>
+    /// Used for KoiBoss, charges bubble blast attack for 2 seconds
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    private bool KoiBubbleBlastTransitionDown(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            StopMotion();
+            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+        }
+
+        ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
+        Debug.Log(animator.GetAnimatorTransitionInfo(0).nameHash);
+
+        if(time >= MAX_TIME)
+        {
+            animator.ResetTrigger(animParm[(int)CarpAnim.Dive]);
+            StopMotion();
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Used for KoiBoss, charges bubble blast attack for 2 seconds
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    private bool KoiBubbleBlastTransitionUp(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if (time == 0)
+        {
+            StopMotion();
+            animator.SetTrigger(animParm[(int)CarpAnim.Shoot]);
+        }
+
+        ApplyConstantMoveForce(Vector3.up, 3.0f * transform.localScale.y, 1.0f);
+
+        if (time >= MAX_TIME)
+        {
+            animator.ResetTrigger(animParm[(int)CarpAnim.Shoot]);
+            StopMotion();
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -271,7 +328,9 @@ public partial class Enemy : PhysicsScript
         {
             //Stop motion at start
             if (time == 0)
+            {
                 StopMotion();
+            }
 
             //Look towards player
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
@@ -384,17 +443,22 @@ public partial class Enemy : PhysicsScript
         //Move fish above water
         if (time < MAX_TIME - STALL_TIME)
         {
-            ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
+            ApplyConstantMoveForce(Vector3.up, 1.0f * transform.localScale.y, 1.0f);
         }
         else if (time < MAX_TIME)
         {
             StopMotion();
             //Do nothing, give player chance to attack
         }
+        else if(time < MAX_TIME + 0.5f)
+        {
+            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+            time = MAX_TIME + 0.5f;
+        }
         //Move fish back underwater
         else if (transform.position.y >= initalPos)
         {
-            ApplyConstantMoveForce(Vector3.down, 2f * transform.localScale.y, 1.0f);
+            ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
         }
         else
         {
@@ -416,8 +480,13 @@ public partial class Enemy : PhysicsScript
     {
         const float MAX_TIME = 1.0f;
 
+        if (time == 0)
+        {
+            animator.SetTrigger(animParm[(int)CarpAnim.Shoot]);
+        }
+
         //Move fish out of water
-        ApplyConstantMoveForce(Vector3.up, 1.5f * transform.localScale.y, 1.0f);
+        ApplyConstantMoveForce(Vector3.up, 1.0f * transform.localScale.y, 1.0f);
 
         if (time >= MAX_TIME)
         {
@@ -436,16 +505,22 @@ public partial class Enemy : PhysicsScript
     /// <returns></returns>
     private bool KoiBubbleBlastReturn(ref float time)
     {
+        const float MAX_TIME = 2.0f;
         const float STALL_TIME = 1.5f;
 
         if (time < STALL_TIME)
         {
             //Do nothing, give player chance to attack
         }
+        else if (time >= STALL_TIME && time < MAX_TIME)
+        {
+            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+            time = MAX_TIME;
+        }
         else if (transform.position.y > initalPos)
         {
             //Move fish back down
-            ApplyConstantMoveForce(Vector3.down, 2f * transform.localScale.y, 1.0f);
+            ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
         }
         else
         {
@@ -522,9 +597,10 @@ public partial class Enemy : PhysicsScript
         {
             hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, ramingDamage, new Vector2(90, 0), 1000));
             gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
+            animator.SetTrigger(animParm[(int)CarpAnim.UAttack]);
         }
 
-        if (time <= 0.9f)
+        if (time <= 0.95f)
         {
             if (!inKnockback)
             {
@@ -543,16 +619,16 @@ public partial class Enemy : PhysicsScript
                 if (transform.position.y <= initalPos)
                 {
                     ReturnToInitalPosition();
-                    time = 3.9f;
+                    time = 3.95f;
                 }
                 else
                 {
-                    ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
+                    ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
                 }
             }
         }
         //At the end of the attack, stop motion and remove hitbox
-        if (time > 0.9f && hitboxes.Count > 0)
+        if (time > 0.95f && hitboxes.Count > 0)
         {
             StopMotion();
             Destroy(hitboxes[hitboxes.Count - 1]);
@@ -560,12 +636,12 @@ public partial class Enemy : PhysicsScript
         }
 
         //If player was not hit, make the koi go back under water
-        if (time >= 3.9f && !inKnockback)
+        if (time >= 3.95f && !inKnockback)
         {
             //Move fish down until its back in original position
             if (transform.position.y > initalPos)
             {
-                ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
+                ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
             }
             else
             {
@@ -575,7 +651,7 @@ public partial class Enemy : PhysicsScript
             }
         }
         //Finish attack
-        else if (time >= 3.9f)
+        else if (time >= 3.95f)
         {
             StopMotion();
             inKnockback = false;
