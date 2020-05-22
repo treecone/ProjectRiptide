@@ -70,7 +70,7 @@ An updated, functional common scene should be maintained to demonstrate the game
 
 ## Nomenclature
 
-On the whole, naming should follow C# standards.
+On the whole, naming should follow C# standards, unless otherwise stated here.
 
 ### Namespaces
 
@@ -124,11 +124,17 @@ private int myPrivateVariable
 private int _myPrivateVariable
 ```
 
-Static fields are the exception and should be written in **PascalCase**:
+Static fields should be written in **PascalCase**:
 
 ```csharp
 public static int TheAnswer = 42;
 ```
+
+Constant fields should be written in **ALL_UPPERCASE**
+```csharp
+public constant int MAX_SPEED = 20;
+```
+
 ### Properties
 
 All properties are written in **PascalCase**. For example:
@@ -166,6 +172,10 @@ Actions are written in **PascalCase**. For example:
 ```csharp
 public event Action<int> ValueChanged;
 ```
+
+### Enums
+
+Enum members are written in **PascalCase**.
 
 ### Misc
 
@@ -229,6 +239,10 @@ RadialSlider
 ```csharp
 IRadialSlider
 ```
+
+### Type Parameters
+
+Type parameters should be prefaced with the letter **T**.
 
 ## Spacing
 
