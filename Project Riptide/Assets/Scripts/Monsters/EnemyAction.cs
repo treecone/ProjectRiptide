@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     //General method for making the moster follow the player
     //Usually should be used for enemy AI when not in an action

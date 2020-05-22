@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonFireScript : MonoBehaviour
+public class CannonFire : MonoBehaviour
 {
     public float cannonBallSizeScale;
     public GameObject cannonBall;
@@ -99,8 +99,8 @@ public class CannonFireScript : MonoBehaviour
                 ball.transform.rotation = angle;
 
                 
-				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * verticalRatio) + (ball.transform.forward * fireSpeed) + (/*ship.GetComponent<ShipMovementScript>().linearVelocity*/2 * 5 * ship.transform.forward);
-                ball.GetComponent<CannonBallBehaviorScript>().damageDealt = damage;
+				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * verticalRatio) + (ball.transform.forward * fireSpeed) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
+                ball.GetComponent<CannonBallBehavior>().damageDealt = damage;
 
                 angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
             }

@@ -5,7 +5,7 @@ using UnityEngine;
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     /// <summary>
     /// Moves the monster randomly within a certain radius

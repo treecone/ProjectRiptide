@@ -14,7 +14,7 @@ public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, Passive
 public enum Anim { Die = 0};
 public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     //public fields
     public EnemyType enemyType;
@@ -96,8 +96,8 @@ public partial class Enemy : PhysicsScript
         healthBarObject.SetActive(false);
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
-        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
-        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().TakeKnockback;
+        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().GetPosition;
+        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
@@ -550,11 +550,11 @@ public partial class Enemy : PhysicsScript
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward * viewRange, Color.red);
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
@@ -584,7 +584,7 @@ public partial class Enemy : PhysicsScript
         for (int i = 0; i <= 90; i += 4)
         {
             //Check right side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                  dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
@@ -592,7 +592,7 @@ public partial class Enemy : PhysicsScript
                  found = true;
             }
             //Check left side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                 dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;

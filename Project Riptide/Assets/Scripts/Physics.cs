@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PhysicsScript : MonoBehaviour
+public class Physics : MonoBehaviour
 {
     public float mass;
     public float maxSpeed;
