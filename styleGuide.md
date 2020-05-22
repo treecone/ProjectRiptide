@@ -27,6 +27,7 @@ https://github.com/raywenderlich/c-sharp-style-guide
 - [Brace Style](#brace-style)
 - [Switch Statements](#switch-statements)
 - [Language](#language)
+- [Emoji](#emoji)
 - [Credit](#credits)
 
 ## Unity Habits
@@ -396,6 +397,10 @@ string color = "red";
 ```
 
 The exception here is `MonoBehaviour` as that's what the class is actually called.
+
+## Emoji 
+
+The proper emoji for signifying approval in Discord is `:thumbsup:` (👍)
 
 ## Credits
 
