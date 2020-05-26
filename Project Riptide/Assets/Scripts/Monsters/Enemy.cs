@@ -14,6 +14,7 @@ public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, Passive
 public enum Anim { Die = 0};
 public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
 
+
 public partial class Enemy : Physics
 {
     //public fields
@@ -97,6 +98,8 @@ public partial class Enemy : Physics
     private float _rotationalVeloctiy = 0.5f;
 
     public float health => _health;
+
+    public Vector2 startingChunk;
 
     // Start is called before the first frame update
     protected override void Start()
