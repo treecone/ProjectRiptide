@@ -14,6 +14,7 @@ public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, Passive
 public enum Anim { Die = 0};
 public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
 
+
 public partial class Enemy : Physics
 {
     //public fields
@@ -98,24 +99,27 @@ public partial class Enemy : Physics
 
     public float health => _health;
 
+    public Vector2 startingChunk;
+
     // Start is called before the first frame update
     protected override void Start()
     {
         state = EnemyState.Passive;
-        _playerDistance = Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        _playerDistance = Vector3.Distance(transform.position, player.transform.position);
         _healthBar = GetComponent<HealthBar>();
         _healthBarObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
-        _PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().GetPosition;
-        _SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().TakeKnockback;
+        _PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
+        _SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
             hitbox.OnStay += OnObsticalCollision;
         }
         LoadEnemy(_enemyType);
-        _camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
+        _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
@@ -570,6 +574,38 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
+    /// Checks if there is an obstical in the enemy's path
+    /// </summary>
+    /// <returns>If enemy's path is interuptted</returns>
+    public bool CheckObstacle(Vector3 target)
+    {
+        RaycastHit hit = new RaycastHit();
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        Vector3 targetDir = target - transform.position;
+        targetDir.Normalize();
+        /*
+        for (int i = 0; i <= _halfView; i += 4)
+        {
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            {
+                return true;
+            }
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
+            {
+                return true;
+            }
+        }*/
+        if(UnityEngine.Physics.SphereCast(detectPosition, _widthMult * 2, transform.forward, out hit, _viewRange * 1.5f))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Find direction to avoid obstacle
     /// </summary>
     /// <returns>Direction to avoid obstacle</returns>
@@ -598,6 +634,47 @@ public partial class Enemy : Physics
             {
                 //Set direction if path is found
                 dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
+                Debug.DrawLine(transform.position, transform.position + dir * _viewRange * 1.5f, Color.yellow);
+                found = true;
+            }
+            if (found)
+                return dir;
+        }
+
+        return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
+    }
+
+    /// <summary>
+    /// Find direction to avoid obstacle
+    /// </summary>
+    /// <returns>Direction to avoid obstacle</returns>
+    public Vector3 AvoidObstacle(Vector3 target)
+    {
+        //Debug.Log("Avoiding Obstacle");
+        Vector3 dir = Vector3.zero;
+        bool found = false;
+
+        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        Vector3 targetDir = target - transform.position;
+        targetDir.Normalize();
+        RaycastHit hit;
+
+        //Check 90 degrees for a path to avoid obstacle
+        for (int i = 0; i <= 90; i += 4)
+        {
+            //Check right side for path
+            if (!UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange * 1.5f))
+            {
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(i, Vector3.up) * targetDir;
+                Debug.DrawLine(transform.position, transform.position + dir * _viewRange * 1.5f, Color.yellow);
+                found = true;
+            }
+            //Check left side for path
+            if (!UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange * 1.5f))
+            {
+                //Set direction if path is found
+                dir = Quaternion.AngleAxis(-i, Vector3.up) * targetDir;
                 Debug.DrawLine(transform.position, transform.position + dir * _viewRange * 1.5f, Color.yellow);
                 found = true;
             }
