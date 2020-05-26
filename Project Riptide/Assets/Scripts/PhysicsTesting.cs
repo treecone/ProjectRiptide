@@ -37,7 +37,7 @@ public class PhysicsTesting : Physics
 
     protected void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
     {
-        float xForce = mass * (dist / (time * Time.deltaTime));
+        float xForce = _mass * (dist / (time * Time.deltaTime));
         //float yForce = ((2 * mass * yMax) / (time * Time.deltaTime)) - ((gravity * time) / (4 * Time.deltaTime));
         float yForce = (-gravity.y * time) / (2 * Time.deltaTime);
         Vector3 netForce = dir * xForce;
@@ -47,8 +47,8 @@ public class PhysicsTesting : Physics
 
     protected Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
     {
-        float xForce = mass * (dist / (time * Time.deltaTime));
-        float gravity = (-8 * mass * yMax) / (time * time);
+        float xForce = _mass * (dist / (time * Time.deltaTime));
+        float gravity = (-8 * _mass * yMax) / (time * time);
         float yForce = (-gravity * time) / (2 * Time.deltaTime);
         Vector3 netForce = dir * xForce;
         netForce += yForce * Vector3.up;

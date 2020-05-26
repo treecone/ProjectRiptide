@@ -518,19 +518,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62649f338f700a6459119c1bf0e8e407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 1
-  maxSpeed: 1.5
-  enemyType: 1
-  projectile: {fileID: 1807429604883853674, guid: 0a043637e4fac3944a273d1f8efb9c3d,
+  _mass: 1
+  _maxSpeed: 1.5
+  _enemyType: 1
+  _projectile: {fileID: 1807429604883853674, guid: 0a043637e4fac3944a273d1f8efb9c3d,
     type: 3}
-  healthBarObject: {fileID: 1212731510}
-  hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
-  camera: {fileID: 0}
-  health: 0
-  lengthMult: 5
-  widthMult: 0.85
-  heightMult: 0
-  baseHeightMult: 0
+  _healthBarObject: {fileID: 1212731510}
+  _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
+  _camera: {fileID: 0}
+  state: 0
+  _lengthMult: 6
+  _widthMult: 0.85
+  _heightMult: 0.5
 --- !u!114 &1712334109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,6 +554,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HurtboxBody
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916492, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
@@ -655,6 +659,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HurtboxTail
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916492, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
@@ -760,6 +769,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HurtboxHead
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916492, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
@@ -935,6 +949,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 0.84586
+      objectReference: {fileID: 0}
+    - target: {fileID: -1617365279978105996, guid: 875cbe9d8367a3c4f800af87e0c6d793,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.28
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 875cbe9d8367a3c4f800af87e0c6d793,
         type: 3}

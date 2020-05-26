@@ -9,7 +9,7 @@ public partial class Enemy : Physics
     private void FollowPlayer()
     {
         //Calculate net force
-        Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+        Vector3 netForce = Seek(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
         //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
 
@@ -22,9 +22,9 @@ public partial class Enemy : Physics
         }
 
         //Rotate in towards direction of velocity
-        if (velocity != Vector3.zero)
+        if (_velocity != Vector3.zero)
         {
-            Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
         }
@@ -37,7 +37,7 @@ public partial class Enemy : Physics
     private void CirclePlayer()
     {
         //Calculate net force
-        Vector3 netForce = PlayerPosition() - transform.position;
+        Vector3 netForce = _PlayerPosition() - transform.position;
         netForce = new Vector3(netForce.x, 0, netForce.z);
         netForce.Normalize();
         netForce *= 4.0f;
@@ -52,9 +52,9 @@ public partial class Enemy : Physics
         }
 
         //Rotate in towards direction of velocity
-        if (velocity != Vector3.zero)
+        if (_velocity != Vector3.zero)
         {
-            Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
         }
 
@@ -69,19 +69,19 @@ public partial class Enemy : Physics
     private bool DoActionQueue()
     {
         //Go through enmeies action queue
-        if (actionQueue.Peek()(ref currTime))
+        if (_actionQueue.Peek()(ref _currTime))
         {
-            currTime += Time.deltaTime;
+            _currTime += Time.deltaTime;
         }
         //If action is finished, go to next action
         //or end attack sequence
         else
         {
-            actionQueue.Dequeue();
+            _actionQueue.Dequeue();
 
-            if (actionQueue.Count != 0)
+            if (_actionQueue.Count != 0)
             {
-                currTime = 0;
+                _currTime = 0;
             }
             else
             {
@@ -103,16 +103,22 @@ public partial class Enemy : Physics
 
         //Stop motion before charge
         if (time == 0)
+        {
             StopMotion();
+        }
 
         //Look towards player
-        destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-        rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+        _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+        _rotation = Quaternion.RotateTowards(_rotation, Quaternion.LookRotation(_destination - transform.position), 1.0f);
 
         if (time >= MAX_TIME)
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -126,43 +132,47 @@ public partial class Enemy : Physics
 
         //Add hitbox at begining
         if (time == 0.0f)
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, ramingDamage));
+        {
+            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage));
+        }
 
-        if (!inKnockback)
+        if (!_inKnockback)
         {
             //If monster hits player, stop special
-            if (playerCollision || obsticalCollision)
+            if (_playerCollision || _obsticalCollision)
             {
-                inKnockback = true;
-                if(playerCollision)
+                _inKnockback = true;
+                if(_playerCollision)
                 {
-                    Vector3 knockback = PlayerPosition() - transform.position;
+                    Vector3 knockback = _PlayerPosition() - transform.position;
                     knockback.Normalize();
                     knockback *= 40.0f;
-                    SendKnockback(knockback);
+                    _SendKnockback(knockback);
                 }
                 time = 0.7f;
             }
 
             //Move forwards
-            ApplyConstantMoveForce(transform.forward, 20.0f * speed, 1.0f);
+            ApplyConstantMoveForce(transform.forward, 20.0f * _speed, 1.0f);
         }
         //Do knockback if there was a hit
         else
         {
             //Move backwards
-            ApplyConstantMoveForce(-transform.forward, 10.0f * speed, 0.3f);
+            ApplyConstantMoveForce(-transform.forward, 10.0f * _speed, 0.3f);
         }
 
         if (time >= MAX_TIME)
         {
-            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
-            hitboxes.RemoveAt(hitboxes.Count - 1);
-            inKnockback = false;
+            GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            _inKnockback = false;
             return false;
         }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -177,9 +187,13 @@ public partial class Enemy : Physics
         ApplyFriction(0.50f);
 
         if (time >= MAX_TIME)
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -194,21 +208,27 @@ public partial class Enemy : Physics
 
         //Stop motion at begining of charge
         if (time == 0)
+        {
             StopMotion();
+        }
 
         if (time <= MAX_TIME - STALL_TIME)
         {
             //Look towards player
-            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            Quaternion desiredRotation = Quaternion.LookRotation(destination - transform.position);
+            _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.5f, 1.0f, 4.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
         if (time >= MAX_TIME)
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -223,20 +243,20 @@ public partial class Enemy : Physics
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage, Vector2.zero, 500));
-            ApplyMoveForce(transform.forward, 30.0f * speed, 1.0f);
-            animator.SetFloat(animParm[(int)CarpAnim.SwimSpeed], 2.0f);
+            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
+            ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
+            _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
         }
 
-        if (!inKnockback)
+        if (!_inKnockback)
         {
-            if (playerCollision || obsticalCollision)
+            if (_playerCollision || _obsticalCollision)
             {
                 //Go into knockback
                 StopMotion();
-                inKnockback = true;
+                _inKnockback = true;
                 time = 0.7f;
-                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
+                ApplyMoveForce(-transform.forward, 2.0f * _speed, 0.3f);
             }
             //ApplyFriction(0.25f);
         }
@@ -248,15 +268,17 @@ public partial class Enemy : Physics
 
         if (time >= MAX_TIME)
         {
-            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
-            hitboxes.RemoveAt(hitboxes.Count - 1);
-            inKnockback = false;
+            GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            _inKnockback = false;
             StopMotion();
-            animator.SetFloat(animParm[(int)CarpAnim.SwimSpeed], 1.0f);
+            _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 1.0f);
             return false;
         }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -271,15 +293,15 @@ public partial class Enemy : Physics
         if(time == 0)
         {
             StopMotion();
-            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
         }
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
-        Debug.Log(animator.GetAnimatorTransitionInfo(0).nameHash);
+        Debug.Log(_animator.GetAnimatorTransitionInfo(0).nameHash);
 
         if(time >= MAX_TIME)
         {
-            animator.ResetTrigger(animParm[(int)CarpAnim.Dive]);
+            _animator.ResetTrigger(_animParm[(int)CarpAnim.Dive]);
             StopMotion();
             return false;
         }
@@ -299,14 +321,14 @@ public partial class Enemy : Physics
         if (time == 0)
         {
             StopMotion();
-            animator.SetTrigger(animParm[(int)CarpAnim.Shoot]);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
         ApplyConstantMoveForce(Vector3.up, 3.0f * transform.localScale.y, 1.0f);
 
         if (time >= MAX_TIME)
         {
-            animator.ResetTrigger(animParm[(int)CarpAnim.Shoot]);
+            _animator.ResetTrigger(_animParm[(int)CarpAnim.Shoot]);
             StopMotion();
             return false;
         }
@@ -333,16 +355,20 @@ public partial class Enemy : Physics
             }
 
             //Look towards player
-            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
-            Quaternion desiredRotation = Quaternion.LookRotation(destination - transform.position);
+            _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
         if (time >= MAX_TIME)
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -353,13 +379,13 @@ public partial class Enemy : Physics
     private bool KoiBubbleBlastAttack(ref float time)
     {
         //Spawn projectiles
-        SpawnProjectile(new Vector3(0, 0, (5 * lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.10f, 0, (5 * lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.25f, 0, (5 * lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.50f, 0, (5 * lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
 
         return false;
     }
@@ -371,7 +397,7 @@ public partial class Enemy : Physics
     /// <returns></returns>
     private bool KoiBubbleAttack(ref float time)
     {
-        SpawnProjectile(new Vector3(0, 0, 5 * lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
 
         return false;
     }
@@ -388,29 +414,29 @@ public partial class Enemy : Physics
         //Start dashing
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, ramingDamage));
-            gravity = ApplyArcForce(transform.forward, 30.0f * speed, 2f * transform.localScale.y, 1.0f);
+            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
+            _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
         }
 
-        if (!inKnockback)
+        if (!_inKnockback)
         {
             //If monster hits player, stop special
-            if (playerCollision || obsticalCollision)
+            if (_playerCollision || _obsticalCollision)
             {
-                inKnockback = true;
-                velocity.x = 0;
-                velocity.z = 0;
-                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
+                _inKnockback = true;
+                _velocity.x = 0;
+                _velocity.z = 0;
+                ApplyMoveForce(-transform.forward, 2.0f * _speed, 0.3f);
             }
-            ApplyForce(gravity);
+            ApplyForce(_gravity);
         }
         //Do knockback if there was a hit
         else
         {
-            ApplyForce(gravity);
+            ApplyForce(_gravity);
 
             //Stop moving fish if it goes below its original height
-            if (transform.position.y <= initalPos)
+            if (transform.position.y <= _initalPos)
             {
                 ReturnToInitalPosition();
                 time = MAX_TIME;
@@ -420,13 +446,15 @@ public partial class Enemy : Physics
         if (time >= MAX_TIME)
         {
             StopMotion();
-            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
-            hitboxes.RemoveAt(hitboxes.Count - 1);
-            inKnockback = false;
+            GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            _inKnockback = false;
             return false;
         }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -452,11 +480,11 @@ public partial class Enemy : Physics
         }
         else if(time < MAX_TIME + 0.5f)
         {
-            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             time = MAX_TIME + 0.5f;
         }
         //Move fish back underwater
-        else if (transform.position.y >= initalPos)
+        else if (transform.position.y >= _initalPos)
         {
             ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
         }
@@ -482,7 +510,7 @@ public partial class Enemy : Physics
 
         if (time == 0)
         {
-            animator.SetTrigger(animParm[(int)CarpAnim.Shoot]);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
         //Move fish out of water
@@ -494,7 +522,9 @@ public partial class Enemy : Physics
             return false;
         }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -514,10 +544,10 @@ public partial class Enemy : Physics
         }
         else if (time >= STALL_TIME && time < MAX_TIME)
         {
-            animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             time = MAX_TIME;
         }
-        else if (transform.position.y > initalPos)
+        else if (transform.position.y > _initalPos)
         {
             //Move fish back down
             ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
@@ -546,7 +576,7 @@ public partial class Enemy : Physics
         if (time < MAX_TIME - STALL_TIME)
         {
             //Calculate net force
-            Vector3 netForce = Seek(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
+            Vector3 netForce = Seek(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
             //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
 
@@ -558,15 +588,15 @@ public partial class Enemy : Physics
             }
 
             //Rotate in towards direction of velocity
-            if (velocity != Vector3.zero)
+            if (_velocity != Vector3.zero)
             {
-                Quaternion desiredRotation = Quaternion.LookRotation(velocity);
+                Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
                 SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
             }
 
             ApplyForce(netForce);
 
-            if (playerDistance <= 3.1f)
+            if (_playerDistance <= 3.1f)
             {
                 StopMotion();
                 time = MAX_TIME - STALL_TIME;
@@ -579,7 +609,9 @@ public partial class Enemy : Physics
             return false;
         }
         else
+        {
             return true;
+        }
     }
 
     /// <summary>
@@ -595,28 +627,28 @@ public partial class Enemy : Physics
 
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, ramingDamage, new Vector2(90, 0), 1000));
-            gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
-            animator.SetTrigger(animParm[(int)CarpAnim.UAttack]);
+            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
+            _animator.SetTrigger(_animParm[(int)CarpAnim.UAttack]);
         }
 
         if (time <= 0.95f)
         {
-            if (!inKnockback)
+            if (!_inKnockback)
             {
                 //If monster hits player, stop special
-                if (playerCollision || obsticalCollision)
+                if (_playerCollision || _obsticalCollision)
                 {
                     StopMotion();
-                    inKnockback = true;
+                    _inKnockback = true;
                 }
-                ApplyForce(gravity);
+                ApplyForce(_gravity);
             }
             //Do knockback if there was a hit
             else
             {
                 //Stop moving fish if it goes below its original height
-                if (transform.position.y <= initalPos)
+                if (transform.position.y <= _initalPos)
                 {
                     ReturnToInitalPosition();
                     time = 3.95f;
@@ -628,18 +660,18 @@ public partial class Enemy : Physics
             }
         }
         //At the end of the attack, stop motion and remove hitbox
-        if (time > 0.95f && hitboxes.Count > 0)
+        if (time > 0.95f && _hitboxes.Count > 0)
         {
             StopMotion();
-            Destroy(hitboxes[hitboxes.Count - 1]);
-            hitboxes.RemoveAt(hitboxes.Count - 1);
+            Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
         }
 
         //If player was not hit, make the koi go back under water
-        if (time >= 3.95f && !inKnockback)
+        if (time >= 3.95f && !_inKnockback)
         {
             //Move fish down until its back in original position
-            if (transform.position.y > initalPos)
+            if (transform.position.y > _initalPos)
             {
                 ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
             }
@@ -647,14 +679,14 @@ public partial class Enemy : Physics
             {
                 StopMotion();
                 ReturnToInitalPosition();
-                inKnockback = true;
+                _inKnockback = true;
             }
         }
         //Finish attack
         else if (time >= 3.95f)
         {
             StopMotion();
-            inKnockback = false;
+            _inKnockback = false;
             return false;
         }
 
@@ -674,29 +706,29 @@ public partial class Enemy : Physics
         //Start dashing
         if (time == 0.0f)
         {
-            hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, ramingDamage, new Vector2(90, 0), 1000));
-            gravity = ApplyArcForce(transform.forward, playerDistance * speed, 2f * transform.localScale.y, 1.0f);
+            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed, 2f * transform.localScale.y, 1.0f);
         }
 
-        if (!inKnockback)
+        if (!_inKnockback)
         {
             //If monster hits player, stop special
-            if (playerCollision || obsticalCollision)
+            if (_playerCollision || _obsticalCollision)
             {
-                inKnockback = true;
-                velocity.x = 0;
-                velocity.z = 0;
-                ApplyMoveForce(-transform.forward, 2.0f * speed, 0.3f);
+                _inKnockback = true;
+                _velocity.x = 0;
+                _velocity.z = 0;
+                ApplyMoveForce(-transform.forward, 2.0f * _speed, 0.3f);
             }
-            ApplyForce(gravity);
+            ApplyForce(_gravity);
         }
         //Do knockback if there was a hit
         else
         {
-            ApplyForce(gravity);
+            ApplyForce(_gravity);
 
             //Stop moving fish if it goes below its original height
-            if (transform.position.y <= initalPos)
+            if (transform.position.y <= _initalPos)
             {
                 time = MAX_TIME;
             }
@@ -706,14 +738,14 @@ public partial class Enemy : Physics
         {
             ReturnToInitalPosition();
             StopMotion();
-            GameObject.Destroy(hitboxes[hitboxes.Count - 1]);
-            hitboxes.RemoveAt(hitboxes.Count - 1);
-            inKnockback = false;
+            GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            _inKnockback = false;
             return false;
         }
         else
+        {
             return true;
-
-        return true;
+        }
     }
 }

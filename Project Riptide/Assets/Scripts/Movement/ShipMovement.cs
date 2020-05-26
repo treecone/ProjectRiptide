@@ -38,15 +38,15 @@ public class ShipMovement : Physics
 		Vector3 moveDirection = TargetDirection.normalized;
 
         //create the rotation we need to be in to look at the target
-        Quaternion lookRotation = rotation;
+        Quaternion lookRotation = _rotation;
         if(moveDirection.sqrMagnitude != 0)
 		    lookRotation = Quaternion.LookRotation(moveDirection);
 
         //Rotate based on target location
-        if (rotation != lookRotation && speedScale > 0.05f)
+        if (_rotation != lookRotation && speedScale > 0.05f)
         {
             //If rotation is close to desired location, slow down rotation
-            if(Quaternion.Angle(rotation, lookRotation) < 45.0f)
+            if(Quaternion.Angle(_rotation, lookRotation) < 45.0f)
             {
                 rotationalVelocity += rotationalVelocity * -0.80f * Time.deltaTime;
                 //Make sure rotation stay's above minium value
@@ -63,7 +63,7 @@ public class ShipMovement : Physics
             }
 
             //Update rotation
-            rotation = Quaternion.RotateTowards(rotation, lookRotation, rotationalVelocity);
+            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, rotationalVelocity);
         }
         //Reset velocity when not rotating
         else
@@ -87,19 +87,19 @@ public class ShipMovement : Physics
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * speedScale * (1.0f + shipUpgradeScript.masterUpgrade["shipSpeed"]);
         }
         //Draw debug lines for net force and move direction
-        Debug.DrawLine(position, position + netForce, Color.blue);
-        Debug.DrawLine(position, position + moveDirection * 10.0f, Color.black);
+        Debug.DrawLine(_position, _position + netForce, Color.blue);
+        Debug.DrawLine(_position, _position + moveDirection * 10.0f, Color.black);
 
         //Apply net force
         ApplyForce(netForce);
         //Apply Friction
         ApplyFriction(0.75f);
         //Apply force against the side of the ship, reduces drift
-        ApplyCounterSideForce(98.0f);
+        ApplyCounterSideForce(0.98f);
         base.Update();
         //Update camera
         cameraControl.UpdateCamera();
-        Debug.DrawLine(position, position + velocity, Color.green);
+        Debug.DrawLine(_position, _position + _velocity, Color.green);
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public class ShipMovement : Physics
     /// <returns>Force to be applied each frame</returns>
     private Vector3 GetConstantMoveForce(Vector3 dir, float dist, float time)
     {
-        float moveForce = (2 * mass * dist) / (time * time);
+        float moveForce = (2 * _mass * dist) / (time * time);
         Vector3 netForce = dir * moveForce;
         return netForce;
     }
@@ -133,11 +133,11 @@ public class ShipMovement : Physics
     private void ApplyCounterSideForce(float strength)
     {
         //Calculate force that counters local velocity on the x axis
-        Vector3 localVel = transform.worldToLocalMatrix * velocity;
+        Vector3 localVel = transform.worldToLocalMatrix * _velocity;
         Vector3 counterVec = new Vector3(-localVel.x, 0, 0);
         //Draw debug line of counter force
-        Debug.DrawLine(position, position + (Vector3)(transform.localToWorldMatrix * counterVec * strength), Color.red);
-        ApplyForce(transform.localToWorldMatrix * counterVec * strength * mass);
+        Debug.DrawLine(_position, _position + (Vector3)(transform.localToWorldMatrix * counterVec * strength), Color.red);
+        ApplyForce(transform.localToWorldMatrix * counterVec * strength * _mass);
     }
 
     /// <summary>

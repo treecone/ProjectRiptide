@@ -41,7 +41,16 @@ public class CannonFire : MonoBehaviour
         rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
-	public class CannonShot
+    public void Fire(Vector3 direction, Vector3 targetDir)
+    {
+        
+        CannonShot rightShot = new CannonShot(direction, 90, shipUpgradeScript.masterUpgrade);
+        CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
+        leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+    }
+
+    public class CannonShot
     {
         private int damage;
         private Vector3 direction;

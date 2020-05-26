@@ -4,44 +4,46 @@ using UnityEngine;
 
 public class Physics : MonoBehaviour
 {
-    public float mass;
-    public float maxSpeed;
+    [SerializeField]
+    protected float _mass;
+    [SerializeField]
+    protected float _maxSpeed;
 
-    protected Vector3 position;
-    protected Vector3 velocity;
-    protected Vector3 acceleration;
-    protected Quaternion rotation;
+    protected Vector3 _position;
+    protected Vector3 _velocity;
+    protected Vector3 _acceleration;
+    protected Quaternion _rotation;
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        position = transform.position;
-        velocity = Vector3.zero;
-        acceleration = Vector3.zero;
+        _position = transform.position;
+        _velocity = Vector3.zero;
+        _acceleration = Vector3.zero;
     }
 
     // Update is called once per frame
     protected virtual void Update()
     {
-        velocity += acceleration * Time.deltaTime;
-        position += velocity * Time.deltaTime;
+        _velocity += _acceleration * Time.deltaTime;
+        _position += _velocity * Time.deltaTime;
 
-        transform.position = position;
-        transform.rotation = rotation;
+        transform.position = _position;
+        transform.rotation = _rotation;
 
-        acceleration = Vector3.zero;
+        _acceleration = Vector3.zero;
     }
 
     //Applys a force to the body
     protected void ApplyForce(Vector3 force)
     {
-        acceleration += force / mass;
+        _acceleration += force / _mass;
     }
 
     //Applys friction to a body, takes coefficient of friction
     protected void ApplyFriction(float coeff)
     {
-        ApplyForce(velocity * -coeff * mass);
+        ApplyForce(_velocity * -coeff * _mass);
     }
 
     //Steers the body to a desired velocity
@@ -49,10 +51,10 @@ public class Physics : MonoBehaviour
     {
         //Set up desired velocity
         desiredVelocity = desiredVelocity.normalized;
-        desiredVelocity *= velocity.magnitude;
+        desiredVelocity *= _velocity.magnitude;
 
         //Calc steering force
-        Vector3 steeringForce = desiredVelocity - velocity;
+        Vector3 steeringForce = desiredVelocity - _velocity;
 
         //Return force
         return steeringForce;
@@ -66,7 +68,7 @@ public class Physics : MonoBehaviour
 
     protected void StopMotion()
     {
-        velocity = Vector3.zero;
-        acceleration = Vector3.zero;
+        _velocity = Vector3.zero;
+        _acceleration = Vector3.zero;
     }
 }
