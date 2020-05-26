@@ -13,6 +13,7 @@ public class ShipMovement : Physics
     public CameraController cameraControl;
 	private Vector3 Target;
 	public Vector3 TargetDirection { get; set;}
+    [HideInInspector]
     public float speedScale = 1.0f;
     private float rotationalVelocity = 0.20f;
     private float rotationalAcceleration = 0.6f;

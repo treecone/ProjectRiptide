@@ -33,6 +33,17 @@ public class CannonFire : MonoBehaviour
                 break;
         }
     }
+
+    public void Fire(string debugShotType, Vector3 targetDir)
+    {
+        switch (debugShotType)
+        {
+            case "right":
+                Fire(transform.right, targetDir);
+                break;
+        }
+    }
+
     public void Fire(Vector3 direction)
     {
         CannonShot rightShot = new CannonShot(direction, 90, shipUpgradeScript.masterUpgrade);
@@ -43,10 +54,17 @@ public class CannonFire : MonoBehaviour
 
     public void Fire(Vector3 direction, Vector3 targetDir)
     {
-        
-        CannonShot rightShot = new CannonShot(direction, 90, shipUpgradeScript.masterUpgrade);
-        CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
-        leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        float angle = Mathf.Acos(Vector3.Dot(targetDir.normalized, transform.forward.normalized));
+        Vector3 cross = Vector3.Cross(targetDir, transform.forward);
+        if (Vector3.Dot(Vector3.up, cross) < 0)
+        { // Or > 0
+            angle = -angle;
+        }
+        angle *= Mathf.Rad2Deg;
+
+        CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
+        //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
+        //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
         rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
     }
 
