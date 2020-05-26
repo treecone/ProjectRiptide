@@ -62,6 +62,23 @@ public class CannonFire : MonoBehaviour
         }
         angle *= Mathf.Rad2Deg;
 
+        if(angle > 0 && angle < 45)
+        {
+            angle = 45;
+        }
+        if(angle > 135)
+        {
+            angle = 135;
+        }
+        if(angle < 0 && angle > -45)
+        {
+            angle = -45;
+        }
+        if(angle < -135)
+        {
+            angle = -135;
+        }
+
         CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
