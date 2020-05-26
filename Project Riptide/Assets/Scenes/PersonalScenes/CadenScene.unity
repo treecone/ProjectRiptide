@@ -210,6 +210,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventory: {fileID: 1080607781}
   upgrades: []
+--- !u!114 &271508309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 271508307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0269ed40b23f5ba4a8e215aa8d4f39b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mass: 1
+  maxSpeed: 1
+  cameraControl: {fileID: 0}
+  speedScale: 1
+  shipUpgradeScript: {fileID: 271508308}
 --- !u!1 &284683790
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +741,7 @@ PrefabInstance:
     - target: {fileID: 1296834634169561189, guid: ead160e8bd75faf4ab73d0fb8df2e9ea,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1296834634169561189, guid: ead160e8bd75faf4ab73d0fb8df2e9ea,
         type: 3}
@@ -1019,7 +1036,7 @@ PrefabInstance:
     - target: {fileID: 8210748076640493394, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.01
+      value: -0.26
       objectReference: {fileID: 0}
     - target: {fileID: 8210748076640493394, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
@@ -1106,7 +1123,8 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8210748076640493399, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
 --- !u!43 &1676164799
 Mesh:
@@ -1747,7 +1765,7 @@ PrefabInstance:
     - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.8
+      value: -14.7
       objectReference: {fileID: 0}
     - target: {fileID: 6303210241429338574, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
         type: 3}
