@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipMovementScript : PhysicsScript
+public class ShipMovement : Physics
 {
     //Constants
     private const float MAX_SHIP_SPEED = 3f;

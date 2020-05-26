@@ -99,7 +99,7 @@ public class Hitbox : MonoBehaviour
                     if (launchStrength != 0)
                     {
                         Vector3 knockback = Quaternion.Euler(0, launchAngle.x, -launchAngle.y) * transform.forward * launchStrength;
-                        hitbox.AttachedObject.GetComponent<ShipMovementScript>().TakeKnockback(knockback);
+                        hitbox.AttachedObject.GetComponent<ShipMovement>().TakeKnockback(knockback);
                     }
                     //Trigger any events assosiated with collision
                     OnTrigger?.Invoke(hitbox.AttachedObject);

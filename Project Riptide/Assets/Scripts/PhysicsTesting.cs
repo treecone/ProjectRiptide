@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PhysicsTestingScript : PhysicsScript
+public class PhysicsTesting : Physics
 {
     Vector3 gravity = Vector3.down * 10.0f;
     float time = 0.0f;

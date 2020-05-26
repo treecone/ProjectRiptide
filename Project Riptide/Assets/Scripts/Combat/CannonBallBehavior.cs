@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CannonBallBehaviorScript : MonoBehaviour
+public class CannonBallBehavior : MonoBehaviour
 {
     public int damageDealt;
     public GameObject hitbox;

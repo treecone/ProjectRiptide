@@ -5,7 +5,7 @@ using UnityEngine;
 public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     /// <summary>
     /// Moves the monster randomly within a certain radius
@@ -198,6 +198,8 @@ public partial class Enemy : PhysicsScript
                             currTime = 0;
                             //Set up bubble blast attack
                             actionQueue.Enqueue(KoiStopTransition);
+                            actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
+                            actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
                             actionQueue.Enqueue(KoiBubbleBlastCharge);
                             actionQueue.Enqueue(KoiBubbleBlastAttack);
                         }
@@ -228,11 +230,14 @@ public partial class Enemy : PhysicsScript
                     currTime = 0;
                     StopMotion();
                     activeStates[(int)State.FormChangeInProgress] = true;
+                    animator.SetTrigger(animParm[(int)CarpAnim.Dive]);
+                    initalPos = transform.position.y;
                 }
+
 
                 if (currTime < 1.0f)
                 {
-                    ApplyConstantMoveForce(Vector3.down, 1.5f * transform.localScale.y, 1.0f);
+                    ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
                     currTime += Time.deltaTime;
                 }
                 else
@@ -240,6 +245,8 @@ public partial class Enemy : PhysicsScript
                     //Change obstical detection position
                     Transform detect = transform.GetChild(transform.childCount - 1);
                     detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
+                    //initalPos = initalPos - 1.0f * transform.localScale.y;
+                    //ReturnToInitalPosition();
 
                     StopMotion();
                     currTime = 0;
@@ -330,6 +337,7 @@ public partial class Enemy : PhysicsScript
                 }
             }
         }
+        animator.SetFloat(animParm[(int)CarpAnim.Velocity], velocity.sqrMagnitude);
     }
 
     /// <summary>

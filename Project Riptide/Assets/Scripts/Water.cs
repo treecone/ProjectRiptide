@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WaterScript : MonoBehaviour
+public class Water : MonoBehaviour
 {   
     [SerializeField]
     private Vector3 waterOffset;

@@ -5,14 +5,16 @@ using UnityEngine;
 /// Caden Messenger, Mira Antolovich
 /// 4/6/2019
 /// </summary>
-enum EnemyState { Passive, Hostile }
+public enum EnemyState { Passive, Hostile }
 public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4}
+public enum Anim { Die = 0};
+public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
 
-public partial class Enemy : PhysicsScript
+public partial class Enemy : Physics
 {
     //public fields
     public EnemyType enemyType;
@@ -26,7 +28,10 @@ public partial class Enemy : PhysicsScript
     //fields
     public float health;
     private float maxHealth;
-    private EnemyState state;
+
+    [HideInInspector]
+    public EnemyState state;
+
     //player's distance from enemy
     private float playerDistance;
     //monsters distance from start position
@@ -63,6 +68,14 @@ public partial class Enemy : PhysicsScript
     private GetVector PlayerPosition;
     private GiveVector SendKnockback;
 
+    //Animation
+    private Animator animator;
+    private int[] animParm;
+
+    //Death
+    bool dying = false;
+    int deathAnim;
+
     //Fields for collision detection
     public float lengthMult;
     public float widthMult;
@@ -86,8 +99,8 @@ public partial class Enemy : PhysicsScript
         healthBarObject.SetActive(false);
         hitboxes = new List<GameObject>();
         actionQueue = new Queue<MonsterAction>();
-        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().GetPosition;
-        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovementScript>().TakeKnockback;
+        PlayerPosition = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().GetPosition;
+        SendKnockback = GameObject.FindGameObjectWithTag("Player").GetComponent<ShipMovement>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
@@ -95,6 +108,7 @@ public partial class Enemy : PhysicsScript
         }
         LoadEnemy(enemyType);
         camera = GameObject.FindGameObjectWithTag("MainCamera").transform.GetComponent<Camera>();
+        animator = GetComponentInChildren<Animator>();
 
         widthVector = new Vector3(widthMult, 0, 0);
 
@@ -104,50 +118,60 @@ public partial class Enemy : PhysicsScript
     // Update is called once per frame
     protected override void Update()
     {
-        //updates player position
-        playerDistance = Vector3.Distance(transform.position, PlayerPosition());
-        enemyDistance = Vector3.Distance(startPos, transform.position);
-
-        //checks for states
-        switch (state)
+        if (!dying)
         {
-            case EnemyState.Passive:
-                PassiveAI();
-                //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
-                //also make sure enemy is not in a passive cooldown
-                if (playerDistance < hostileRadius && passiveCooldown <= 0)
-                {
-                    healthBarObject.SetActive(true);
-                    state = EnemyState.Hostile;
-                }
-                break;
-            case EnemyState.Hostile:
-                HostileAI();
-                //check for passive behavior trigger, if you get far enough away
-                if (playerDistance >= passiveRadius)
-                {
-                    healthBarObject.SetActive(false);
-                    state = EnemyState.Passive;
-                }
-                break;
+            //updates player position
+            playerDistance = Vector3.Distance(transform.position, PlayerPosition());
+            enemyDistance = Vector3.Distance(startPos, transform.position);
+
+            //checks for states
+            switch (state)
+            {
+                case EnemyState.Passive:
+                    PassiveAI();
+                    //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
+                    //also make sure enemy is not in a passive cooldown
+                    if (playerDistance < hostileRadius && passiveCooldown <= 0)
+                    {
+                        healthBarObject.SetActive(true);
+                        state = EnemyState.Hostile;
+                    }
+                    break;
+                case EnemyState.Hostile:
+                    HostileAI();
+                    //check for passive behavior trigger, if you get far enough away
+                    if (playerDistance >= passiveRadius)
+                    {
+                        healthBarObject.SetActive(false);
+                        state = EnemyState.Passive;
+                    }
+                    break;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                TakeDamage(10);
+
+            //Make health bar face player
+            healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
+
+            if (passiveCooldown > 0)
+                passiveCooldown -= Time.deltaTime;
+
+            SetHeightMult();
+            SetHealthBarPosition();
+
+            playerCollision = false;
+            obsticalCollision = false;
+
+            base.Update();
         }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-            TakeDamage(10);
-
-        //Make health bar face player
-        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
-
-        if (passiveCooldown > 0)
-            passiveCooldown -= Time.deltaTime;
-
-        SetHeightMult();
-        SetHealthBarPosition();
-
-        playerCollision = false;
-        obsticalCollision = false;
-
-        base.Update();
+        else
+        {
+            if(!animator.IsInTransition(0) && !animator.GetCurrentAnimatorStateInfo(0).IsTag("death"))
+            {
+                DestroyEnemy();
+            }
+        }
     }
 
     /// <summary>
@@ -189,6 +213,13 @@ public partial class Enemy : PhysicsScript
                 maxRadius = 240.0f;
                 specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
                 activeStates = new bool[3] { false, false, false };
+                animParm = new int[6] {
+                    Animator.StringToHash("die"),
+                    Animator.StringToHash("swimSpeed"),
+                    Animator.StringToHash("dive"),
+                    Animator.StringToHash("shoot"),
+                    Animator.StringToHash("uAttack"),
+                    Animator.StringToHash("velocity")};
                 playerCollision = false;
                 isRaming = false;
                 ramingDamage = 20;
@@ -274,13 +305,25 @@ public partial class Enemy : PhysicsScript
         if (health <= 0)
         {
             health = 0;
-            //Drop loot
-            GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
-            lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
-            lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
-            //Kill monster
-            Destroy(gameObject);
+            if(animator != null)
+            {
+                animator.SetTrigger(animParm[(int)Anim.Die]);
+                deathAnim = Animator.StringToHash("death");
+            }
+            dying = true;
         }
+    }
+
+    /// <summary>
+    /// Destorys the enemy and drops loot
+    /// </summary>
+    public void DestroyEnemy()
+    {
+        GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
+        lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
+        lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
+        //Kill monster
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -510,11 +553,11 @@ public partial class Enemy : PhysicsScript
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward * viewRange, Color.red);
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
-            if (Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange))
             {
                 return true;
             }
@@ -544,7 +587,7 @@ public partial class Enemy : PhysicsScript
         for (int i = 0; i <= 90; i += 4)
         {
             //Check right side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                  dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
@@ -552,7 +595,7 @@ public partial class Enemy : PhysicsScript
                  found = true;
             }
             //Check left side for path
-            if (!Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
+            if (!UnityEngine.Physics.SphereCast(detectPosition, widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, viewRange * 1.5f))
             {
                 //Set direction if path is found
                 dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;

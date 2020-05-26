@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MenusScript : MonoBehaviour
+public class Menus : MonoBehaviour
 {
     public void PlayerLeavePort()
     {

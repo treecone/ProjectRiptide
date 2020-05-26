@@ -25,7 +25,7 @@ public class PortManager : MonoBehaviour
 		if (!inPort && Vector3.Distance(player.transform.position, transform.position) < 10)
 		{
             inPort = true;
-			player.GetComponent<ShipMovementScript>().enabled = false;
+			player.GetComponent<ShipMovement>().enabled = false;
 			PortUI.SetActive(true);
 			player.GetComponent<Rigidbody>().velocity = Vector3.zero;
 		}
@@ -35,7 +35,7 @@ public class PortManager : MonoBehaviour
     {
         inPort = false;
         player.transform.position = gameObject.transform.position + this.transform.right * -20;
-        player.GetComponent<ShipMovementScript>().enabled = true;
+        player.GetComponent<ShipMovement>().enabled = true;
         PortUI.SetActive(false);
     }
 }

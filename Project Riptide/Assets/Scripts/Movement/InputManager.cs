@@ -23,8 +23,8 @@ public class InputManager : MonoBehaviour
 
 	//-----References-----
 	private GameObject ship;
-	private ShipMovementScript movementScript;
-	private CannonFireScript cannonFireScript;
+	private ShipMovement movementScript;
+	private CannonFire cannonFireScript;
 	public RectTransform iconPoint;
 	public GameObject IconPrefab;
     public RectTransform iconBase;
@@ -65,8 +65,8 @@ public class InputManager : MonoBehaviour
 		camera = Camera.main;
         screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
 		ship = GameObject.FindWithTag("Player");
-		movementScript = ship.GetComponent<ShipMovementScript>();
-		cannonFireScript = ship.GetComponent<CannonFireScript>();
+		movementScript = ship.GetComponent<ShipMovement>();
+		cannonFireScript = ship.GetComponent<CannonFire>();
 		currentTouches = new List<TouchData>();
 		if (iconPoint == null && GameObject.Find("InputIcon"))
 		{
