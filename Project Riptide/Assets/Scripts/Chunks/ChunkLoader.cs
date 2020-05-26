@@ -134,7 +134,9 @@ public class ChunkLoader : MonoBehaviour
     // March through each monster a
     public void CheckUnloadMonster()
     {
+        // List of monsters to unload.
         List<string> destroyMonsters = new List<string>();
+        // Loop through each potential monster.
         foreach(KeyValuePair<string, GameObject> kvpair in monsters)
         {
             string name = kvpair.Key;
@@ -147,13 +149,15 @@ public class ChunkLoader : MonoBehaviour
                 bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
                 Debug.Log(start);
-                // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster.
+                // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
                 if ((!monstersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive) || (!playersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive))
                 {
+                    // Add this monster to the list of monsters to destroy.
                     destroyMonsters.Add(name);
                 }
             }
         }
+        // Unload each monster in this list.
         foreach(string n in destroyMonsters)
         {
             UnloadMonster(n);
