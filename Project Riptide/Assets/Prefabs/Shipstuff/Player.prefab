@@ -130,10 +130,11 @@ GameObject:
   - component: {fileID: 8210748076640493394}
   - component: {fileID: 8210748076640493393}
   - component: {fileID: 8210748076640493398}
-  - component: {fileID: 8210748076640493399}
   - component: {fileID: 8210748076640493396}
   - component: {fileID: 8210748076640493397}
   - component: {fileID: 8210748076640493402}
+  - component: {fileID: 271508308}
+  - component: {fileID: 271508309}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -169,8 +170,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 0.6731596, z: 4.4375706}
+  m_Center: {x: 0, y: -0.1634202, z: 0.5326719}
 --- !u!54 &8210748076640493398
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -187,22 +188,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
---- !u!114 &8210748076640493399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8210748076640493403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fb9b7d1df68b3ef4da3757c43df041c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mass: 1
-  maxSpeed: 1
-  camera: {fileID: 0}
-  speedScale: 1
 --- !u!114 &8210748076640493396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,8 +200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9645a8dc069ba7049a22399aab9cf9f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cannonBallSizeScale: 0.5
   cannonBall: {fileID: 83568729744095847, guid: ae53b0ef0426ddb49801fedf5575741b,
     type: 3}
+  shipUpgradeScript: {fileID: 271508308}
 --- !u!114 &8210748076640493397
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,6 +230,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 8210748076621396175}
+--- !u!114 &271508308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210748076640493403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: {fileID: 0}
+  upgrades: []
+--- !u!114 &271508309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210748076640493403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb9b7d1df68b3ef4da3757c43df041c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mass: 1
+  _maxSpeed: 1
+  cameraControl: {fileID: 0}
+  speedScale: 1
+  shipUpgradeScript: {fileID: 271508308}
 --- !u!1 &8210748076670254795
 GameObject:
   m_ObjectHideFlags: 0
@@ -665,6 +683,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Hurtbox
       objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916492, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: attachedObject
@@ -678,6 +701,11 @@ PrefabInstance:
     - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
         type: 3}
       propertyPath: type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7583904746337916494, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,
+        type: 3}
+      propertyPath: _type
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7583904746337916495, guid: d727db15d8fd13b4fbe2c2f5ad2faa7c,

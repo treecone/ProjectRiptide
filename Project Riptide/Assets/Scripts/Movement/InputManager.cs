@@ -77,7 +77,9 @@ public class InputManager : MonoBehaviour
 			iconPoint = Instantiate(IconPrefab, transform).GetComponent<RectTransform>();
 		}
         if (GameObject.Find("InputBase"))
+        {
             iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
+        }
 	}
 
 	void Update()
