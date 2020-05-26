@@ -11,33 +11,19 @@ public class Hitbox : MonoBehaviour
     public event HitboxEnter OnStay;
 
     [SerializeField]
-    private HitboxType type;
+    private HitboxType _type;
     [SerializeField]
-    private float damage;
+    private float _damage;
     [SerializeField]
-    private GameObject attachedObject;
+    private GameObject _attachedObject;
     [SerializeField]
-    private Vector2 launchAngle;
+    private Vector2 _launchAngle;
     [SerializeField]
-    private float launchStrength;
+    private float _launchStrength;
 
-    /// <summary>
-    /// GameObject Hitbox is attached to
-    /// </summary>
-    public GameObject AttachedObject
-    {
-        get { return attachedObject; }
-    }
-
-    public float Damage
-    {
-        get { return damage; }
-    }
-
-    public HitboxType Type
-    {
-        get { return type; }
-    }
+    public GameObject attachedObject => _attachedObject;
+    public float damage => _damage;
+    public HitboxType type => _type;
 
     /// <summary>
     /// Set the values of the hitbox
@@ -49,11 +35,11 @@ public class Hitbox : MonoBehaviour
     /// <param name="damage">Damage hitbox deals, or multipler for hurtbox</param>
     public void SetHitbox(GameObject attached, Vector3 position, Vector3 size, HitboxType type, float damage)
     {
-        attachedObject = attached;
+        _attachedObject = attached;
         transform.position = position;
         transform.localScale = size;
-        this.type = type;
-        this.damage = damage;
+        this._type = type;
+        this._damage = damage;
     }
 
     /// <summary>
@@ -68,13 +54,13 @@ public class Hitbox : MonoBehaviour
     /// <param name="launchStrength">Strength of knockback</param>
     public void SetHitbox(GameObject attached, Vector3 position, Vector3 size, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
     {
-        attachedObject = attached;
+        _attachedObject = attached;
         transform.position = position;
         transform.localScale = size;
-        this.type = type;
-        this.damage = damage;
-        this.launchAngle = launchAngle;
-        this.launchStrength = launchStrength;
+        _type = type;
+        _damage = damage;
+        _launchAngle = launchAngle;
+        _launchStrength = launchStrength;
     }
 
     /// <summary>
@@ -88,39 +74,39 @@ public class Hitbox : MonoBehaviour
         {
             Hitbox hitbox = other.gameObject.GetComponent<Hitbox>();
             //If the collision was with a player hurtbox
-            if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
+            if (hitbox.type == HitboxType.PlayerHurtbox && hitbox.attachedObject.CompareTag("Player"))
             {
                 //Make sure this hitbox is an enemy hitbox
-                if (type == HitboxType.EnemyHitbox)
+                if (_type == HitboxType.EnemyHitbox)
                 {
                     //Player takes damage
-                    hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(damage * hitbox.damage);
+                    hitbox.attachedObject.GetComponent<PlayerHealth>().TakeDamage(_damage * hitbox._damage);
                     //Add knockback if there is any
-                    if (launchStrength != 0)
+                    if (_launchStrength != 0)
                     {
-                        Vector3 knockback = Quaternion.Euler(0, launchAngle.x, -launchAngle.y) * transform.forward * launchStrength;
-                        hitbox.AttachedObject.GetComponent<ShipMovement>().TakeKnockback(knockback);
+                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength;
+                        hitbox.attachedObject.GetComponent<ShipMovement>().TakeKnockback(knockback);
                     }
                     //Trigger any events assosiated with collision
-                    OnTrigger?.Invoke(hitbox.AttachedObject);
+                    OnTrigger?.Invoke(hitbox.attachedObject);
                 }
             }
             //If the collision was with an enemy hurtbox
-            else if (hitbox.Type == HitboxType.EnemyHurtbox && hitbox.AttachedObject.CompareTag("Enemy"))
+            else if (hitbox.type == HitboxType.EnemyHurtbox && hitbox.attachedObject.CompareTag("Enemy"))
             {
                 //Make sure this hitbox is a player hitbox
-                if (type == HitboxType.PlayerHitbox)
+                if (_type == HitboxType.PlayerHitbox)
                 {
                     //Add knockback if there is any
-                    if (launchStrength != 0)
+                    if (_launchStrength != 0)
                     {
-                        Vector3 knockback = Quaternion.Euler(0, launchAngle.x, -launchAngle.y) * transform.forward * launchStrength;
-                        hitbox.AttachedObject.GetComponent<Enemy>().TakeKnockback(knockback);
+                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength;
+                        hitbox.attachedObject.GetComponent<Enemy>().TakeKnockback(knockback);
                     }
                     //Calculate damage for enemies
-                    hitbox.AttachedObject.GetComponent<Enemy>().TakeDamage(damage * hitbox.damage);
+                    hitbox.attachedObject.GetComponent<Enemy>().TakeDamage(_damage * hitbox._damage);
                     //Trigger any events associated with collision
-                    OnTrigger?.Invoke(hitbox.AttachedObject);
+                    OnTrigger?.Invoke(hitbox.attachedObject);
                 }
             }
         }
@@ -145,14 +131,14 @@ public class Hitbox : MonoBehaviour
     public void OnDrawGizmos()
     {
         //Draw launch angle
-        if (launchStrength != 0)
+        if (_launchStrength != 0)
         {
-            Vector3 knockback = Quaternion.Euler(0, launchAngle.x, -launchAngle.y) * transform.forward * launchStrength / 100;
+            Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength / 100;
             Debug.DrawLine(transform.position, transform.position + knockback, Color.red);
         }
 
         //Pick color based on hitbox types
-        if (type == HitboxType.EnemyHitbox || type == HitboxType.PlayerHitbox)
+        if (_type == HitboxType.EnemyHitbox || _type == HitboxType.PlayerHitbox)
             Gizmos.color = Color.red;
         else
             Gizmos.color = Color.green;
