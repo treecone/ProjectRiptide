@@ -387,7 +387,7 @@ public class InputManager : MonoBehaviour
 				if (clickOne && doubleClickCheck < 0.45f) //double click
 				{
 					clickOne = false;
-					cannonFireScript.Fire("right");
+					cannonFireScript.Fire("right", GetFireTarget(Input.mousePosition - screenCorrect) - ship.transform.position);
 				}
                 //If first click, remember
 				else if (!clickOne)
@@ -401,6 +401,7 @@ public class InputManager : MonoBehaviour
 		{
 			Vector3 pos = GetTarget(clickCurrentPosition);
 			movementScript.TargetDirection = pos - ship.transform.position;
+            clickOne = false;
 		}
 	}
 
@@ -434,9 +435,20 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="input">Click position on screen</param>
     /// <returns>Direction to fire towards</returns>
-    Vector3 GetFireTarget(Vector3 input)
+    Vector3 GetFireTarget(Vector2 input)
     {
-        input += screenCorrect;
+        //Find direction of input from click start pos
+        Vector2 distVec = input - iconBase.anchoredPosition;
+        //Get distance
+        float dist = distVec.magnitude;
+        distVec.Normalize();
+        distVec *= 20.0f;
+
+        //Find the location to move player towards based on player's location
+        Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
+
+        return targetPos;
+        /*input += screenCorrect;
 		// create ray from the camera and passing through the touch position:
 		Ray ray = camera.ScreenPointToRay(input);
 
@@ -451,7 +463,7 @@ public class InputManager : MonoBehaviour
 			// get the point pos has the position in the plane you've touched
 			return ray.GetPoint(distance);
 		}
-        return ship.transform.position;
+        return ship.transform.position;*/
     }
 
     /// <summary>
