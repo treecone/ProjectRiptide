@@ -22,9 +22,8 @@ public class ChunkLoader : MonoBehaviour
                                           {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_KOI, Region.CHINA_ISLAND1, Region.OCEAN},
                                           {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.OCEAN},
                                           {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN}};
-    private string[] monsterNames = new string[]{"koi"};
     public GameObject koiPrefab;
-    private Dictionary<string, GameObject> monsters = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> monsters;
 
     public Chunk[,] chunks;  // List of all the chunk prefabs
     public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
@@ -43,8 +42,9 @@ public class ChunkLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SetUpMonsters();
+
         currentRegion = "china";
-        monsters.Add("koi", null);
         chunks = new Chunk[map.GetLength(0), map.GetLength(1)];
         ship = GameObject.FindGameObjectWithTag("Player");
         visibleChunks = new List<Chunk>();
@@ -60,7 +60,7 @@ public class ChunkLoader : MonoBehaviour
                 // Get which region this chunk is a part of.
                 Region r = map[x, z];
                 string pathName = "Chunks";
-                // Take a loot at wich region this chunk is in.
+                // Take a look at which region this chunk is in.
                 switch (r)
                 {
                     // Set the chunks pathname to the next china chunk.
@@ -103,7 +103,25 @@ public class ChunkLoader : MonoBehaviour
         ship.transform.position = new Vector3(_CHUNKSIDELENGTH * currentChunkPosition.x, 1f, _CHUNKSIDELENGTH * currentChunkPosition.y);
 
     }
-
+    // Set up the dictionaries of monsters.
+    public void SetUpMonsters()
+    {
+        monsters = new Dictionary<string, GameObject>();
+        monsters.Add("koi", null);
+    }
+    // Load a monster of the specified name at the specifed positon.
+    public void LoadMonster(Vector3 position, string name)
+    {
+        switch (name)
+        {
+            // Load the monster.
+            case "koi":
+                {
+                    monsters[name] = Instantiate(koiPrefab, position, Quaternion.identity);
+                    break;
+                }
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -217,18 +235,11 @@ public class ChunkLoader : MonoBehaviour
                         visibleChunks.Add(chunks[x, z]);
                         // Get the name of the boss to add if there is supposed to be a boss in this chunk.
                         string monsterName = GetMonsterName(chunks[x, z].region);
+                        Debug.Log("Monster Name " +monsterName);
                         // Monster is not yet loaded in this chunk
-                        if (monsters.ContainsKey(monsterName) && !monsters[monsterName]){
-                            // Determine which monster it is.
-                            switch (monsterName)
-                            {
-                                // Load the monster.
-                                case "koi":
-                                    {
-                                        monsters[monsterName] = Instantiate(koiPrefab, chunks[x, z].center, Quaternion.identity);
-                                        break;
-                                    }
-                            }
+                        if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null){
+                            // Load in the monster.
+                            LoadMonster(chunks[x, z].center, monsterName);
                         }
                     }
                     // Chunk is no longer within viewing distance of the ship, so unload it.
@@ -238,11 +249,15 @@ public class ChunkLoader : MonoBehaviour
                         chunks[x, z].chunk.SetActive(false);
                         visibleChunks.Remove(chunks[x, z]);
                         //Name of boss if there is one.
-                        string potentialMonsterName = GetMonsterName(chunks[x, z].region);
-                        // Monster in now passive.
-                        if(monsters[potentialMonsterName].gameObject.GetComponent<Enemy>().state == EnemyState.Passive)
+                        string monsterName = GetMonsterName(chunks[x, z].region);
+                        Debug.Log("Monster Name " + monsterName);
+                        // Monster is currently passive, so unload it.
+                        if (monsters.ContainsKey(monsterName) && monsters[monsterName] && monsters[monsterName].gameObject.GetComponent<Enemy>().state == EnemyState.Passive)
                         {
-                            Destroy(monsters[potentialMonsterName]);
+                            // Delete the monster.
+                            Destroy(monsters[monsterName]);
+                            monsters[monsterName] = null;
+
                         }
                     }
                     // Ship was in a different chunk and has now moved into this chunk, make it the current chunk.
@@ -260,7 +275,7 @@ public class ChunkLoader : MonoBehaviour
     // Example CHINA_KOI would return "china"
     public string GetRegionName(Region region)
     {
-        string name ="";
+        string name ="NOTHING";
         switch (region)
         {
             case Region.CHINA:
@@ -290,16 +305,14 @@ public class ChunkLoader : MonoBehaviour
 
     public string GetMonsterName(Region r)
     {
-        string name = "";
         switch (r)
         {
             case Region.CHINA_KOI:
                 {
-                    name = "koi";
-                    break;
+                    return "koi";
 
                 }
         }
-        return name;
+        return "NONE";
     }
 }
