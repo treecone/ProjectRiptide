@@ -583,24 +583,25 @@ public partial class Enemy : Physics
         Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
-        /*
+        
         for (int i = 0; i <= _halfView; i += 4)
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
+            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
-        }*/
-        if(UnityEngine.Physics.SphereCast(detectPosition, _widthMult * 2, transform.forward, out hit, _viewRange * 1.5f))
-        {
-            return true;
         }
+        /*if(UnityEngine.Physics.SphereCast(detectPosition, _widthMult * 2, transform.forward, out hit, _viewRange * 1.5f))
+        {
+            Debug.Log(hit.transform.gameObject.tag);
+            return true;
+        }*/
 
         return false;
     }

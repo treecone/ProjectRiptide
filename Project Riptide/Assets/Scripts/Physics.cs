@@ -51,7 +51,7 @@ public class Physics : MonoBehaviour
     {
         //Set up desired velocity
         desiredVelocity = desiredVelocity.normalized;
-        desiredVelocity *= _velocity.magnitude;
+        desiredVelocity *= _maxSpeed;
 
         //Calc steering force
         Vector3 steeringForce = desiredVelocity - _velocity;
