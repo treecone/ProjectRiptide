@@ -14,11 +14,11 @@ public partial class Enemy : Physics
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
 
         //Check for collision
-        if (CheckObstacle())
+        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
         {
-            Vector3 avoidForce = Steer(AvoidObstacle()) * 3.0f;
+            Vector3 avoidForce = Steer(AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z))) * 10.0f;
             netForce += avoidForce;
-            //Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
+            Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
         }
 
         //Rotate in towards direction of velocity
