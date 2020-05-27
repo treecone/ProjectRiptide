@@ -25,8 +25,8 @@ public class ChunkLoader : MonoBehaviour
     public GameObject koiPrefab;
     private Dictionary<string, GameObject> monsters;
 
-    public Chunk[,] chunks;  // List of all the chunk prefabs
-    public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
+    private Chunk[,] chunks;  // List of all the chunk prefabs
+    private List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
     private const float _CHUNKSIDELENGTH = 100; // Base length of each chunk.
     public GameObject ship; // Player
     public Vector2 currentChunkPosition; // The array coordinates of the chunk, not real world coordinates!!
@@ -34,7 +34,7 @@ public class ChunkLoader : MonoBehaviour
     public bool showAllChunks; // Change this value in the editor to make all chunks visible.
 
     // Used to determine if the player has transitioned regions.
-    public string previousRegion;
+    private string previousRegion;
     public string currentRegion;
 
     private TextMeshProUGUI regionDisplay;
@@ -121,7 +121,7 @@ public class ChunkLoader : MonoBehaviour
             case "koi":
                 {
                     monsters[name] = Instantiate(koiPrefab, new Vector3(position.x, 0, position.y), Quaternion.identity);
-                    monsters[name].GetComponent<Enemy>().startingChunk = chunk;
+                    monsters[name].GetComponent<Enemy>().StartingChunk = chunk;
                     break;
                 }
         }
@@ -144,13 +144,13 @@ public class ChunkLoader : MonoBehaviour
             // Monster exists and is roaming...
             if (monster)
             {
-                Vector2 start = monster.GetComponent<Enemy>().startingChunk;
+                Vector2 start = monster.GetComponent<Enemy>().StartingChunk;
                 bool monstersInChunk = (DistanceFromChunkCenter(monster, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
                 Debug.Log(start);
                 // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
-                if ((!monstersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive) || (!playersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive))
+                if ((!monstersInChunk && monster.GetComponent<Enemy>().State == EnemyState.Passive) || (!playersInChunk && monster.GetComponent<Enemy>().State == EnemyState.Passive))
                 {
                     // Add this monster to the list of monsters to destroy.
                     destroyMonsters.Add(name);
