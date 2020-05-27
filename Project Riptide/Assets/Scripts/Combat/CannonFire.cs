@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CannonFire : MonoBehaviour
 {
-    public float cannonBallSizeScale;
     public GameObject cannonBall;
     public Upgrades shipUpgradeScript;
 
@@ -37,8 +36,8 @@ public class CannonFire : MonoBehaviour
     {
         CannonShot rightShot = new CannonShot(direction, 90, shipUpgradeScript.masterUpgrade);
         CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
-        leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
-        rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        leftShot.Fire(cannonBall, gameObject);
+        rightShot.Fire(cannonBall, gameObject);
     }
 
 	public class CannonShot
@@ -50,18 +49,7 @@ public class CannonFire : MonoBehaviour
         private float verticalRatio;
         private int count;
         private float spreadAngle;
-        
-        //this doesn't really get used but it'll stay in just in case for now
-        public CannonShot(int count, int damage, Vector3 direction, float fireSpeed, float fireAngle, float verticalRatio, float spreadAngle)
-        {
-            this.count = count;
-            this.damage = damage;
-            this.direction = direction;
-            this.fireSpeed = fireSpeed;
-            this.fireAngle = fireAngle;
-            this.verticalRatio = verticalRatio;
-            this.spreadAngle = spreadAngle;
-        }
+        private float size;
 
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
@@ -72,9 +60,10 @@ public class CannonFire : MonoBehaviour
             this.fireAngle = fireAngle;
             this.verticalRatio = 0.1f + upgrade["verticalRatio"];
             this.spreadAngle = 20;
+            this.size = 20 + upgrade["shotSize"];
         }
 
-        public void Fire(GameObject cannonBall, GameObject ship, float cannonBallSizeScale)
+        public void Fire(GameObject cannonBall, GameObject ship)
         {
             float trueSpreadAngle;
             if (count == 1)
@@ -90,7 +79,7 @@ public class CannonFire : MonoBehaviour
             for (int i = 0; i < count; i++)
             {
                 GameObject ball = Instantiate(cannonBall, ship.transform.position + (ship.transform.localScale.x / 2) * direction, Quaternion.identity);
-                ball.transform.localScale = new Vector3(cannonBallSizeScale * Mathf.Sqrt(damage), cannonBallSizeScale * Mathf.Sqrt(damage), cannonBallSizeScale * Mathf.Sqrt(damage));
+                ball.transform.localScale = new Vector3(size, size, size);
                 ball.SetActive(true);
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
