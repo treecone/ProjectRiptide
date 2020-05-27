@@ -6,80 +6,59 @@ using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
-	
-	public Vector3 tempOffset =  new Vector3(-14.4f, 0, 5.9f);
-	//Number of buttons currently being touched on screen, not sure if we'll need this variable but for debug
-	public int buttonsPressed;
+	private Camera _camera;
 
-	public Camera camera;
-
-	public bool touchingLeft;
-	public bool touchingRight;
-    private bool startedMove = false;
-
-	public Slider speedSlider;
-
+    private bool _startedMove = false;
 	//REFACTORED VARIABLES ONLY BELOW HERE
 
 	//-----References-----
-	private GameObject ship;
-	private ShipMovement movementScript;
-	private CannonFire cannonFireScript;
-	public RectTransform iconPoint;
-	public GameObject IconPrefab;
-    public RectTransform iconBase;
+	private GameObject _ship;
+	private ShipMovement _movementScript;
+	private CannonFire _cannonFireScript;
+	private RectTransform _iconPoint;
+    private RectTransform _iconBase;
     private const float MAX_ICON_DIST = 500.0f;
 
 	//-----Multiple touches-----
-	private List<TouchData> currentTouches;
-	public bool mobile;
-	float doubleClickCheck;
-	bool clickOne;
+	private List<TouchData> _currentTouches;
+    [SerializeField]
+	private bool _mobile;
+	private float _doubleClickCheck;
+	private bool _clickOne;
 
 	//-----Config values-----
 
 	/// <summary>
-	/// How close to the side of the screen a touch must be to cause rotation
-	/// </summary>
-	public float turnTouchArea;
-
-	/// <summary>
 	/// The minimum displacement a swipe must have to be considered a swipe
 	/// </summary>
-	public float minSwipeDisplacement = 100;
+	private const float MIN_SWIPE_DISPLACEMENT = 100;
 
 	/// <summary>
 	/// The minimum speed a swipe must have to be considered a swipe
 	/// </summary>
-	public float minSwipeSpeed = 1000;
+	private const float MIN_SWIPE_SPEED = 1000;
 
 	/// <summary>
 	/// The maximum time a tap can be held down and still be considered a tap
 	/// </summary>
-	public float maxTapDuration = 0.5f;
+	private const float MAX_TAP_DURATION = 0.5f;
 
-	private static Vector3 screenCorrect;
+	private static Vector3 ScreenCorrect;
 
-	void Awake()
+    private Vector2 _clickStartPosition;
+    private Vector2 _clickCurrentPosition;
+    private float _clickDuration;
+
+    void Awake()
 	{
-		camera = Camera.main;
-        screenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
-		ship = GameObject.FindWithTag("Player");
-		movementScript = ship.GetComponent<ShipMovement>();
-		cannonFireScript = ship.GetComponent<CannonFire>();
-		currentTouches = new List<TouchData>();
-		if (iconPoint == null && GameObject.Find("InputIcon"))
-		{
-			iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
-		}
-		else if (iconPoint == null)
-		{
-			iconPoint = Instantiate(IconPrefab, transform).GetComponent<RectTransform>();
-		}
-        if (GameObject.Find("InputBase"))
-        {
-            iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
-        }
+		_camera = Camera.main;
+        ScreenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
+		_ship = GameObject.FindWithTag("Player");
+		_movementScript = _ship.GetComponent<ShipMovement>();
+		_cannonFireScript = _ship.GetComponent<CannonFire>();
+		_currentTouches = new List<TouchData>();
+	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
+        _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
 	}
 
 	void Update()
@@ -89,17 +68,17 @@ public class InputManager : MonoBehaviour
             Application.Quit();
 
         //Take input depending on device
-		if (mobile)
+		if (_mobile)
 			TakeMobileInput();
 		else
 			TakeKeyboardInput();
-		doubleClickCheck += Time.deltaTime;
+		_doubleClickCheck += Time.deltaTime;
 	}
 
 	void HandleTouch(TouchData t)
 	{
 		//Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
-		if (t.Velocity.magnitude > minSwipeSpeed && t.Displacement.magnitude > minSwipeDisplacement)
+		if (t.Velocity.magnitude > MIN_SWIPE_SPEED && t.Displacement.magnitude > MIN_SWIPE_DISPLACEMENT)
 		{
 			//All behavior for when a swipe is completed
 
@@ -118,7 +97,7 @@ public class InputManager : MonoBehaviour
 			}
 
 		}
-		else if (t.Duration > maxTapDuration)
+		else if (t.Duration > MAX_TAP_DURATION)
 		{
 			//All behavior for when a tap and hold is completed
 
@@ -126,14 +105,14 @@ public class InputManager : MonoBehaviour
 		else
 		{
 			//All behavior for when a tap is completed
-			if (clickOne && doubleClickCheck < 0.45f) //double click
+			if (_clickOne && _doubleClickCheck < 0.45f) //double click
 			{
-				clickOne = false;
-				cannonFireScript.Fire("both");
+				_clickOne = false;
+				_cannonFireScript.Fire("both");
 			}
-			else if (!clickOne)
+			else if (!_clickOne)
 			{
-				clickOne = true;
+				_clickOne = true;
 			}
 
 			#region Deprecated Code
@@ -158,46 +137,46 @@ public class InputManager : MonoBehaviour
 		{
 			if (t.phase == TouchPhase.Began)
 			{
-				currentTouches.Add(new TouchData(t));
+				_currentTouches.Add(new TouchData(t));
 			}
 		}
 		//Update all touches that are currently down
-		for (int i = 0; i < currentTouches.Count; i++)
+		for (int i = 0; i < _currentTouches.Count; i++)
 		{
-			TouchData t = currentTouches[i];
+			TouchData t = _currentTouches[i];
 			t.Update(Input.touches);
 
 			//if the touch has just ended, remove it from the list and perform whatever behavior is appropriate for that touch
 			if (t.phase == TouchPhase.Ended)
 			{
-				currentTouches.Remove(t);
+				_currentTouches.Remove(t);
 				i--;
 				//HandleTouch(t);
-				doubleClickCheck = 0;
+				_doubleClickCheck = 0;
 				continue;
 			}
 
             //If double click is still being tested for
-            if (doubleClickCheck <= 0.8)
+            if (_doubleClickCheck <= 0.8)
             {
                 //Increment time of touch
                 t.time += Time.deltaTime;
                 //If touch displacment is big enough and at least some time has passed, stop looking for double tap
                 if (t.Displacement.magnitude > 50f && t.time > 0.1f)
-                    doubleClickCheck = 0.9f;
+                    _doubleClickCheck = 0.9f;
             }
 
             //If no longer checking for double click
             //Treat touch for movement
-            if (doubleClickCheck > 0.8f)
+            if (_doubleClickCheck > 0.8f)
 			{
                 //If move just started
                 if(!t.startedMove)
                 {
                     //Set position of move icon base
-                    if(iconBase != null)
-                        iconBase.anchoredPosition = t.Position;
-                    clickStartPosition = t.Position;
+                    if(_iconBase != null)
+                        _iconBase.anchoredPosition = t.Position;
+                    _clickStartPosition = t.Position;
                     t.startedMove = true;
                 }
 
@@ -206,8 +185,8 @@ public class InputManager : MonoBehaviour
 
                 //Get direction to move the player in
 				Vector3 pos = GetTarget(t.Position);
-				print(pos - ship.transform.position);
-				movementScript.TargetDirection = pos - ship.transform.position;
+				print(pos - _ship.transform.position);
+				_movementScript.TargetDirection = pos - _ship.transform.position;
 			}
 		}
 	}
@@ -301,10 +280,6 @@ public class InputManager : MonoBehaviour
 		}
 	}
 
-	Vector2 clickStartPosition;
-	Vector2 clickCurrentPosition;
-	float clickDuration;
-
     /// <summary>
     /// Takes keyboard input from player
     /// </summary>
@@ -314,54 +289,54 @@ public class InputManager : MonoBehaviour
 		if (Input.GetMouseButtonDown(0)) //mouse down
 		{
             //Set start position of click
-			clickStartPosition = Input.mousePosition - screenCorrect;
-			clickCurrentPosition = clickStartPosition;
+			_clickStartPosition = Input.mousePosition - ScreenCorrect;
+			_clickCurrentPosition = _clickStartPosition;
 
-			clickDuration = 0;
+			_clickDuration = 0;
 		}
         //Mouse is being held
 		else if (Input.GetMouseButton(0)) //mouse held
 		{
-			clickDuration += Time.deltaTime;
-            clickCurrentPosition = Input.mousePosition - screenCorrect;
-            Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
+			_clickDuration += Time.deltaTime;
+            _clickCurrentPosition = Input.mousePosition - ScreenCorrect;
+            Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
             //If click has moved enough and enough time has passed, stop checking for double click
-            if (clickDisplacement.magnitude > 50f && clickDuration > 0.1f)
-                doubleClickCheck = 0.9f;
+            if (clickDisplacement.magnitude > 50f && _clickDuration > 0.1f)
+                _doubleClickCheck = 0.9f;
             
             //If click is not a double click, handle it as movement
-            if (doubleClickCheck > 0.8f)
+            if (_doubleClickCheck > 0.8f)
 			{
                 //If movement just started
-                if(!startedMove)
+                if(!_startedMove)
                 {
                     //Set position of icon base
-                    clickStartPosition = Input.mousePosition - screenCorrect;
-                    if (iconBase != null)
+                    _clickStartPosition = Input.mousePosition - ScreenCorrect;
+                    if (_iconBase != null)
                     {
-                        iconBase.anchoredPosition = clickStartPosition;
+                        _iconBase.anchoredPosition = _clickStartPosition;
                     }
-                    startedMove = true;
+                    _startedMove = true;
                 }
-				clickCurrentPosition = Input.mousePosition - screenCorrect;
+				_clickCurrentPosition = Input.mousePosition - ScreenCorrect;
 
                 //Pet position of movement icon
-                if (iconPoint != null)
-                    SetPointIcon(clickCurrentPosition);
+                if (_iconPoint != null)
+                    SetPointIcon(_clickCurrentPosition);
 
                 //Get direction of movement for player
-				Vector3 pos = GetTarget(clickCurrentPosition);
-				movementScript.TargetDirection = pos - ship.transform.position;
+				Vector3 pos = GetTarget(_clickCurrentPosition);
+				_movementScript.TargetDirection = pos - _ship.transform.position;
 			}
 		}
         //If mouse is released
 		else if (Input.GetMouseButtonUp(0)) //mouse up 
 		{
-            startedMove = false;
-			Vector2 clickDisplacement = clickCurrentPosition - clickStartPosition;
-			Vector2 clickVelocity = clickDisplacement / clickDuration;
+            _startedMove = false;
+			Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
+			Vector2 clickVelocity = clickDisplacement / _clickDuration;
             //Check for swipe
-			if (clickVelocity.magnitude > minSwipeSpeed && clickDisplacement.magnitude > minSwipeDisplacement) //swipe behavior
+			if (clickVelocity.magnitude > MIN_SWIPE_SPEED && clickDisplacement.magnitude > MIN_SWIPE_DISPLACEMENT) //swipe behavior
 			{
 				if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
 				{
@@ -376,7 +351,7 @@ public class InputManager : MonoBehaviour
 				}
 			}
             //Check for click and hold
-			else if (clickDuration > maxTapDuration) //click and hold behavior
+			else if (_clickDuration > MAX_TAP_DURATION) //click and hold behavior
 			{
 
 			}
@@ -384,24 +359,24 @@ public class InputManager : MonoBehaviour
 			else //click behavior
 			{
 				//If double click, fire
-				if (clickOne && doubleClickCheck < 0.45f) //double click
+				if (_clickOne && _doubleClickCheck < 0.45f) //double click
 				{
-					clickOne = false;
-					cannonFireScript.Fire("right", GetFireTarget(Input.mousePosition - screenCorrect) - ship.transform.position);
+					_clickOne = false;
+					_cannonFireScript.Fire("right", GetFireTarget(Input.mousePosition - ScreenCorrect) - _ship.transform.position);
 				}
                 //If first click, remember
-				else if (!clickOne)
+				else if (!_clickOne)
 				{
-					clickOne = true;
+					_clickOne = true;
 				}
 			}
-			doubleClickCheck = 0;
+			_doubleClickCheck = 0;
 		}
-		else if (clickCurrentPosition != null && doubleClickCheck > 1f)
+		else if (_clickCurrentPosition != null && _doubleClickCheck > 1f)
 		{
-			Vector3 pos = GetTarget(clickCurrentPosition);
-			movementScript.TargetDirection = pos - ship.transform.position;
-            clickOne = false;
+			Vector3 pos = GetTarget(_clickCurrentPosition);
+			_movementScript.TargetDirection = pos - _ship.transform.position;
+            _clickOne = false;
 		}
 	}
 
@@ -413,20 +388,20 @@ public class InputManager : MonoBehaviour
 	Vector3 GetTarget(Vector2 input)
 	{
         //Find direction of input from click start pos
-        Vector2 distVec = input - clickStartPosition;
+        Vector2 distVec = input - _clickStartPosition;
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
         distVec *= 20.0f;
 
         //Find the location to move player towards based on player's location
-        Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
+        Vector3 targetPos = _ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
 
         //Set speed scale based on how far click is from starting click
         if (dist > MAX_ICON_DIST)
-            movementScript.SpeedScale = 1.0f;
+            _movementScript.SpeedScale = 1.0f;
         else
-            movementScript.SpeedScale = dist / MAX_ICON_DIST;
+            _movementScript.SpeedScale = dist / MAX_ICON_DIST;
         return targetPos;
 	}
 
@@ -438,14 +413,14 @@ public class InputManager : MonoBehaviour
     Vector3 GetFireTarget(Vector2 input)
     {
         //Find direction of input from click start pos
-        Vector2 distVec = input - iconBase.anchoredPosition;
+        Vector2 distVec = input - _iconBase.anchoredPosition;
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
         distVec *= 20.0f;
 
         //Find the location to move player towards based on player's location
-        Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
+        Vector3 targetPos = _ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
 
         return targetPos;
     }
@@ -457,17 +432,17 @@ public class InputManager : MonoBehaviour
     void SetPointIcon(Vector2 pos)
     {
         //Find distance of click from starting click
-        float dist = Vector2.Distance(pos, clickStartPosition);
+        float dist = Vector2.Distance(pos, _clickStartPosition);
         //If distance is less than max icon distance, set icon to pos
         if (dist <= MAX_ICON_DIST)
-            iconPoint.anchoredPosition = pos;
+            _iconPoint.anchoredPosition = pos;
         //Else, find point on circle to place icon
         else
         {
-            Vector2 distVec = pos - clickStartPosition;
+            Vector2 distVec = pos - _clickStartPosition;
             distVec.Normalize();
             distVec *= MAX_ICON_DIST;
-            iconPoint.anchoredPosition = clickStartPosition + distVec;
+            _iconPoint.anchoredPosition = _clickStartPosition + distVec;
         }
     }
 }
