@@ -81,7 +81,7 @@ public class CannonFire : MonoBehaviour
         CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
-        rightShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        rightShot.Fire(cannonBall, gameObject);
     }
 
     public class CannonShot
