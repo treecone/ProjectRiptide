@@ -11,8 +11,9 @@ public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4}
-public enum Anim { Die = 0};
-public enum CarpAnim { SwimSpeed = 1, Dive = 2, Shoot = 3, UAttack = 4, Velocity = 5};
+public enum Anim { Die = 0, Velocity = 1};
+public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5};
+public enum CrabAnim { Jump = 2};
 
 
 public partial class Enemy : Physics
@@ -35,8 +36,8 @@ public partial class Enemy : Physics
     private float _health;
     private float _maxHealth;
 
-    [HideInInspector]
-    public EnemyState state;
+    private EnemyState _state;
+    public EnemyState State { get; set; }
 
     //player's distance from enemy
     private float _playerDistance;
@@ -81,6 +82,7 @@ public partial class Enemy : Physics
     //Death
     private bool _dying = false;
     private int _deathAnim;
+    private float _deathTimer;
 
     //Fields for collision detection
     [SerializeField]
@@ -97,14 +99,15 @@ public partial class Enemy : Physics
     //Smooth rotation stuff
     private float _rotationalVeloctiy = 0.5f;
 
-    public float health => _health;
+    public float Health => _health;
 
-    public Vector2 startingChunk;
+    private Vector2 _startingChunk;
+    public Vector2 StartingChunk { get; set; }
 
     // Start is called before the first frame update
     protected override void Start()
     {
-        state = EnemyState.Passive;
+        _state = EnemyState.Passive;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         _playerDistance = Vector3.Distance(transform.position, player.transform.position);
         _healthBar = GetComponent<HealthBar>();
@@ -137,7 +140,7 @@ public partial class Enemy : Physics
             _enemyDistance = Vector3.Distance(_startPos, transform.position);
 
             //checks for states
-            switch (state)
+            switch (_state)
             {
                 case EnemyState.Passive:
                     _PassiveAI();
@@ -146,7 +149,7 @@ public partial class Enemy : Physics
                     if (_playerDistance < _hostileRadius && _passiveCooldown <= 0)
                     {
                         _healthBarObject.SetActive(true);
-                        state = EnemyState.Hostile;
+                        _state = EnemyState.Hostile;
                     }
                     break;
                 case EnemyState.Hostile:
@@ -155,7 +158,7 @@ public partial class Enemy : Physics
                     if (_playerDistance >= _passiveRadius)
                     {
                         _healthBarObject.SetActive(false);
-                        state = EnemyState.Passive;
+                        _state = EnemyState.Passive;
                     }
                     break;
             }
@@ -178,10 +181,11 @@ public partial class Enemy : Physics
         }
         else
         {
-            if(!_animator.IsInTransition(0) && !_animator.GetCurrentAnimatorStateInfo(0).IsTag("death"))
+            if(_deathTimer > 3.0f)
             {
                 DestroyEnemy();
             }
+            _deathTimer += Time.deltaTime;
         }
     }
 
@@ -227,10 +231,10 @@ public partial class Enemy : Physics
                 _animParm = new int[6] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("swimSpeed"),
+                    Animator.StringToHash("velocity"),
                     Animator.StringToHash("dive"),
                     Animator.StringToHash("shoot"),
-                    Animator.StringToHash("uAttack"),
-                    Animator.StringToHash("velocity")};
+                    Animator.StringToHash("uAttack")};
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
@@ -287,7 +291,11 @@ public partial class Enemy : Physics
                 _passiveRadius = 130.0f;
                 _maxRadius = 240.0f;
                 _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[1] { false};
+                _activeStates = new bool[3] { false, false, false};
+                _animParm = new int[3] {
+                    Animator.StringToHash("die"),
+                    Animator.StringToHash("velocity"),
+                    Animator.StringToHash("jump")};
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
@@ -308,10 +316,10 @@ public partial class Enemy : Physics
     {
         _health -= damage;
         _healthBar.UpdateHealth(_health);
-        if (state == EnemyState.Passive)
+        if (_state == EnemyState.Passive)
         {
             _healthBarObject.SetActive(true);
-            state = EnemyState.Hostile;
+            _state = EnemyState.Hostile;
         }
         if (_health <= 0)
         {
@@ -322,6 +330,7 @@ public partial class Enemy : Physics
                 _deathAnim = Animator.StringToHash("death");
             }
             _dying = true;
+            _deathTimer = 0;
         }
     }
 
@@ -474,103 +483,11 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
-    /// Applys a force to move the enemy in an arc
-    /// </summary>
-    /// <param name="dir">Direction of movement</param>
-    /// <param name="dist">Horizontal distance covered</param>
-    /// <param name="time">Time that the arc takes place</param>
-    /// <param name="gravity">Gravity being applied each frame</param>
-    private void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
-    {
-        float xForce = _mass * (dist / (time * Time.deltaTime));
-        float yForce = (-gravity.y * time) / (2 * Time.deltaTime);
-        Vector3 netForce = dir * xForce;
-        netForce += yForce * Vector3.up;
-        ApplyForce(netForce);
-    }
-
-    /// <summary>
-    /// Applys a force to move the enemy in an arc
-    /// </summary>
-    /// <param name="dir">Direction of movement</param>
-    /// <param name="dist">Horizontal distance covered</param>
-    /// <param name="yMax">Maximum vertical distance</param>
-    /// <param name="time">Time that the arc takes place</param>
-    /// <returns>Gravity to be applied each frame</returns>
-    private Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
-    {
-        float xForce = _mass * (dist / (time * Time.deltaTime));
-        float gravity = (-8 * _mass * yMax) / (time * time);
-        float yForce = (-gravity * time) / (2 * Time.deltaTime);
-        Vector3 netForce = dir * xForce;
-        netForce += yForce * Vector3.up;
-        ApplyForce(netForce);
-        return Vector3.up * gravity;
-    }
-
-    /// <summary>
-    /// Applies a force to move in a direction at a specified speed
-    /// Applied only once
-    /// </summary>
-    /// <param name="dir">Direction of movment</param>
-    /// <param name="dist">Distance moved over time frame</param>
-    /// <param name="time">Time frame to move dstance</param>
-    private void ApplyMoveForce(Vector3 dir, float dist, float time)
-    {
-        float moveForce = _mass * (dist / (time * Time.deltaTime));
-        Vector3 netForce = dir * moveForce;
-        ApplyForce(netForce);
-    }
-
-    /// <summary>
-    /// Applies a force to move in a direction at a specified speed
-    /// Needs to be applied each frame
-    /// </summary>
-    /// <param name="dir">Direction of movement</param>
-    /// <param name="dist">Distance moved over time frame</param>
-    /// <param name="time">Time frame to move distance</param>
-    private void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
-    {
-        float moveForce = (2 * _mass * dist) / (time * time);
-        Vector3 netForce = dir * moveForce;
-        ApplyForce(netForce);
-    }
-
-    /// <summary>
     /// Sets position of health bar above enemy
     /// </summary>
     private void SetHealthBarPosition()
     {
         _healthBarObject.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
-    }
-
-    /// <summary>
-    /// Checks if there is an obstical in the enemy's path
-    /// </summary>
-    /// <returns>If enemy's path is interuptted</returns>
-    public bool CheckObstacle()
-    {
-        RaycastHit hit = new RaycastHit();
-        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
-        for (int i = 0; i <= _halfView; i += 4)
-        {
-            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward * _viewRange, Color.red);
-            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward * _viewRange, Color.red);
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, _viewRange))
-            {
-                return true;
-            }
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, _viewRange))
-            {
-                return true;
-            }
-        }
-        /*if(Physics.SphereCast(detectPosition + transform.TransformDirection(widthVector), widthMult, transform.forward, out hit, viewRange * 1.5f))
-        {
-            return true;
-        }*/
-
-        return false;
     }
 
     /// <summary>
@@ -583,65 +500,22 @@ public partial class Enemy : Physics
         Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
-        /*
+        
         for (int i = 0; i <= _halfView; i += 4)
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
+            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
-        }*/
-        if(UnityEngine.Physics.SphereCast(detectPosition, _widthMult * 2, transform.forward, out hit, _viewRange * 1.5f))
-        {
-            return true;
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// Find direction to avoid obstacle
-    /// </summary>
-    /// <returns>Direction to avoid obstacle</returns>
-    public Vector3 AvoidObstacle()
-    {
-        //Debug.Log("Avoiding Obstacle");
-        Vector3 dir = Vector3.zero;
-        bool found = false;
-
-        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
-        RaycastHit hit;
-
-        //Check 90 degrees for a path to avoid obstacle
-        for (int i = 0; i <= 90; i += 4)
-        {
-            //Check right side for path
-            if (!UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * transform.forward, out hit, _viewRange * 1.5f))
-            {
-                //Set direction if path is found
-                 dir = Quaternion.AngleAxis(i, Vector3.up) * transform.forward;
-                Debug.DrawLine(transform.position, transform.position + dir * _viewRange * 1.5f, Color.yellow);
-                 found = true;
-            }
-            //Check left side for path
-            if (!UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * transform.forward, out hit, _viewRange * 1.5f))
-            {
-                //Set direction if path is found
-                dir = Quaternion.AngleAxis(-i, Vector3.up) * transform.forward;
-                Debug.DrawLine(transform.position, transform.position + dir * _viewRange * 1.5f, Color.yellow);
-                found = true;
-            }
-            if (found)
-                return dir;
-        }
-
-        return Quaternion.AngleAxis(90, Vector3.up) * transform.forward;
     }
 
     /// <summary>
@@ -694,7 +568,7 @@ public partial class Enemy : Physics
     {
         if (obstical.tag == "Obstical")
         {
-            StopMotion();
+            StopHorizontalMotion();
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();

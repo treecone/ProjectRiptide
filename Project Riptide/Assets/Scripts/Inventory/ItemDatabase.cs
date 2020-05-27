@@ -8,9 +8,9 @@ using System;
 //USING LITJSON
 public class ItemDatabase : MonoBehaviour
 {
-    private string defaultPath;
-    private string jsonString;
-    private JsonData itemData;
+    private string _defaultPath;
+    private string _jsonString;
+    private JsonData _itemData;
 
     public Color[] rarityColors;
 
@@ -19,25 +19,25 @@ public class ItemDatabase : MonoBehaviour
 
     void Awake()
     {
-        defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
-        jsonString = File.ReadAllText(defaultPath);
-        itemData = JsonMapper.ToObject(jsonString);
+        _defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
+        _jsonString = File.ReadAllText(_defaultPath);
+        _itemData = JsonMapper.ToObject(_jsonString);
         ConstructDatabase();
     }
 
     //This method is called in the begining of the game to take all the sprites from the Json we made into a dictonary of items
     //This can be changed later if we decide that we want to pull items from the json mid game
-    void ConstructDatabase ()
+    private void ConstructDatabase ()
     {
-        for (int i = 0; i < itemData.Count; i++)
+        for (int i = 0; i < _itemData.Count; i++)
         {
-            string nameTempString = itemData[i]["name"].ToString();
+            string nameTempString = _itemData[i]["name"].ToString();
 
             //Parses the item's upgrades
             List<Upgrade> upgrades = new List<Upgrade>();
-            for(int j = 0; j < itemData[i]["upgrades"].Count; j++)
+            for(int j = 0; j < _itemData[i]["upgrades"].Count; j++)
             {
-                JsonData upgradeData = itemData[i]["upgrades"][j];
+                JsonData upgradeData = _itemData[i]["upgrades"][j];
                 string name = (string)upgradeData["name"];
                 Dictionary<string, float> upgradeInfo = new Dictionary<string, float>();
                 foreach(string key in upgradeData["data"].Keys)
@@ -51,9 +51,9 @@ public class ItemDatabase : MonoBehaviour
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
             if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"))
             {
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (int)itemData[i]["rarity"],
-                    (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"),
-                    (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"], upgrades));
+                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
+                    (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"),
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
                 //This usually means that we have yet to put the sprite for the item in the game
 
@@ -61,9 +61,9 @@ public class ItemDatabase : MonoBehaviour
             else
             {
                 //Delete this?
-                database.Add(new Item((int)itemData[i]["id"], nameTempString, itemData[i]["description"].ToString(), (int)itemData[i]["rarity"],
-                    (int)itemData[i]["value"], itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"),
-                    (int)itemData[i]["amount"], (int)itemData[i]["maxAmount"], upgrades));
+                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
+                    (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"),
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
             }
         }
     }
@@ -88,11 +88,11 @@ public class ItemDatabase : MonoBehaviour
     //Gets a Jsondata file of a item from the json, don't recomend you use unless you need the jsondata file for it
     JsonData GetItem (string name, string type)
     {
-        for(int i = 0; i < itemData[type].Count; i++)
+        for(int i = 0; i < _itemData[type].Count; i++)
         {
-            if(itemData[type][i]["name"].ToString () == name || itemData[type][i]["slug"].ToString () == name)
+            if(_itemData[type][i]["name"].ToString () == name || _itemData[type][i]["slug"].ToString () == name)
             {
-                return itemData[type][i];
+                return _itemData[type][i];
             }
         }
         return null;

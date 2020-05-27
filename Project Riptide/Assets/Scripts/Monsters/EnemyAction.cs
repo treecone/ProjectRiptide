@@ -8,18 +8,21 @@ public partial class Enemy : Physics
     //Usually should be used for enemy AI when not in an action
     private void FollowPlayer()
     {
-        //Calculate net force
-        Vector3 netForce = Seek(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
-        //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
-
-        //Check for collision
+        Vector3 destination = Vector3.zero;
+        //Check for obstacle
         if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
         {
-            Vector3 avoidForce = Steer(AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z))) * 10.0f;
-            netForce += avoidForce;
-            Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
+            //Set destination to closest way to player that avoids obstacles
+            destination = transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
         }
+        else
+        {
+            //Set destination to player
+            destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+        }
+        //Seek destination
+        Vector3 netForce = Seek(destination);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -37,18 +40,21 @@ public partial class Enemy : Physics
     private void CirclePlayer()
     {
         //Calculate net force
-        Vector3 netForce = _PlayerPosition() - transform.position;
-        netForce = new Vector3(netForce.x, 0, netForce.z);
-        netForce.Normalize();
-        netForce *= 4.0f;
-        netForce = Vector3.Cross(Vector3.up, netForce);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
+        Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
-        //Check for collision
-        if (CheckObstacle())
+        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
         {
-            netForce += Steer(AvoidObstacle()) * 3.0f;
-            //netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+            netForce += transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
+        }
+        else
+        {
+            Vector3 crossForce = _PlayerPosition() - transform.position;
+            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
+            crossForce.Normalize();
+            crossForce *= 1f;
+            crossForce = Vector3.Cross(Vector3.up, crossForce);
+            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
+            netForce += crossForce;
         }
 
         //Rotate in towards direction of velocity
@@ -510,6 +516,7 @@ public partial class Enemy : Physics
 
         if (time == 0)
         {
+            StopMotion();
             _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
@@ -575,26 +582,27 @@ public partial class Enemy : Physics
 
         if (time < MAX_TIME - STALL_TIME)
         {
-            //Calculate net force
-            Vector3 netForce = Seek(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
-            //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
-
-            //Check for collision
-            if (CheckObstacle())
+            Vector3 destination = Vector3.zero;
+            if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
             {
-                netForce += Steer(AvoidObstacle()) * 3.0f;
-                //netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+                destination = transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
             }
+            else
+            {
+                destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            }
+            Vector3 netForce = Seek(destination);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
             {
                 Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
                 SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+                //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
             }
-
-            ApplyForce(netForce);
+            //Debug.DrawLine(transform.position, transform.position + netForce, Color.red);
+            ApplyForce(netForce * 2.0f);
 
             if (_playerDistance <= 3.1f)
             {
@@ -706,8 +714,9 @@ public partial class Enemy : Physics
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
-            _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed, 2f * transform.localScale.y, 1.0f);
+            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed * 1.5f, 2f * transform.localScale.y, 1.0f);
+            _animator.SetTrigger(_animParm[(int)CrabAnim.Jump]);
         }
 
         if (!_inKnockback)
