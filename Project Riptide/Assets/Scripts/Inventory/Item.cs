@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class Item 
+public class Item
 {
     #region Fields
     [SerializeField]
@@ -16,23 +16,106 @@ public class Item
     private Sprite icon;                //sprite of item
     private int amount;                 //current amount of item
     private int maxAmount;              //max amount of items
-    private List<Upgrade> upgrades;     //?????? we keep this here or no
-    private bool equipped;              //?????? we keep this here or no
+    private List<Upgrade> upgrades;
+    private bool equipped;
     #endregion
 
-    #region Get/Set
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public int Rarity { get; set; }
-    public int Value { get; set; }
-    public string Slug { get; set; }
-    public Sprite Icon { get; set; }
-    public int Amount { get; set; }
-    public int MaxAmount { get; set; }
-    //KEEPING THESE OR NAH?
-    public List<Upgrade> Upgrades { get; set; }
-    public bool Equipped { get; set; }
+    #region Properties
+    public int Id
+    {
+        get
+        {
+            return id;
+        }
+    }
+    public string Name
+    {
+        get
+        {
+            return name;
+        }
+    }
+
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+    }
+
+    public int Rarity
+    {
+        get
+        {
+            return rarity;
+        }
+    }
+
+    public int Value
+    {
+        get
+        {
+            return value;
+        }
+    }
+
+    public string Slug
+    {
+        get
+        {
+            return slug;
+        }
+    }
+
+    public Sprite Icon
+    {
+        get
+        {
+            return icon;
+        }
+    }
+
+    public int Amount
+    {
+        get
+        {
+            return amount;
+        }
+        set
+        {
+            amount = value;
+        }
+    }
+
+    public int MaxAmount
+    {
+        get
+        {
+            return maxAmount;
+        }
+    }
+
+    public List<Upgrade> Upgrades
+    {
+        get
+        {
+            return upgrades;
+        }
+    }
+
+    public bool Equipped
+    {
+        get
+        {
+            return equipped;
+        }
+        set
+        {
+            equipped = value;
+        }
+    }
+
     #endregion
 
     public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades)

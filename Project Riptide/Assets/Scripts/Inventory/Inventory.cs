@@ -61,6 +61,11 @@ public class Inventory : MonoBehaviour
         {
             AddItem("grapeshot", 1);
         }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Debug.Log("b");
+            AddItem("healthyhull", 1);
+        }
         if (Input.GetKey(KeyCode.J))
         {
             GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(Random.Range(0, 5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
@@ -78,6 +83,7 @@ public class Inventory : MonoBehaviour
     {
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = _itemDatabase.FindItem(itemName);
+        Debug.Log(itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
