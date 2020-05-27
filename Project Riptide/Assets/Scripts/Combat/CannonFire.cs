@@ -104,7 +104,7 @@ public class CannonFire : MonoBehaviour
             this.fireAngle = fireAngle;
             this.verticalRatio = 0.1f + upgrade["verticalRatio"];
             this.spreadAngle = 20;
-            this.size = 20 + upgrade["shotSize"];
+            this.size = 0.5f + upgrade["shotSize"];
         }
 
         public void Fire(GameObject cannonBall, GameObject ship)

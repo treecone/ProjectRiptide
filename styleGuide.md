@@ -40,7 +40,28 @@ If a variable is to be changed in the Unity Editor, use `[SerializeField]` rathe
 
 ### Properties
 
-Public `get` and `set` properties should be used in place of public fields.
+Public `get` and `set` properties should be used in place of public fields. Properties without special behavior can be written in one lane.
+
+**AVOID**:
+
+```csharp
+public int Id {
+  get 
+  {
+    return id;
+  } 
+  set 
+  {
+    id = value;
+  }
+}
+```
+
+**PREFER**:
+
+```csharp
+public int id {get; set;}
+```
 
 ### Script naming
 

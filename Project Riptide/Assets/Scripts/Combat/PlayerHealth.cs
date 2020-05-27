@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
+    [SerializeField]
+    private Upgrades shipUpgradeScript;
+
     public GameObject healthBarObject;
     private Camera camera;
 
@@ -29,12 +32,35 @@ public class PlayerHealth : MonoBehaviour
     }
 
     /// <summary>
+    /// Behavior for every second - health regen, update healthbar, etc
+    /// </summary>
+    private void UpdateHealth()
+    {
+        AddHealth(shipUpgradeScript.masterUpgrade["regeneration"]);
+        float lastMaxHealth = maxHealth;
+        maxHealth = 100 + shipUpgradeScript.masterUpgrade["maxHealth"];
+        if(lastMaxHealth != maxHealth)
+        {
+            health += maxHealth - lastMaxHealth;
+        }
+    }
+
+    /// <summary>
+    /// Player adds health, up to their max health
+    /// </summary>
+    /// <param name="health">The amount of health to add</param>
+    public void AddHealth(float health)
+    {
+        this.health += health;
+    }
+
+    /// <summary>
     /// Player takes damage, if health is 0 they die
     /// </summary>
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        health -= damage;
+        health -= damage / (1.0f / shipUpgradeScript.masterUpgrade["armor"]);
         healthBar.UpdateHealth(health);
         if (health <= 0)
         {
