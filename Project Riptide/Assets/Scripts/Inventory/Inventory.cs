@@ -162,7 +162,6 @@ public class Inventory : MonoBehaviour
     /// </value>
     public int Size
     {
-        
         get
         {
             return items.Count;
