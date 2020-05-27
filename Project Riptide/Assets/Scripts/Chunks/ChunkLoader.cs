@@ -25,8 +25,8 @@ public class ChunkLoader : MonoBehaviour
     public GameObject koiPrefab;
     private Dictionary<string, GameObject> monsters;
 
-    public Chunk[,] chunks;  // List of all the chunk prefabs
-    public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
+    private Chunk[,] chunks;  // List of all the chunk prefabs
+    private List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
     private const float _CHUNKSIDELENGTH = 100; // Base length of each chunk.
     public GameObject ship; // Player
     public Vector2 currentChunkPosition; // The array coordinates of the chunk, not real world coordinates!!
@@ -34,7 +34,7 @@ public class ChunkLoader : MonoBehaviour
     public bool showAllChunks; // Change this value in the editor to make all chunks visible.
 
     // Used to determine if the player has transitioned regions.
-    public string previousRegion;
+    private string previousRegion;
     public string currentRegion;
 
     private TextMeshProUGUI regionDisplay;
