@@ -8,18 +8,32 @@ public partial class Enemy : Physics
     //Usually should be used for enemy AI when not in an action
     private void FollowPlayer()
     {
-        //Calculate net force
+        /*//Calculate net force
         Vector3 netForce = Seek(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
         //Debug.DrawLine(transform.position, transform.position + netForce, Color.blue);
         netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
 
         //Check for collision
-        if (CheckObstacle())
+        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
         {
-            Vector3 avoidForce = Steer(AvoidObstacle()) * 3.0f;
+            netForce /= 2.0f; 
+            Vector3 avoidForce = Steer(AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z))) * 10.0f;
             netForce += avoidForce;
-            //Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
+            Debug.DrawLine(transform.position, transform.position + avoidForce, Color.black);
+        }*/
+
+        Vector3 destination = Vector3.zero;
+        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
+        {
+            destination = transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
         }
+        else
+        {
+            destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+        }
+        Debug.Log(Seek(destination));
+        Vector3 netForce = Seek(destination);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -37,18 +51,20 @@ public partial class Enemy : Physics
     private void CirclePlayer()
     {
         //Calculate net force
-        Vector3 netForce = _PlayerPosition() - transform.position;
-        netForce = new Vector3(netForce.x, 0, netForce.z);
-        netForce.Normalize();
-        netForce *= 4.0f;
-        netForce = Vector3.Cross(Vector3.up, netForce);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 3.0f;
+        Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
-        //Check for collision
-        if (CheckObstacle())
+        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
         {
-            netForce += Steer(AvoidObstacle()) * 3.0f;
-            //netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 10.0f;
+            netForce += transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
+        }
+        else
+        {
+            Vector3 crossForce = _PlayerPosition() - transform.position;
+            crossForce = new Vector3(netForce.x, 0, netForce.z);
+            crossForce.Normalize();
+            crossForce *= 4.0f;
+            crossForce = Vector3.Cross(Vector3.up, netForce);
+            netForce += crossForce;
         }
 
         //Rotate in towards direction of velocity

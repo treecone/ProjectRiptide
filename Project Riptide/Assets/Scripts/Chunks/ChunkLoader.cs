@@ -22,9 +22,8 @@ public class ChunkLoader : MonoBehaviour
                                           {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_KOI, Region.CHINA_ISLAND1, Region.OCEAN},
                                           {Region.OCEAN, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.CHINA_ISLAND1, Region.OCEAN},
                                           {Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN, Region.OCEAN}};
-    private string[] monsterNames = new string[]{"koi"};
     public GameObject koiPrefab;
-    private Dictionary<string, GameObject> monsters = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> monsters;
 
     public Chunk[,] chunks;  // List of all the chunk prefabs
     public List<Chunk> visibleChunks; // A dynamic list of all chunks visible to the player.
@@ -40,11 +39,14 @@ public class ChunkLoader : MonoBehaviour
 
     private TextMeshProUGUI regionDisplay;
 
+    private float unloadTimer;
+
     // Start is called before the first frame update
     void Start()
     {
+        SetUpMonsters();
+        unloadTimer = 0;
         currentRegion = "china";
-        monsters.Add("koi", null);
         chunks = new Chunk[map.GetLength(0), map.GetLength(1)];
         ship = GameObject.FindGameObjectWithTag("Player");
         visibleChunks = new List<Chunk>();
@@ -60,7 +62,7 @@ public class ChunkLoader : MonoBehaviour
                 // Get which region this chunk is a part of.
                 Region r = map[x, z];
                 string pathName = "Chunks";
-                // Take a loot at wich region this chunk is in.
+                // Take a look at which region this chunk is in.
                 switch (r)
                 {
                     // Set the chunks pathname to the next china chunk.
@@ -103,7 +105,64 @@ public class ChunkLoader : MonoBehaviour
         ship.transform.position = new Vector3(_CHUNKSIDELENGTH * currentChunkPosition.x, 1f, _CHUNKSIDELENGTH * currentChunkPosition.y);
 
     }
-
+    // Set up the dictionaries of monsters.
+    public void SetUpMonsters()
+    {
+        monsters = new Dictionary<string, GameObject>();
+        monsters.Add("koi", null);
+        // Add more monsters
+    }
+    // Load a monster of the specified name at the specifed positon.
+    public void LoadMonster(Vector2 position, Vector2 chunk, string name)
+    {
+        switch (name)
+        {
+            // Load the monster.
+            case "koi":
+                {
+                    monsters[name] = Instantiate(koiPrefab, new Vector3(position.x, 0, position.y), Quaternion.identity);
+                    monsters[name].GetComponent<Enemy>().startingChunk = chunk;
+                    break;
+                }
+        }
+    }
+    public void UnloadMonster(string name)
+    {
+        Destroy(monsters[name]);
+        monsters[name] = null;
+    }
+    // March through each monster a
+    public void CheckUnloadMonster()
+    {
+        // List of monsters to unload.
+        List<string> destroyMonsters = new List<string>();
+        // Loop through each potential monster.
+        foreach(KeyValuePair<string, GameObject> kvpair in monsters)
+        {
+            string name = kvpair.Key;
+            GameObject monster = kvpair.Value;
+            // Monster exists and is roaming...
+            if (monster)
+            {
+                Vector2 start = monster.GetComponent<Enemy>().startingChunk;
+                bool monstersInChunk = (DistanceFromChunkCenter(monster, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
+                bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
+                Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
+                Debug.Log(start);
+                // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
+                if ((!monstersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive) || (!playersInChunk && monster.GetComponent<Enemy>().state == EnemyState.Passive))
+                {
+                    // Add this monster to the list of monsters to destroy.
+                    destroyMonsters.Add(name);
+                }
+            }
+        }
+        // Unload each monster in this list.
+        foreach(string n in destroyMonsters)
+        {
+            UnloadMonster(n);
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -142,10 +201,10 @@ public class ChunkLoader : MonoBehaviour
     /// <param name="x"> The row of the array of chunks.</param>
     /// <param name="z"> The col of the array of chunks.</param>
     /// <returns> The distance between the ship and the chunks center.</returns>
-    public float DistanceFromChunkCenter(int x, int z)
+    public float DistanceFromChunkCenter(GameObject g, int x, int z)
     {
-        return Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - (x * _CHUNKSIDELENGTH), 2)
-            + Mathf.Pow(ship.transform.position.z - (z * _CHUNKSIDELENGTH), 2));
+        return Mathf.Sqrt(Mathf.Pow(g.transform.position.x - (x * _CHUNKSIDELENGTH), 2)
+            + Mathf.Pow(g.transform.position.z - (z * _CHUNKSIDELENGTH), 2));
     }
     /// <summary>
     /// Updates the current chunk field to accurately represent which chunk the user is in.
@@ -204,10 +263,10 @@ public class ChunkLoader : MonoBehaviour
                 // The bounds of this chunk.
                 Rect chunkBounds = new Rect((x - .5f) * _CHUNKSIDELENGTH, (z - .5f) * _CHUNKSIDELENGTH, _CHUNKSIDELENGTH, _CHUNKSIDELENGTH);
                 // Chunk is valid.
-                if (x >= 0 && z >= 0 && x < map.GetLength(0) && z < map.GetLength(1) && chunks[x,z] != null)
+                if (x >= 0 && z >= 0 && x < map.GetLength(0) && z < map.GetLength(1) && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = (DistanceFromChunkCenter(x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
+                    bool close = (DistanceFromChunkCenter(ship, x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -217,33 +276,20 @@ public class ChunkLoader : MonoBehaviour
                         visibleChunks.Add(chunks[x, z]);
                         // Get the name of the boss to add if there is supposed to be a boss in this chunk.
                         string monsterName = GetMonsterName(chunks[x, z].region);
+                        Debug.Log("Monster Name " + monsterName);
                         // Monster is not yet loaded in this chunk
-                        if (monsters.ContainsKey(monsterName) && !monsters[monsterName]){
-                            // Determine which monster it is.
-                            switch (monsterName)
-                            {
-                                // Load the monster.
-                                case "koi":
-                                    {
-                                        monsters[monsterName] = Instantiate(koiPrefab, chunks[x, z].center, Quaternion.identity);
-                                        break;
-                                    }
-                            }
+                        if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
+                        {
+                            // Load in the monster.
+                            LoadMonster(chunks[x, z].center, new Vector2(x,z), monsterName);
                         }
                     }
                     // Chunk is no longer within viewing distance of the ship, so unload it.
-                    if(!close && inVisibleChunks)
+                    if (!close && inVisibleChunks)
                     {
                         // Deactivate this chunk
                         chunks[x, z].chunk.SetActive(false);
                         visibleChunks.Remove(chunks[x, z]);
-                        //Name of boss if there is one.
-                        string potentialMonsterName = GetMonsterName(chunks[x, z].region);
-                        // Monster in now passive.
-                        if(monsters[potentialMonsterName].gameObject.GetComponent<Enemy>().state == EnemyState.Passive)
-                        {
-                            Destroy(monsters[potentialMonsterName]);
-                        }
                     }
                     // Ship was in a different chunk and has now moved into this chunk, make it the current chunk.
                     if ((stashedChunkPos.x != x || stashedChunkPos.y != z) && chunkBounds.Contains(new Vector2(ship.transform.position.x, ship.transform.position.z)))
@@ -255,12 +301,18 @@ public class ChunkLoader : MonoBehaviour
                 }
             }
         }
+        unloadTimer += Time.deltaTime;
+        if(unloadTimer > 1)
+        {
+            CheckUnloadMonster();
+            unloadTimer = 0;
+        }
     }
     // Given the region label, return as a string which region this chunk comes from.
     // Example CHINA_KOI would return "china"
     public string GetRegionName(Region region)
     {
-        string name ="";
+        string name ="NOTHING";
         switch (region)
         {
             case Region.CHINA:
@@ -290,16 +342,14 @@ public class ChunkLoader : MonoBehaviour
 
     public string GetMonsterName(Region r)
     {
-        string name = "";
         switch (r)
         {
             case Region.CHINA_KOI:
                 {
-                    name = "koi";
-                    break;
+                    return "koi";
 
                 }
         }
-        return name;
+        return "NONE";
     }
 }
