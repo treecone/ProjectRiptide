@@ -51,7 +51,9 @@ public class ItemDatabase : MonoBehaviour
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
             if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"))
             {
-                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (bool)_itemData[i]["stackable"], (int)_itemData[i]["rarity"], (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"), (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
+                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
+                    (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("ItemSprites/" + nameTempString + "Sprite"),
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
                 //This usually means that we have yet to put the sprite for the item in the game
 
@@ -59,7 +61,9 @@ public class ItemDatabase : MonoBehaviour
             else
             {
                 //Delete this?
-                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (bool)_itemData[i]["stackable"], (int)_itemData[i]["rarity"], (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"), (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
+                database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
+                    (int)_itemData[i]["value"], _itemData[i]["slug"].ToString(), Resources.Load<Sprite>("Inventory/ItemSprites/" + nameTempString + "Sprite"),
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
             }
         }
     }
@@ -71,7 +75,7 @@ public class ItemDatabase : MonoBehaviour
     {
         for(int i = 0; i < database.Count; i++)
         {
-            if(database[i].name == name || database[i].slug == name.ToLower())
+            if(database[i].Name == name || database[i].Slug == name.ToLower())
             {
                 return database[i];
             }
