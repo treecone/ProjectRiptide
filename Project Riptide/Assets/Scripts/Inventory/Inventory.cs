@@ -8,13 +8,13 @@ public class Inventory : MonoBehaviour
 {
     public List<Item> items;
     public List<GameObject> inventorySlots;
-    private ItemDatabase theDatabase;
+    private ItemDatabase _itemDatabase;
     public Upgrades shipUpgradeScript;
     void Start()
     {
         items = new List<Item>();
         inventorySlots = new List<GameObject>();
-        theDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
+        _itemDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
     }
     
     
@@ -39,7 +39,6 @@ public class Inventory : MonoBehaviour
         if (Input.GetKey(KeyCode.M))
         {
             RemoveItem("nails", 8);
-
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -60,8 +59,8 @@ public class Inventory : MonoBehaviour
         if (Input.GetKey(KeyCode.J))
         {
             GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(Random.Range(0,5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
-            lootable.GetComponent<Lootable>().itemStored = theDatabase.GetRandomItem();
-            lootable.GetComponent<Lootable>().lightColor = theDatabase.rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
+            lootable.GetComponent<Lootable>().itemStored = _itemDatabase.GetRandomItem();
+            lootable.GetComponent<Lootable>().lightColor = _itemDatabase.rarityColors[lootable.GetComponent<Lootable>().itemStored.rarity];
         }
     }
 
@@ -73,7 +72,7 @@ public class Inventory : MonoBehaviour
     public void AddItem(string itemName, int amountToAdd)
     {
         int amountToAddTemp = amountToAdd;
-        Item itemToAdd = theDatabase.FindItem(itemName);
+        Item itemToAdd = _itemDatabase.FindItem(itemName);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
@@ -118,7 +117,7 @@ public class Inventory : MonoBehaviour
     public bool RemoveItem (string itemName, int amount)
     {
         if(items.Count == 0) { Debug.LogWarning("Nothing in inventory, nothing to delete!"); return false; }
-        Item itemToRemove = theDatabase.FindItem(itemName);
+        Item itemToRemove = _itemDatabase.FindItem(itemName);
         for (int i = items.Count-1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
@@ -152,19 +151,24 @@ public class Inventory : MonoBehaviour
             otherInventory.AddItem(itemName, amount);
         }
     }
-
-    /// <summary>
-    /// Gets the size of the inventory in slots
-    /// </summary>
-    /// <returns>The number of slots in the inventory</returns>
+    
+    /// <value>
+    /// Gets the size of the inventory in number of slots
+    /// </value>
     public int Size
     {
+        
         get
         {
             return items.Count;
         }
     }
 
+    /// <summary>
+    /// Indexer for the inventory
+    /// </summary>
+    /// <param name="i">The slot number of the item you are looking for</param>
+    /// <returns>The item in that slot</returns>
     public Item this[int i]
     {
         get
