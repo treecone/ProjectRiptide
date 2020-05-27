@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Attack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
-public enum State { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
+public enum KoiAttack { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
+public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 
 public partial class Enemy : Physics
 {
@@ -32,23 +32,35 @@ public partial class Enemy : Physics
             }
         }
 
-        //Calculate net force
-        Vector3 netForce = Seek(_destination);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * _maxSpeed;
-
-        //Check for collision
-        if(CheckObstacle())
+        Vector3 destination = Vector3.zero;
+        //Check for obstacle
+        if (CheckObstacle(_destination))
         {
-            ApplyForce(Steer(AvoidObstacle()) * 2.0f);
+            //Set destination to closest way to player that avoids obstacles
+            destination = transform.position + AvoidObstacle(_destination);
         }
+        else
+        {
+            //Set destination to player
+            destination = _destination;
+        }
+        //Seek destination
+        Vector3 netForce = Seek(destination);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
         //Rotate in towards direction of velocity
-        _rotation = Quaternion.RotateTowards(_rotation, Quaternion.LookRotation(_velocity), 4.0f);
-
+        if (_velocity != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+        }
         _timeCurrent += Time.deltaTime;
 
         ApplyForce(netForce);
+
         //ApplyFriction(0.25f);
+        if(_animator != null)
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 
     /// <summary>
@@ -71,7 +83,7 @@ public partial class Enemy : Physics
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius)
         {
-            state = EnemyState.Passive;
+            _state = EnemyState.Passive;
             ResetHostile();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
@@ -128,7 +140,7 @@ public partial class Enemy : Physics
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius)
         {
-            state = EnemyState.Passive;
+            _state = EnemyState.Passive;
             ResetHostile();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
@@ -139,26 +151,30 @@ public partial class Enemy : Physics
             if (_health > _maxHealth / 2)
             {
                 //If the Koi is not in any special
-                if (!_activeStates[(int)State.Active])
+                if (!_activeStates[(int)AttackState.Active])
                 {
                     if (_playerDistance > 6.0f)
+                    {
                         FollowPlayer();
+                    }
                     else
-                        CirclePlayer();
+                    {
+                        //CirclePlayer();
+                    }
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
-                    if (_specialCooldown[(int)State.Active] > 0)
-                        _specialCooldown[(int)State.Active] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] > 0)
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                     //Check to see if monster can use triple dash special attack
                     if (_playerDistance < 13.0f)
                     {
-                        _specialCooldown[(int)Attack.TripleDash] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[(int)Attack.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.TripleDash] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttack.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
                         {
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 5.0f;
-                            _specialCooldown[(int)Attack.TripleDash] = 6.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)KoiAttack.TripleDash] = 6.0f;
                             _currTime = 0;
                             //Set up triple dash attack
                             _actionQueue.Enqueue(KoiStopTransition);
@@ -174,13 +190,13 @@ public partial class Enemy : Physics
                     //Check to see if monster can use bubble attack
                     if (_playerDistance > 10.0f)
                     {
-                        _specialCooldown[(int)Attack.BubbleAttack] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[(int)Attack.BubbleAttack] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.BubbleAttack] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttack.BubbleAttack] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Load projectile
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 2.0f;
-                            _specialCooldown[(int)Attack.BubbleAttack] = 3.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 2.0f;
+                            _specialCooldown[(int)KoiAttack.BubbleAttack] = 3.0f;
                             _currTime = 0;
                             _actionQueue.Enqueue(KoiBubbleAttack);
                         }
@@ -189,12 +205,12 @@ public partial class Enemy : Physics
                     //Check to see if player can use charge projectile special attack
                     if (_playerDistance < 20.0f)
                     {
-                        _specialCooldown[(int)Attack.BubbleBlast] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[3] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.BubbleBlast] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[3] < 0.0f && Random.Range(1, 4) == 1)
                         {
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 6.0f;
-                            _specialCooldown[(int)Attack.BubbleBlast] = 8.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 6.0f;
+                            _specialCooldown[(int)KoiAttack.BubbleBlast] = 8.0f;
                             _currTime = 0;
                             //Set up bubble blast attack
                             _actionQueue.Enqueue(KoiStopTransition);
@@ -215,21 +231,21 @@ public partial class Enemy : Physics
                 }
             }
             //Switch to phase 2
-            else if (!_activeStates[(int)State.FormChanged])
+            else if (!_activeStates[(int)AttackState.FormChanged])
             {
                 //Check to see if form changing is just beginning
-                if (!_activeStates[(int)State.FormChangeInProgress])
+                if (!_activeStates[(int)AttackState.FormChangeInProgress])
                 {
                     //Reset any specials the Koi may be in
-                    _activeStates[(int)State.Active] = false;
-                    _specialCooldown[(int)State.Active] = 5.0f;
+                    _activeStates[(int)AttackState.Active] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
                     _isRaming = false;
                     _inKnockback = false;
                     _actionQueue.Clear();
                     ClearHitboxes();
                     _currTime = 0;
                     StopMotion();
-                    _activeStates[(int)State.FormChangeInProgress] = true;
+                    _activeStates[(int)AttackState.FormChangeInProgress] = true;
                     _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
                     _initalPos = transform.position.y;
                 }
@@ -250,35 +266,39 @@ public partial class Enemy : Physics
 
                     StopMotion();
                     _currTime = 0;
-                    _activeStates[(int)State.FormChanged] = true;
+                    _activeStates[(int)AttackState.FormChanged] = true;
                 }
             }
             //Phase 2 AI
             else
             {
                 //If the Koi is not in any special
-                if (!_activeStates[(int)State.Active])
+                if (!_activeStates[(int)AttackState.Active])
                 {
                     if (_playerDistance > 10.0f)
+                    {
                         FollowPlayer();
+                    }
                     else
-                        CirclePlayer();
+                    {
+                        //CirclePlayer();
+                    }
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
-                    if (_specialCooldown[(int)State.Active] > 0)
-                        _specialCooldown[(int)State.Active] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] > 0)
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                     //Check to see if monster can use triple dash special attack
                     if (_playerDistance < 16.0f)
                     {
-                        _specialCooldown[(int)Attack.TripleDash] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[(int)Attack.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.TripleDash] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttack.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Use cooldown to store original height
                             _initalPos = transform.position.y;
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 5.0f;
-                            _specialCooldown[(int)Attack.TripleDash] = 6.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)KoiAttack.TripleDash] = 6.0f;
                             //Set up triple dash attack
                             _actionQueue.Enqueue(KoiDashCharge);
                             _actionQueue.Enqueue(KoiUnderwaterDash);
@@ -293,14 +313,14 @@ public partial class Enemy : Physics
                     //Check to see if monster can use underwater attack
                     if (_playerDistance < 15.0f)
                     {
-                        _specialCooldown[(int)Attack.UnderwaterAttack] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[(int)Attack.UnderwaterAttack] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.UnderwaterAttack] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttack.UnderwaterAttack] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Use cooldown to store original height
                             _initalPos = transform.position.y;
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 5.0f;
-                            _specialCooldown[(int)Attack.UnderwaterAttack] = 8.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)KoiAttack.UnderwaterAttack] = 8.0f;
                             //Set up Underwater attack
                             _actionQueue.Enqueue(KoiUnderwaterFollow);
                             _actionQueue.Enqueue(KoiUnderwaterAttack);
@@ -310,14 +330,14 @@ public partial class Enemy : Physics
                     //Check to see if player can use charge projectile special attack
                     if (_playerDistance < 23.0f)
                     {
-                        _specialCooldown[(int)Attack.BubbleBlast] -= Time.deltaTime;
-                        if (_specialCooldown[(int)State.Active] < 0.0f && _specialCooldown[(int)Attack.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
+                        _specialCooldown[(int)KoiAttack.BubbleBlast] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttack.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             //Use cooldown to store original height
                             _initalPos = transform.position.y;
-                            _activeStates[(int)State.Active] = true;
-                            _specialCooldown[(int)State.Active] = 6.0f;
-                            _specialCooldown[(int)Attack.BubbleBlast] = 9.0f;
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 6.0f;
+                            _specialCooldown[(int)KoiAttack.BubbleBlast] = 9.0f;
                             //Set up Underwater bubble blast
                             _actionQueue.Enqueue(KoiBubbleBlastUnderwaterCharge);
                             _actionQueue.Enqueue(KoiBubbleBlastCharge);
@@ -331,13 +351,13 @@ public partial class Enemy : Physics
                     //Go through enmeies action queue
                     if (!DoActionQueue())
                     {
-                        _activeStates[(int)State.Active] = false;
+                        _activeStates[(int)AttackState.Active] = false;
                         _currTime = 0;
                     }
                 }
             }
         }
-        _animator.SetFloat(_animParm[(int)CarpAnim.Velocity], _velocity.sqrMagnitude);
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 
     /// <summary>
@@ -349,7 +369,7 @@ public partial class Enemy : Physics
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius)
         {
-            state = EnemyState.Passive;
+            _state = EnemyState.Passive;
             ResetHostile();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
@@ -379,15 +399,35 @@ public partial class Enemy : Physics
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius)
         {
-            state = EnemyState.Passive;
+            _state = EnemyState.Passive;
             ResetHostile();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
         }
-        else
+        //When crab first activates, jump out of the water
+        else if(!_activeStates[(int)AttackState.FormChanged])
         {
+            if(!_activeStates[(int)AttackState.FormChangeInProgress])
+            {
+                _gravity = ApplyArcForce(transform.forward, 0, 3, 1.0f);
+                _currTime = 0;
+                _activeStates[(int)AttackState.FormChangeInProgress] = true;
+            }
+
+            ApplyForce(_gravity);
+
+            if(_currTime >= 0.85f)
+            {
+                _activeStates[(int)AttackState.FormChanged] = true;
+                StopMotion();
+                _currTime = 0;
+            }
+            _currTime += Time.deltaTime;
+        }
+        else
+        { 
             //If enemy is not in special
-            if (!_activeStates[(int)State.Active])
+            if (!_activeStates[(int)AttackState.Active])
             {
                 //Follow the player
                 FollowPlayer();
@@ -395,12 +435,12 @@ public partial class Enemy : Physics
                 //Cooldown special while in a 10 units of player
                 if (_playerDistance < 20.0f)
                 {
-                    _specialCooldown[(int)State.Active] -= Time.deltaTime;
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                 }
                 //If cooldown is finished, switch to special
-                if (_specialCooldown[(int)State.Active] <= 0)
+                if (_specialCooldown[(int)AttackState.Active] <= 0)
                 {
-                    _activeStates[(int)State.Active] = true;
+                    _activeStates[(int)AttackState.Active] = true;
                     _currTime = 0;
                     _initalPos = transform.position.y;
                     //Load an attack that charges a dash then attacks
@@ -412,10 +452,11 @@ public partial class Enemy : Physics
                 //Go through enmeies action queue
                 if (!DoActionQueue())
                 {
-                    _activeStates[(int)State.Active] = false;
-                    _specialCooldown[(int)State.Active] = 5.0f;
+                    _activeStates[(int)AttackState.Active] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
                 }
             }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
     }
 }
