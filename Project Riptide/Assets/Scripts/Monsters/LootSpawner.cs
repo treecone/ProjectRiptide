@@ -41,7 +41,7 @@ public class LootSpawner : MonoBehaviour
             {
                 GameObject theSpawnedObject = Instantiate(Resources.Load("Inventory/Lootable"), gameObject.transform.position, Quaternion.identity) as GameObject;
                 theSpawnedObject.GetComponent<Lootable>().itemStored = GameManager.GetComponent<ItemDatabase>().FindItem(seperatedDropString[3 * i - 1]);
-                theSpawnedObject.GetComponent<Lootable>().itemStored.amount = int.Parse(seperatedDropString[i * 3 - 2]);
+                theSpawnedObject.GetComponent<Lootable>().itemStored.Amount = int.Parse(seperatedDropString[i * 3 - 2]);
             }
 
             if(seperatedDropString[i * 3] == "#")
