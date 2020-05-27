@@ -9,23 +9,46 @@ public class ShipMovement : Physics
     private const float MAX_SHIP_SPEED = 3f;
     private const float MAX_ROTATIONAL_VELOCITY = 1.0f;
     private const float MIN_ROTATIONAL_VELOCITY = 0.20f;
+    private const float ROTATIONAL_ACCELERATION = 0.6f;
 
-    public CameraController cameraControl;
-	private Vector3 Target;
+    private CameraController _cameraControl;
+	private Vector3 _target;
 	public Vector3 TargetDirection { get; set;}
-    [HideInInspector]
-    public float speedScale = 1.0f;
-    private float rotationalVelocity = 0.20f;
-    private float rotationalAcceleration = 0.6f;
+    private float _speedScale = 1.0f;
+    private float _rotationalVelocity = 0.20f;
 
-    public Upgrades shipUpgradeScript;
+    [SerializeField]
+    private Upgrades shipUpgradeScript;
     private bool rotatePositive = true;
 
     private Hitbox playerHurtbox;
 
+    public float SpeedScale
+    {
+        get
+        {
+            return _speedScale;
+        }
+        set
+        {
+            if (value < 0)
+            {
+                _speedScale = 0;
+            }
+            else if (value > 1)
+            {
+                _speedScale = 1;
+            }
+            else
+            {
+                _speedScale = value;
+            }
+        }
+    }
+
     protected override void Start()
     {
-        cameraControl = Camera.main.GetComponent<CameraController>();
+        _cameraControl = Camera.main.GetComponent<CameraController>();
         playerHurtbox = transform.GetComponentInChildren<Hitbox>();
         //Add collision to hurt box
         playerHurtbox.OnStay += OnObsticalCollision;
@@ -44,48 +67,48 @@ public class ShipMovement : Physics
 		    lookRotation = Quaternion.LookRotation(moveDirection);
 
         //Rotate based on target location
-        if (_rotation != lookRotation && speedScale > 0.05f)
+        if (_rotation != lookRotation && _speedScale > 0.05f)
         {
             //If rotation is close to desired location, slow down rotation
             if(Quaternion.Angle(_rotation, lookRotation) < 45.0f)
             {
-                rotationalVelocity += rotationalVelocity * -0.80f * Time.deltaTime;
+                _rotationalVelocity += _rotationalVelocity * -0.80f * Time.deltaTime;
                 //Make sure rotation stay's above minium value
-                if (rotationalVelocity < MIN_ROTATIONAL_VELOCITY)
-                    rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
+                if (_rotationalVelocity < MIN_ROTATIONAL_VELOCITY)
+                    _rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
             }
             //Else speed up rotation
             else
             {
-                rotationalVelocity += rotationalAcceleration * Time.deltaTime;
+                _rotationalVelocity += ROTATIONAL_ACCELERATION * Time.deltaTime;
                 //Make sure rotation stay's below maximum value
-                if (rotationalVelocity > MAX_ROTATIONAL_VELOCITY)
-                    rotationalVelocity = MAX_ROTATIONAL_VELOCITY;
+                if (_rotationalVelocity > MAX_ROTATIONAL_VELOCITY)
+                    _rotationalVelocity = MAX_ROTATIONAL_VELOCITY;
             }
 
             //Update rotation
-            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, rotationalVelocity);
+            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, _rotationalVelocity);
         }
         //Reset velocity when not rotating
         else
-            rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
+            _rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
 
         //Check if rotating direction has changed, if so reset rotation velocity
         if((Vector3.Cross(transform.forward, moveDirection).y < 0 && rotatePositive) || (Vector3.Cross(transform.forward, moveDirection).y > 0 && !rotatePositive))
         {
-            rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
+            _rotationalVelocity = MIN_ROTATIONAL_VELOCITY;
             rotatePositive = !rotatePositive;
         }
 
         //Calculate force moving towards desired location
         Vector3 netForce = Vector3.zero;
         //Make sure speed is large enough to keep moving
-        if (speedScale > 0.05f)
+        if (_speedScale > 0.05f)
         {
             //Add force moving towards desired location based on ship speed and speed scale
-            netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * speedScale, 1.0f);
+            netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * _speedScale, 1.0f);
             //Add force moving forwards
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * speedScale * (1.0f + shipUpgradeScript.masterUpgrade["shipSpeed"]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * _speedScale * (1.0f + shipUpgradeScript.masterUpgrade["shipSpeed"]);
         }
         //Draw debug lines for net force and move direction
         Debug.DrawLine(_position, _position + netForce, Color.blue);
@@ -99,7 +122,7 @@ public class ShipMovement : Physics
         ApplyCounterSideForce(0.98f);
         base.Update();
         //Update camera
-        cameraControl.UpdateCamera();
+        _cameraControl.UpdateCamera();
         Debug.DrawLine(_position, _position + _velocity, Color.green);
     }
 

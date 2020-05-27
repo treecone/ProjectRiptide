@@ -222,7 +222,7 @@ public partial class Enemy : Physics
                 _timeBetween = 5.0;
                 _timeCurrent = _timeBetween;
                 _startPos = transform.position;
-                _wanderRadius = 45.0f;
+                _wanderRadius = 60.0f;
                 _hostileRadius = 30.0f;
                 _passiveRadius = 120.0f;
                 _maxRadius = 240.0f;
@@ -230,8 +230,8 @@ public partial class Enemy : Physics
                 _activeStates = new bool[3] { false, false, false };
                 _animParm = new int[6] {
                     Animator.StringToHash("die"),
-                    Animator.StringToHash("swimSpeed"),
                     Animator.StringToHash("velocity"),
+                    Animator.StringToHash("swimSpeed"),
                     Animator.StringToHash("dive"),
                     Animator.StringToHash("shoot"),
                     Animator.StringToHash("uAttack")};

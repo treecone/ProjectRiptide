@@ -26,7 +26,7 @@ public partial class Enemy : Physics
                 //Select new destination that is inside wander radius
                 do
                 {
-                    _destination = new Vector3(transform.position.x + Random.Range(-10, 10), transform.position.y, transform.position.z + Random.Range(-10, 10));
+                    _destination = new Vector3(transform.position.x + Random.Range(-30, 30), transform.position.y, transform.position.z + Random.Range(-30, 30));
                 } while (Vector3.Distance(_destination, _startPos) > _wanderRadius);
                 _timeCurrent = 0;
             }
@@ -46,7 +46,7 @@ public partial class Enemy : Physics
         }
         //Seek destination
         Vector3 netForce = Seek(destination);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -56,7 +56,7 @@ public partial class Enemy : Physics
         }
         _timeCurrent += Time.deltaTime;
 
-        ApplyForce(netForce);
+        ApplyForce(netForce * 0.7f);
 
         //ApplyFriction(0.25f);
         if(_animator != null)

@@ -424,9 +424,9 @@ public class InputManager : MonoBehaviour
 
         //Set speed scale based on how far click is from starting click
         if (dist > MAX_ICON_DIST)
-            movementScript.speedScale = 1.0f;
+            movementScript.SpeedScale = 1.0f;
         else
-            movementScript.speedScale = dist / MAX_ICON_DIST;
+            movementScript.SpeedScale = dist / MAX_ICON_DIST;
         return targetPos;
 	}
 
@@ -448,22 +448,6 @@ public class InputManager : MonoBehaviour
         Vector3 targetPos = ship.transform.position + new Vector3(-distVec.y, 0, distVec.x);
 
         return targetPos;
-        /*input += screenCorrect;
-		// create ray from the camera and passing through the touch position:
-		Ray ray = camera.ScreenPointToRay(input);
-
-		// create a logical plane at this object's position and perpendicular to world Y:
-		Plane plane = new Plane(Vector3.up, Vector3.zero);
-		float distance = 0;
-		// if plane hit...
-		if (plane.Raycast(ray, out distance))
-		{
-			Vector3 pos = ray.GetPoint(distance);
-			Debug.DrawLine(ship.transform.position, pos, Color.red);
-			// get the point pos has the position in the plane you've touched
-			return ray.GetPoint(distance);
-		}
-        return ship.transform.position;*/
     }
 
     /// <summary>
