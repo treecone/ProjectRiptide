@@ -322,7 +322,7 @@ public class InputManager : MonoBehaviour
                     }
                     _startedMove = true;
                 }
-                //_screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
+                _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
                 _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
 
                 //Pet position of movement icon
@@ -366,7 +366,6 @@ public class InputManager : MonoBehaviour
 				//If double click, fire
 				if (_clickOne && _doubleClickCheck < 0.45f) //double click
 				{
-                    Debug.Log("Firing from this place " + _clickOne);
                     _clickOne = false;
 					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position);
 				}
