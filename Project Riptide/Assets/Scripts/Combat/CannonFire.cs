@@ -118,7 +118,7 @@ public class CannonFire : MonoBehaviour
             {
                 trueSpreadAngle = spreadAngle / (count - 1);
             }
-            //currently only shoots right, gotta fix to actually account for direction
+
             Quaternion angle = Quaternion.Euler(0, (-trueSpreadAngle * (count - 1) / 2) + ship.transform.rotation.eulerAngles.y + fireAngle, 0); //Quaternion.AngleAxis(-spreadAngle * (count - 1) / 2, Vector3.up) * direction;
             for (int i = 0; i < count; i++)
             {
@@ -132,7 +132,7 @@ public class CannonFire : MonoBehaviour
                 ball.transform.rotation = angle;
 
                 
-				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * verticalRatio) + (ball.transform.forward * fireSpeed) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
+				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * (verticalRatio / (verticalRatio + 1.0f))) + (ball.transform.forward * fireSpeed * (1.0f / (verticalRatio + 1.0f))) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
                 ball.GetComponent<CannonBallBehavior>().damageDealt = damage;
 
                 angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
