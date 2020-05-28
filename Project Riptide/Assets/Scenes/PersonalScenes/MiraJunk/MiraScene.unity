@@ -379,43 +379,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e59e833d8dadd2047ae154930c1cb4f7, type: 3}
---- !u!1 &66965494 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8622532474592026573, guid: 08023d8f5d737d546916f57cf3805d62,
-    type: 3}
-  m_PrefabInstance: {fileID: 1950087887}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &66965495
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 66965494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9002a1d9bcc6af848909f3cf4743c184, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  items: []
-  inventorySlots:
-  - {fileID: 1655600267}
-  - {fileID: 2025423697}
-  - {fileID: 120421353}
-  - {fileID: 1697641941}
-  - {fileID: 1382485153}
-  - {fileID: 945413755}
-  - {fileID: 1348928225}
-  - {fileID: 673246427}
-  - {fileID: 303922595}
-  - {fileID: 1149059989}
-  - {fileID: 1634482839}
-  - {fileID: 2043263754}
-  - {fileID: 367366392}
-  - {fileID: 1735747137}
-  - {fileID: 1359238616}
-  - {fileID: 914539899}
-  shipUpgradeScript: {fileID: 0}
 --- !u!1001 &105144948
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4002,7 +3965,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 141992188380781335, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
@@ -4042,7 +4005,12 @@ PrefabInstance:
     - target: {fileID: 253648449171162991, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 347145387956014300, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 555854963406785459, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
@@ -4269,6 +4237,11 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1634638417085989753, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1677993316761890714, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -4298,6 +4271,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1710577003520781486, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2091950107755809765, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
@@ -4432,12 +4410,12 @@ PrefabInstance:
     - target: {fileID: 3573251427992813833, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.515
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3573251427992813833, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3683989169948083936, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
@@ -5057,7 +5035,7 @@ PrefabInstance:
     - target: {fileID: 8933505077071397529, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
@@ -5424,6 +5402,43 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 756006274}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2099110390 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8933505077071397529, guid: 08023d8f5d737d546916f57cf3805d62,
+    type: 3}
+  m_PrefabInstance: {fileID: 1950087887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2099110394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2099110390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9002a1d9bcc6af848909f3cf4743c184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  items: []
+  inventorySlots:
+  - {fileID: 1655600267}
+  - {fileID: 2025423697}
+  - {fileID: 120421353}
+  - {fileID: 1697641941}
+  - {fileID: 1382485153}
+  - {fileID: 945413755}
+  - {fileID: 1348928225}
+  - {fileID: 673246427}
+  - {fileID: 303922595}
+  - {fileID: 1149059989}
+  - {fileID: 1634482839}
+  - {fileID: 2043263754}
+  - {fileID: 367366392}
+  - {fileID: 1735747137}
+  - {fileID: 1359238616}
+  - {fileID: 914539899}
+  shipUpgradeScript: {fileID: 0}
 --- !u!1001 &2106993756
 PrefabInstance:
   m_ObjectHideFlags: 0
