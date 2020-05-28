@@ -23,6 +23,7 @@ public class PlayerHealth : MonoBehaviour
         healthBar = GetComponent<HealthBar>();
         healthBar.SetMaxHealth(100);
         camera = Camera.main;
+        InvokeRepeating("UpdateHealth", 1.0f, 1.0f);
     }
 
     private void Update()
@@ -37,6 +38,9 @@ public class PlayerHealth : MonoBehaviour
     private void UpdateHealth()
     {
         AddHealth(shipUpgradeScript.masterUpgrade["regeneration"]);
+
+        //if the player's max health changed, then add health according to the change
+        //in other words, adding max health adds the same amount of current health
         float lastMaxHealth = maxHealth;
         maxHealth = 100 + shipUpgradeScript.masterUpgrade["maxHealth"];
         if(lastMaxHealth != maxHealth)
@@ -60,7 +64,7 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        health -= damage / (1.0f / shipUpgradeScript.masterUpgrade["armor"]);
+        health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
         healthBar.UpdateHealth(health);
         if (health <= 0)
         {

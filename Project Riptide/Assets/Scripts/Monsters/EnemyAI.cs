@@ -360,40 +360,6 @@ public partial class Enemy : Physics
         _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 
-    /// <summary>
-    /// Enemy runs away from player in their hostile state
-    /// rather than trying to fight the player
-    /// </summary>
-    public void HostileRunAway()
-    {
-        //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
-        {
-            _state = EnemyState.Passive;
-            ResetHostile();
-            //Keep monster passive for 5 seconds at least
-            _passiveCooldown = 5.0f;
-        }
-        else
-        {
-            //Track player
-            _destination = new Vector3(GameObject.FindGameObjectWithTag("Player").transform.position.x, transform.position.y, GameObject.FindGameObjectWithTag("Player").transform.position.z);
-            //Find the direction the monster should be looking, away from the player
-            _lookRotation = Quaternion.LookRotation(transform.position - _destination);
-            //Find local forward vector
-            Vector3 forward = transform.worldToLocalMatrix.MultiplyVector(transform.forward);
-            //When monster gets close to an obstical avoid it
-            /*if (CheckCollision())
-            {
-                lookRotation = Quaternion.LookRotation(Vector3.Cross(Vector3.up, transform.forward));
-            }*/
-
-            //Rotate and move monster
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, _lookRotation, 0.4f);
-            transform.Translate(new Vector3(forward.x, 0, forward.z) * _speed / 40);
-        }
-    }
-
     public void HostileRockCrab()
     {
         //If enemy is outside max radius, set to passive
@@ -458,5 +424,23 @@ public partial class Enemy : Physics
             }
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
+    }
+
+    /// <summary>
+    /// Enemy runs away from player in their hostile state
+    /// rather than trying to fight the player
+    /// </summary>
+    public void HostileRunAway()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+
+        FleePlayer(1.5f);
     }
 }
