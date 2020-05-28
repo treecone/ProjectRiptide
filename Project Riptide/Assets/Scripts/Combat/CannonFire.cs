@@ -38,6 +38,7 @@ public class CannonFire : MonoBehaviour
         switch (debugShotType)
         {
             case "right":
+                Debug.Log("Firing");
                 Fire(transform.right, targetDir);
                 break;
         }
@@ -81,6 +82,7 @@ public class CannonFire : MonoBehaviour
         CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
+        Debug.Log("Shot actually Fired");
         rightShot.Fire(cannonBall, gameObject);
     }
 

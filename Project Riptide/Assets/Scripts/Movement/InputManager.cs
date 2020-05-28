@@ -293,7 +293,7 @@ public class InputManager : MonoBehaviour
 		if (Input.GetMouseButtonDown(0)) //mouse down
 		{
             //Set start position of click
-			_clickStartPosition = Input.mousePosition - ScreenCorrect;
+			_clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
 			_clickCurrentPosition = _clickStartPosition;
 
 			_clickDuration = 0;
@@ -302,7 +302,7 @@ public class InputManager : MonoBehaviour
 		else if (Input.GetMouseButton(0)) //mouse held
 		{
 			_clickDuration += Time.deltaTime;
-            _clickCurrentPosition = Input.mousePosition - ScreenCorrect;
+            _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
             Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
             //If click has moved enough and enough time has passed, stop checking for double click
             if (clickDisplacement.magnitude > 50f && _clickDuration > 0.1f)
@@ -315,7 +315,7 @@ public class InputManager : MonoBehaviour
                 if(!_startedMove)
                 {
                     //Set position of icon base
-                    _clickStartPosition = Input.mousePosition - ScreenCorrect;
+                    _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
                     if (_iconBase != null)
                     {
                         _iconBase.anchoredPosition = _clickStartPosition;
@@ -366,8 +366,9 @@ public class InputManager : MonoBehaviour
 				//If double click, fire
 				if (_clickOne && _doubleClickCheck < 0.45f) //double click
 				{
-					_clickOne = false;
-					_cannonFireScript.Fire("right", GetFireTarget(Input.mousePosition - ScreenCorrect) - _ship.transform.position);
+                    Debug.Log("Firing from this place " + _clickOne);
+                    _clickOne = false;
+					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position);
 				}
                 //If first click, remember
 				else if (!_clickOne)
