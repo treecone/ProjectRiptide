@@ -15,7 +15,7 @@ public class ItemSlot : MonoBehaviour
 
     public void UpdateSlotVisuals() //Updates the image and amount text
     {
-        gameObject.transform.Find("Item Image").GetComponent<Image>().sprite = item.Icon;
+        gameObject.transform.Find("Icon").GetComponent<Image>().sprite = item.Icon;
         gameObject.transform.Find("AmountText").GetComponent<TextMeshProUGUI>().text = item.Amount.ToString();
     }
 

@@ -13,6 +13,7 @@ public class Inventory : MonoBehaviour
     private ItemDatabase _itemDatabase;
     public Upgrades shipUpgradeScript;
     private ItemDatabase _theDatabase;
+    private int _inventoryIndex = 0;
     #endregion
 
     void Start()
@@ -31,18 +32,6 @@ public class Inventory : MonoBehaviour
     public void Update()
     {
 
-        if (Input.GetButton("UpButton"))
-        {
-            
-        }
-
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            foreach (Transform child in transform)
-            {
-                child.gameObject.SetActive(!child.gameObject.activeSelf); //Turning on/off UI
-            }
-        }
         if (Input.GetKey(KeyCode.N))
         {
             AddItem("carpscale", 8);
@@ -89,7 +78,7 @@ public class Inventory : MonoBehaviour
     {
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = _itemDatabase.FindItem(itemName);
-        Debug.Log(itemToAdd.Name);
+        Debug.Log("Adding item " + itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
@@ -112,16 +101,19 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
+        /*
         //Adding new item to slot, no previous items were found
         GameObject newSlot = Instantiate(Resources.Load("inventory/InventorySlot"), gameObject.transform.Find("InventoryScrollRect").Find("Inventory Panel").transform) as GameObject;
         newSlot.GetComponent<ItemSlot>().item = itemToAdd;
         newSlot.GetComponent<ItemSlot>().item.Amount = amountToAddTemp;
         inventorySlots.Add(newSlot);
-
+        
         items.Add(itemToAdd);
         items[items.Count - 1].Amount = amountToAddTemp;
 
         newSlot.GetComponent<ItemSlot>().UpdateSlotVisuals();
+        */
+
         shipUpgradeScript.Recalculate();
     }
 
