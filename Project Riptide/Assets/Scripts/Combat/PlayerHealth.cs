@@ -64,7 +64,7 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        health -= damage / (1.0f / shipUpgradeScript.masterUpgrade["armor"]);
+        health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
         healthBar.UpdateHealth(health);
         if (health <= 0)
         {
