@@ -30,9 +30,8 @@ public partial class Enemy : Physics
     [SerializeField]
     private Camera _camera;
 
+    //Health fields
     private HealthBar _healthBar;
-
-    //fields
     private float _health;
     private float _maxHealth;
 

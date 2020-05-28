@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
 	private CannonFire _cannonFireScript;
 	private RectTransform _iconPoint;
     private RectTransform _iconBase;
+    private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 500.0f;
 
 	//-----Multiple touches-----
@@ -44,6 +45,7 @@ public class InputManager : MonoBehaviour
 	private const float MAX_TAP_DURATION = 0.5f;
 
 	private static Vector3 ScreenCorrect;
+    private Vector2 _screenScale;
 
     private Vector2 _clickStartPosition;
     private Vector2 _clickCurrentPosition;
@@ -52,7 +54,9 @@ public class InputManager : MonoBehaviour
     void Awake()
 	{
 		_camera = Camera.main;
-        ScreenCorrect = new Vector2(Screen.width / 2, Screen.height / 2);
+        ScreenCorrect = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
+        _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
+        _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
 		_ship = GameObject.FindWithTag("Player");
 		_movementScript = _ship.GetComponent<ShipMovement>();
 		_cannonFireScript = _ship.GetComponent<CannonFire>();
@@ -318,7 +322,8 @@ public class InputManager : MonoBehaviour
                     }
                     _startedMove = true;
                 }
-				_clickCurrentPosition = Input.mousePosition - ScreenCorrect;
+                //_screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
+                _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
 
                 //Pet position of movement icon
                 if (_iconPoint != null)

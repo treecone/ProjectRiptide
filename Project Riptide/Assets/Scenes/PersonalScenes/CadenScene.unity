@@ -1118,6 +1118,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 3643537810973826820, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 1412
+      objectReference: {fileID: 0}
+    - target: {fileID: 3643537810973826820, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5234398163161261132, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -1263,20 +1273,13 @@ PrefabInstance:
       propertyPath: m_ScreenMatchMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8622532474592026575, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
---- !u!114 &861039497 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 506571360, guid: 08023d8f5d737d546916f57cf3805d62,
-    type: 3}
-  m_PrefabInstance: {fileID: 861039496}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &881504462
 GameObject:
   m_ObjectHideFlags: 0
@@ -2061,6 +2064,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8210748076640493397, guid: 59ea9c24f4295d744a4b3d24a318a75b,
+        type: 3}
+      propertyPath: shipUpgradeScript
+      value: 
+      objectReference: {fileID: 271508308}
     - target: {fileID: 8210748076640493403, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
       propertyPath: m_Name
@@ -2720,6 +2728,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000,
         type: 0}
+    - target: {fileID: 6477495758465067200, guid: fb58c0a273275ae478587ea76a52ef51,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2041448668}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb58c0a273275ae478587ea76a52ef51, type: 3}
 --- !u!1 &2034152206
@@ -2815,6 +2828,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &2041448668 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8210748076640493394, guid: 59ea9c24f4295d744a4b3d24a318a75b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1487569880}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2051959818
 GameObject:
   m_ObjectHideFlags: 0
@@ -3098,20 +3117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c389a08d11e7248b867fe110afda0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tempOffset: {x: -14.4, y: 0, z: 5.9}
-  buttonsPressed: 0
-  camera: {fileID: 0}
-  touchingLeft: 0
-  touchingRight: 0
-  speedSlider: {fileID: 861039497}
-  iconPoint: {fileID: 0}
-  IconPrefab: {fileID: 0}
-  iconBase: {fileID: 0}
-  mobile: 0
-  turnTouchArea: 300
-  minSwipeDisplacement: 100
-  minSwipeSpeed: 1000
-  maxTapDuration: 0.5
+  _mobile: 0
 --- !u!4 &8516230389540628687
 Transform:
   m_ObjectHideFlags: 0
