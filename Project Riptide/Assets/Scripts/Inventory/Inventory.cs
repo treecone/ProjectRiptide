@@ -30,6 +30,12 @@ public class Inventory : MonoBehaviour
 
     public void Update()
     {
+
+        if (Input.GetButton("UpButton"))
+        {
+            
+        }
+
         if (Input.GetKeyDown(KeyCode.I))
         {
             foreach (Transform child in transform)
