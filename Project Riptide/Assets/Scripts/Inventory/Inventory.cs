@@ -24,6 +24,23 @@ public class Inventory : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Gets the item at index i in the inventory
+    /// </summary>
+    /// <param name="i">The index to get the item from</param>
+    /// <returns>The item at index i</returns>
+    /// <exception cref="System.IndexOutOfRangeException">Thrown when i is out of the range of the inventory</exception>
+    public Item this[int i]
+    {
+        get
+        {
+            if(i >= inventorySlots.Count || i < 0)
+            {
+                throw new System.IndexOutOfRangeException("That inventory does not contain that index.");
+            }
+            return inventorySlots[i].GetComponent<ItemSlot>().item;
+        }
+    }
     public void UpdateTooltip()
     {
 
@@ -76,13 +93,14 @@ public class Inventory : MonoBehaviour
     /// <param name="amountToAdd">The amount of that item to be added</param>
     public void AddItem(string itemName, int amountToAdd)
     {
+        Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = _itemDatabase.FindItem(itemName);
         Debug.Log("Adding item " + itemToAdd.Name);
-        for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
+        for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
-            if (items[i].Name == itemToAdd.Name && items[i].Amount != items[i].MaxAmount) //Another item with room has been found, does it have room
+            if (items[i].Name == itemToAdd.Name && items[i].Amount != items[i].MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
                 if (items[i].Amount + amountToAdd <= items[i].MaxAmount)
                 {
@@ -93,12 +111,43 @@ public class Inventory : MonoBehaviour
                 }
                 else //amount to add is too much, split it up
                 {
-                    int subtractionAmount = items[i].MaxAmount - items[i].Amount;
                     items[i].Amount = items[i].MaxAmount;
                     slot.item.Amount = slot.item.MaxAmount;
-                    amountToAddTemp -= subtractionAmount;
+                    amountToAddTemp -= (items[i].MaxAmount - items[i].Amount);
                     slot.UpdateSlotVisuals();
                 }
+            }
+            else if (slot.item == null)
+            {
+                //Slots is empty, store it temp
+                tempClearSlots.Enqueue(i);
+            }
+        }
+
+        while(amountToAddTemp > 0) //There are still items left over, need to make some new items in slots
+        {
+            if(tempClearSlots.Count > 0)
+            {
+                int itemSlotNumber = tempClearSlots.Dequeue();
+                ItemSlot theSlot = inventorySlots[itemSlotNumber].GetComponent<ItemSlot>();
+                if (itemToAdd.MaxAmount >= amountToAddTemp)
+                {
+                    //Everything fits
+                    theSlot.item = itemToAdd;
+                    theSlot.item.Amount = amountToAddTemp;
+                }
+                else
+                {
+                    theSlot.item = itemToAdd;
+                    theSlot.item.Amount = theSlot.item.MaxAmount;
+                    amountToAddTemp -= (theSlot.item.MaxAmount - theSlot.item.Amount);
+                }
+                theSlot.UpdateSlotVisuals();
+            }
+            else
+            {
+                Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
+                return;
             }
         }
         /*
@@ -171,19 +220,7 @@ public class Inventory : MonoBehaviour
             return items.Count;
         }
     }
-
-    /// <summary>
-    /// Indexer for the inventory
-    /// </summary>
-    /// <param name="i">The slot number of the item you are looking for</param>
-    /// <returns>The item in that slot</returns>
-    public Item this[int i]
-    {
-        get
-        {
-            return items[i];
-        }
-    }
+    
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>
