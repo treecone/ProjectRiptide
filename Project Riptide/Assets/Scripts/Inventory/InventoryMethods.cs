@@ -5,8 +5,11 @@ using TMPro;
 
 public class InventoryMethods : MonoBehaviour
 {
+
     [SerializeField]
     private TextMeshProUGUI _trashField;
+    [SerializeField]
+    private InputManager _inputManagerScript;
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
 
     public bool HoldingButton { get; set; }
@@ -48,6 +51,7 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void PauseGame()
     {
+        _inputManagerScript.enabled = false;
         Time.timeScale = 0.0f;
     }
 
@@ -56,6 +60,7 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void UnpauseGame()
     {
+        _inputManagerScript.enabled = true;
         Time.timeScale = 1.0f;
     }
 
