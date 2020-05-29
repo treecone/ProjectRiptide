@@ -52,6 +52,10 @@ public class Inventory : MonoBehaviour
         {
             AddItem("carpscale", 8);
         }
+        if (Input.GetKey(KeyCode.V))
+        {
+            AddItem("wood", 4);
+        }
         if (Input.GetKey(KeyCode.M))
         {
             RemoveItem("nails", 8);
@@ -68,7 +72,7 @@ public class Inventory : MonoBehaviour
         {
             AddItem("silksails", 1);
         }
-        if (Input.GetKeyDown(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.B))
         {
             AddItem("grapeshot", 1);
         }
