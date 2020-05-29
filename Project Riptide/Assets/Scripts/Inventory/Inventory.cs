@@ -24,6 +24,23 @@ public class Inventory : MonoBehaviour
     }
 
 
+    /// <summary>
+    /// Gets the item at index i in the inventory
+    /// </summary>
+    /// <param name="i">The index to get the item from</param>
+    /// <returns>The item at index i</returns>
+    /// <exception cref="System.IndexOutOfRangeException">Thrown when i is out of the range of the inventory</exception>
+    public Item this[int i]
+    {
+        get
+        {
+            if(i >= inventorySlots.Count || i < 0)
+            {
+                throw new System.IndexOutOfRangeException("That inventory does not contain that index.");
+            }
+            return inventorySlots[i].GetComponent<ItemSlot>().item;
+        }
+    }
     public void UpdateTooltip()
     {
 
@@ -203,19 +220,7 @@ public class Inventory : MonoBehaviour
             return items.Count;
         }
     }
-
-    /// <summary>
-    /// Indexer for the inventory
-    /// </summary>
-    /// <param name="i">The slot number of the item you are looking for</param>
-    /// <returns>The item in that slot</returns>
-    public Item this[int i]
-    {
-        get
-        {
-            return items[i];
-        }
-    }
+    
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>

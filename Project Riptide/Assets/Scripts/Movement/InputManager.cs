@@ -450,6 +450,16 @@ public class InputManager : MonoBehaviour
             _iconPoint.anchoredPosition = _clickStartPosition + distVec;
         }
     }
+
+    /// <summary>
+    /// Resets input values on being disabled
+    /// </summary>
+    private void OnDisable()
+    {
+        _clickOne = false;
+        _startedMove = false;
+        _doubleClickCheck = 0f;
+    }
 }
 
 
