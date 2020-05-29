@@ -19,7 +19,6 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         items = new List<Item>();
-        inventorySlots = new List<GameObject>();
         _itemDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
     }
 
@@ -49,7 +48,7 @@ public class Inventory : MonoBehaviour
     public void Update()
     {
 
-        if (Input.GetKey(KeyCode.N))
+        if (Input.GetKey(KeyCode.C))
         {
             AddItem("carpscale", 8);
         }
@@ -65,7 +64,7 @@ public class Inventory : MonoBehaviour
         {
             AddItem("scalemailhull", 1);
         }
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.N))
         {
             AddItem("silksails", 1);
         }
@@ -100,24 +99,22 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
-            if (items[i].Name == itemToAdd.Name && items[i].Amount != items[i].MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
+            if (slot.item.Name == itemToAdd.Name && slot.item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
-                if (items[i].Amount + amountToAdd <= items[i].MaxAmount)
+                if (slot.item.Amount + amountToAdd <= slot.item.MaxAmount)
                 {
-                    items[i].Amount += amountToAdd;
                     slot.item.Amount += amountToAdd;
                     slot.UpdateSlotVisuals();
                     return; //Item is completely in the inventory now, end
                 }
                 else //amount to add is too much, split it up
                 {
-                    items[i].Amount = items[i].MaxAmount;
                     slot.item.Amount = slot.item.MaxAmount;
                     amountToAddTemp -= (items[i].MaxAmount - items[i].Amount);
                     slot.UpdateSlotVisuals();
                 }
             }
-            else if (slot.item == null)
+            else if (slot.item.Name == null)
             {
                 //Slots is empty, store it temp
                 tempClearSlots.Enqueue(i);
@@ -135,6 +132,7 @@ public class Inventory : MonoBehaviour
                     //Everything fits
                     theSlot.item = itemToAdd;
                     theSlot.item.Amount = amountToAddTemp;
+                    amountToAddTemp = 0;
                 }
                 else
                 {
