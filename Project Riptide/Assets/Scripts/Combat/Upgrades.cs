@@ -83,7 +83,7 @@ public class Upgrades : MonoBehaviour
         List<Upgrade> equippedUpgrades = new List<Upgrade>();
         for (int i = 0; i < inventory.Size; i++) {
             Item item = inventory[i];
-            if (item.Equipped == true)
+            if (item.Id != 0 && item.Equipped == true)
             {
                 foreach(Upgrade u in item.Upgrades)
                 {

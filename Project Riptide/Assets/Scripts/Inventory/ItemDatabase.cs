@@ -78,12 +78,12 @@ public class ItemDatabase : MonoBehaviour
         {
             if(database[i].Name == name || database[i].Slug == name.ToLower())
             {
-                return database[i];
+                return new Item(database[i]);
             }
         }
         //Returns the null item
         Debug.LogWarning("[Inventory] Item could not be found in the method FindItem()! Returning Null Item!");
-        return database[0];
+        return new Item(database[0]);
     }
 
     //Gets a Jsondata file of a item from the json, don't recomend you use unless you need the jsondata file for it

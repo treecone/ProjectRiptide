@@ -8,12 +8,14 @@ public class Item
     #region Fields
     [SerializeField]
     private int id;                     //id for items (use this to compare)
+    [SerializeField]
     private string name;                //name
     private string description;         //tooltip for description
     private int rarity;                 //rarity color
     private int value;                  //gold value
     private string slug;                //lowercase names with no spaces
     private Sprite icon;                //sprite of item
+    [SerializeField]
     private int amount;                 //current amount of item
     private int maxAmount;              //max amount of items
     private List<Upgrade> upgrades;
@@ -131,6 +133,25 @@ public class Item
         this.maxAmount = maxAmount;
         this.upgrades = upgrades;
         this.equipped = true;
+    }
+
+    public Item(Item other)
+    {
+        this.id = other.id;
+        this.name = other.name;
+        this.description = other.description;
+        this.rarity = other.rarity;
+        this.value = other.value;
+        this.slug = other.slug;
+        this.icon = other.icon;
+        this.amount = other.amount;
+        this.maxAmount = other.maxAmount;
+        this.upgrades = new List<Upgrade>();
+        foreach(Upgrade u in other.upgrades)
+        {
+            this.upgrades.Add(u);
+        }
+        this.equipped = other.equipped;
     }
 }
 
