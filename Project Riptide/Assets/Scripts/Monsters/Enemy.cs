@@ -600,6 +600,18 @@ public partial class Enemy : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
+        if(obstical.tag == "Hitbox")
+        {
+            GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
+            if(attached != gameObject)
+            {
+                Vector3 backForce = transform.position - obstical.transform.position;
+                backForce = new Vector3(backForce.x, 0, backForce.z);
+                backForce.Normalize();
+                backForce *= 20.0f;
+                ApplyForce(backForce);
+            }
+        }
     }
 
     /// <summary>

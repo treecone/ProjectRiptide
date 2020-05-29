@@ -181,6 +181,15 @@ public class ShipMovement : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
+            backForce *= 40.0f;
+            ApplyForce(backForce);
+        }
+        if(obstical.tag == "Hitbox")
+        {
+            //Create a force away from enemy
+            Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
+            backForce.Normalize();
             backForce *= 20.0f;
             ApplyForce(backForce);
         }
