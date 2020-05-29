@@ -160,6 +160,7 @@ public partial class Enemy : Physics
                         {
                             _healthBarObject.SetActive(false);
                         }
+                        ResetHostile();
                         _state = EnemyState.Passive;
                     }
                     break;
@@ -290,7 +291,7 @@ public partial class Enemy : Physics
                 _startPos = transform.position;
                 _wanderRadius = 45.0f;
                 _hostileRadius = 10.0f;
-                _passiveRadius = 130.0f;
+                _passiveRadius = 50.0f;
                 _maxRadius = 240.0f;
                 _specialCooldown = new float[1] { 5.0f };
                 _activeStates = new bool[3] { false, false, false};
@@ -302,7 +303,7 @@ public partial class Enemy : Physics
                 _isRaming = false;
                 _ramingDamage = 20;
                 _HostileAI = HostileRockCrab;
-                _PassiveAI = PassiveDoNothing;
+                _PassiveAI = PassiveRockCrab;
                 break;
             case EnemyType.SeaSheep:
                 _speed = 0.7f;
@@ -377,14 +378,14 @@ public partial class Enemy : Physics
     public void ResetHostile()
     {
         //reset states
-        for (int i = 0; i > _activeStates.Length; i++)
+        for (int i = 0; i < _activeStates.Length; i++)
         {
             _activeStates[i] = false;
         }
         //reset cooldowns
-        for (int i = 0; i > _specialCooldown.Length; i++)
+        for (int i = 0; i < _specialCooldown.Length; i++)
         {
-            _specialCooldown[i] = 0.0f;
+            _specialCooldown[i] = 5.0f;
         }
         _isRaming = false;
         _inKnockback = false;
