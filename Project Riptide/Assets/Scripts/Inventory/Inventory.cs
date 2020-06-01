@@ -35,7 +35,7 @@ public class Inventory : MonoBehaviour
             {
                 throw new System.IndexOutOfRangeException("That inventory does not contain that index.");
             }
-            return inventorySlots[i].GetComponent<ItemSlot>().item;
+            return inventorySlots[i].GetComponent<InventorySlot>().item;
         }
     }
     public void UpdateTooltip()
@@ -104,7 +104,7 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             
-            ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
+            InventorySlot slot = inventorySlots[i].GetComponent<InventorySlot>();
             Debug.Log("trying to add in slot " + i + ". slot currently has " + slot.item.Amount + " " + slot.item.Name + " out of a max of " + slot.item.MaxAmount);
             if (slot.item.Name == itemToAdd.Name && slot.item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
@@ -149,7 +149,7 @@ public class Inventory : MonoBehaviour
 
                 int itemSlotNumber = tempClearSlots.Dequeue();
                 Debug.Log("trying empty slot " + itemSlotNumber);
-                ItemSlot theSlot = inventorySlots[itemSlotNumber].GetComponent<ItemSlot>();
+                InventorySlot theSlot = inventorySlots[itemSlotNumber].GetComponent<InventorySlot>();
                 if (itemToAdd.MaxAmount >= amountToAddTemp)
                 {
                     //Everything fits
@@ -199,7 +199,7 @@ public class Inventory : MonoBehaviour
         Item itemToRemove = _itemDatabase.FindItem(itemName);
         for (int i = this.Size - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
-            ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
+            InventorySlot slot = inventorySlots[i].GetComponent<InventorySlot>();
             if (this[i].Name == itemToRemove.Name)
             {
                 if (this[i].Amount <= amount)
