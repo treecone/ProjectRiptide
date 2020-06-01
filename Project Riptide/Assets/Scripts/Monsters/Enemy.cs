@@ -10,7 +10,7 @@ public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4, SeaSheep = 5}
 public enum Anim { Die = 0, Velocity = 1};
 public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5};
 public enum CrabAnim { Jump = 2};
@@ -30,9 +30,8 @@ public partial class Enemy : Physics
     [SerializeField]
     private Camera _camera;
 
+    //Health fields
     private HealthBar _healthBar;
-
-    //fields
     private float _health;
     private float _maxHealth;
 
@@ -163,7 +162,11 @@ public partial class Enemy : Physics
                     //check for passive behavior trigger, if you get far enough away
                     if (_playerDistance >= _passiveRadius)
                     {
-                        _healthBarObject.SetActive(false);
+                        if (_health == _maxHealth)
+                        {
+                            _healthBarObject.SetActive(false);
+                        }
+                        ResetHostile();
                         _state = EnemyState.Passive;
                     }
                     break;
@@ -228,7 +231,7 @@ public partial class Enemy : Physics
                 _timeBetween = 5.0;
                 _timeCurrent = _timeBetween;
                 _startPos = transform.position;
-                _wanderRadius = 45.0f;
+                _wanderRadius = 60.0f;
                 _hostileRadius = 30.0f;
                 _passiveRadius = 120.0f;
                 _maxRadius = 240.0f;
@@ -236,8 +239,8 @@ public partial class Enemy : Physics
                 _activeStates = new bool[3] { false, false, false };
                 _animParm = new int[6] {
                     Animator.StringToHash("die"),
-                    Animator.StringToHash("swimSpeed"),
                     Animator.StringToHash("velocity"),
+                    Animator.StringToHash("swimSpeed"),
                     Animator.StringToHash("dive"),
                     Animator.StringToHash("shoot"),
                     Animator.StringToHash("uAttack")};
@@ -294,7 +297,7 @@ public partial class Enemy : Physics
                 _startPos = transform.position;
                 _wanderRadius = 45.0f;
                 _hostileRadius = 10.0f;
-                _passiveRadius = 130.0f;
+                _passiveRadius = 50.0f;
                 _maxRadius = 240.0f;
                 _specialCooldown = new float[1] { 5.0f };
                 _activeStates = new bool[3] { false, false, false};
@@ -306,7 +309,30 @@ public partial class Enemy : Physics
                 _isRaming = false;
                 _ramingDamage = 20;
                 _HostileAI = HostileRockCrab;
-                _PassiveAI = PassiveDoNothing;
+                _PassiveAI = PassiveRockCrab;
+                break;
+            case EnemyType.SeaSheep:
+                _speed = 0.7f;
+                _health = 20;
+                _maxHealth = 20;
+                _timeBetween = 5.0;
+                _timeCurrent = _timeBetween;
+                _startPos = transform.position;
+                _wanderRadius = 45.0f;
+                _hostileRadius = 10.0f;
+                _passiveRadius = 20.0f;
+                _maxRadius = 100.0f;
+                _specialCooldown = new float[1] { 5.0f };
+                _activeStates = new bool[1] { false };
+                _animParm = new int[3] {
+                    Animator.StringToHash("die"),
+                    Animator.StringToHash("velocity"),
+                    Animator.StringToHash("jump")};
+                _playerCollision = false;
+                _isRaming = false;
+                _ramingDamage = 20;
+                _HostileAI = HostileRunAway;
+                _PassiveAI = PassiveWanderRadius;
                 break;
         }
 
@@ -322,7 +348,7 @@ public partial class Enemy : Physics
     {
         _health -= damage;
         _healthBar.UpdateHealth(_health);
-        if (_state == EnemyState.Passive)
+        if (_state == EnemyState.Passive && _passiveCooldown <= 0)
         {
             _healthBarObject.SetActive(true);
             _state = EnemyState.Hostile;
@@ -358,14 +384,14 @@ public partial class Enemy : Physics
     public void ResetHostile()
     {
         //reset states
-        for (int i = 0; i > _activeStates.Length; i++)
+        for (int i = 0; i < _activeStates.Length; i++)
         {
             _activeStates[i] = false;
         }
         //reset cooldowns
-        for (int i = 0; i > _specialCooldown.Length; i++)
+        for (int i = 0; i < _specialCooldown.Length; i++)
         {
-            _specialCooldown[i] = 0.0f;
+            _specialCooldown[i] = 5.0f;
         }
         _isRaming = false;
         _inKnockback = false;
@@ -581,6 +607,18 @@ public partial class Enemy : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
+        if(obstical.tag == "Hitbox")
+        {
+            GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
+            if(attached != gameObject)
+            {
+                Vector3 backForce = transform.position - obstical.transform.position;
+                backForce = new Vector3(backForce.x, 0, backForce.z);
+                backForce.Normalize();
+                backForce *= 20.0f;
+                ApplyForce(backForce);
+            }
+        }
     }
 
     /// <summary>
@@ -622,7 +660,7 @@ public partial class Enemy : Physics
             }
 
             //Update rotation
-            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, _rotationalVeloctiy);
+            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, _rotationalVeloctiy * 60 * Time.deltaTime);
         }
         //Reset velocity when not rotating
         else

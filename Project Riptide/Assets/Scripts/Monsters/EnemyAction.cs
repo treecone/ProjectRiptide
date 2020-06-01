@@ -35,6 +35,38 @@ public partial class Enemy : Physics
         ApplyForce(netForce);
     }
 
+    //General method for making the moster follow the player
+    //Usually should be used for enemy AI when not in an action
+    private void FleePlayer(float speed)
+    {
+        Vector3 destination = Vector3.zero;
+        Vector3 avoidDirection = (transform.position - _PlayerPosition()) + transform.position;
+        //Check for obstacle
+        if (CheckObstacle(new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z)))
+        {
+            //Set destination to closest way to player that avoids obstacles
+            destination = transform.position + AvoidObstacle(new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z));
+        }
+        else
+        {
+            //Set destination to player
+            destination = new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z);
+        }
+        //Seek destination
+        Vector3 netForce = Seek(destination);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
+
+        //Rotate in towards direction of velocity
+        if (_velocity != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(velocity), 4.0f);
+        }
+        //Debug.DrawLine(transform.position, transform.position + netForce, Color.red);
+        ApplyForce(netForce * speed);
+    }
+
     //General method for making the moster circle around the player
     //Used when monster is too close to player
     private void CirclePlayer()
@@ -303,7 +335,6 @@ public partial class Enemy : Physics
         }
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
-        Debug.Log(_animator.GetAnimatorTransitionInfo(0).nameHash);
 
         if(time >= MAX_TIME)
         {
