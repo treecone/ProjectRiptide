@@ -78,6 +78,8 @@ public class CannonFire : MonoBehaviour
             angle = -135;
         }
 
+        Debug.DrawLine(transform.position, transform.position + Quaternion.Euler(0, -angle, 0) * transform.forward * 10.0f, Color.blue);
+
         CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
