@@ -10,10 +10,13 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _trashField;
     [SerializeField]
     private InputManager _inputManagerScript;
+    [SerializeField]
+    private TextMeshProUGUI _itemName;
+    [SerializeField]
+    private TextMeshProUGUI _itemDescription;
+
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
-
-    public bool HoldingButton { get; set; }
-
+    
     /// <summary>
     /// changes trash number
     /// </summary>
@@ -71,6 +74,19 @@ public class InventoryMethods : MonoBehaviour
     public void ResetActiveItem()
     {
         _activeItem = null;
+        _itemName.SetText("");
+        _itemDescription.SetText("");
+        _trashField.SetText("0");
+    }
+
+
+    public void ChooseItem(InventorySlot inventorySlot)
+    {
+        _activeItem = inventorySlot.item;
+        _trashField.SetText("0");
+        Debug.Log("Clicked on " + _activeItem.Name);
+        _itemName.SetText(_activeItem.Name);
+        _itemDescription.SetText(_activeItem.Description);
     }
 
 

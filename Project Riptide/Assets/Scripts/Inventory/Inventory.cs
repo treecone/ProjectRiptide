@@ -184,7 +184,7 @@ public class Inventory : MonoBehaviour
         newSlot.GetComponent<ItemSlot>().UpdateSlotVisuals();
         */
 
-        shipUpgradeScript.Recalculate();
+    
     }
 
     /// <summary>
