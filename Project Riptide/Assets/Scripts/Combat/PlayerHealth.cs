@@ -29,7 +29,7 @@ public class PlayerHealth : MonoBehaviour
     private void Update()
     {
         //Make health bar face player
-        healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
+        //healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
     }
 
     /// <summary>

@@ -464,10 +464,6 @@ public class InputManager : MonoBehaviour
         _doubleClickCheck = 0f;
     }
 
-    private bool CheckEnemy(Vector3 dir)
-    {
-
-    }
 }
 
 
