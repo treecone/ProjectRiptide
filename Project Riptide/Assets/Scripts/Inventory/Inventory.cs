@@ -8,7 +8,6 @@ public class Inventory : MonoBehaviour
 {
     //need to refactor
     #region Fields
-    public List<Item> items;
     public List<GameObject> inventorySlots;
     private ItemDatabase _itemDatabase;
     public Upgrades shipUpgradeScript;
@@ -18,7 +17,6 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
-        items = new List<Item>();
         _itemDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
     }
 
@@ -48,17 +46,21 @@ public class Inventory : MonoBehaviour
     public void Update()
     {
 
-        if (Input.GetKey(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.C))
         {
             AddItem("carpscale", 8);
         }
-        if (Input.GetKey(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.V))
         {
             AddItem("wood", 4);
         }
-        if (Input.GetKey(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            RemoveItem("nails", 8);
+            AddItem("nails", 8);
+        }
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            RemoveItem("nails", 3);
         }
         if (Input.GetKeyDown(KeyCode.Z))
         {
@@ -78,7 +80,6 @@ public class Inventory : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            Debug.Log("b");
             AddItem("healthyhull", 1);
         }
         if (Input.GetKey(KeyCode.J))
@@ -102,26 +103,36 @@ public class Inventory : MonoBehaviour
         Debug.Log("Adding item " + itemToAdd.Name);
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
+            
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
+            Debug.Log("trying to add in slot " + i + ". slot currently has " + slot.item.Amount + " " + slot.item.Name + " out of a max of " + slot.item.MaxAmount);
             if (slot.item.Name == itemToAdd.Name && slot.item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
-                if (slot.item.Amount + amountToAdd <= slot.item.MaxAmount)
+                Debug.Log("slot " + i + " has same item and has room.");
+                if (slot.item.Amount + amountToAddTemp <= slot.item.MaxAmount)
                 {
-                    slot.item.Amount += amountToAdd;
+                    Debug.Log("can fit rest of items in this slot, finishing");
+                    slot.item.Amount += amountToAddTemp;
                     slot.UpdateSlotVisuals();
                     return; //Item is completely in the inventory now, end
                 }
                 else //amount to add is too much, split it up
                 {
+                    Debug.Log("cannot fit all items in this slot, amountToAdd reduced from " + amountToAddTemp);
                     slot.item.Amount = slot.item.MaxAmount;
-                    amountToAddTemp -= (items[i].MaxAmount - items[i].Amount);
+                    amountToAddTemp -= (slot.item.MaxAmount - slot.item.Amount);
+                    Debug.Log("to " + amountToAddTemp);
                     slot.UpdateSlotVisuals();
                 }
             }
-            else if (slot.item.Name == null)
+            else if (slot.item.Id == 0)
             {
+                Debug.Log("slot " + i + " is empty, enqueueing");
                 //Slots is empty, store it temp
                 tempClearSlots.Enqueue(i);
+            } else if(slot.item.Name == itemToAdd.Name)
+            {
+                Debug.Log("slot has " + slot.item.Name + ", but is full");
             }
         }
 
@@ -129,7 +140,15 @@ public class Inventory : MonoBehaviour
         {
             if(tempClearSlots.Count > 0)
             {
+                string debugStr = "trying empty slots ";
+                foreach(int i in tempClearSlots)
+                {
+                    debugStr += i + ", ";
+                }
+                Debug.Log(debugStr);
+
                 int itemSlotNumber = tempClearSlots.Dequeue();
+                Debug.Log("trying empty slot " + itemSlotNumber);
                 ItemSlot theSlot = inventorySlots[itemSlotNumber].GetComponent<ItemSlot>();
                 if (itemToAdd.MaxAmount >= amountToAddTemp)
                 {
@@ -176,24 +195,23 @@ public class Inventory : MonoBehaviour
     /// <returns>true if the given amount of item was succesfully removed, false otherwise</returns>
     public bool RemoveItem(string itemName, int amount)
     {
-        if(items.Count == 0) { Debug.LogWarning("Nothing in inventory, nothing to delete!"); return false; }
+        if(this.Size == 0) { Debug.LogWarning("Nothing in inventory, nothing to delete!"); return false; }
         Item itemToRemove = _itemDatabase.FindItem(itemName);
-        for (int i = items.Count - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
+        for (int i = this.Size - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
             ItemSlot slot = inventorySlots[i].GetComponent<ItemSlot>();
-            if (items[i].Name == itemToRemove.Name)
+            if (this[i].Name == itemToRemove.Name)
             {
-                if (items[i].Amount <= amount)
+                if (this[i].Amount <= amount)
                 {
-                    int newAmount = amount - items[i].Amount;
-                    inventorySlots.Remove(slot.gameObject);
-                    items.RemoveAt(i);
-                    slot.Clear();
+                    int newAmount = amount - this[i].Amount;
+                    slot.item = _itemDatabase.FindItem("null");
+                    slot.UpdateSlotVisuals();
                     RemoveItem(itemName, newAmount); //Recursive
                 }
                 else
                 {
-                    items[i].Amount -= amount;
+                    this[i].Amount -= amount;
                     slot.UpdateSlotVisuals();
                 }
                 return true;
@@ -212,14 +230,29 @@ public class Inventory : MonoBehaviour
         }
     }
     
-    /// <value>
-    /// Gets the size of the inventory in number of slots
-    /// </value>
     public int Size
     {
         get
         {
-            return items.Count;
+            return inventorySlots.Count;
+        }
+    }
+    /// <value>
+    /// Gets the number of stacks of non-null items in the inventory
+    /// </value>
+    public int Count
+    {
+        get
+        {
+            int c = 0;
+            for(int i = 0; i < inventorySlots.Count; i++)
+            {
+                if(this[i].Id != 0)
+                {
+                    c++;
+                }
+            }
+            return c;
         }
     }
     
@@ -231,11 +264,11 @@ public class Inventory : MonoBehaviour
     public int CountOf(string itemName)
     {
         int count = 0;
-        for (int i = 0; i < items.Count; i++)
+        for (int i = 0; i < this.Count; i++)
         {
-            if (items[i].Name == itemName)
+            if (this[i].Name == itemName)
             {
-                count += items[i].Amount;
+                count += this[i].Amount;
             }
         }
         return count;

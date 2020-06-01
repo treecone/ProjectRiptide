@@ -77,6 +77,9 @@ public class InputManager : MonoBehaviour
 		else
 			TakeKeyboardInput();
 		_doubleClickCheck += Time.deltaTime;
+
+		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
+			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
 	}
 
 	void HandleTouch(TouchData t)
