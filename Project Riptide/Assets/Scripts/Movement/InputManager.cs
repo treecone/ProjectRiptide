@@ -17,6 +17,7 @@ public class InputManager : MonoBehaviour
 	private CannonFire _cannonFireScript;
 	private RectTransform _iconPoint;
     private RectTransform _iconBase;
+    private RectTransform _iconArrow;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 500.0f;
 
@@ -63,6 +64,7 @@ public class InputManager : MonoBehaviour
 		_currentTouches = new List<TouchData>();
 	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
+        //_iconArrow = GameObject.Find("InputArrow").GetComponent<RectTransform>();
 	}
 
 	void Update()
@@ -77,6 +79,15 @@ public class InputManager : MonoBehaviour
 		else
 			TakeKeyboardInput();
 		_doubleClickCheck += Time.deltaTime;
+
+        /*Enemy enemy;
+        enemy = CheckEnemy(_ship.transform.right);
+        if (enemy != null)
+            AutoFire(enemy);
+        enemy = CheckEnemy(-_ship.transform.right);
+        if (enemy != null)
+            AutoFire(enemy);*/
+            
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
@@ -330,7 +341,10 @@ public class InputManager : MonoBehaviour
 
                 //Pet position of movement icon
                 if (_iconPoint != null)
-                    SetPointIcon(_clickCurrentPosition);
+                {
+                    //SetPointIcon(_clickCurrentPosition);
+                    SetPointIconArrow(_clickCurrentPosition);
+                }
 
                 //Get direction of movement for player
 				Vector3 pos = GetTarget(_clickCurrentPosition);
@@ -455,6 +469,36 @@ public class InputManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the position of the movement icon
+    /// </summary>
+    /// <param name="pos">Position of click</param>
+    void SetPointIconArrow(Vector2 pos)
+    {
+        //Find distance of click from starting click
+        float dist = Vector2.Distance(pos, _clickStartPosition);
+        //If distance is less than max icon distance, set icon to pos
+        if (dist > MAX_ICON_DIST)
+        {
+            dist = MAX_ICON_DIST;
+        }
+
+        _iconPoint.anchoredPosition = _clickStartPosition;
+        Vector3 diff = pos - _clickStartPosition;
+        float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
+        _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
+        _iconPoint.localScale = new Vector3(_iconPoint.localScale.x, 6 * (dist / MAX_ICON_DIST), _iconPoint.localScale.z);
+
+        //Else, find point on circle to place icon
+        /*else
+        {
+            Vector2 distVec = pos - _clickStartPosition;
+            distVec.Normalize();
+            distVec *= MAX_ICON_DIST;
+            _iconPoint.anchoredPosition = _clickStartPosition + distVec;
+        }*/
+    }
+
+    /// <summary>
     /// Resets input values on being disabled
     /// </summary>
     private void OnDisable()
@@ -464,6 +508,44 @@ public class InputManager : MonoBehaviour
         _doubleClickCheck = 0f;
     }
 
+    private float _halfView = 20.0f;
+    private float _viewRange = 20.0f;
+
+    private Enemy CheckEnemy(Vector3 targetDir)
+    {
+        RaycastHit hit = new RaycastHit();
+        Vector3 detectPosition = _ship.transform.position;
+        //Vector3 targetDir = target - transform.position;
+        targetDir.Normalize();
+
+        for (int i = 0; i <= _halfView; i += 4)
+        {
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
+            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            {
+                if (hit.collider.gameObject.tag == "Hitbox")
+                {
+                    return hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                }
+            }
+            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
+            {
+                if (hit.collider.gameObject.tag == "Hitbox")
+                {
+                    return hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private void AutoFire(Enemy enemy)
+    {
+        Debug.DrawLine(_ship.transform.position, enemy.transform.position, Color.blue);
+        _cannonFireScript.Fire("right", enemy.transform.position - _ship.transform.position);
+    }
 }
 
 
