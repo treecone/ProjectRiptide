@@ -16,7 +16,7 @@ public partial class Enemy : Physics
         //This is important if the monster 
         if (_enemyDistance > _wanderRadius)
         {
-            _destination = _startPos;
+            _destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
         }
         else
         {
