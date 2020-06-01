@@ -117,6 +117,8 @@ public partial class Enemy : Physics
         //When crab is close enough, move down to hide again
         else if(transform.position.y > _startPos.y)
         {
+            //Set passive cooldown so rock crab cannot be triggered during transition
+            _passiveCooldown = 1.0f;
             //Move down
             ApplyConstantMoveForce(Vector3.down, 3.0f, 1.0f);
         }
@@ -425,7 +427,7 @@ public partial class Enemy : Physics
     public void HostileRockCrab()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
