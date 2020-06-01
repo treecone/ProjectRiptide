@@ -33,12 +33,12 @@ public class CannonFire : MonoBehaviour
         }
     }
 
-    public void Fire(string debugShotType, Vector3 targetDir)
+    public void Fire(string debugShotType, Vector3 targetDir, float offset)
     {
         switch (debugShotType)
         {
             case "right":
-                Fire(transform.right, targetDir);
+                Fire(transform.right, targetDir, offset);
                 break;
         }
     }
@@ -51,7 +51,7 @@ public class CannonFire : MonoBehaviour
         rightShot.Fire(cannonBall, gameObject);
     }
 
-    public void Fire(Vector3 direction, Vector3 targetDir)
+    public void Fire(Vector3 direction, Vector3 targetDir, float offset)
     {
         float angle = Mathf.Acos(Vector3.Dot(targetDir.normalized, transform.forward.normalized));
         Vector3 cross = Vector3.Cross(targetDir, transform.forward);
@@ -78,9 +78,9 @@ public class CannonFire : MonoBehaviour
             angle = -135;
         }
 
-        Debug.DrawLine(transform.position, transform.position + Quaternion.Euler(0, -angle, 0) * transform.forward * 10.0f, Color.blue);
+        Debug.Log(angle);
 
-        CannonShot rightShot = new CannonShot(direction, -angle, shipUpgradeScript.masterUpgrade);
+        CannonShot rightShot = new CannonShot(direction, -angle + offset, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
         rightShot.Fire(cannonBall, gameObject);
@@ -129,10 +129,8 @@ public class CannonFire : MonoBehaviour
                 ball.SetActive(true);
 
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
-                
 
                 ball.transform.rotation = angle;
-
                 
 				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * fireSpeed * (verticalRatio / (verticalRatio + 1.0f))) + (ball.transform.forward * fireSpeed * (1.0f / (verticalRatio + 1.0f))) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
                 ball.GetComponent<CannonBallBehavior>().damageDealt = damage;

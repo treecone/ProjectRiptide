@@ -17,7 +17,6 @@ public class InputManager : MonoBehaviour
 	private CannonFire _cannonFireScript;
 	private RectTransform _iconPoint;
     private RectTransform _iconBase;
-    private RectTransform _iconArrow;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 500.0f;
 
@@ -80,13 +79,13 @@ public class InputManager : MonoBehaviour
 			TakeKeyboardInput();
 		_doubleClickCheck += Time.deltaTime;
 
-        /*Enemy enemy;
+        Enemy enemy;
         enemy = CheckEnemy(_ship.transform.right);
         if (enemy != null)
-            AutoFire(enemy);
+            AutoFire(enemy, 15.0f);
         enemy = CheckEnemy(-_ship.transform.right);
         if (enemy != null)
-            AutoFire(enemy);*/
+            AutoFire(enemy, -15.0f);
             
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
@@ -384,7 +383,8 @@ public class InputManager : MonoBehaviour
 				if (_clickOne && _doubleClickCheck < 0.45f) //double click
 				{
                     _clickOne = false;
-					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position);
+                    Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
+					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
 				}
                 //If first click, remember
 				else if (!_clickOne)
@@ -469,7 +469,7 @@ public class InputManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the position of the movement icon
+    /// Sets the position of the arrow movement icon
     /// </summary>
     /// <param name="pos">Position of click</param>
     void SetPointIconArrow(Vector2 pos)
@@ -482,10 +482,15 @@ public class InputManager : MonoBehaviour
             dist = MAX_ICON_DIST;
         }
 
+        //Set position of arrow
         _iconPoint.anchoredPosition = _clickStartPosition;
+
+        //Find rotation for arrow
         Vector3 diff = pos - _clickStartPosition;
         float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
         _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
+
+        //Scale arrow based on distance from center
         _iconPoint.localScale = new Vector3(_iconPoint.localScale.x, 6 * (dist / MAX_ICON_DIST), _iconPoint.localScale.z);
 
         //Else, find point on circle to place icon
@@ -509,7 +514,7 @@ public class InputManager : MonoBehaviour
     }
 
     private float _halfView = 20.0f;
-    private float _viewRange = 20.0f;
+    private float _viewRange = 30.0f;
 
     private Enemy CheckEnemy(Vector3 targetDir)
     {
@@ -520,8 +525,8 @@ public class InputManager : MonoBehaviour
 
         for (int i = 0; i <= _halfView; i += 4)
         {
-            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
-            Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
+            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
+            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
             if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 if (hit.collider.gameObject.tag == "Hitbox")
@@ -541,10 +546,11 @@ public class InputManager : MonoBehaviour
         return null;
     }
 
-    private void AutoFire(Enemy enemy)
+    private void AutoFire(Enemy enemy, float offset)
     {
         Debug.DrawLine(_ship.transform.position, enemy.transform.position, Color.blue);
-        _cannonFireScript.Fire("right", enemy.transform.position - _ship.transform.position);
+        Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
+        _cannonFireScript.Fire("right", new Vector3(diff.x, 0, diff.z), offset);
     }
 }
 
