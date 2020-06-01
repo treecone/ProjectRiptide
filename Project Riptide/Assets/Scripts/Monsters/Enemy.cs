@@ -100,8 +100,14 @@ public partial class Enemy : Physics
 
     public float Health => _health;
 
-    private Vector2 _startingChunk;
-    public Vector2 StartingChunk { get; set; }
+    private Vector2 _enemyStartingChunk;
+    public Vector2 EnemyStartingChunk { get; set; }
+
+    private Vector2 _enemyStartingPosition;
+    public Vector2 EnemyStartingPosition { get; set; }
+
+    private int _enemyID;
+    public int EnemyID { get; set; }
 
     // Start is called before the first frame update
     protected override void Start()

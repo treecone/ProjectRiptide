@@ -79,11 +79,16 @@ public class InventoryMethods : MonoBehaviour
         _trashField.SetText("0");
     }
 
-
+    /// <summary>
+    /// Chooses inventory slot
+    /// </summary>
+    /// <param name="inventorySlot"></param>
     public void ChooseItem(InventorySlot inventorySlot)
     {
-        _activeItem = inventorySlot.item;
+        //automatically set this to 0
         _trashField.SetText("0");
+
+        _activeItem = inventorySlot.item;
         Debug.Log("Clicked on " + _activeItem.Name);
         _itemName.SetText(_activeItem.Name);
         _itemDescription.SetText(_activeItem.Description);
