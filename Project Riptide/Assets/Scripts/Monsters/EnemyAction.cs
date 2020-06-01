@@ -335,7 +335,6 @@ public partial class Enemy : Physics
         }
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
-        Debug.Log(_animator.GetAnimatorTransitionInfo(0).nameHash);
 
         if(time >= MAX_TIME)
         {

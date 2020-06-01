@@ -342,7 +342,7 @@ public partial class Enemy : Physics
     {
         _health -= damage;
         _healthBar.UpdateHealth(_health);
-        if (_state == EnemyState.Passive)
+        if (_state == EnemyState.Passive && _passiveCooldown <= 0)
         {
             _healthBarObject.SetActive(true);
             _state = EnemyState.Hostile;
@@ -654,7 +654,7 @@ public partial class Enemy : Physics
             }
 
             //Update rotation
-            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, _rotationalVeloctiy);
+            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, _rotationalVeloctiy * 60 * Time.deltaTime);
         }
         //Reset velocity when not rotating
         else

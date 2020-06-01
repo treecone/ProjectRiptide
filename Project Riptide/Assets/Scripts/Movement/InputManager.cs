@@ -463,6 +463,11 @@ public class InputManager : MonoBehaviour
         _startedMove = false;
         _doubleClickCheck = 0f;
     }
+
+    private bool CheckEnemy(Vector3 dir)
+    {
+
+    }
 }
 
 

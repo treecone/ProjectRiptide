@@ -7,8 +7,8 @@ public class ShipMovement : Physics
 {
     //Constants
     private const float MAX_SHIP_SPEED = 3f;
-    private const float MAX_ROTATIONAL_VELOCITY = 1.0f;
-    private const float MIN_ROTATIONAL_VELOCITY = 0.20f;
+    private const float MAX_ROTATIONAL_VELOCITY = 1f;
+    private const float MIN_ROTATIONAL_VELOCITY = 0.2f;
     private const float ROTATIONAL_ACCELERATION = 0.6f;
 
     private CameraController _cameraControl;
@@ -87,7 +87,7 @@ public class ShipMovement : Physics
             }
 
             //Update rotation
-            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, _rotationalVelocity);
+            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, _rotationalVelocity * 60 * Time.deltaTime);
         }
         //Reset velocity when not rotating
         else
