@@ -4,11 +4,11 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class ItemSlot : MonoBehaviour
+public class InventorySlot : MonoBehaviour
 {
     public Item item;
 
-    public ItemSlot(Item item)
+    public InventorySlot(Item item)
     {
         this.item = item;
     }
