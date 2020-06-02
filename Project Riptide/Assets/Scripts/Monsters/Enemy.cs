@@ -346,23 +346,26 @@ public partial class Enemy : Physics
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        _health -= damage;
-        _healthBar.UpdateHealth(_health);
-        if (_state == EnemyState.Passive && _passiveCooldown <= 0)
+        if (_health > 0)
         {
-            _healthBarObject.SetActive(true);
-            _state = EnemyState.Hostile;
-        }
-        if (_health <= 0)
-        {
-            _health = 0;
-            if(_animator != null)
+            _health -= damage;
+            _healthBar.UpdateHealth(_health);
+            if (_state == EnemyState.Passive && _passiveCooldown <= 0)
             {
-                _animator.SetTrigger(_animParm[(int)Anim.Die]);
-                _deathAnim = Animator.StringToHash("death");
+                _healthBarObject.SetActive(true);
+                _state = EnemyState.Hostile;
             }
-            _dying = true;
-            _deathTimer = 0;
+            if (_health <= 0)
+            {
+                _health = 0;
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(_animParm[(int)Anim.Die]);
+                    _deathAnim = Animator.StringToHash("death");
+                }
+                _dying = true;
+                _deathTimer = 0;
+            }
         }
     }
 
