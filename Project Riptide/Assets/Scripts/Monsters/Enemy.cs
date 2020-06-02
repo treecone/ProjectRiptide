@@ -96,10 +96,10 @@ public partial class Enemy : Physics
     private float _viewRange = 20.0f;
     private Vector3 _widthVector;
 
-    //Smooth rotation stuff
     private float _rotationalVeloctiy = 0.5f;
 
     public float Health => _health;
+    public bool IsDying => _dying;
 
     private Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk { get; set; }
@@ -533,7 +533,7 @@ public partial class Enemy : Physics
     /// <returns>If enemy's path is interuptted</returns>
     public bool CheckObstacle(Vector3 target)
     {
-        RaycastHit hit = new RaycastHit();
+        RaycastHit[] hits;
         Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
@@ -542,14 +542,36 @@ public partial class Enemy : Physics
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            //Check right
+            hits = UnityEngine.Physics.SphereCastAll(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, _viewRange);
+            foreach(RaycastHit hit in hits)
+            {
+                //Make sure hit was not from their own hitbox
+                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent == gameObject))
+                {
+                    return true;
+                }
+            }
+
+            //Check left
+            hits = UnityEngine.Physics.SphereCastAll(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, _viewRange);
+            foreach (RaycastHit hit in hits)
+            {
+                //Make sure hit was not from their own hitbox
+                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent.gameObject == gameObject))
+                {
+                    return true;
+                }
+            }
+
+            /*if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
             if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
-            }
+            }*/
         }
 
         return false;

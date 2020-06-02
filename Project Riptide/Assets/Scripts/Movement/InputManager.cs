@@ -22,6 +22,8 @@ public class InputManager : MonoBehaviour
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 500.0f;
+    private const float MAX_ARROW_LENGTH = 6 * (MAX_ICON_DIST / 500.0f);
+
 
 	//-----Multiple touches-----
 
@@ -69,10 +71,10 @@ public class InputManager : MonoBehaviour
         {
             Enemy enemy;
             enemy = CheckEnemy(_ship.transform.right);
-            if (enemy != null)
+            if (enemy != null && !enemy.IsDying)
                 AutoFire(enemy, 15.0f);
             enemy = CheckEnemy(-_ship.transform.right);
-            if (enemy != null)
+            if (enemy != null && !enemy.IsDying)
                 AutoFire(enemy, -15.0f);
         }
 
@@ -222,7 +224,7 @@ public class InputManager : MonoBehaviour
         _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
 
         //Scale arrow based on distance from center
-        _iconPoint.localScale = new Vector3(_iconPoint.localScale.x, 6 * (dist / MAX_ICON_DIST), _iconPoint.localScale.z);
+        _iconPoint.localScale = new Vector3(_iconPoint.localScale.x, MAX_ARROW_LENGTH * (dist / MAX_ICON_DIST), _iconPoint.localScale.z);
     }
 
     /// <summary>
