@@ -24,28 +24,8 @@ public class InputManager : MonoBehaviour
     private const float MAX_ICON_DIST = 500.0f;
 
 	//-----Multiple touches-----
-	//private List<TouchData> _currentTouches;
-    [SerializeField]
-	private bool _mobile;
-	private float _doubleClickCheck;
-	private bool _clickOne;
 
 	//-----Config values-----
-
-	/// <summary>
-	/// The minimum displacement a swipe must have to be considered a swipe
-	/// </summary>
-	private const float MIN_SWIPE_DISPLACEMENT = 100;
-
-	/// <summary>
-	/// The minimum speed a swipe must have to be considered a swipe
-	/// </summary>
-	private const float MIN_SWIPE_SPEED = 1000;
-
-	/// <summary>
-	/// The maximum time a tap can be held down and still be considered a tap
-	/// </summary>
-	private const float MAX_TAP_DURATION = 0.5f;
 
 	private static Vector3 ScreenCorrect;
     private Vector2 _screenScale;
@@ -73,10 +53,8 @@ public class InputManager : MonoBehaviour
 		_ship = GameObject.FindWithTag("Player");
 		_movementScript = _ship.GetComponent<ShipMovement>();
 		_cannonFireScript = _ship.GetComponent<CannonFire>();
-		//_currentTouches = new List<TouchData>();
 	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
-        //_iconArrow = GameObject.Find("InputArrow").GetComponent<RectTransform>();
 	}
 
 	void Update()
@@ -85,11 +63,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
 
-        //Take input depending on device
-		/*if (_mobile)
-			TakeMobileInput();
-		else*/
-			TakeKeyboardInput();
+	    TakeKeyboardInput();
 
         if (_autoFire)
         {
@@ -108,212 +82,6 @@ public class InputManager : MonoBehaviour
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
 	}
 
-/*	void HandleTouch(TouchData t)
-	{
-		//Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
-		if (t.Velocity.magnitude > MIN_SWIPE_SPEED && t.Displacement.magnitude > MIN_SWIPE_DISPLACEMENT)
-		{
-			//All behavior for when a swipe is completed
-
-			if (Math.Abs(t.Displacement.y) > Math.Abs(t.Displacement.x)) //the swipe is up or down
-			{
-				if (t.Displacement.y < 0) //swipe down
-				{
-					//movementScript.LinearVelocity -= movementScript.linearAcceleration;
-					Debug.Log("Swipe Down");
-				}
-				else //swipe up
-				{
-					//movementScript.LinearVelocity += movementScript.linearAcceleration;
-					Debug.Log("Swipe Up");
-				}
-			}
-
-		}
-		else if (t.Duration > MAX_TAP_DURATION)
-		{
-			//All behavior for when a tap and hold is completed
-
-		}
-		else
-		{
-			//All behavior for when a tap is completed
-			if (_clickOne && _doubleClickCheck < 0.45f) //double click
-			{
-				_clickOne = false;
-				//_cannonFireScript.Fire("both");
-			}
-			else if (!_clickOne)
-			{
-				_clickOne = true;
-			}
-
-			#region Deprecated Code
-            /*
-			if (t.Position.x < turnTouchArea - Screen.width / 2) //tapped left side of screen
-			{
-				cannonFireScript.Fire("debugOneBig");
-			}
-
-			if (t.Position.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
-			{
-				cannonFireScript.Fire("debugTriShot");
-			}
-			#endregion
-		}
-	}
-
-	void TakeMobileInput()
-	{
-		//Add any new touches to the touch list
-		foreach (Touch t in Input.touches)
-		{
-			if (t.phase == TouchPhase.Began)
-			{
-				_currentTouches.Add(new TouchData(t));
-			}
-		}
-		//Update all touches that are currently down
-		for (int i = 0; i < _currentTouches.Count; i++)
-		{
-			TouchData t = _currentTouches[i];
-			t.Update(Input.touches);
-
-			//if the touch has just ended, remove it from the list and perform whatever behavior is appropriate for that touch
-			if (t.phase == TouchPhase.Ended)
-			{
-				_currentTouches.Remove(t);
-				i--;
-				//HandleTouch(t);
-				_doubleClickCheck = 0;
-				continue;
-			}
-
-            //If double click is still being tested for
-            if (_doubleClickCheck <= 0.8)
-            {
-                //Increment time of touch
-                t.time += Time.deltaTime;
-                //If touch displacment is big enough and at least some time has passed, stop looking for double tap
-                if (t.Displacement.magnitude > 50f && t.time > 0.1f)
-                    _doubleClickCheck = 0.9f;
-            }
-
-            //If no longer checking for double click
-            //Treat touch for movement
-            if (_doubleClickCheck > 0.8f)
-			{
-                //If move just started
-                if(!t.startedMove)
-                {
-                    //Set position of move icon base
-                    if(_iconBase != null)
-                        _iconBase.anchoredPosition = t.Position;
-                    _clickStartPosition = t.Position;
-                    t.startedMove = true;
-                }
-
-                //Set position of move icon
-                SetPointIcon(t.Position);
-
-                //Get direction to move the player in
-				Vector3 pos = GetTarget(t.Position);
-				print(pos - _ship.transform.position);
-				_movementScript.TargetDirection = pos - _ship.transform.position;
-			}
-		}
-	}
-
-    /// <summary>
-    /// Handles information related to mobile touches
-    /// </summary>
-	private class TouchData
-	{
-		private Touch touch;
-		private int index;
-		private float duration;
-		private Vector2 startPosition;
-
-		public TouchPhase phase;
-        public bool startedMove;
-        public float time = 0.0f;
-
-        /// <summary>
-        /// Displacement from starting touch
-        /// </summary>
-		public Vector2 Displacement
-		{
-			get
-			{
-				return Position - startPosition;
-			}
-		}
-
-        /// <summary>
-        /// Velocity of touch movement
-        /// </summary>
-		public Vector2 Velocity
-		{
-			get
-			{
-				return Displacement / duration;
-			}
-		}
-
-        /// <summary>
-        /// Position of the touch on the screen
-        /// </summary>
-		public Vector2 Position
-		{
-			get
-			{
-				return touch.position - new Vector2(Screen.width / 2, Screen.height / 2);
-			}
-		}
-
-        /// <summary>
-        /// Length of time touch is active
-        /// </summary>
-		public float Duration
-		{
-			get
-			{
-				return duration;
-			}
-		}
-
-        /// <summary>
-        /// Creates touch data from a touch
-        /// </summary>
-        /// <param name="touch">Touch input</param>
-		public TouchData(Touch touch)
-		{
-			this.touch = touch;
-			index = touch.fingerId;
-			duration = 0;
-			print(Position);
-			startPosition = Position;
-		}
-
-        /// <summary>
-        /// Update touch data
-        /// </summary>
-        /// <param name="touches"></param>
-		public void Update(Touch[] touches)
-		{
-			foreach (Touch t in touches)
-			{
-				if (t.fingerId == index)
-				{
-					touch = t;
-				}
-			}
-			duration += touch.deltaTime;
-			phase = touch.phase;
-		}
-	}
-    */
-
     /// <summary>
     /// Takes keyboard input from player
     /// </summary>
@@ -326,7 +94,6 @@ public class InputManager : MonoBehaviour
             _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
             _clickCurrentPosition = _clickStartPosition;
 
-            _doubleClickCheck = 0;
             _clickDuration = 0;
         }
         //Mouse is being held
@@ -360,7 +127,7 @@ public class InputManager : MonoBehaviour
                 if (_iconPoint != null)
                 {
                     //SetPointIcon(_clickCurrentPosition);
-                    SetPointIconArrow(_clickCurrentPosition);
+                    SetArrowIcon(_clickCurrentPosition);
                 }
 
                 //Get direction of movement for player
@@ -384,53 +151,6 @@ public class InputManager : MonoBehaviour
                     _currFireTime = 0.0f;
                 }
             }
-            _doubleClickCheck = 0.0f;
-            /*Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
-			Vector2 clickVelocity = clickDisplacement / _clickDuration;
-            //Check for swipe
-			if (clickVelocity.magnitude > MIN_SWIPE_SPEED && clickDisplacement.magnitude > MIN_SWIPE_DISPLACEMENT) //swipe behavior
-			{
-				if (Math.Abs(clickDisplacement.y) > Math.Abs(clickDisplacement.x)) //the swipe is up or down
-				{
-					if (clickDisplacement.y < 0) //swipe down
-					{
-						//Debug.Log("Swipe Down");
-					}
-					else //swipe up
-					{
-						//Debug.Log("Swipe Up");
-					}
-				}
-			}
-            //Check for click and hold
-			else if (_clickDuration > MAX_TAP_DURATION) //click and hold behavior
-			{
-
-			}
-            //Check for click
-			else //click behavior
-			{
-				//If double click, fire
-				if (_doubleClickCheck < 0.45f) //double click
-				{
-                    //_clickOne = false;
-                    Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
-					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
-				}
-                //If first click, remember
-				/*else if (!_clickOne)
-				{
-					_clickOne = true;
-				}
-			}
-			_doubleClickCheck = 0;
-		}
-		else if (_clickCurrentPosition != null && _doubleClickCheck > 1f)
-		{
-			Vector3 pos = GetTarget(_clickCurrentPosition);
-			_movementScript.TargetDirection = pos - _ship.transform.position;
-            _clickOne = false;
-		}*/
         }
     }
 
@@ -480,31 +200,10 @@ public class InputManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the position of the movement icon
-    /// </summary>
-    /// <param name="pos">Position of click</param>
-    void SetPointIcon(Vector2 pos)
-    {
-        //Find distance of click from starting click
-        float dist = Vector2.Distance(pos, _clickStartPosition);
-        //If distance is less than max icon distance, set icon to pos
-        if (dist <= MAX_ICON_DIST)
-            _iconPoint.anchoredPosition = pos;
-        //Else, find point on circle to place icon
-        else
-        {
-            Vector2 distVec = pos - _clickStartPosition;
-            distVec.Normalize();
-            distVec *= MAX_ICON_DIST;
-            _iconPoint.anchoredPosition = _clickStartPosition + distVec;
-        }
-    }
-
-    /// <summary>
     /// Sets the position of the arrow movement icon
     /// </summary>
     /// <param name="pos">Position of click</param>
-    void SetPointIconArrow(Vector2 pos)
+    void SetArrowIcon(Vector2 pos)
     {
         //Find distance of click from starting click
         float dist = Vector2.Distance(pos, _clickStartPosition);
@@ -524,15 +223,6 @@ public class InputManager : MonoBehaviour
 
         //Scale arrow based on distance from center
         _iconPoint.localScale = new Vector3(_iconPoint.localScale.x, 6 * (dist / MAX_ICON_DIST), _iconPoint.localScale.z);
-
-        //Else, find point on circle to place icon
-        /*else
-        {
-            Vector2 distVec = pos - _clickStartPosition;
-            distVec.Normalize();
-            distVec *= MAX_ICON_DIST;
-            _iconPoint.anchoredPosition = _clickStartPosition + distVec;
-        }*/
     }
 
     /// <summary>
@@ -540,9 +230,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        _clickOne = false;
         _startedMove = false;
-        _doubleClickCheck = 0f;
     }
 
     /// <summary>
@@ -554,7 +242,6 @@ public class InputManager : MonoBehaviour
     {
         RaycastHit hit = new RaycastHit();
         Vector3 detectPosition = _ship.transform.position;
-        //Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
 
         for (int i = 0; i <= _halfView; i += 4)
