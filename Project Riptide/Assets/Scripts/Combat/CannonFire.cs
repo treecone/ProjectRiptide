@@ -33,14 +33,14 @@ public class CannonFire : MonoBehaviour
         }
     }
 
-    public void Fire(string debugShotType, Vector3 targetDir, float offset)
+    public float Fire(string debugShotType, Vector3 targetDir, float offset)
     {
         switch (debugShotType)
         {
             case "right":
-                Fire(transform.right, targetDir, offset);
-                break;
+                return Fire(transform.right, targetDir, offset);
         }
+        return 0;
     }
 
     public void Fire(Vector3 direction)
@@ -51,7 +51,7 @@ public class CannonFire : MonoBehaviour
         rightShot.Fire(cannonBall, gameObject);
     }
 
-    public void Fire(Vector3 direction, Vector3 targetDir, float offset)
+    public float Fire(Vector3 direction, Vector3 targetDir, float offset)
     {
         float angle = Mathf.Acos(Vector3.Dot(targetDir.normalized, transform.forward.normalized));
         Vector3 cross = Vector3.Cross(targetDir, transform.forward);
@@ -78,12 +78,11 @@ public class CannonFire : MonoBehaviour
             angle = -135;
         }
 
-        Debug.Log(angle);
-
         CannonShot rightShot = new CannonShot(direction, -angle + offset, shipUpgradeScript.masterUpgrade);
         //CannonShot leftShot = new CannonShot(direction, -90, shipUpgradeScript.masterUpgrade);
         //leftShot.Fire(cannonBall, gameObject, cannonBallSizeScale);
         rightShot.Fire(cannonBall, gameObject);
+        return angle;
     }
 
     public class CannonShot
