@@ -24,7 +24,7 @@ public class InputManager : MonoBehaviour
     private const float MAX_ICON_DIST = 500.0f;
 
 	//-----Multiple touches-----
-	private List<TouchData> _currentTouches;
+	//private List<TouchData> _currentTouches;
     [SerializeField]
 	private bool _mobile;
 	private float _doubleClickCheck;
@@ -73,7 +73,7 @@ public class InputManager : MonoBehaviour
 		_ship = GameObject.FindWithTag("Player");
 		_movementScript = _ship.GetComponent<ShipMovement>();
 		_cannonFireScript = _ship.GetComponent<CannonFire>();
-		_currentTouches = new List<TouchData>();
+		//_currentTouches = new List<TouchData>();
 	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
         //_iconArrow = GameObject.Find("InputArrow").GetComponent<RectTransform>();
@@ -86,9 +86,9 @@ public class InputManager : MonoBehaviour
             Application.Quit();
 
         //Take input depending on device
-		if (_mobile)
+		/*if (_mobile)
 			TakeMobileInput();
-		else
+		else*/
 			TakeKeyboardInput();
 
         if (_autoFire)
@@ -108,7 +108,7 @@ public class InputManager : MonoBehaviour
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
 	}
 
-	void HandleTouch(TouchData t)
+/*	void HandleTouch(TouchData t)
 	{
 		//Debug.Log("Touch released: Duration - " + t.Duration + "   Displacement - " + t.Displacement.magnitude + "   Velocity - " + t.Velocity.magnitude);
 		if (t.Velocity.magnitude > MIN_SWIPE_SPEED && t.Displacement.magnitude > MIN_SWIPE_DISPLACEMENT)
@@ -158,7 +158,7 @@ public class InputManager : MonoBehaviour
 			if (t.Position.x > Screen.width / 2 - turnTouchArea) //tapped right side of screen
 			{
 				cannonFireScript.Fire("debugTriShot");
-			}*/
+			}
 			#endregion
 		}
 	}
@@ -312,6 +312,7 @@ public class InputManager : MonoBehaviour
 			phase = touch.phase;
 		}
 	}
+    */
 
     /// <summary>
     /// Takes keyboard input from player
