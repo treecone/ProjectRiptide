@@ -466,7 +466,7 @@ public class InputManager : MonoBehaviour
 
     private bool CheckEnemy(Vector3 dir)
     {
-
+        return true;
     }
 }
 
