@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class ShotIndicator : MonoBehaviour
 {
-    private float MAX_DURATION = 0.5f;
-    private float _currDuration = 0.0f;
     private Image _image;
 
     private void Start()
@@ -17,7 +15,9 @@ public class ShotIndicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Decrease alpha value of indicator
         _image.color = new Color(_image.color.r, _image.color.g, _image.color.b, _image.color.a - Time.deltaTime);
+        //When alpha is gone, destory the indicator
         if(_image.color.a <= 0)
         {
             Destroy(gameObject);

@@ -61,6 +61,9 @@ public class InputManager : MonoBehaviour
     private float _fireRate = 0.5f;
     private float _currFireTime = 0.0f;
 
+    private float _halfView = 20.0f;
+    private float _viewRange = 30.0f;
+
     void Awake()
 	{
 		_camera = Camera.main;
@@ -138,7 +141,7 @@ public class InputManager : MonoBehaviour
 			if (_clickOne && _doubleClickCheck < 0.45f) //double click
 			{
 				_clickOne = false;
-				_cannonFireScript.Fire("both");
+				//_cannonFireScript.Fire("both");
 			}
 			else if (!_clickOne)
 			{
@@ -374,7 +377,7 @@ public class InputManager : MonoBehaviour
                 if (_currFireTime >= _fireRate)
                 {
                     Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
-                    float angle = _cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
+                    float angle = _cannonFireScript.Fire(GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
                     GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
                     indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
                     _currFireTime = 0.0f;
@@ -541,9 +544,11 @@ public class InputManager : MonoBehaviour
         _doubleClickCheck = 0f;
     }
 
-    private float _halfView = 20.0f;
-    private float _viewRange = 30.0f;
-
+    /// <summary>
+    /// Checks for an enemy to fire at by using ray casts
+    /// </summary>
+    /// <param name="targetDir">Direction to check for enemy</param>
+    /// <returns>Enemy found, null if none</returns>
     private Enemy CheckEnemy(Vector3 targetDir)
     {
         RaycastHit hit = new RaycastHit();
@@ -574,12 +579,17 @@ public class InputManager : MonoBehaviour
         return null;
     }
 
+    /// <summary>
+    /// Automatically fire a shot towards the enemy
+    /// </summary>
+    /// <param name="enemy">Enemy to fire at</param>
+    /// <param name="offset">Offset of ship fire angle</param>
     private void AutoFire(Enemy enemy, float offset)
     {
         if (_currFireTime >= _fireRate)
         {
             Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
-            _cannonFireScript.Fire("right", new Vector3(diff.x, 0, diff.z), offset);
+            _cannonFireScript.Fire(new Vector3(diff.x, 0, diff.z), offset);
             _currFireTime = 0.0f;
         }
     }
