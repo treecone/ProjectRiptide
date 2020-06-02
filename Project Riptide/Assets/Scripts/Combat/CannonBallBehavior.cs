@@ -15,7 +15,6 @@ public class CannonBallBehavior : MonoBehaviour
         projHitbox = Instantiate(hitbox, transform);
         projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, transform.position, new Vector3(1, 1, 1), HitboxType.PlayerHitbox, damageDealt);
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
-        projHitbox.GetComponent<Hitbox>().tag = "ProjHitbox";
     }
 
     // Update is called once per frame
