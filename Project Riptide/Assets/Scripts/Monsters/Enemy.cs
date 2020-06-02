@@ -57,6 +57,7 @@ public partial class Enemy : Physics
     private float _wanderRadius;
     private float _maxRadius;
     private float _passiveCooldown;
+    private float _pushMult = 1.0f;
     private float[] _specialCooldown;
     private bool[] _activeStates;
     private bool _playerCollision;
@@ -95,13 +96,19 @@ public partial class Enemy : Physics
     private float _viewRange = 20.0f;
     private Vector3 _widthVector;
 
-    //Smooth rotation stuff
     private float _rotationalVeloctiy = 0.5f;
 
     public float Health => _health;
+    public bool IsDying => _dying;
 
-    private Vector2 _startingChunk;
-    public Vector2 StartingChunk { get; set; }
+    private Vector2 _enemyStartingChunk;
+    public Vector2 EnemyStartingChunk { get; set; }
+
+    private Vector2 _enemyStartingPosition;
+    public Vector2 EnemyStartingPosition { get; set; }
+
+    private int _enemyID;
+    public int EnemyID { get; set; }
 
     // Start is called before the first frame update
     protected override void Start()
@@ -241,6 +248,7 @@ public partial class Enemy : Physics
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
+                _pushMult = 0.1f;
                 _HostileAI = KoiBossHostile;
                 _PassiveAI = PassiveWanderRadius;
                 break;
@@ -325,6 +333,7 @@ public partial class Enemy : Physics
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
+                _pushMult = 10.0f;
                 _HostileAI = HostileRunAway;
                 _PassiveAI = PassiveWanderRadius;
                 break;
@@ -340,23 +349,26 @@ public partial class Enemy : Physics
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        _health -= damage;
-        _healthBar.UpdateHealth(_health);
-        if (_state == EnemyState.Passive && _passiveCooldown <= 0)
+        if (_health > 0)
         {
-            _healthBarObject.SetActive(true);
-            _state = EnemyState.Hostile;
-        }
-        if (_health <= 0)
-        {
-            _health = 0;
-            if(_animator != null)
+            _health -= damage;
+            _healthBar.UpdateHealth(_health);
+            if (_state == EnemyState.Passive && _passiveCooldown <= 0)
             {
-                _animator.SetTrigger(_animParm[(int)Anim.Die]);
-                _deathAnim = Animator.StringToHash("death");
+                _healthBarObject.SetActive(true);
+                _state = EnemyState.Hostile;
             }
-            _dying = true;
-            _deathTimer = 0;
+            if (_health <= 0)
+            {
+                _health = 0;
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(_animParm[(int)Anim.Die]);
+                    _deathAnim = Animator.StringToHash("death");
+                }
+                _dying = true;
+                _deathTimer = 0;
+            }
         }
     }
 
@@ -403,7 +415,6 @@ public partial class Enemy : Physics
         if (collision.tag == "Obstical")
         {
             _obsticalCollision = true;
-            Debug.Log("Obstical Collision");
         }
         if (collision.tag == "Player")
             _playerCollision = true;
@@ -522,7 +533,7 @@ public partial class Enemy : Physics
     /// <returns>If enemy's path is interuptted</returns>
     public bool CheckObstacle(Vector3 target)
     {
-        RaycastHit hit = new RaycastHit();
+        RaycastHit[] hits;
         Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
@@ -531,14 +542,36 @@ public partial class Enemy : Physics
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            //Check right
+            hits = UnityEngine.Physics.SphereCastAll(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, _viewRange);
+            foreach(RaycastHit hit in hits)
+            {
+                //Make sure hit was not from their own hitbox
+                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent == gameObject))
+                {
+                    return true;
+                }
+            }
+
+            //Check left
+            hits = UnityEngine.Physics.SphereCastAll(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, _viewRange);
+            foreach (RaycastHit hit in hits)
+            {
+                //Make sure hit was not from their own hitbox
+                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent.gameObject == gameObject))
+                {
+                    return true;
+                }
+            }
+
+            /*if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
             }
             if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
             {
                 return true;
-            }
+            }*/
         }
 
         return false;
@@ -601,7 +634,7 @@ public partial class Enemy : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
-        if(obstical.tag == "Hitbox")
+        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
             if(attached != gameObject)
@@ -609,9 +642,17 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 20.0f;
+                backForce *= 20.0f * _pushMult;
                 ApplyForce(backForce);
             }
+        }
+        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
+        {
+            Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
+            backForce.Normalize();
+            backForce *= 5.0f * _pushMult;
+            ApplyForce(backForce);
         }
     }
 

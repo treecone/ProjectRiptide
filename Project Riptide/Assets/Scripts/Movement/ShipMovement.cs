@@ -184,7 +184,7 @@ public class ShipMovement : Physics
             backForce *= 40.0f;
             ApplyForce(backForce);
         }
-        if(obstical.tag == "Hitbox")
+        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
         {
             //Create a force away from enemy
             Vector3 backForce = transform.position - obstical.transform.position;

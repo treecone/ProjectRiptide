@@ -2,18 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class InventoryMethods : MonoBehaviour
 {
-
     [SerializeField]
     private TextMeshProUGUI _trashField;
     [SerializeField]
     private InputManager _inputManagerScript;
+    [SerializeField]
+    private TextMeshProUGUI _itemName;
+    [SerializeField]
+    private TextMeshProUGUI _itemDescription;
+    [SerializeField]
+    private TextMeshProUGUI _trashName;
+    [SerializeField]
+    private Slider _volumeSlider;
+    [SerializeField]
+    private Slider _soundSlider;
+
+    const float soundValue = .5f;
+
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
-
-    public bool HoldingButton { get; set; }
-
+    
     /// <summary>
     /// changes trash number
     /// </summary>
@@ -23,7 +34,6 @@ public class InventoryMethods : MonoBehaviour
         int amount = System.Convert.ToInt32(_trashField.text);
 
         //if active item exists
-        /*
         if (_activeItem != null)
         {
             amount += num;
@@ -38,11 +48,10 @@ public class InventoryMethods : MonoBehaviour
             }
             _trashField.SetText("{0}", amount);
         }
-        */
-        amount += num;
-        _trashField.SetText("{0}", amount);
-
-        Debug.Log("E");
+        else
+        {
+            Debug.Log("No Item");
+        }
     }
 
     /// <summary>
@@ -71,8 +80,42 @@ public class InventoryMethods : MonoBehaviour
     public void ResetActiveItem()
     {
         _activeItem = null;
+        _itemName.SetText("");
+        _itemDescription.SetText("");
+        _trashField.SetText("0");
     }
 
+    /// <summary>
+    /// Chooses inventory slot
+    /// </summary>
+    /// <param name="inventorySlot"></param>
+    public void ChooseItem(InventorySlot inventorySlot)
+    {
+        //automatically set this to 0
+        _trashField.SetText("0");
+
+        _activeItem = inventorySlot.item;
+        Debug.Log("Clicked on " + _activeItem.Name);    
+        _itemName.SetText(_activeItem.Name);
+        _itemDescription.SetText(_activeItem.Description);
+        //{0} did not work here
+        _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
+    }
+
+
+    public void TrashItem(Inventory inventory)
+    {
+        int amount = System.Convert.ToInt32(_trashField.text);
+        inventory.RemoveItem(_activeItem.Name, amount);
+    }
+
+    public void ResetSound()
+    {
+        _volumeSlider.value = soundValue;
+        _soundSlider.value = soundValue;
+    }
+
+    
 
 
 }

@@ -347,7 +347,7 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
-    /// Used for KoiBoss, charges bubble blast attack for 2 seconds
+    /// Used for KoiBoss, move back up after bubble blast attack
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
@@ -365,6 +365,7 @@ public partial class Enemy : Physics
 
         if (time >= MAX_TIME)
         {
+            ReturnToInitalPosition();
             _animator.ResetTrigger(_animParm[(int)CarpAnim.Shoot]);
             StopMotion();
             return false;
