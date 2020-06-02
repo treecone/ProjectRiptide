@@ -57,6 +57,7 @@ public partial class Enemy : Physics
     private float _wanderRadius;
     private float _maxRadius;
     private float _passiveCooldown;
+    private float _pushMult = 1.0f;
     private float[] _specialCooldown;
     private bool[] _activeStates;
     private bool _playerCollision;
@@ -247,6 +248,7 @@ public partial class Enemy : Physics
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
+                _pushMult = 0.1f;
                 _HostileAI = KoiBossHostile;
                 _PassiveAI = PassiveWanderRadius;
                 break;
@@ -331,6 +333,7 @@ public partial class Enemy : Physics
                 _playerCollision = false;
                 _isRaming = false;
                 _ramingDamage = 20;
+                _pushMult = 10.0f;
                 _HostileAI = HostileRunAway;
                 _PassiveAI = PassiveWanderRadius;
                 break;
@@ -609,7 +612,7 @@ public partial class Enemy : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
-        if(obstical.tag == "Hitbox")
+        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
             if(attached != gameObject)
@@ -617,9 +620,17 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 20.0f;
+                backForce *= 20.0f * _pushMult;
                 ApplyForce(backForce);
             }
+        }
+        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
+        {
+            Vector3 backForce = transform.position - obstical.transform.position;
+            backForce = new Vector3(backForce.x, 0, backForce.z);
+            backForce.Normalize();
+            backForce *= 5.0f * _pushMult;
+            ApplyForce(backForce);
         }
     }
 
