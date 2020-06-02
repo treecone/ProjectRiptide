@@ -106,7 +106,6 @@ public class InventoryMethods : MonoBehaviour
     public void TrashItem(Inventory inventory)
     {
         int amount = System.Convert.ToInt32(_trashField.text);
-
         inventory.RemoveItem(_activeItem.Name, amount);
     }
 
@@ -115,5 +114,8 @@ public class InventoryMethods : MonoBehaviour
         _volumeSlider.value = soundValue;
         _soundSlider.value = soundValue;
     }
+
+    
+
 
 }
