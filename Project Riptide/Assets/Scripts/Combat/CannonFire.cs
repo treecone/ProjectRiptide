@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class CannonFire : MonoBehaviour
 {
-    public GameObject cannonBall;
-    public Upgrades shipUpgradeScript;
+    [SerializeField]
+    private GameObject _cannonBall;
+    [SerializeField]
+    private Upgrades _shipUpgradeScript;
+    [SerializeField]
+    private GameObject _cannonSmoke;
+    public GameObject CannonSmoke => _cannonSmoke;
 
     // Start is called before the first frame update
     void Start()
@@ -57,8 +62,8 @@ public class CannonFire : MonoBehaviour
             angle = -135;
         }
 
-        CannonShot rightShot = new CannonShot(direction, -angle + offset, shipUpgradeScript.masterUpgrade);
-        rightShot.Fire(cannonBall, gameObject);
+        CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
+        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
         return angle;
     }
 
@@ -85,7 +90,7 @@ public class CannonFire : MonoBehaviour
             this._size = 0.5f + upgrade["shotSize"];
         }
 
-        public void Fire(GameObject cannonBall, GameObject ship)
+        public void Fire(GameObject cannonBall, GameObject ship, GameObject cannonSmoke)
         {
             float trueSpreadAngle;
             if (_count == 1)
@@ -107,6 +112,7 @@ public class CannonFire : MonoBehaviour
                 //ball.GetComponent<Rigidbody>().velocity = angle * fireSpeed;
 
                 ball.transform.rotation = angle;
+                Instantiate(cannonSmoke, ship.transform.position, angle, ship.transform);
                 
 				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * _fireSpeed * (_verticalRatio / (_verticalRatio + 1.0f))) + (ball.transform.forward * _fireSpeed * (1.0f / (_verticalRatio + 1.0f))) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
                 ball.GetComponent<CannonBallBehavior>().damageDealt = _damage;
