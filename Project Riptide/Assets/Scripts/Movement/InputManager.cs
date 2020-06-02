@@ -96,6 +96,12 @@ public class InputManager : MonoBehaviour
             _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
             _clickCurrentPosition = _clickStartPosition;
 
+            //If click is close enough to base, don't move base when move starts
+            if(Vector3.SqrMagnitude(_iconBase.anchoredPosition - _clickStartPosition) <= MAX_ICON_DIST * MAX_ICON_DIST)
+            {
+                _startedMove = true;
+            }
+
             _clickDuration = 0;
         }
         //Mouse is being held
@@ -164,7 +170,7 @@ public class InputManager : MonoBehaviour
 	Vector3 GetTarget(Vector2 input)
 	{
         //Find direction of input from click start pos
-        Vector2 distVec = input - _clickStartPosition;
+        Vector2 distVec = input - _iconBase.anchoredPosition;
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
@@ -208,7 +214,7 @@ public class InputManager : MonoBehaviour
     void SetArrowIcon(Vector2 pos)
     {
         //Find distance of click from starting click
-        float dist = Vector2.Distance(pos, _clickStartPosition);
+        float dist = Vector2.Distance(pos, _iconBase.anchoredPosition);
         //If distance is less than max icon distance, set icon to pos
         if (dist > MAX_ICON_DIST)
         {
@@ -216,10 +222,10 @@ public class InputManager : MonoBehaviour
         }
 
         //Set position of arrow
-        _iconPoint.anchoredPosition = _clickStartPosition;
+        _iconPoint.anchoredPosition = _iconBase.anchoredPosition;
 
         //Find rotation for arrow
-        Vector3 diff = pos - _clickStartPosition;
+        Vector3 diff = pos - _iconBase.anchoredPosition;
         float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
         _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
 

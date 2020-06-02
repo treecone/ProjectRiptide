@@ -62,6 +62,8 @@ public class CannonFire : MonoBehaviour
             angle = -135;
         }
 
+        //Camera camera = Camera.main;
+        //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
         rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
         return angle;
