@@ -195,7 +195,11 @@ public class Inventory : MonoBehaviour
     /// <returns>true if the given amount of item was succesfully removed, false otherwise</returns>
     public bool RemoveItem(string itemName, int amount)
     {
-        if(this.Size == 0) { Debug.LogWarning("Nothing in inventory, nothing to delete!"); return false; }
+        if (this.Size == 0)
+        {
+            Debug.LogWarning("Nothing in inventory, nothing to delete!");
+            return false;
+        }
         Item itemToRemove = _itemDatabase.FindItem(itemName);
         for (int i = this.Size - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
