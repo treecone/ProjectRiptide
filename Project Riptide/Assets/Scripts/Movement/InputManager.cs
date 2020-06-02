@@ -9,7 +9,10 @@ public class InputManager : MonoBehaviour
 	private Camera _camera;
 
     private bool _startedMove = false;
-	//REFACTORED VARIABLES ONLY BELOW HERE
+    //REFACTORED VARIABLES ONLY BELOW HERE
+
+    [SerializeField]
+    private GameObject _shotIndicator;
 
 	//-----References-----
 	private GameObject _ship;
@@ -50,6 +53,10 @@ public class InputManager : MonoBehaviour
     private Vector2 _clickStartPosition;
     private Vector2 _clickCurrentPosition;
     private float _clickDuration;
+    private const float MAX_FAST_CLICK_DURATION = 0.4f;
+
+    private float _fireRate = 1.0f;
+    private float _currFireTime = 0.0f;
 
     void Awake()
 	{
@@ -77,7 +84,6 @@ public class InputManager : MonoBehaviour
 			TakeMobileInput();
 		else
 			TakeKeyboardInput();
-		_doubleClickCheck += Time.deltaTime;
 
         Enemy enemy;
         enemy = CheckEnemy(_ship.transform.right);
@@ -86,7 +92,8 @@ public class InputManager : MonoBehaviour
         enemy = CheckEnemy(-_ship.transform.right);
         if (enemy != null)
             AutoFire(enemy, -15.0f);
-            
+
+        _currFireTime += Time.deltaTime;
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
@@ -301,31 +308,34 @@ public class InputManager : MonoBehaviour
     /// Takes keyboard input from player
     /// </summary>
 	void TakeKeyboardInput()
-	{
+    {
         //Mouse initally pressed
-		if (Input.GetMouseButtonDown(0)) //mouse down
-		{
+        if (Input.GetMouseButtonDown(0)) //mouse down
+        {
             //Set start position of click
-			_clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
-			_clickCurrentPosition = _clickStartPosition;
+            _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
+            _clickCurrentPosition = _clickStartPosition;
 
-			_clickDuration = 0;
-		}
+            _doubleClickCheck = 0;
+            _clickDuration = 0;
+        }
         //Mouse is being held
-		else if (Input.GetMouseButton(0)) //mouse held
-		{
-			_clickDuration += Time.deltaTime;
+        else if (Input.GetMouseButton(0)) //mouse held
+        {
+            _clickDuration += Time.deltaTime;
             _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
             Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
             //If click has moved enough and enough time has passed, stop checking for double click
-            if (clickDisplacement.magnitude > 50f && _clickDuration > 0.1f)
+            if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
                 _doubleClickCheck = 0.9f;
-            
+
+            _doubleClickCheck += Time.deltaTime;
+
             //If click is not a double click, handle it as movement
             if (_doubleClickCheck > 0.8f)
-			{
+            {
                 //If movement just started
-                if(!_startedMove)
+                if (!_startedMove)
                 {
                     //Set position of icon base
                     _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
@@ -346,15 +356,25 @@ public class InputManager : MonoBehaviour
                 }
 
                 //Get direction of movement for player
-				Vector3 pos = GetTarget(_clickCurrentPosition);
-				_movementScript.TargetDirection = pos - _ship.transform.position;
-			}
-		}
+                Vector3 pos = GetTarget(_clickCurrentPosition);
+                _movementScript.TargetDirection = pos - _ship.transform.position;
+            }
+        }
         //If mouse is released
-		else if (Input.GetMouseButtonUp(0)) //mouse up 
-		{
+        else if (Input.GetMouseButtonUp(0)) //mouse up 
+        {
             _startedMove = false;
-			Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
+            if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
+            {
+                //_clickOne = false;
+                Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
+                float angle = _cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
+                GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
+
+                indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
+            }
+            _doubleClickCheck = 0.0f;
+            /*Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
 			Vector2 clickVelocity = clickDisplacement / _clickDuration;
             //Check for swipe
 			if (clickVelocity.magnitude > MIN_SWIPE_SPEED && clickDisplacement.magnitude > MIN_SWIPE_DISPLACEMENT) //swipe behavior
@@ -380,14 +400,14 @@ public class InputManager : MonoBehaviour
 			else //click behavior
 			{
 				//If double click, fire
-				if (_clickOne && _doubleClickCheck < 0.45f) //double click
+				if (_doubleClickCheck < 0.45f) //double click
 				{
-                    _clickOne = false;
+                    //_clickOne = false;
                     Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
 					_cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
 				}
                 //If first click, remember
-				else if (!_clickOne)
+				/*else if (!_clickOne)
 				{
 					_clickOne = true;
 				}
@@ -399,8 +419,9 @@ public class InputManager : MonoBehaviour
 			Vector3 pos = GetTarget(_clickCurrentPosition);
 			_movementScript.TargetDirection = pos - _ship.transform.position;
             _clickOne = false;
-		}
-	}
+		}*/
+        }
+    }
 
     /// <summary>
     /// Finds direction to move player towards
@@ -548,9 +569,12 @@ public class InputManager : MonoBehaviour
 
     private void AutoFire(Enemy enemy, float offset)
     {
-        Debug.DrawLine(_ship.transform.position, enemy.transform.position, Color.blue);
-        Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
-        _cannonFireScript.Fire("right", new Vector3(diff.x, 0, diff.z), offset);
+        if (_currFireTime >= _fireRate)
+        {
+            Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
+            _cannonFireScript.Fire("right", new Vector3(diff.x, 0, diff.z), offset);
+            _currFireTime = 0.0f;
+        }
     }
 }
 

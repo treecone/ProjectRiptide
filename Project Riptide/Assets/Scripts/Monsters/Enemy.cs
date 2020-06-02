@@ -409,7 +409,6 @@ public partial class Enemy : Physics
         if (collision.tag == "Obstical")
         {
             _obsticalCollision = true;
-            Debug.Log("Obstical Collision");
         }
         if (collision.tag == "Player")
             _playerCollision = true;
