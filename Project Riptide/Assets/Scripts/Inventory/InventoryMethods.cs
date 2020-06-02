@@ -5,7 +5,6 @@ using TMPro;
 
 public class InventoryMethods : MonoBehaviour
 {
-
     [SerializeField]
     private TextMeshProUGUI _trashField;
     [SerializeField]
@@ -14,6 +13,8 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _itemName;
     [SerializeField]
     private TextMeshProUGUI _itemDescription;
+    [SerializeField]
+    private TextMeshProUGUI _trashName;
 
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
     
@@ -26,7 +27,6 @@ public class InventoryMethods : MonoBehaviour
         int amount = System.Convert.ToInt32(_trashField.text);
 
         //if active item exists
-        /*
         if (_activeItem != null)
         {
             amount += num;
@@ -41,11 +41,10 @@ public class InventoryMethods : MonoBehaviour
             }
             _trashField.SetText("{0}", amount);
         }
-        */
-        amount += num;
-        _trashField.SetText("{0}", amount);
-
-        Debug.Log("E");
+        else
+        {
+            Debug.Log("No Item");
+        }
     }
 
     /// <summary>
@@ -89,11 +88,20 @@ public class InventoryMethods : MonoBehaviour
         _trashField.SetText("0");
 
         _activeItem = inventorySlot.item;
-        Debug.Log("Clicked on " + _activeItem.Name);
+        Debug.Log("Clicked on " + _activeItem.Name);    
         _itemName.SetText(_activeItem.Name);
         _itemDescription.SetText(_activeItem.Description);
+        //{0} did not work here
+        _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
     }
 
+
+    public void TrashItem(Inventory inventory)
+    {
+        int amount = System.Convert.ToInt32(_trashField.text);
+
+        inventory.RemoveItem(_activeItem.Name, amount);
+    }
 
 
 }
