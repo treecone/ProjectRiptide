@@ -55,7 +55,10 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    private float _fireRate = 1.0f;
+    [SerializeField]
+    private bool _autoFire = false;
+
+    private float _fireRate = 0.5f;
     private float _currFireTime = 0.0f;
 
     void Awake()
@@ -85,13 +88,16 @@ public class InputManager : MonoBehaviour
 		else
 			TakeKeyboardInput();
 
-        Enemy enemy;
-        enemy = CheckEnemy(_ship.transform.right);
-        if (enemy != null)
-            AutoFire(enemy, 15.0f);
-        enemy = CheckEnemy(-_ship.transform.right);
-        if (enemy != null)
-            AutoFire(enemy, -15.0f);
+        if (_autoFire)
+        {
+            Enemy enemy;
+            enemy = CheckEnemy(_ship.transform.right);
+            if (enemy != null)
+                AutoFire(enemy, 15.0f);
+            enemy = CheckEnemy(-_ship.transform.right);
+            if (enemy != null)
+                AutoFire(enemy, -15.0f);
+        }
 
         _currFireTime += Time.deltaTime;
 
@@ -327,12 +333,10 @@ public class InputManager : MonoBehaviour
             Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
             //If click has moved enough and enough time has passed, stop checking for double click
             if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
-                _doubleClickCheck = 0.9f;
-
-            _doubleClickCheck += Time.deltaTime;
+                _clickDuration = 0.9f;
 
             //If click is not a double click, handle it as movement
-            if (_doubleClickCheck > 0.8f)
+            if (_clickDuration > 0.8f)
             {
                 //If movement just started
                 if (!_startedMove)
@@ -364,14 +368,17 @@ public class InputManager : MonoBehaviour
         else if (Input.GetMouseButtonUp(0)) //mouse up 
         {
             _startedMove = false;
-            if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
+            if (!_autoFire && _clickDuration < MAX_FAST_CLICK_DURATION) //double click
             {
                 //_clickOne = false;
-                Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
-                float angle = _cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
-                GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
-
-                indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
+                if (_currFireTime >= _fireRate)
+                {
+                    Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
+                    float angle = _cannonFireScript.Fire("right", GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
+                    GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
+                    indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
+                    _currFireTime = 0.0f;
+                }
             }
             _doubleClickCheck = 0.0f;
             /*Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;

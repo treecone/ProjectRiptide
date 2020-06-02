@@ -265,11 +265,12 @@ public partial class Enemy : Physics
                     if (_playerDistance < 20.0f)
                     {
                         _specialCooldown[(int)KoiAttackState.BubbleBlast] -= Time.deltaTime;
-                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[3] < 0.0f && Random.Range(1, 4) == 1)
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 6.0f;
                             _specialCooldown[(int)KoiAttackState.BubbleBlast] = 8.0f;
+                            _initalPos = transform.position.y;
                             _currTime = 0;
                             //Set up bubble blast attack
                             _actionQueue.Enqueue(KoiStopTransition);
