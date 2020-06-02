@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class InventoryMethods : MonoBehaviour
 {
@@ -15,6 +16,12 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _itemDescription;
     [SerializeField]
     private TextMeshProUGUI _trashName;
+    [SerializeField]
+    private Slider _volumeSlider;
+    [SerializeField]
+    private Slider _soundSlider;
+
+    const float soundValue = .5f;
 
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
     
@@ -103,5 +110,10 @@ public class InventoryMethods : MonoBehaviour
         inventory.RemoveItem(_activeItem.Name, amount);
     }
 
+    public void ResetSound()
+    {
+        _volumeSlider.value = soundValue;
+        _soundSlider.value = soundValue;
+    }
 
 }
