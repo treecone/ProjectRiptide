@@ -18,6 +18,7 @@ public class InputManager : MonoBehaviour
 	private GameObject _ship;
 	private ShipMovement _movementScript;
 	private CannonFire _cannonFireScript;
+    private CameraController _cameraController;
 	private RectTransform _iconPoint;
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
@@ -38,22 +39,23 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    [SerializeField]
-    private bool _autoFire = false;
-    [SerializeField]
-    private bool _semiAutoFire = false;
-
     private float _fireRate = 0.5f;
     private float _currFireTime = 0.0f;
 
     private float _viewRange = 20.0f;
 
+    [SerializeField]
+    private Material _glMaterial;
+    private bool _combatMode = false;
+    private const float MAX_COMBAT_RANGE = 50.0f;
+    private Enemy _targetEnemy;
     private Enemy _leftEnemy;
     private Enemy _rightEnemy;
 
     void Awake()
 	{
 		_camera = Camera.main;
+        _cameraController = _camera.GetComponent<CameraController>();
         ScreenCorrect = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
         _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
         _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
@@ -72,26 +74,49 @@ public class InputManager : MonoBehaviour
 
 	    TakeKeyboardInput();
 
-        if (_autoFire)
+        if (_combatMode)
         {
+            _currFireTime += Time.deltaTime;
+
+            bool fired = false;
             _rightEnemy = CheckEnemy(_ship.transform.right);
             if (_rightEnemy != null && !_rightEnemy.IsDying)
-                AutoFire(_rightEnemy, 15.0f);
+            {
+                if(AutoFire(_rightEnemy, 15.0f))
+                {
+                    fired = true;
+                }
+            }
             _leftEnemy = CheckEnemy(-_ship.transform.right);
             if (_leftEnemy != null && !_leftEnemy.IsDying)
-                AutoFire(_leftEnemy, -15.0f);
-        }
-
-        if(_semiAutoFire)
-        {
-            _rightEnemy = CheckEnemy(_ship.transform.right);
-            _leftEnemy = CheckEnemy(-_ship.transform.right);
-            //Set indicator if enemy is in range
-            if(_leftEnemy != null && !_leftEnemy.IsDying && _currFireTime >= _fireRate)
             {
-                _movementScript.ToggleIndicator(true);
+                if(AutoFire(_leftEnemy, -15.0f))
+                {
+                    fired = true;
+                }
             }
-            else if(_rightEnemy != null && !_rightEnemy.IsDying && _currFireTime >= _fireRate)
+
+            if(_targetEnemy.IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+            {
+                _targetEnemy = CheckEnemyInRadius(MAX_COMBAT_RANGE, true);
+
+                if(_targetEnemy == null)
+                {
+                    _combatMode = false;
+                    _cameraController.ToggleCombatView(false);
+                }
+            }
+
+            if(fired)
+            {
+                _currFireTime = 0;
+            }
+        }
+        else
+        {
+            _targetEnemy = CheckEnemyInRadius(_viewRange, false);
+            //Set indicator if enemy is in range
+            if (_targetEnemy != null && !_targetEnemy.IsDying)
             {
                 _movementScript.ToggleIndicator(true);
             }
@@ -100,8 +125,6 @@ public class InputManager : MonoBehaviour
                 _movementScript.ToggleIndicator(false);
             }
         }
-
-        _currFireTime += Time.deltaTime;
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
@@ -170,29 +193,13 @@ public class InputManager : MonoBehaviour
         else if (Input.GetMouseButtonUp(0)) //mouse up 
         {
             _startedMove = false;
-            if (!_autoFire && _clickDuration < MAX_FAST_CLICK_DURATION) //double click
+            if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
             {
-                //_clickOne = false;
-                if (_currFireTime >= _fireRate)
+                if (!_combatMode)
                 {
-                    if (!_semiAutoFire)
-                    {
-                        float angle = _cannonFireScript.Fire(GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
-                        GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
-                        indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
-                    }
-                    else
-                    {
-                        if (_rightEnemy != null && !_rightEnemy.IsDying)
-                        {
-                            AutoFire(_rightEnemy, 15.0f);
-                        }
-                        if (_leftEnemy != null && !_leftEnemy.IsDying)
-                        {
-                            AutoFire(_leftEnemy, -15.0f);
-                        }
-                    }
-                    _currFireTime = 0.0f;
+                     _combatMode = true;
+                     _cameraController.ToggleCombatView(true);
+                     _movementScript.ToggleIndicator(false);
                 }
             }
         }
@@ -284,7 +291,9 @@ public class InputManager : MonoBehaviour
     /// <returns>Enemy found, null if none</returns>
     private Enemy CheckEnemy(Vector3 targetDir)
     {
-        RaycastHit hit = new RaycastHit();
+        Enemy foundEnemy = null;
+        float dist = 999999;
+        RaycastHit[] hits;
         Vector3 detectPosition = _ship.transform.position;
         targetDir.Normalize();
 
@@ -292,23 +301,89 @@ public class InputManager : MonoBehaviour
         {
             //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
+            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, _viewRange);
+            //Check each hit from raycast
+            foreach (RaycastHit hit in hits)
             {
+                //Check if hit was from enemy
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {
-                    return hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    if (enemy != null && !enemy.IsDying)
+                    {
+                        //Take only the closest enenmy
+                        float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
+                        if (enemyDist < dist)
+                        {
+                            foundEnemy = enemy;
+                            dist = enemyDist;
+                        }
+                    }
                 }
             }
-            if (UnityEngine.Physics.Raycast(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
+            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, _viewRange);
+            //Check each hit from raycast
+            foreach (RaycastHit hit in hits)
             {
+                //Check if hit was from enemy
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {
-                    return hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    if (enemy != null && !enemy.IsDying)
+                    {
+                        //Take only the closest enenmy
+                        float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
+                        if (enemyDist < dist)
+                        {
+                            foundEnemy = enemy;
+                            dist = enemyDist;
+                        }
+                    }
                 }
             }
         }
 
-        return null;
+        return foundEnemy;
+    }
+
+    /// <summary>
+    /// Finds the closest enemy in a radius around the player
+    /// </summary>
+    /// <param name="radius">Radius to check</param>
+    /// <param name="checkHostile">Ensure monster is hostile</param>
+    /// <returns>Enemy found, null if none</returns>
+    private Enemy CheckEnemyInRadius(float radius, bool checkHostile)
+    {
+        Collider[] colliders;
+        Enemy foundEnemy = null;
+        float dist = 999999;
+        colliders = UnityEngine.Physics.OverlapSphere(_ship.transform.position, radius);
+        //Check all colliders found to find closest enemy
+        foreach (Collider collider in colliders)
+        {
+            if (collider.gameObject.tag == "Hitbox")
+            {
+                Enemy enemy = collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                if (enemy != null && !enemy.IsDying)
+                {
+                    //If check hostile is on, make sure enemy is not passive
+                    if (checkHostile)
+                    {
+                        if (enemy.State == EnemyState.Passive)
+                        {
+                            continue;
+                        }
+                    }
+                    float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
+                    if (enemyDist < dist)
+                    {
+                        foundEnemy = enemy;
+                        dist = enemyDist;
+                    }
+                }
+            }
+        }
+        return foundEnemy;
     }
 
     /// <summary>
@@ -316,13 +391,35 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="enemy">Enemy to fire at</param>
     /// <param name="offset">Offset of ship fire angle</param>
-    private void AutoFire(Enemy enemy, float offset)
+    private bool AutoFire(Enemy enemy, float offset)
     {
         if (_currFireTime >= _fireRate)
         {
             Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
             _cannonFireScript.Fire(new Vector3(diff.x, 0, diff.z), offset);
-            _currFireTime = 0.0f;
+            return true;
+        }
+        return false;
+    }
+
+    private void OnRenderObject()
+    {
+        if (_rightEnemy != null && !_rightEnemy.IsDying)
+        {
+            _glMaterial.SetPass(0);
+            GL.Begin(GL.LINES);
+            GL.Vertex(_ship.transform.position);
+            GL.Vertex(_rightEnemy.transform.position);
+            GL.End();
+        }
+
+        if (_leftEnemy != null && !_leftEnemy.IsDying)
+        {
+            _glMaterial.SetPass(0);
+            GL.Begin(GL.LINES);
+            GL.Vertex(_ship.transform.position);
+            GL.Vertex(_leftEnemy.transform.position);
+            GL.End();
         }
     }
 }

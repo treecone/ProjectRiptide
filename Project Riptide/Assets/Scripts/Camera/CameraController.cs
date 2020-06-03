@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Transform _player;
     [SerializeField]
-    private Vector3 _offset = new Vector3(30, 30 , 0);
+    private Vector3 _offset = new Vector3(35, 35 , 0);
     [SerializeField]
     private float _smoothSpeed = 0.01f;
 
@@ -39,5 +39,17 @@ public class CameraController : MonoBehaviour
         transform.position = smoothedPosition;
 
         transform.LookAt(_player);
+    }
+
+    public void ToggleCombatView(bool on)
+    {
+        if(on)
+        {
+            _offset = new Vector3(30, 30, 0);
+        }
+        else
+        {
+            _offset = new Vector3(35, 35, 0);
+        }
     }
 }

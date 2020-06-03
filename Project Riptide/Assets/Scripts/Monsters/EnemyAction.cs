@@ -476,7 +476,6 @@ public partial class Enemy : Physics
             //Stop moving fish if it goes below its original height
             if (transform.position.y <= _initalPos)
             {
-                ReturnToInitalPosition();
                 time = MAX_TIME;
             }
         }
@@ -486,6 +485,7 @@ public partial class Enemy : Physics
             StopMotion();
             GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            ReturnToInitalPosition();
             _inKnockback = false;
             return false;
         }

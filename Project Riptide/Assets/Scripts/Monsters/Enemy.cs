@@ -36,7 +36,7 @@ public partial class Enemy : Physics
     private float _maxHealth;
 
     private EnemyState _state;
-    public EnemyState State { get; set; }
+    public EnemyState State => _state;
 
     //player's distance from enemy
     private float _playerDistance;
@@ -102,13 +102,25 @@ public partial class Enemy : Physics
     public bool IsDying => _dying;
 
     private Vector2 _enemyStartingChunk;
-    public Vector2 EnemyStartingChunk { get; set; }
+    public Vector2 EnemyStartingChunk
+    {
+        get { return _enemyStartingChunk; }
+        set { _enemyStartingChunk = value; }
+    }
 
     private Vector2 _enemyStartingPosition;
-    public Vector2 EnemyStartingPosition { get; set; }
+    public Vector2 EnemyStartingPosition
+    {
+        get { return _enemyStartingPosition; }
+        set { _enemyStartingPosition = value; }
+    }
 
     private int _enemyID;
-    public int EnemyID { get; set; }
+    public int EnemyID
+    {
+        get { return _enemyID; }
+        set { _enemyID = value; }
+    }
 
     // Start is called before the first frame update
     protected override void Start()
@@ -377,9 +389,9 @@ public partial class Enemy : Physics
     /// </summary>
     public void DestroyEnemy()
     {
-        GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
-        lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
-        lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.Rarity];
+        //GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
+        //lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
+        //lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.Rarity];
         //Kill monster
         Destroy(gameObject);
     }
@@ -547,7 +559,7 @@ public partial class Enemy : Physics
             foreach(RaycastHit hit in hits)
             {
                 //Make sure hit was not from their own hitbox
-                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent == gameObject))
+                if (!(hit.collider.tag == "Hitbox" && hit.collider.transform.parent.gameObject == gameObject))
                 {
                     return true;
                 }
