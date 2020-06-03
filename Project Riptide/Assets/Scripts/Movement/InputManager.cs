@@ -22,6 +22,7 @@ public class InputManager : MonoBehaviour
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 500.0f;
+    private const float MAX_ICON_RECLICK_DIST = MAX_ICON_DIST + 100.0f;
     private const float MAX_ARROW_LENGTH = 6 * (MAX_ICON_DIST / 500.0f);
 
 
@@ -39,12 +40,16 @@ public class InputManager : MonoBehaviour
 
     [SerializeField]
     private bool _autoFire = false;
+    [SerializeField]
+    private bool _semiAutoFire = false;
 
     private float _fireRate = 0.5f;
     private float _currFireTime = 0.0f;
 
-    private float _halfView = 20.0f;
-    private float _viewRange = 30.0f;
+    private float _viewRange = 20.0f;
+
+    private Enemy _leftEnemy;
+    private Enemy _rightEnemy;
 
     void Awake()
 	{
@@ -69,13 +74,31 @@ public class InputManager : MonoBehaviour
 
         if (_autoFire)
         {
-            Enemy enemy;
-            enemy = CheckEnemy(_ship.transform.right);
-            if (enemy != null && !enemy.IsDying)
-                AutoFire(enemy, 15.0f);
-            enemy = CheckEnemy(-_ship.transform.right);
-            if (enemy != null && !enemy.IsDying)
-                AutoFire(enemy, -15.0f);
+            _rightEnemy = CheckEnemy(_ship.transform.right);
+            if (_rightEnemy != null && !_rightEnemy.IsDying)
+                AutoFire(_rightEnemy, 15.0f);
+            _leftEnemy = CheckEnemy(-_ship.transform.right);
+            if (_leftEnemy != null && !_leftEnemy.IsDying)
+                AutoFire(_leftEnemy, -15.0f);
+        }
+
+        if(_semiAutoFire)
+        {
+            _rightEnemy = CheckEnemy(_ship.transform.right);
+            _leftEnemy = CheckEnemy(-_ship.transform.right);
+            //Set indicator if enemy is in range
+            if(_leftEnemy != null && !_leftEnemy.IsDying && _currFireTime >= _fireRate)
+            {
+                _movementScript.ToggleIndicator(true);
+            }
+            else if(_rightEnemy != null && !_rightEnemy.IsDying && _currFireTime >= _fireRate)
+            {
+                _movementScript.ToggleIndicator(true);
+            }
+            else
+            {
+                _movementScript.ToggleIndicator(false);
+            }
         }
 
         _currFireTime += Time.deltaTime;
@@ -97,7 +120,7 @@ public class InputManager : MonoBehaviour
             _clickCurrentPosition = _clickStartPosition;
 
             //If click is close enough to base, don't move base when move starts
-            if(Vector3.SqrMagnitude(_iconBase.anchoredPosition - _clickStartPosition) <= MAX_ICON_DIST * MAX_ICON_DIST)
+            if(Vector3.SqrMagnitude(_iconBase.anchoredPosition - _clickStartPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _startedMove = true;
             }
@@ -152,10 +175,23 @@ public class InputManager : MonoBehaviour
                 //_clickOne = false;
                 if (_currFireTime >= _fireRate)
                 {
-                    Debug.DrawRay(_ship.transform.position, GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, Color.red, 5.0f);
-                    float angle = _cannonFireScript.Fire(GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
-                    GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
-                    indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
+                    if (!_semiAutoFire)
+                    {
+                        float angle = _cannonFireScript.Fire(GetFireTarget((Input.mousePosition - ScreenCorrect) * _screenScale) - _ship.transform.position, 0);
+                        GameObject indicator = Instantiate(_shotIndicator, _iconBase.transform.position, Quaternion.identity, _canvasRect.gameObject.transform);
+                        indicator.transform.localRotation = Quaternion.Euler(0, 0, -(_ship.transform.eulerAngles.y + 90) + angle);
+                    }
+                    else
+                    {
+                        if (_rightEnemy != null && !_rightEnemy.IsDying)
+                        {
+                            AutoFire(_rightEnemy, 15.0f);
+                        }
+                        if (_leftEnemy != null && !_leftEnemy.IsDying)
+                        {
+                            AutoFire(_leftEnemy, -15.0f);
+                        }
+                    }
                     _currFireTime = 0.0f;
                 }
             }
@@ -252,7 +288,7 @@ public class InputManager : MonoBehaviour
         Vector3 detectPosition = _ship.transform.position;
         targetDir.Normalize();
 
-        for (int i = 0; i <= _halfView; i += 4)
+        for (int i = 0; i <= _cannonFireScript.ShotAngle / 2; i += 4)
         {
             //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
