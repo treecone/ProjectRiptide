@@ -14,7 +14,7 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Vector3 _offset = new Vector3(30, 30 , 0);
     [SerializeField]
-    private float _smoothSpeed = 10f;
+    private float _smoothSpeed = 0.01f;
 
     void Start ()
     {

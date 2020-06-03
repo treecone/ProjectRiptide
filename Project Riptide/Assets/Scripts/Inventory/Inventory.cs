@@ -291,4 +291,14 @@ public class Inventory : MonoBehaviour
         return count;
     }
 
+    public List<Item> GetItemList()
+    {
+        List<Item> itemList = new List<Item>();
+        for (int i = 0; i < inventorySlots.Count; i++)
+        {
+            itemList.Add(this[i]);
+        }
+        return itemList;
+    }
+
 }

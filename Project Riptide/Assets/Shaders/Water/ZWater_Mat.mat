@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5487268904660880403
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
 --- !u!21 &2100000
 Material:
   serializedVersion: 6
@@ -7,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SkyWater 1
-  m_Shader: {fileID: -6465566751694194690, guid: 32b269833a6379843878854950b44dc0,
+  m_Name: ZWater_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: ef0be3f2f80a7794a9002202192baec2,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -44,26 +57,36 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_29D24458_Texture_1:
+        m_Texture: {fileID: 2800000, guid: eb14a3d47df663c4197d34190cdec3fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_B9BB5862_Texture_1:
+        m_Texture: {fileID: 2800000, guid: c1eacb64e2348f245b4a4235c89737bd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_6F9EE481_Texture_1:
+        m_Texture: {fileID: 2800000, guid: c1eacb64e2348f245b4a4235c89737bd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Texture2DAsset_6774FAE7_Out_0:
-        m_Texture: {fileID: 2800000, guid: eb14a3d47df663c4197d34190cdec3fa, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_233A5494: 2
-    - Vector1_280AC35A: 200
-    - Vector1_3CA81952: 1.03
-    - Vector1_4A2A502: 0
-    - Vector1_6766769B: 0.05
-    - Vector1_723DDDE9: 1.5
-    - Vector1_A0913B6D: 0.2
-    - Vector1_A839D52C: 0.25
-    - Vector1_AD948E6C: 0.05
-    - Vector1_C15F00E9: 15
-    - Vector1_DF25647B: 0.5
+    - Vector1_361A02E2: 0.5
+    - Vector1_43058008: -0.15
+    - Vector1_490F5111: 39
+    - Vector1_5078A7C2: 30
+    - Vector1_570FDA5: 0.1
+    - Vector1_85AC2B1D: 0
+    - Vector1_8CE0FE94: 0
+    - Vector1_9187C45A: 0.2
+    - Vector1_A1D73D8E: 4
+    - Vector1_A90D56E6: 0.2
+    - Vector1_D256AA5B: 18.33
+    - Vector1_E8E6B7ED: 2
+    - Vector1_EF41CD6C: 0.001
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -86,26 +109,12 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_7F1878B0: {r: 0.8207547, g: 0.80914026, b: 0.80914026, a: 1}
-    - Color_865F75F6: {r: 0.18534178, g: 0.77839935, b: 0.8018868, a: 1}
-    - Color_CCF67CB0: {r: 0, g: 0.08884642, b: 0.2264151, a: 1}
-    - Color_D66500FC: {r: 1, g: 1, b: 1, a: 0}
-    - Color_FFECDAC1: {r: 0.044544343, g: 0.63578683, b: 0.7264151, a: 1}
-    - Vector3_CAD1EFCE: {r: 127.82, g: 14.4, b: -18.12, a: -35.13}
-    - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - Color_72F6F359: {r: 0.25943398, g: 0.6493655, b: 1, a: 1}
+    - Color_BDBE1842: {r: 0, g: 0.96256685, b: 1, a: 1}
+    - Color_E6083C73: {r: 0, g: 0.61237675, b: 0.9137255, a: 1}
+    - Color_FF206D58: {r: 1, g: 1, b: 1, a: 0}
+    - Vector2_B9A5CF73: {r: 30, g: 30, b: 0, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
---- !u!114 &6917689332599159324
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
