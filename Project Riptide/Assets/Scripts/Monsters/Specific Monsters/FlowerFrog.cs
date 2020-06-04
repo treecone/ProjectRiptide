@@ -5,7 +5,10 @@ using UnityEngine;
 public partial class FlowerFrog : Enemy
 {
     [SerializeField]
-    private LineRenderer _tounge;
+    protected LineRenderer _tounge;
+
+    protected const float LATCH_DAMAGE_CAP = 15;
+    protected float _latchStartHealth = 0;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -20,7 +23,7 @@ public partial class FlowerFrog : Enemy
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 60.0f;
+        _wanderRadius = 30.0f;
         _hostileRadius = 30.0f;
         _passiveRadius = 60.0f;
         _maxRadius = 240.0f;
@@ -32,20 +35,22 @@ public partial class FlowerFrog : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.1f;
+        _pushMult = 2.0f;
         _HostileAI = HostileFlowerFrog;
-        _PassiveAI = PassiveDoNothing;
+        _PassiveAI = PassiveReturnToRadius;
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
-
-        //Setup tounge hitbox
-        CreateHitbox(Vector3.zero, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0);
     }
 
     // Update is called once per frame
     protected override void Update()
     {
+        _tounge.transform.rotation = Quaternion.identity;
         base.Update();
+        if(IsDying)
+        {
+            _tounge.SetPosition(1, Vector3.zero);
+        }
     }
 }

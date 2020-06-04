@@ -189,7 +189,7 @@ public partial class Enemy : Physics
                     Vector3 knockback = PlayerPosition() - transform.position;
                     knockback.Normalize();
                     knockback *= 40.0f;
-                    _SendKnockback(knockback);
+                    SendKnockback(knockback);
                 }
                 time = 0.7f;
             }
@@ -812,8 +812,8 @@ public partial class FlowerFrog : Enemy
     /// <returns></returns>
     protected bool ToungeCharge(ref float time)
     {
-        const float MAX_TIME = 2.0f;
-        const float STALL_TIME = 0.4f;
+        const float MAX_TIME = 1.5f;
+        const float STALL_TIME = 0.1f;
 
         if (time < MAX_TIME - STALL_TIME)
         {
@@ -848,18 +848,20 @@ public partial class FlowerFrog : Enemy
     /// <returns></returns>
     protected bool ShootTounge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = 0.8f;
 
         if(time == 0)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
+            _hitboxes.Add(CreateHitbox(_tounge.transform.localPosition, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
+            _hitboxes[_hitboxes.Count - 1].transform.parent = _tounge.transform;
         }
 
         if(_playerCollision)
         {
             //LATCH ONTO PLAYER
-            _tounge.SetPosition(1, PlayerPosition());
+                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
             _activeStates[(int)FlowerFrogAttackState.Latched] = true;
+            _latchStartHealth = _health;
             time = MAX_TIME;
         }
             
@@ -872,8 +874,8 @@ public partial class FlowerFrog : Enemy
         if (time < MAX_TIME)
         {
             //Move tounge forward
-            _tounge.SetPosition(1, new Vector3(_tounge.GetPosition(1).x, _tounge.GetPosition(1).y, _tounge.GetPosition(1).z + 0.6f * Time.deltaTime));
-            _hitboxes[_hitboxes.Count - 1].transform.position = _tounge.GetPosition(1);
+            _tounge.SetPosition(1, _tounge.GetPosition(1) + transform.forward * 25.0f * Time.deltaTime);
+            _hitboxes[_hitboxes.Count - 1].transform.localPosition = _tounge.GetPosition(1);
         }
 
         if(time >= MAX_TIME)
@@ -901,7 +903,7 @@ public partial class FlowerFrog : Enemy
         }
 
         //Move tounge backwards
-        _tounge.SetPosition(1, new Vector3(_tounge.GetPosition(1).x, _tounge.GetPosition(1).y, _tounge.GetPosition(1).z - 0.6f * Time.deltaTime));
+        _tounge.SetPosition(1, _tounge.GetPosition(1) - (_tounge.GetPosition(1) - _tounge.GetPosition(0)).normalized * 30.0f * Time.deltaTime);
 
         //If tonge moves back too far, set time to max
         if (_tounge.GetPosition(1).z <= 0)
@@ -913,5 +915,25 @@ public partial class FlowerFrog : Enemy
         {
             return true;
         }
+    }
+
+    protected void ToungeDrag()
+    {
+        const float MAX_DRAG_DIST = 15.0f;
+
+        //Seek destination
+        Vector3 netForce = Vector3.zero;
+        if(Vector3.SqrMagnitude(transform.position - PlayerPosition()) > MAX_DRAG_DIST * MAX_DRAG_DIST)
+        {
+            netForce += PlayerPosition() - transform.position;
+            netForce = new Vector3(netForce.x, 0, netForce.z);
+            netForce = netForce.normalized * 20.0f;
+        }
+
+        Quaternion desiredRotation = Quaternion.LookRotation(PlayerPosition() - transform.position);
+        SetSmoothRotation(desiredRotation, 2.0f, 0.75f, 3.0f);
+
+        ApplyForce(netForce);
+        ApplyFriction(0.5f);
     }
 }
