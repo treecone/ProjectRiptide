@@ -440,36 +440,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!1 &3559024751126874004
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6329698721948742475}
-  m_Layer: 0
-  m_Name: detectPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6329698721948742475
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3559024751126874004}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.129, z: 2.399}
-  m_LocalScale: {x: 0.39600042, y: 0.39600042, z: 0.39600042}
-  m_Children: []
-  m_Father: {fileID: 6303210241429338574}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6999395955324292061
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,7 +449,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6303210241429338574}
-  - component: {fileID: 1297938975235730218}
+  - component: {fileID: 5551869437308580067}
   - component: {fileID: 1712334109}
   m_Layer: 0
   m_Name: KoiBoss
@@ -504,11 +474,10 @@ Transform:
   - {fileID: 6085025434224507579}
   - {fileID: 840647768181334762}
   - {fileID: 6285888865819060551}
-  - {fileID: 6329698721948742475}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1297938975235730218
+--- !u!114 &5551869437308580067
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -517,17 +486,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6999395955324292061}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62649f338f700a6459119c1bf0e8e407, type: 3}
+  m_Script: {fileID: 11500000, guid: 8032609741ed88249b16b8d2e2d25aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
-  _maxSpeed: 1.5
-  _enemyType: 1
+  _maxSpeed: 5
   _projectile: {fileID: 1807429604883853674, guid: 0a043637e4fac3944a273d1f8efb9c3d,
     type: 3}
   _healthBarObject: {fileID: 1212731510}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
-  _camera: {fileID: 0}
   _lengthMult: 6
   _widthMult: 1.5
   _heightMult: 0.5
@@ -1003,15 +970,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 875cbe9d8367a3c4f800af87e0c6d793, type: 3}
---- !u!1 &1729157759141713703 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 875cbe9d8367a3c4f800af87e0c6d793,
-    type: 3}
-  m_PrefabInstance: {fileID: 7268491783700467246}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2424179094470419764 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 875cbe9d8367a3c4f800af87e0c6d793,
+    type: 3}
+  m_PrefabInstance: {fileID: 7268491783700467246}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1729157759141713703 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -927199367670048503, guid: 875cbe9d8367a3c4f800af87e0c6d793,
     type: 3}
   m_PrefabInstance: {fileID: 7268491783700467246}
   m_PrefabAsset: {fileID: 0}

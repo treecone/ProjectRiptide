@@ -1,12 +1,16 @@
-﻿using System.Collections;
+﻿/*This script contains actions used by various enemy classes
+ * uses partial classes to declare actions
+*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Actions available to all enemys
 public partial class Enemy : Physics
 {
     //General method for making the moster follow the player
     //Usually should be used for enemy AI when not in an action
-    private void FollowPlayer()
+    protected void FollowPlayer()
     {
         Vector3 destination = Vector3.zero;
         //Check for obstacle
@@ -37,7 +41,7 @@ public partial class Enemy : Physics
 
     //General method for making the moster follow the player
     //Usually should be used for enemy AI when not in an action
-    private void FleePlayer(float speed)
+    protected void FleePlayer(float speed)
     {
         Vector3 destination = Vector3.zero;
         Vector3 avoidDirection = (transform.position - _PlayerPosition()) + transform.position;
@@ -69,7 +73,7 @@ public partial class Enemy : Physics
 
     //General method for making the moster circle around the player
     //Used when monster is too close to player
-    private void CirclePlayer()
+    protected void CirclePlayer()
     {
         //Calculate net force
         Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
@@ -104,7 +108,7 @@ public partial class Enemy : Physics
     /// Returns false when finished
     /// </summary>
     /// <returns></returns>
-    private bool DoActionQueue()
+    protected bool DoActionQueue()
     {
         //Go through enmeies action queue
         if (_actionQueue.Peek()(ref _currTime))
@@ -135,7 +139,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool DashCharge(ref float time)
+    protected bool DashCharge(ref float time)
     {
         const float MAX_TIME = 2.0f;
 
@@ -164,7 +168,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current Time</param>
     /// <returns></returns>
-    private bool DashAttack(ref float time)
+    protected bool DashAttack(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
@@ -212,13 +216,17 @@ public partial class Enemy : Physics
             return true;
         }
     }
+}
 
+//Actions available to the koi boss
+public partial class KoiBoss : Enemy
+{
     /// <summary>
     /// Transition to charge attack by slowing down
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiStopTransition(ref float time)
+    protected bool KoiStopTransition(ref float time)
     {
         const float MAX_TIME = 0.25f;
 
@@ -239,7 +247,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiDashCharge(ref float time)
+    protected bool KoiDashCharge(ref float time)
     {
         const float MAX_TIME = 1.5f;
         const float STALL_TIME = 0.2f;
@@ -274,7 +282,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current Time</param>
     /// <returns></returns>
-    private bool KoiDashAttack(ref float time)
+    protected bool KoiDashAttack(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
@@ -324,11 +332,11 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    private bool KoiBubbleBlastTransitionDown(ref float time)
+    protected bool KoiBubbleBlastTransitionDown(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
-        if(time == 0)
+        if (time == 0)
         {
             StopMotion();
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
@@ -336,7 +344,7 @@ public partial class Enemy : Physics
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
 
-        if(time >= MAX_TIME)
+        if (time >= MAX_TIME)
         {
             _animator.ResetTrigger(_animParm[(int)CarpAnim.Dive]);
             StopMotion();
@@ -351,7 +359,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    private bool KoiBubbleBlastTransitionUp(ref float time)
+    protected bool KoiBubbleBlastTransitionUp(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
@@ -379,7 +387,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    private bool KoiBubbleBlastCharge(ref float time)
+    protected bool KoiBubbleBlastCharge(ref float time)
     {
         const float MAX_TIME = 2.0f;
         const float STALL_TIME = 0.1f;
@@ -414,7 +422,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiBubbleBlastAttack(ref float time)
+    protected bool KoiBubbleBlastAttack(ref float time)
     {
         //Spawn projectiles
         SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
@@ -433,7 +441,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiBubbleAttack(ref float time)
+    protected bool KoiBubbleAttack(ref float time)
     {
         SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
 
@@ -445,7 +453,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiUnderwaterDash(ref float time)
+    protected bool KoiUnderwaterDash(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
@@ -501,7 +509,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current Time</param>
     /// <returns></returns>
-    private bool KoiUnderwaterDashReturn(ref float time)
+    protected bool KoiUnderwaterDashReturn(ref float time)
     {
         const float MAX_TIME = 4.0f;
         const float STALL_TIME = 3.0f;
@@ -516,7 +524,7 @@ public partial class Enemy : Physics
             StopMotion();
             //Do nothing, give player chance to attack
         }
-        else if(time < MAX_TIME + 0.5f)
+        else if (time < MAX_TIME + 0.5f)
         {
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             time = MAX_TIME + 0.5f;
@@ -542,7 +550,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current Time</param>
     /// <returns></returns>
-    private bool KoiBubbleBlastUnderwaterCharge(ref float time)
+    protected bool KoiBubbleBlastUnderwaterCharge(ref float time)
     {
         const float MAX_TIME = 1.0f;
 
@@ -572,7 +580,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiBubbleBlastReturn(ref float time)
+    protected bool KoiBubbleBlastReturn(ref float time)
     {
         const float MAX_TIME = 2.0f;
         const float STALL_TIME = 1.5f;
@@ -607,7 +615,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current time</param>
     /// <returns></returns>
-    private bool KoiUnderwaterFollow(ref float time)
+    protected bool KoiUnderwaterFollow(ref float time)
     {
         const float MAX_TIME = 4.5f;
         const float STALL_TIME = 0.5f;
@@ -661,7 +669,7 @@ public partial class Enemy : Physics
     /// </summary>
     /// <param name="time">Current Time</param>
     /// <returns></returns>
-    private bool KoiUnderwaterAttack(ref float time)
+    protected bool KoiUnderwaterAttack(ref float time)
     {
         //This one's too complicated to add constant times to work with
 
@@ -732,14 +740,18 @@ public partial class Enemy : Physics
 
         return true;
     }
+}
 
+//Actions available to rock crabs
+public partial class RockCrab : Enemy
+{
     /// <summary>
     /// Used for Rock Crab
     /// Crab flings itself forward towards the player
     /// </summary>
     /// <param name="time"></param>
     /// <returns></returns>
-    private bool CrabRockFling(ref float time)
+    protected bool RockCrabFling(ref float time)
     {
         const float MAX_TIME = 1.0f;
 

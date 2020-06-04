@@ -10,7 +10,7 @@ public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, CrabRock = 4, SeaSheep = 5}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5}
 public enum Anim { Die = 0, Velocity = 1};
 public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5};
 public enum CrabAnim { Jump = 2};
@@ -20,102 +20,100 @@ public partial class Enemy : Physics
 {
     //public fields
     [SerializeField]
-    private EnemyType _enemyType;
+    protected GameObject _projectile;
     [SerializeField]
-    private GameObject _projectile;
+    protected GameObject _healthBarObject;
     [SerializeField]
-    private GameObject _healthBarObject;
-    [SerializeField]
-    private GameObject _hitbox;
-    [SerializeField]
-    private Camera _camera;
+    protected GameObject _hitbox;
+    protected Camera _camera;
 
     //Health fields
-    private HealthBar _healthBar;
-    private float _health;
-    private float _maxHealth;
+    protected HealthBar _healthBar;
+    protected float _health;
+    protected float _maxHealth;
 
-    private EnemyState _state;
+    protected EnemyType _enemyType;
+    protected EnemyState _state;
     public EnemyState State => _state;
 
     //player's distance from enemy
-    private float _playerDistance;
+    protected float _playerDistance;
     //monsters distance from start position
-    private float _enemyDistance;
+    protected float _enemyDistance;
     //Radius to trigger hostile AI
-    private float _hostileRadius;
+    protected float _hostileRadius;
     //Radius to trigger passive AI
-    private float _passiveRadius;
+    protected float _passiveRadius;
     //Fields for AI
-    private float _speed;
-    private Vector3 _destination;
-    private Quaternion _lookRotation;
-    private double _timeBetween;
-    private double _timeCurrent;
-    private Vector3 _startPos;
-    private Vector3 _gravity;
-    private float _wanderRadius;
-    private float _maxRadius;
-    private float _passiveCooldown;
-    private float _pushMult = 1.0f;
-    private float[] _specialCooldown;
-    private bool[] _activeStates;
-    private bool _playerCollision;
-    private bool _obsticalCollision;
-    private bool _isRaming;
-    private bool _inKnockback = false;
-    private float _initalPos;
-    private float _currTime = 0.0f;
-    private int _ramingDamage;
-    private AI _HostileAI;
-    private AI _PassiveAI;
-    private List<GameObject> _hitboxes;
-    private List<GameObject> _hurtboxes;
-    private Queue<MonsterAction> _actionQueue;
-    private GetVector _PlayerPosition;
-    private GiveVector _SendKnockback;
+    protected float _speed;
+    protected Vector3 _destination;
+    protected Quaternion _lookRotation;
+    protected double _timeBetween;
+    protected double _timeCurrent;
+    protected Vector3 _startPos;
+    protected Vector3 _gravity;
+    protected float _wanderRadius;
+    protected float _maxRadius;
+    protected float _passiveCooldown;
+    protected float _pushMult = 1.0f;
+    protected float[] _specialCooldown;
+    protected bool[] _activeStates;
+    protected bool _playerCollision;
+    protected bool _obsticalCollision;
+    protected bool _isRaming;
+    protected bool _inKnockback = false;
+    protected float _initalPos;
+    protected float _currTime = 0.0f;
+    protected int _ramingDamage;
+    protected AI _HostileAI;
+    protected AI _PassiveAI;
+    protected List<GameObject> _hitboxes;
+    protected List<GameObject> _hurtboxes;
+    protected Queue<MonsterAction> _actionQueue;
+    protected GetVector _PlayerPosition;
+    protected GiveVector _SendKnockback;
 
     //Animation
-    private Animator _animator;
-    private int[] _animParm;
+    protected Animator _animator;
+    protected int[] _animParm;
 
     //Death
-    private bool _dying = false;
-    private int _deathAnim;
-    private float _deathTimer;
+    protected bool _dying = false;
+    protected int _deathAnim;
+    protected float _deathTimer;
 
     //Fields for collision detection
     [SerializeField]
-    private float _lengthMult;
+    protected float _lengthMult;
     [SerializeField]
-    private float _widthMult;
+    protected float _widthMult;
     [SerializeField]
-    private float _heightMult;
+    protected float _heightMult;
 
-    private float _halfView = 55.0f;
-    private float _viewRange = 20.0f;
-    private Vector3 _widthVector;
+    protected float _halfView = 55.0f;
+    protected float _viewRange = 20.0f;
+    protected Vector3 _widthVector;
 
-    private float _rotationalVeloctiy = 0.5f;
+    protected float _rotationalVeloctiy = 0.5f;
 
     public float Health => _health;
     public bool IsDying => _dying;
 
-    private Vector2 _enemyStartingChunk;
+    protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
     {
         get { return _enemyStartingChunk; }
         set { _enemyStartingChunk = value; }
     }
 
-    private Vector2 _enemyStartingPosition;
+    protected Vector2 _enemyStartingPosition;
     public Vector2 EnemyStartingPosition
     {
         get { return _enemyStartingPosition; }
         set { _enemyStartingPosition = value; }
     }
 
-    private int _enemyID;
+    protected int _enemyID;
     public int EnemyID
     {
         get { return _enemyID; }
@@ -139,7 +137,6 @@ public partial class Enemy : Physics
             hitbox.OnTrigger += HitboxTriggered;
             hitbox.OnStay += OnObsticalCollision;
         }
-        LoadEnemy(_enemyType);
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
 
@@ -212,150 +209,6 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
-    /// Loads an enemy of the specified type
-    /// </summary>
-    /// <param name="type">Type of enemy</param>
-    private void LoadEnemy(EnemyType type)
-    {
-        switch (type)
-        {
-            case EnemyType.FirstEnemy:
-                _speed = 1.0f;
-                _health = 20;
-                _maxHealth = 20;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 30.0f;
-                _hostileRadius = 10.0f;
-                _passiveRadius = 50.0f;
-                _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[1] { false };
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 15;
-                _HostileAI = HostileFollowAndDash;
-                _PassiveAI = PassiveWanderRadius;
-                break;
-            case EnemyType.KoiBoss:
-                _speed = 1.0f;
-                _health = 200;
-                _maxHealth = 200;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 60.0f;
-                _hostileRadius = 30.0f;
-                _passiveRadius = 120.0f;
-                _maxRadius = 240.0f;
-                _specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-                _activeStates = new bool[3] { false, false, false };
-                _animParm = new int[6] {
-                    Animator.StringToHash("die"),
-                    Animator.StringToHash("velocity"),
-                    Animator.StringToHash("swimSpeed"),
-                    Animator.StringToHash("dive"),
-                    Animator.StringToHash("shoot"),
-                    Animator.StringToHash("uAttack")};
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 20;
-                _pushMult = 0.1f;
-                _HostileAI = KoiBossHostile;
-                _PassiveAI = PassiveWanderRadius;
-                break;
-            case EnemyType.DefensiveEnemy:
-                _speed = 1.0f;
-                _health = 30;
-                _maxHealth = 30;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 30.0f;
-                _hostileRadius = 0.0f;
-                _passiveRadius = 50.0f;
-                _maxRadius = 120.0f;
-                _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[1] { false };
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 15;
-                _HostileAI = HostileFollowAndDash;
-                _PassiveAI = PassiveWanderRadius;
-                break;
-            case EnemyType.PassiveEnemy:
-                _speed = 1.2f;
-                _health = 20;
-                _maxHealth = 20;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 30.0f;
-                _hostileRadius = 10.0f;
-                _passiveRadius = 30.0f;
-                _maxRadius = 120.0f;
-                _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[1] { false };
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 5;
-                _HostileAI = HostileRunAway;
-                _PassiveAI = PassiveWanderRadius;
-                break;
-            case EnemyType.CrabRock:
-                _speed = 0.8f;
-                _health = 50;
-                _maxHealth = 50;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 45.0f;
-                _hostileRadius = 10.0f;
-                _passiveRadius = 50.0f;
-                _maxRadius = 240.0f;
-                _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[3] { false, false, false};
-                _animParm = new int[3] {
-                    Animator.StringToHash("die"),
-                    Animator.StringToHash("velocity"),
-                    Animator.StringToHash("jump")};
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 20;
-                _HostileAI = HostileRockCrab;
-                _PassiveAI = PassiveRockCrab;
-                break;
-            case EnemyType.SeaSheep:
-                _speed = 0.7f;
-                _health = 20;
-                _maxHealth = 20;
-                _timeBetween = 5.0;
-                _timeCurrent = _timeBetween;
-                _startPos = transform.position;
-                _wanderRadius = 45.0f;
-                _hostileRadius = 10.0f;
-                _passiveRadius = 20.0f;
-                _maxRadius = 100.0f;
-                _specialCooldown = new float[1] { 5.0f };
-                _activeStates = new bool[1] { false };
-                _animParm = new int[3] {
-                    Animator.StringToHash("die"),
-                    Animator.StringToHash("velocity"),
-                    Animator.StringToHash("jump")};
-                _playerCollision = false;
-                _isRaming = false;
-                _ramingDamage = 20;
-                _pushMult = 10.0f;
-                _HostileAI = HostileRunAway;
-                _PassiveAI = PassiveWanderRadius;
-                break;
-        }
-
-        //Setup health bar
-        _healthBar.SetMaxHealth(_maxHealth);
-    }
-
-    /// <summary>
     /// Monster takes damage, if health is 0 they die
     /// </summary>
     /// <param name="damage">Amount of damage taken</param>
@@ -399,7 +252,7 @@ public partial class Enemy : Physics
     /// <summary>
     /// Resets enemy's hostile AI values
     /// </summary>
-    public void ResetHostile()
+    protected void ResetHostile()
     {
         //reset states
         for (int i = 0; i < _activeStates.Length; i++)
@@ -441,7 +294,7 @@ public partial class Enemy : Physics
     /// <param name="type">Type of hitbox</param>
     /// <param name="damage">Damage dealt by hitbox</param>
     /// <returns></returns>
-    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage)
+    protected GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage)
     {
         GameObject temp = Instantiate(_hitbox, transform);
         temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage);
@@ -459,7 +312,7 @@ public partial class Enemy : Physics
     /// <param name="launchAngle">Angle that hitbox will launch player</param>
     /// <param name="launchStrength">Strength at which player will be launched</param>
     /// <returns></returns>
-    public GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
+    protected GameObject CreateHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
     {
         GameObject temp = Instantiate(_hitbox, transform);
         temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage, launchAngle, launchStrength);
@@ -475,7 +328,7 @@ public partial class Enemy : Physics
     /// <param name="damage">Damage projectile inflicts</param>
     /// <param name="maxLifeSpan">Max life span of projectile</param>
     /// <param name="movementPattern">Movement pattern of projectile</param>
-    private void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
+    protected void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
     {
         GameObject.Instantiate(_projectile,
             transform.position + transform.TransformVector(position),
@@ -498,7 +351,7 @@ public partial class Enemy : Physics
     /// <param name="movementPattern">Movement pattern of projectile</param>
     /// <param name="launchAngle">Angle that hitbox will launch player</param>
     /// <param name="launchStrength">Strength at which player will be launched</param>
-    private void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    protected void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
     {
         GameObject.Instantiate(_projectile,
             transform.position + transform.TransformVector(position),
@@ -513,7 +366,7 @@ public partial class Enemy : Physics
             launchStrength);
     }
 
-    private void ClearHitboxes()
+    protected void ClearHitboxes()
     {
         for (int i = 0; i < _hitboxes.Count; i++)
         {
@@ -525,7 +378,7 @@ public partial class Enemy : Physics
     /// <summary>
     /// Returns enemy to inital position on Y axis
     /// </summary>
-    private void ReturnToInitalPosition()
+    protected void ReturnToInitalPosition()
     {
 
         _position = new Vector3(transform.position.x, _initalPos, transform.position.z);
@@ -534,7 +387,7 @@ public partial class Enemy : Physics
     /// <summary>
     /// Sets position of health bar above enemy
     /// </summary>
-    private void SetHealthBarPosition()
+    protected void SetHealthBarPosition()
     {
         _healthBarObject.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
@@ -543,10 +396,10 @@ public partial class Enemy : Physics
     /// Checks if there is an obstical in the enemy's path
     /// </summary>
     /// <returns>If enemy's path is interuptted</returns>
-    public bool CheckObstacle(Vector3 target)
+    protected bool CheckObstacle(Vector3 target)
     {
         RaycastHit[] hits;
-        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        Vector3 detectPosition = transform.position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
         
@@ -593,13 +446,13 @@ public partial class Enemy : Physics
     /// Find direction to avoid obstacle
     /// </summary>
     /// <returns>Direction to avoid obstacle</returns>
-    public Vector3 AvoidObstacle(Vector3 target)
+    protected Vector3 AvoidObstacle(Vector3 target)
     {
         //Debug.Log("Avoiding Obstacle");
         Vector3 dir = Vector3.zero;
         bool found = false;
 
-        Vector3 detectPosition = transform.GetChild(transform.childCount - 1).position;
+        Vector3 detectPosition = transform.position;
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
         RaycastHit hit;
@@ -684,7 +537,7 @@ public partial class Enemy : Physics
     /// <param name="rotationalAcceleration">Rotational Acceleration</param>
     /// <param name="minRotationalVelocity">Minimum Rotational Velocity</param>
     /// <param name="maxRotationalVelocity">Maximum Rotational Velocity</param>
-    public void SetSmoothRotation(Quaternion desiredRotation, float rotationalAcceleration, float minRotationalVelocity, float maxRotationalVelocity)
+    protected void SetSmoothRotation(Quaternion desiredRotation, float rotationalAcceleration, float minRotationalVelocity, float maxRotationalVelocity)
     {
         //Rotate based on target location
         if (_rotation != desiredRotation)
