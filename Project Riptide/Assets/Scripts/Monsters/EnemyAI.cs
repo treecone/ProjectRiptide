@@ -7,6 +7,7 @@ using UnityEngine;
 
 public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
+public enum FlowerFrogAttackState { Latched = 1 }
 
 //AI available to all enemys
 public partial class Enemy : Physics
@@ -516,6 +517,54 @@ public partial class RockCrab : Enemy
                     _initalPos = transform.position.y;
                     //Load an attack that charges a dash then attacks
                     _actionQueue.Enqueue(RockCrabFling);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                }
+            }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+    }
+}
+
+public partial class FlowerFrog : Enemy
+{
+    protected void HostileFlowerFrog()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If enemy is not in special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                //Follow the player
+                FollowPlayer();
+
+                //Cooldown special while in a 10 units of player
+                if (_playerDistance < 20.0f)
+                {
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                }
+                //If cooldown is finished, switch to special
+                if (_specialCooldown[(int)AttackState.Active] <= 0)
+                {
+                    _activeStates[(int)AttackState.Active] = true;
+                    _currTime = 0;
+                    //Load an attack that shoots the frogs tounge out to latch on to player
+                    _actionQueue.Enqueue(ToungeReturn);
                 }
             }
             else

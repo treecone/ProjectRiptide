@@ -17,6 +17,8 @@ public class PortManager : MonoBehaviour
     private GameObject _portUI;
     [SerializeField]    //can remove this later
 	private bool _inPort;
+    [SerializeField]
+    private Button _leavePort;
 
     public bool InPort { get; set; }
 
@@ -30,7 +32,17 @@ public class PortManager : MonoBehaviour
         {
             _canvas = GameObject.Find("Canvas");
         }
-        _portUI = _canvas.transform.GetChild(8).gameObject;
+        if (_portUI == null)
+        {
+            _portUI = _canvas.transform.GetChild(8).gameObject;
+        }
+        
+        if (_leavePort == null)
+        {
+            _leavePort = _portUI.transform.GetChild(4).gameObject.GetComponent<Button>();
+        }
+        _leavePort.onClick.AddListener(LeavePort);
+
         _inPort = false;
 	}
 
@@ -41,18 +53,18 @@ public class PortManager : MonoBehaviour
 		if (!_inPort && Vector3.Distance(_player.transform.position, transform.position) < 10)
 		{
             _inPort = true;
-			_player.GetComponent<ShipMovement>().enabled = false;
 			_portUI.SetActive(true);
-			_player.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            _player.GetComponent<ShipMovement>().StopMotion();
             _inventoryMethods.PauseGame();
-		}
-	}
+        }
+        
+    }
 
-    public void LeavePort ()
+    public void LeavePort()
     {
+        _player.GetComponent<ShipMovement>().Position += new Vector3(5, 0, 5);
         _inPort = false;
-        _player.transform.position = gameObject.transform.position + this.transform.right * -20;
-        _player.GetComponent<ShipMovement>().enabled = true;
         _portUI.SetActive(false);
+        _inventoryMethods.UnpauseGame();
     }
 }
