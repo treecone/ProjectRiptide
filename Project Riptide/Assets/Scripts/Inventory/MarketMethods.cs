@@ -8,6 +8,8 @@ public class MarketMethods : MonoBehaviour
 {
     #region Fields
     [SerializeField]
+    private InventoryMethods _inventoryMethods;
+    [SerializeField]
     private Inventory _inventoryVault;
     [SerializeField]
     private Inventory _inventoryShip;
@@ -86,6 +88,10 @@ public class MarketMethods : MonoBehaviour
         _itemCost.SetText("{0}", _activeItem.Value);
     }
 
+    /// <summary>
+    /// Sells item based on amount * value, adds to gold
+    /// </summary>
+    /// <param name="inventory"></param>
     public void SellItem(Inventory inventory)
     {
         //increase gold
@@ -101,10 +107,34 @@ public class MarketMethods : MonoBehaviour
         inventory.RemoveItem(saved.Name, amount);
     }
 
+    /// <summary>
+    /// update gold for inventory and vault inventory
+    /// </summary>
     public void UpdateGold()
     {
         _totalGoldMarket.SetText("{0}", _inventoryShip.TotalGold);
         _inventoryVault.TotalGold = _inventoryShip.TotalGold;
+    }
+
+    /// <summary>
+    /// Used to set values of buttons to emphasize ship, vault, or buying
+    /// </summary>
+    public void ChooseButton(GameObject button)
+    {
+        button.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 80);
+        button.GetComponent<Image>().color = new Color32(132, 132, 132, 255);
+        button.GetComponent<Button>().interactable = false;
+    }
+
+    /// <summary>
+    /// Used to set values of buttons to reset ship, vault, or buying
+    /// </summary>
+    /// <param name="button"></param>
+    public void ResetButton(GameObject button)
+    {
+        button.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 50);
+        button.GetComponent<Image>().color = new Color32(100, 100, 100, 255);
+        button.GetComponent<Button>().interactable = true;
     }
 
 
