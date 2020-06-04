@@ -24,6 +24,8 @@ public class InventoryMethods : MonoBehaviour
     private Slider _volumeSlider;
     [SerializeField]
     private Slider _soundSlider;
+    [SerializeField]
+    private Inventory _inventory;
 
 
     const float soundValue = .5f;

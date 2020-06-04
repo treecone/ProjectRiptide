@@ -8,7 +8,10 @@ public class MarketMethods : MonoBehaviour
 {
     #region Fields
     [SerializeField]
-    private Inventory _inventory;
+    private Inventory _inventoryVault;
+    [SerializeField]
+    private Inventory _inventoryShip;
+    //private Inventory _inventoryShop;
     [SerializeField]
     private TextMeshProUGUI _sellBuyField;
     [SerializeField]
@@ -100,7 +103,8 @@ public class MarketMethods : MonoBehaviour
 
     public void UpdateGold()
     {
-        _totalGoldMarket.SetText("{0}", _inventory.TotalGold);
+        _totalGoldMarket.SetText("{0}", _inventoryShip.TotalGold);
+        _inventoryVault.TotalGold = _inventoryShip.TotalGold;
     }
 
 
