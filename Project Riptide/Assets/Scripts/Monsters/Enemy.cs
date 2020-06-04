@@ -10,10 +10,8 @@ public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6}
 public enum Anim { Die = 0, Velocity = 1};
-public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5};
-public enum CrabAnim { Jump = 2};
 
 
 public partial class Enemy : Physics
@@ -70,7 +68,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hitboxes;
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
-    protected GetVector _PlayerPosition;
+    protected GetVector PlayerPosition;
     protected GiveVector _SendKnockback;
 
     //Animation
@@ -130,7 +128,7 @@ public partial class Enemy : Physics
         _healthBarObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
-        _PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
+        PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
         _SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
@@ -151,7 +149,7 @@ public partial class Enemy : Physics
         if (!_dying)
         {
             //updates player position
-            _playerDistance = Vector3.Distance(transform.position, _PlayerPosition());
+            _playerDistance = Vector3.Distance(transform.position, PlayerPosition());
             _enemyDistance = Vector3.Distance(_startPos, transform.position);
 
             //checks for states
@@ -366,6 +364,9 @@ public partial class Enemy : Physics
             launchStrength);
     }
 
+    /// <summary>
+    /// Clears all hitboxes off the enemy
+    /// </summary>
     protected void ClearHitboxes()
     {
         for (int i = 0; i < _hitboxes.Count; i++)

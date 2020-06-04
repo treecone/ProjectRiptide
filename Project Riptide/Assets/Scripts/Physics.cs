@@ -14,6 +14,18 @@ public class Physics : MonoBehaviour
     protected Vector3 _acceleration;
     protected Quaternion _rotation;
 
+    public Vector3 Position
+    {
+        get { return _position; }
+        set { _position = value; }
+    }
+
+    public Quaternion Rotation
+    {
+        get { return _rotation; }
+        set { _rotation = value; }
+    }
+
     // Start is called before the first frame update
     protected virtual void Start()
     {

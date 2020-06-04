@@ -14,15 +14,15 @@ public partial class Enemy : Physics
     {
         Vector3 destination = Vector3.zero;
         //Check for obstacle
-        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
+        if (CheckObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)))
         {
             //Set destination to closest way to player that avoids obstacles
-            destination = transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
+            destination = transform.position + AvoidObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
         }
         else
         {
             //Set destination to player
-            destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         }
         //Seek destination
         Vector3 netForce = Seek(destination);
@@ -44,7 +44,7 @@ public partial class Enemy : Physics
     protected void FleePlayer(float speed)
     {
         Vector3 destination = Vector3.zero;
-        Vector3 avoidDirection = (transform.position - _PlayerPosition()) + transform.position;
+        Vector3 avoidDirection = (transform.position - PlayerPosition()) + transform.position;
         //Check for obstacle
         if (CheckObstacle(new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z)))
         {
@@ -78,13 +78,13 @@ public partial class Enemy : Physics
         //Calculate net force
         Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
 
-        if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
+        if (CheckObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)))
         {
-            netForce += transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
+            netForce += transform.position + AvoidObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
         }
         else
         {
-            Vector3 crossForce = _PlayerPosition() - transform.position;
+            Vector3 crossForce = PlayerPosition() - transform.position;
             crossForce = new Vector3(crossForce.x, 0, crossForce.z);
             crossForce.Normalize();
             crossForce *= 1f;
@@ -150,7 +150,7 @@ public partial class Enemy : Physics
         }
 
         //Look towards player
-        _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+        _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         _rotation = Quaternion.RotateTowards(_rotation, Quaternion.LookRotation(_destination - transform.position), 1.0f);
 
         if (time >= MAX_TIME)
@@ -186,7 +186,7 @@ public partial class Enemy : Physics
                 _inKnockback = true;
                 if(_playerCollision)
                 {
-                    Vector3 knockback = _PlayerPosition() - transform.position;
+                    Vector3 knockback = PlayerPosition() - transform.position;
                     knockback.Normalize();
                     knockback *= 40.0f;
                     _SendKnockback(knockback);
@@ -261,7 +261,7 @@ public partial class KoiBoss : Enemy
         if (time <= MAX_TIME - STALL_TIME)
         {
             //Look towards player
-            _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.5f, 1.0f, 4.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
@@ -401,7 +401,7 @@ public partial class KoiBoss : Enemy
             }
 
             //Look towards player
-            _destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
@@ -623,13 +623,13 @@ public partial class KoiBoss : Enemy
         if (time < MAX_TIME - STALL_TIME)
         {
             Vector3 destination = Vector3.zero;
-            if (CheckObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z)))
+            if (CheckObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)))
             {
-                destination = transform.position + AvoidObstacle(new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z));
+                destination = transform.position + AvoidObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
             }
             else
             {
-                destination = new Vector3(_PlayerPosition().x, transform.position.y, _PlayerPosition().z);
+                destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             }
             Vector3 netForce = Seek(destination);
             netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
@@ -794,6 +794,119 @@ public partial class RockCrab : Enemy
             GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
             _inKnockback = false;
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
+
+public partial class FlowerFrog : Enemy
+{
+    /// <summary>
+    /// Frog rotates towards player to prepare to shoot tounge
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ToungeCharge(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+        const float STALL_TIME = 0.4f;
+
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Stop motion at start
+            if (time == 0)
+            {
+                StopMotion();
+            }
+
+            //Look towards player
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Frog shoots tounge towards the player
+    /// If the tounge hits the player, the frog latches on
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ShootTounge(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
+        }
+
+        if(_playerCollision)
+        {
+            //LATCH ONTO PLAYER
+            _tounge.SetPosition(1, PlayerPosition());
+            _activeStates[(int)FlowerFrogAttackState.Latched] = true;
+            time = MAX_TIME;
+        }
+            
+        if(_obsticalCollision)
+        {
+            //If obstical is hit, move to return phase
+            time = MAX_TIME;
+        }
+
+        if (time < MAX_TIME)
+        {
+            //Move tounge forward
+            _tounge.SetPosition(1, new Vector3(_tounge.GetPosition(1).x, _tounge.GetPosition(1).y, _tounge.GetPosition(1).z + 0.6f * Time.deltaTime));
+            _hitboxes[_hitboxes.Count - 1].transform.position = _tounge.GetPosition(1);
+        }
+
+        if(time >= MAX_TIME)
+        {
+            ClearHitboxes();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Returns frogs tounge to inside it's mouth
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ToungeReturn(ref float time)
+    {
+        //If frog is latched, don't return the tounge
+        if(_activeStates[(int)FlowerFrogAttackState.Latched])
+        {
+            return false;
+        }
+
+        //Move tounge backwards
+        _tounge.SetPosition(1, new Vector3(_tounge.GetPosition(1).x, _tounge.GetPosition(1).y, _tounge.GetPosition(1).z - 0.6f * Time.deltaTime));
+
+        //If tonge moves back too far, set time to max
+        if (_tounge.GetPosition(1).z <= 0)
+        {
+            _tounge.SetPosition(1, Vector3.zero);
             return false;
         }
         else
