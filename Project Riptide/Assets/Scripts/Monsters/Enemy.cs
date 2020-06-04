@@ -10,6 +10,7 @@ public delegate void AI();
 public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
+public delegate void GiveFloat(float f);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6}
 public enum Anim { Die = 0, Velocity = 1};
 
@@ -69,7 +70,8 @@ public partial class Enemy : Physics
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
     protected GetVector PlayerPosition;
-    protected GiveVector _SendKnockback;
+    protected GiveVector SendKnockback;
+    protected GiveFloat SendFriction;
 
     //Animation
     protected Animator _animator;
@@ -129,7 +131,8 @@ public partial class Enemy : Physics
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
         PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
-        _SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
+        SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
+        SendFriction = player.GetComponent<ShipMovement>().ApplyFriction;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;

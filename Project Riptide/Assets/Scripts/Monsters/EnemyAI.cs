@@ -75,6 +75,43 @@ public partial class Enemy : Physics
     {
         //Do nothing
     }
+    
+    /// <summary>
+    /// Passive AI that returns a monster to it's wander radius
+    /// Used for monsters that do nothing until triggered
+    /// Then need to return back to their starting area when
+    /// they return to passive
+    /// </summary>
+    public void PassiveReturnToRadius()
+    {
+        if (_enemyDistance >= _wanderRadius)
+        {
+            Vector3 destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
+            //Check for obstacle
+            if (CheckObstacle(destination))
+            {
+                //Set destination to closest way to player that avoids obstacles
+                destination = transform.position + AvoidObstacle(destination);
+            }
+            //Seek destination
+            Vector3 netForce = Seek(destination);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+
+            //Rotate in towards direction of velocity
+            if (_velocity != Vector3.zero)
+            {
+                Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+                SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            }
+            _timeCurrent += Time.deltaTime;
+
+            ApplyForce(netForce);
+
+            //ApplyFriction(0.25f);
+            if (_animator != null)
+                _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+    }
 
     /// <summary>
     /// Most moves towards the player and circles him
@@ -550,21 +587,41 @@ public partial class FlowerFrog : Enemy
             //If enemy is not in special
             if (!_activeStates[(int)AttackState.Active])
             {
-                //Follow the player
-                FollowPlayer();
+                if (!_activeStates[(int)FlowerFrogAttackState.Latched])
+                {
+                    //Follow the player
+                    FollowPlayer();
 
-                //Cooldown special while in a 10 units of player
-                if (_playerDistance < 20.0f)
-                {
-                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                    //Cooldown special while in a 10 units of player
+                    if (_playerDistance < 20.0f)
+                    {
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                    }
+                    //If cooldown is finished, switch to special
+                    if (_specialCooldown[(int)AttackState.Active] <= 0)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _currTime = 0;
+                        //Load an attack that shoots the frogs tounge out to latch on to player
+                        _actionQueue.Enqueue(ToungeCharge);
+                        _actionQueue.Enqueue(ShootTounge);
+                        _actionQueue.Enqueue(ToungeReturn);
+                    }
                 }
-                //If cooldown is finished, switch to special
-                if (_specialCooldown[(int)AttackState.Active] <= 0)
+                else
                 {
-                    _activeStates[(int)AttackState.Active] = true;
-                    _currTime = 0;
-                    //Load an attack that shoots the frogs tounge out to latch on to player
-                    _actionQueue.Enqueue(ToungeReturn);
+                    //While latched
+                    ToungeDrag();
+                    _tounge.transform.rotation = Quaternion.identity;
+                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+                    if(_latchStartHealth - _health > LATCH_DAMAGE_CAP)
+                    {
+                        _activeStates[(int)FlowerFrogAttackState.Latched] = false;
+                        _activeStates[(int)AttackState.Active] = true;
+                        _currTime = 0;
+                        _actionQueue.Enqueue(ToungeReturn);
+                    }
+                    SendFriction(0.4f);
                 }
             }
             else
@@ -576,7 +633,7 @@ public partial class FlowerFrog : Enemy
                     _specialCooldown[(int)AttackState.Active] = 5.0f;
                 }
             }
-            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+            //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
     }
 }
