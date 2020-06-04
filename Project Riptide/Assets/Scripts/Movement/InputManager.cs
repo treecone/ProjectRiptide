@@ -118,11 +118,11 @@ public class InputManager : MonoBehaviour
             //Set indicator if enemy is in range
             if (_targetEnemy != null && !_targetEnemy.IsDying)
             {
-                _movementScript.ToggleIndicator(true);
+                _movementScript.IndicatorActive = true;
             }
             else
             {
-                _movementScript.ToggleIndicator(false);
+                _movementScript.IndicatorActive = false;
             }
         }
 
@@ -195,11 +195,11 @@ public class InputManager : MonoBehaviour
             _startedMove = false;
             if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
             {
-                if (!_combatMode)
+                if (!_combatMode && _movementScript.IndicatorActive)
                 {
                      _combatMode = true;
                      _cameraController.ToggleCombatView(true);
-                     _movementScript.ToggleIndicator(false);
+                    _movementScript.IndicatorActive = false;
                 }
             }
         }

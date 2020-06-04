@@ -49,6 +49,12 @@ public class ShipMovement : Physics
         }
     }
 
+    public bool IndicatorActive
+    {
+        get { return _shotIndicator.activeSelf; }
+        set { _shotIndicator.SetActive(value); }
+    }
+
     protected override void Start()
     {
         _camera = Camera.main;
@@ -211,14 +217,5 @@ public class ShipMovement : Physics
     public void TakeKnockback(Vector3 knockback)
     {
         ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade["hardiness"]));
-    }
-
-    /// <summary>
-    /// Toggles the visibility of the shot indicator
-    /// </summary>
-    /// <param name="on">True = on, false = off</param>
-    public void ToggleIndicator(bool on)
-    {
-        _shotIndicator.SetActive(on);
     }
 }
