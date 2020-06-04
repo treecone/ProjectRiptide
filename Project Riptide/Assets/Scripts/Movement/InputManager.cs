@@ -13,6 +13,10 @@ public class InputManager : MonoBehaviour
 
     [SerializeField]
     private GameObject _shotIndicator;
+    [SerializeField]
+    private LineRenderer _leftIndicator;
+    [SerializeField]
+    private LineRenderer _rightIndicator;
 
 	//-----References-----
 	private GameObject _ship;
@@ -78,7 +82,13 @@ public class InputManager : MonoBehaviour
         {
             _currFireTime += Time.deltaTime;
 
+            _rightIndicator.SetPosition(0, Vector3.zero);
+            _leftIndicator.SetPosition(0, Vector3.zero);
+            _rightIndicator.transform.rotation = Quaternion.identity;
+            _leftIndicator.transform.rotation = Quaternion.identity;
+
             bool fired = false;
+            //Check right side for enemies
             _rightEnemy = CheckEnemy(_ship.transform.right);
             if (_rightEnemy != null && !_rightEnemy.IsDying)
             {
@@ -86,7 +96,14 @@ public class InputManager : MonoBehaviour
                 {
                     fired = true;
                 }
+                _rightIndicator.SetPosition(1, _rightEnemy.transform.position - _ship.transform.position);
             }
+            else
+            {
+                _rightIndicator.SetPosition(1, Vector3.zero);
+            }
+
+            //Check left side for enemies
             _leftEnemy = CheckEnemy(-_ship.transform.right);
             if (_leftEnemy != null && !_leftEnemy.IsDying)
             {
@@ -94,9 +111,15 @@ public class InputManager : MonoBehaviour
                 {
                     fired = true;
                 }
+                _leftIndicator.SetPosition(1, _leftEnemy.transform.position - _ship.transform.position);
+            }
+            else
+            {
+                _leftIndicator.SetPosition(1, Vector3.zero);
             }
 
-            if(_targetEnemy.IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+            //Check to see if combat mode should be turned off
+            if (_targetEnemy.IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
             {
                 _targetEnemy = CheckEnemyInRadius(MAX_COMBAT_RANGE, true);
 
@@ -104,6 +127,8 @@ public class InputManager : MonoBehaviour
                 {
                     _combatMode = false;
                     _cameraController.ToggleCombatView(false);
+                    _leftIndicator.enabled = false;
+                    _rightIndicator.enabled = false;
                 }
             }
 
@@ -199,7 +224,9 @@ public class InputManager : MonoBehaviour
                 {
                      _combatMode = true;
                      _cameraController.ToggleCombatView(true);
-                    _movementScript.IndicatorActive = false;
+                     _movementScript.IndicatorActive = false;
+                    _leftIndicator.enabled = true;
+                    _rightIndicator.enabled = true;
                 }
             }
         }
@@ -400,27 +427,6 @@ public class InputManager : MonoBehaviour
             return true;
         }
         return false;
-    }
-
-    private void OnRenderObject()
-    {
-        if (_rightEnemy != null && !_rightEnemy.IsDying)
-        {
-            _glMaterial.SetPass(0);
-            GL.Begin(GL.LINES);
-            GL.Vertex(_ship.transform.position);
-            GL.Vertex(_rightEnemy.transform.position);
-            GL.End();
-        }
-
-        if (_leftEnemy != null && !_leftEnemy.IsDying)
-        {
-            _glMaterial.SetPass(0);
-            GL.Begin(GL.LINES);
-            GL.Vertex(_ship.transform.position);
-            GL.Vertex(_leftEnemy.transform.position);
-            GL.End();
-        }
     }
 }
 
