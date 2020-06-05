@@ -166,12 +166,12 @@ public class IslandGenerator : MonoBehaviour
             }
         Debug.Log(built);
         //}
-        Instantiate(obj.gameObject);
-        obj.gameObject.transform.position = result;
-        obj.gameObject.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
-        obj.gameObject.transform.localScale = Vector3.one * obj.scale;
-        obj.gameObject.transform.up = normal;
-        obj.gameObject.transform.position += normal * obj.verticalOffset;
+        GameObject clone = Instantiate(obj.gameObject);
+        clone.transform.position = result;
+        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
+        clone.transform.localScale = Vector3.one * obj.scale;
+        clone.transform.up = normal;
+        clone.transform.position += normal * obj.verticalOffset;
 
 
         for (float i = 0; i < Mathf.PI * 2; i += Mathf.PI / 8f)
