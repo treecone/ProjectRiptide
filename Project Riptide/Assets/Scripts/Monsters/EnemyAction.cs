@@ -71,36 +71,14 @@ public partial class Enemy : Physics
         ApplyForce(netForce * speed);
     }
 
-    //General method for making the moster circle around the player
-    //Used when monster is too close to player
-    protected void CirclePlayer()
+    /// <summary>
+    /// General method for making the monster stay facing the player
+    /// </summary>
+    protected void LookAtPlayer()
     {
-        //Calculate net force
-        Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
-
-        if (CheckObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)))
-        {
-            netForce += transform.position + AvoidObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
-        }
-        else
-        {
-            Vector3 crossForce = PlayerPosition() - transform.position;
-            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
-            crossForce.Normalize();
-            crossForce *= 1f;
-            crossForce = Vector3.Cross(Vector3.up, crossForce);
-            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
-            netForce += crossForce;
-        }
-
-        //Rotate in towards direction of velocity
-        if (_velocity != Vector3.zero)
-        {
-            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
-            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
-        }
-
-        ApplyForce(netForce);
+        _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+        SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
     }
 
     /// <summary>

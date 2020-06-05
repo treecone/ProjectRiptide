@@ -29,7 +29,7 @@ public partial class FlowerFrog : Enemy
         _hostileRadius = 15.0f;
         _passiveRadius = 60.0f;
         _maxRadius = 240.0f;
-        _specialCooldown = new float[2] { 5.0f, 0.0f};
+        _specialCooldown = new float[2] { 0.0f, 0.0f};
         _activeStates = new bool[2] { false, false };
         _animParm = new int[2] {
                     Animator.StringToHash("die"),
@@ -54,5 +54,14 @@ public partial class FlowerFrog : Enemy
         {
             _tounge.SetPosition(1, Vector3.zero);
         }
+    }
+
+    /// <summary>
+    /// On passive reset tounge position
+    /// </summary>
+    protected override void OnPassive()
+    {
+        _tounge.SetPosition(1, Vector3.zero);
+        base.OnPassive();
     }
 }

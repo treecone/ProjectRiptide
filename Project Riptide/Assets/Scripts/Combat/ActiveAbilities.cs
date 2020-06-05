@@ -166,7 +166,6 @@ public class ActiveAbilities : MonoBehaviour
     /// <returns>If skill was successful</returns>
     private bool Dash(Enemy enemy)
     {
-        Debug.Log("Dashing");
         //Applies force in direction of player velocity
         Vector3 netForce = _movementScript.GetVelocity().normalized;
         netForce *= 400.0f;

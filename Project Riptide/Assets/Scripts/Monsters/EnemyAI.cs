@@ -582,11 +582,8 @@ public partial class FlowerFrog : Enemy
         if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
-            ResetHostile();
             //Reset tounge position
-            _tounge.SetPosition(1, Vector3.zero);
-            //Keep monster passive for 5 seconds at least
-            _passiveCooldown = 5.0f;
+            OnPassive();
         }
         else
         {
@@ -596,7 +593,10 @@ public partial class FlowerFrog : Enemy
                 if (!_activeStates[(int)FlowerFrogAttackState.Latched])
                 {
                     //Follow the player
-                    FollowPlayer();
+                    //FollowPlayer();
+                    LookAtPlayer();
+
+                    ApplyFriction(0.5f);
 
                     //Cooldown special while in a 10 units of player
                     if (_playerDistance < 20.0f)

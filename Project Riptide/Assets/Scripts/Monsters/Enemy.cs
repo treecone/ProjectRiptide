@@ -167,7 +167,7 @@ public partial class Enemy : Physics
                     //also make sure enemy is not in a passive cooldown
                     if (_playerDistance < _hostileRadius && _passiveCooldown <= 0)
                     {
-                        _healthBarObject.SetActive(true);
+                        OnHostile();
                         _state = EnemyState.Hostile;
                     }
                     break;
@@ -176,11 +176,7 @@ public partial class Enemy : Physics
                     //check for passive behavior trigger, if you get far enough away
                     if (_playerDistance >= _passiveRadius)
                     {
-                        if (_health == _maxHealth)
-                        {
-                            _healthBarObject.SetActive(false);
-                        }
-                        ResetHostile();
+                        OnPassive();
                         _state = EnemyState.Passive;
                     }
                     break;
@@ -221,7 +217,7 @@ public partial class Enemy : Physics
             _healthBar.UpdateHealth(_health);
             if (_state == EnemyState.Passive && _passiveCooldown <= 0)
             {
-                _healthBarObject.SetActive(true);
+                OnHostile();
                 _state = EnemyState.Hostile;
             }
             if (_health <= 0)
@@ -511,7 +507,7 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 20.0f * _pushMult;
+                backForce *= 5.0f * _pushMult;
                 ApplyForce(backForce);
             }
         }
@@ -570,4 +566,27 @@ public partial class Enemy : Physics
         else
             _rotationalVeloctiy = minRotationalVelocity;
     }
+
+    /// <summary>
+    /// Called when monster becomes passive
+    /// </summary>
+    protected virtual void OnPassive()
+    {
+        if (_health == _maxHealth)
+        {
+            _healthBarObject.SetActive(false);
+        }
+        ResetHostile();
+        //Keep monster passive for 5 seconds at least
+        _passiveCooldown = 5.0f;
+    }
+    
+    /// <summary>
+    /// Called when monster becomes hostile
+    /// </summary>
+    protected virtual void OnHostile()
+    {
+        _healthBarObject.SetActive(true);
+    }
+
 }
