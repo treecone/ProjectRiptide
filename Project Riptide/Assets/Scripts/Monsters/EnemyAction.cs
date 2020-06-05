@@ -824,9 +824,9 @@ public partial class FlowerFrog : Enemy
             }
 
             //Look towards player
-            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity();
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
-            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            SetSmoothRotation(desiredRotation, 1.2f, 0.75f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
@@ -859,7 +859,7 @@ public partial class FlowerFrog : Enemy
         if(_playerCollision)
         {
             //LATCH ONTO PLAYER
-                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+            _tounge.SetPosition(1, PlayerPosition() - transform.position);
             _activeStates[(int)FlowerFrogAttackState.Latched] = true;
             _latchStartHealth = _health;
             time = MAX_TIME;
@@ -906,7 +906,7 @@ public partial class FlowerFrog : Enemy
         _tounge.SetPosition(1, _tounge.GetPosition(1) - (_tounge.GetPosition(1) - _tounge.GetPosition(0)).normalized * 30.0f * Time.deltaTime);
 
         //If tonge moves back too far, set time to max
-        if (_tounge.GetPosition(1).z <= 0)
+        if (_tounge.GetPosition(1).z < 0.5f && _tounge.GetPosition(1).z > -0.5f)
         {
             _tounge.SetPosition(1, Vector3.zero);
             return false;
@@ -918,9 +918,7 @@ public partial class FlowerFrog : Enemy
     }
 
     protected void ToungeDrag()
-    {
-        const float MAX_DRAG_DIST = 15.0f;
-
+    { 
         //Seek destination
         Vector3 netForce = Vector3.zero;
         if(Vector3.SqrMagnitude(transform.position - PlayerPosition()) > MAX_DRAG_DIST * MAX_DRAG_DIST)

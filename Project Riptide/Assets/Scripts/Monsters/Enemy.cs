@@ -70,6 +70,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
     protected GetVector PlayerPosition;
+    protected GetVector PlayerVelocity;
     protected GiveVector SendKnockback;
     protected GiveFloat SendFriction;
 
@@ -130,9 +131,11 @@ public partial class Enemy : Physics
         _healthBarObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
-        PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
-        SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
-        SendFriction = player.GetComponent<ShipMovement>().ApplyFriction;
+        ShipMovement movement = player.GetComponent<ShipMovement>();
+        PlayerPosition = movement.GetPosition;
+        PlayerVelocity = movement.GetVelocity;
+        SendKnockback = movement.TakeKnockback;
+        SendFriction = movement.ApplyFriction;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
@@ -182,9 +185,6 @@ public partial class Enemy : Physics
                     }
                     break;
             }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                TakeDamage(10);
 
             //Make health bar face player
             _healthBarObject.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);

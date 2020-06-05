@@ -48,9 +48,8 @@ public class InputManager : MonoBehaviour
 
     private float _viewRange = 20.0f;
 
-    [SerializeField]
-    private Material _glMaterial;
     private bool _combatMode = false;
+    public bool InCombatMode => _combatMode;
     private const float MAX_COMBAT_RANGE = 50.0f;
     private Enemy _targetEnemy;
     private Enemy _leftEnemy;
@@ -278,6 +277,18 @@ public class InputManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Resets movement icons and stops the player's motion
+    /// </summary>
+    public void ResetMovement()
+    {
+        _iconBase.anchoredPosition = new Vector2(0, 100000);
+        SetArrowIcon(_iconBase.anchoredPosition);
+        _movementScript.TargetDirection = Vector3.zero;
+        _movementScript.SpeedScale = 0;
+        _movementScript.StopMotion();
+    }
+
+    /// <summary>
     /// Sets the position of the arrow movement icon
     /// </summary>
     /// <param name="pos">Position of click</param>
@@ -316,7 +327,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="targetDir">Direction to check for enemy</param>
     /// <returns>Enemy found, null if none</returns>
-    private Enemy CheckEnemy(Vector3 targetDir)
+    public Enemy CheckEnemy(Vector3 targetDir)
     {
         Enemy foundEnemy = null;
         float dist = 999999;
