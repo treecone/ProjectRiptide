@@ -113,6 +113,7 @@ public class MarketMethods : MonoBehaviour
     public void UpdateGold()
     {
         _totalGoldMarket.SetText("{0}", _inventoryShip.TotalGold);
+        Debug.Log(_inventoryShip.TotalGold);
         _inventoryVault.TotalGold = _inventoryShip.TotalGold;
     }
 
