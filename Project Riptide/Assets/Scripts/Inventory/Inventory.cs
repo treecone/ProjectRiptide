@@ -9,9 +9,8 @@ public class Inventory : MonoBehaviour
     //need to refactor
     #region Fields
     public List<GameObject> inventorySlots;
-    private ItemDatabase _itemDatabase;
+    protected ItemDatabase _itemDatabase;
     public Upgrades shipUpgradeScript;
-    private ItemDatabase _theDatabase;
     private int _inventoryIndex = 0;
     private int _totalGold = 0;
     #endregion
