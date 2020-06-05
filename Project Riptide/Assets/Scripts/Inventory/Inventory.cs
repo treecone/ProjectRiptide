@@ -13,7 +13,20 @@ public class Inventory : MonoBehaviour
     public Upgrades shipUpgradeScript;
     private ItemDatabase _theDatabase;
     private int _inventoryIndex = 0;
+    private int _totalGold = 0;
     #endregion
+
+    public int TotalGold    
+    {
+        get
+        {
+            return _totalGold;
+        }
+        set
+        {
+            _totalGold = value;
+        }
+    }
 
     void Start()
     {

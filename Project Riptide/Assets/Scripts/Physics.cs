@@ -14,6 +14,18 @@ public class Physics : MonoBehaviour
     protected Vector3 _acceleration;
     protected Quaternion _rotation;
 
+    public Vector3 Position
+    {
+        get { return _position; }
+        set { _position = value; }
+    }
+
+    public Quaternion Rotation
+    {
+        get { return _rotation; }
+        set { _rotation = value; }
+    }
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -39,7 +51,7 @@ public class Physics : MonoBehaviour
     /// Applies a force to the body
     /// </summary>
     /// <param name="force">Force to apply</param>
-    protected void ApplyForce(Vector3 force)
+    public void ApplyForce(Vector3 force)
     {
         _acceleration += force / _mass;
     }
@@ -48,7 +60,7 @@ public class Physics : MonoBehaviour
     /// Applies friction to the body
     /// </summary>
     /// <param name="coeff">Coefficent of friction</param>
-    protected void ApplyFriction(float coeff)
+    public void ApplyFriction(float coeff)
     {
         ApplyForce(_velocity * -coeff * _mass);
     }
@@ -58,7 +70,7 @@ public class Physics : MonoBehaviour
     /// </summary>
     /// <param name="desiredVelocity">Desired Velocity</param>
     /// <returns>Force to steer the body</returns>
-    protected Vector3 Steer(Vector3 desiredVelocity)
+    public Vector3 Steer(Vector3 desiredVelocity)
     {
         //Set up desired velocity
         desiredVelocity = desiredVelocity.normalized;
@@ -76,7 +88,7 @@ public class Physics : MonoBehaviour
     /// </summary>
     /// <param name="target">Target to seek</param>
     /// <returns>Force to seek the target</returns>
-    protected Vector3 Seek(Vector3 target)
+    public Vector3 Seek(Vector3 target)
     {
         Vector3 desiredVelocity = target - transform.position;
         return Steer(desiredVelocity);
@@ -85,7 +97,7 @@ public class Physics : MonoBehaviour
     /// <summary>
     /// Stops motion of the body
     /// </summary>
-    protected void StopMotion()
+    public void StopMotion()
     {
         _velocity = Vector3.zero;
         _acceleration = Vector3.zero;
@@ -94,7 +106,7 @@ public class Physics : MonoBehaviour
     /// <summary>
     /// Stops motion of the x and z axis of the body
     /// </summary>
-    protected void StopHorizontalMotion()
+    public void StopHorizontalMotion()
     {
         _velocity = new Vector3(0, _velocity.y, 0);
         _acceleration = new Vector3(0, _acceleration.y, 0);
@@ -103,7 +115,7 @@ public class Physics : MonoBehaviour
     /// <summary>
     /// Stops motion on the y axis of the body
     /// </summary>
-    protected void StopVerticalMotion()
+    public void StopVerticalMotion()
     {
         _velocity = new Vector3(_velocity.x, 0, _velocity.z);
         _acceleration = new Vector3(_acceleration.x, 0, _acceleration.z);
@@ -116,7 +128,7 @@ public class Physics : MonoBehaviour
     /// <param name="dist">Horizontal distance covered</param>
     /// <param name="time">Time that the arc takes place</param>
     /// <param name="gravity">Gravity being applied each frame</param>
-    protected void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
+    public void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
     {
         float xForce = _mass * (dist / (time * Time.deltaTime));
         float yForce = (-gravity.y * time) / (2 * Time.deltaTime);
@@ -133,7 +145,7 @@ public class Physics : MonoBehaviour
     /// <param name="yMax">Maximum vertical distance</param>
     /// <param name="time">Time that the arc takes place</param>
     /// <returns>Gravity to be applied each frame</returns>
-    protected Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
+    public Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
     {
         float xForce = _mass * (dist / (time * Time.deltaTime));
         float gravity = (-8 * _mass * yMax) / (time * time);
@@ -151,7 +163,7 @@ public class Physics : MonoBehaviour
     /// <param name="dir">Direction of movment</param>
     /// <param name="dist">Distance moved over time frame</param>
     /// <param name="time">Time frame to move dstance</param>
-    protected void ApplyMoveForce(Vector3 dir, float dist, float time)
+    public void ApplyMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = _mass * (dist / (time * Time.deltaTime));
         Vector3 netForce = dir * moveForce;
@@ -165,7 +177,7 @@ public class Physics : MonoBehaviour
     /// <param name="dir">Direction of movement</param>
     /// <param name="dist">Distance moved over time frame</param>
     /// <param name="time">Time frame to move distance</param>
-    protected void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
+    public void ApplyConstantMoveForce(Vector3 dir, float dist, float time)
     {
         float moveForce = (2 * _mass * dist) / (time * time);
         Vector3 netForce = dir * moveForce;

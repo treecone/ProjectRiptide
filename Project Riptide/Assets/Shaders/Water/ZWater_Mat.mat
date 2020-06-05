@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8178830417391408868
+--- !u!114 &-5487268904660880403
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Island2_Mat
-  m_Shader: {fileID: -6465566751694194690, guid: d8fb39b31de3e054c8648cfe90d183ed,
+  m_Name: ZWater_Mat
+  m_Shader: {fileID: -6465566751694194690, guid: ef0be3f2f80a7794a9002202192baec2,
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -33,10 +33,6 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - Texture2D_A7E5D735:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -61,16 +57,41 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_29D24458_Texture_1:
+        m_Texture: {fileID: 2800000, guid: eb14a3d47df663c4197d34190cdec3fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_52A6A408_Texture_1:
+        m_Texture: {fileID: 2800000, guid: eb14a3d47df663c4197d34190cdec3fa, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2DLOD_B9BB5862_Texture_1:
+        m_Texture: {fileID: 2800000, guid: c1eacb64e2348f245b4a4235c89737bd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_6F9EE481_Texture_1:
+        m_Texture: {fileID: 2800000, guid: c1eacb64e2348f245b4a4235c89737bd, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_3627D3D9: 0.74
-    - Vector1_4E6B7BA4: 0
-    - Vector1_985AB311: 0.04
-    - Vector1_9E0801F9: -1
-    - Vector1_E632208A: 0.1
+    - Vector1_3249DB8B: 0.05
+    - Vector1_361A02E2: 0.5
+    - Vector1_43058008: -0.15
+    - Vector1_490F5111: 39
+    - Vector1_5078A7C2: 30
+    - Vector1_570FDA5: 0.1
+    - Vector1_85AC2B1D: 0
+    - Vector1_8CE0FE94: 0
+    - Vector1_9187C45A: 0.2
+    - Vector1_A1D73D8E: 4
+    - Vector1_A90D56E6: 0.2
+    - Vector1_D256AA5B: 18.33
+    - Vector1_E8E6B7ED: 2
+    - Vector1_EF41CD6C: 0.001
     - _AlphaClip: 0
     - _Blend: 0
     - _BumpScale: 1
@@ -93,12 +114,12 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_1AE6866E: {r: 0.745283, g: 0.72073156, b: 0.4745906, a: 1}
-    - Color_5D0380D7: {r: 0.945098, g: 0.945098, b: 0.945098, a: 0}
-    - Color_86EC44F6: {r: 0.17661981, g: 0.46226418, b: 0.23542893, a: 1}
-    - Color_AEFDED49: {r: 0.972549, g: 0.972549, b: 0.972549, a: 0}
-    - Vector3_3B0E48BD: {r: 3, g: 1, b: 1, a: 0}
-    - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - Color_72F6F359: {r: 0.25943398, g: 0.6493655, b: 1, a: 1}
+    - Color_BDBE1842: {r: 0, g: 0.96256685, b: 1, a: 1}
+    - Color_E6083C73: {r: 0, g: 0.61237675, b: 0.9137255, a: 1}
+    - Color_FF206D58: {r: 1, g: 1, b: 1, a: 0}
+    - Vector2_B9A5CF73: {r: 30, g: 30, b: 0, a: 0}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

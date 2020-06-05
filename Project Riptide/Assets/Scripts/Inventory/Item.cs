@@ -117,7 +117,6 @@ public class Item
             equipped = value;
         }
     }
-
     #endregion
 
     public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades)

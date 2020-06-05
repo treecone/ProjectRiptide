@@ -9,7 +9,7 @@ public class Menus : MonoBehaviour
         GameObject[] allPorts = GameObject.FindGameObjectsWithTag("Port");
         foreach (GameObject port in allPorts)
         {
-            if (port.GetComponent<PortManager>().inPort)
+            if (port.GetComponent<PortManager>().InPort)
             {
                 port.GetComponent<PortManager>().LeavePort();
                 return;

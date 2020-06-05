@@ -10,7 +10,9 @@ public class CannonFire : MonoBehaviour
     private Upgrades _shipUpgradeScript;
     [SerializeField]
     private GameObject _cannonSmoke;
-    public GameObject CannonSmoke => _cannonSmoke;
+
+    private float _shotAngle = 90;
+    public float ShotAngle => _shotAngle;
 
     // Start is called before the first frame update
     void Start()
@@ -45,21 +47,23 @@ public class CannonFire : MonoBehaviour
         }
         angle *= Mathf.Rad2Deg;
 
-        if(angle > 0 && angle < 45)
+        //Clamp shot angle
+        float shotClamp = (180f - _shotAngle) / 2;
+        if(angle > 0 && angle < shotClamp)
         {
-            angle = 45;
+            angle = shotClamp;
         }
-        if(angle > 135)
+        if(angle > 180 - shotClamp)
         {
-            angle = 135;
+            angle = 180 - shotClamp;
         }
-        if(angle < 0 && angle > -45)
+        if(angle < 0 && angle > -shotClamp)
         {
-            angle = -45;
+            angle = -shotClamp;
         }
-        if(angle < -135)
+        if(angle < -180 + shotClamp)
         {
-            angle = -135;
+            angle = -180 + shotClamp;
         }
 
         //Camera camera = Camera.main;

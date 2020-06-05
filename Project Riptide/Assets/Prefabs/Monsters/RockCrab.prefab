@@ -440,36 +440,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ShowMaskGraphic: 1
---- !u!1 &4618212860510354827
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4618212860510354826}
-  m_Layer: 0
-  m_Name: detectPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4618212860510354826
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4618212860510354827}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.41, z: -0.02}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 4618212861017856868}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4618212861017856793
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,7 +449,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4618212861017856868}
-  - component: {fileID: 4618212861017856792}
+  - component: {fileID: 6697133033685254127}
   - component: {fileID: 5844281943901009203}
   m_Layer: 0
   m_Name: RockCrab
@@ -502,11 +472,10 @@ Transform:
   - {fileID: 1519201733644620968}
   - {fileID: 2965691889692409221}
   - {fileID: 4618212859901516230}
-  - {fileID: 4618212860510354826}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4618212861017856792
+--- !u!114 &6697133033685254127
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -515,17 +484,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 4618212861017856793}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62649f338f700a6459119c1bf0e8e407, type: 3}
+  m_Script: {fileID: 11500000, guid: b6ab637c603a7df4ca5714b5434dff8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _mass: 1
   _maxSpeed: 4
-  _enemyType: 4
   _projectile: {fileID: 1807429604883853674, guid: 0a043637e4fac3944a273d1f8efb9c3d,
     type: 3}
   _healthBarObject: {fileID: 4618212860153878898}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
-  _camera: {fileID: 0}
   _lengthMult: 2
   _widthMult: 1.5
   _heightMult: 1

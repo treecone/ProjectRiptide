@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ShipMovement : Physics
 {
@@ -10,7 +11,9 @@ public class ShipMovement : Physics
     private const float MAX_ROTATIONAL_VELOCITY = 1f;
     private const float MIN_ROTATIONAL_VELOCITY = 0.2f;
     private const float ROTATIONAL_ACCELERATION = 0.6f;
-
+    private GameObject _canvas;
+    private Camera _camera;
+    private GameObject _shotIndicator;
     private CameraController _cameraControl;
 	private Vector3 _target;
 	public Vector3 TargetDirection { get; set;}
@@ -46,10 +49,19 @@ public class ShipMovement : Physics
         }
     }
 
+    public bool IndicatorActive
+    {
+        get { return _shotIndicator.activeSelf; }
+        set { _shotIndicator.SetActive(value); }
+    }
+
     protected override void Start()
     {
-        _cameraControl = Camera.main.GetComponent<CameraController>();
+        _camera = Camera.main;
+        _cameraControl = _camera.GetComponent<CameraController>();
         playerHurtbox = transform.GetComponentInChildren<Hitbox>();
+        _canvas = transform.Find("Canvas").gameObject;
+        _shotIndicator = _canvas.transform.Find("ShotIndicator").gameObject;
         //Add collision to hurt box
         playerHurtbox.OnStay += OnObsticalCollision;
         base.Start();
@@ -58,8 +70,11 @@ public class ShipMovement : Physics
     // Update is called once per frame
     override protected void Update()
     {
-		//find the vector pointing from our position to the target
-		Vector3 moveDirection = TargetDirection.normalized;
+        //Rotate Canvas towards camera
+        _canvas.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
+
+        //find the vector pointing from our position to the target
+        Vector3 moveDirection = TargetDirection.normalized;
 
         //create the rotation we need to be in to look at the target
         Quaternion lookRotation = _rotation;

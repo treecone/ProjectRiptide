@@ -1,10 +1,15 @@
-﻿using System.Collections;
+﻿/*This script contains AI used by various enemy classes
+ * uses partial classes to declare AI
+*/
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
+public enum FlowerFrogAttackState { Latched = 1 }
 
+//AI available to all enemys
 public partial class Enemy : Physics
 {
     /// <summary>
@@ -70,25 +75,17 @@ public partial class Enemy : Physics
     {
         //Do nothing
     }
-
+    
     /// <summary>
-    /// Passive AI for the rock crab
-    /// Does nothing but hide underwater and wait for player
-    /// When the rock crab is far away from starting position,
-    /// Run back to starting area
+    /// Passive AI that returns a monster to it's wander radius
+    /// Used for monsters that do nothing until triggered
+    /// Then need to return back to their starting area when
+    /// they return to passive
     /// </summary>
-    public void PassiveRockCrab()
+    public void PassiveReturnToRadius()
     {
-        if(_position.y == _startPos.y)
+        if (_enemyDistance >= _wanderRadius)
         {
-            //Do nothing
-            return;
-        }
-
-        //While crab is too far away from starting pos, move towards starting pos
-        if(_enemyDistance >= 10.0f)
-        {
-
             Vector3 destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
             //Check for obstacle
             if (CheckObstacle(destination))
@@ -113,20 +110,6 @@ public partial class Enemy : Physics
             //ApplyFriction(0.25f);
             if (_animator != null)
                 _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
-        }
-        //When crab is close enough, move down to hide again
-        else if(transform.position.y > _startPos.y)
-        {
-            //Set passive cooldown so rock crab cannot be triggered during transition
-            _passiveCooldown = 1.0f;
-            //Move down
-            ApplyConstantMoveForce(Vector3.down, 3.0f, 1.0f);
-        }
-        //If crab moves down to far, return to initial y pos
-        else if(transform.position.y < _startPos.y)
-        {
-            StopMotion();
-            _position = new Vector3(_position.x, _startPos.y, _position.z);
         }
     }
 
@@ -182,6 +165,28 @@ public partial class Enemy : Physics
         }
     }
 
+    /// <summary>
+    /// Enemy runs away from player in their hostile state
+    /// rather than trying to fight the player
+    /// </summary>
+    public void HostileRunAway()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+
+        FleePlayer(1.5f);
+    }
+}
+
+//AI for koi boss
+public partial class KoiBoss : Enemy
+{
     /// <summary>
     /// Defines the AI for the Giant Koi Boss fight
     /// Phase 1 >50% health
@@ -419,13 +424,76 @@ public partial class Enemy : Physics
         }
         _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
+}
+
+//AI for Rock crab
+public partial class RockCrab : Enemy
+{
+    /// <summary>
+    /// Passive AI for the rock crab
+    /// Does nothing but hide underwater and wait for player
+    /// When the rock crab is far away from starting position,
+    /// Run back to starting area
+    /// </summary>
+    public void PassiveRockCrab()
+    {
+        if (_position.y == _startPos.y)
+        {
+            //Do nothing
+            return;
+        }
+
+        //While crab is too far away from starting pos, move towards starting pos
+        if (_enemyDistance >= 10.0f)
+        {
+
+            Vector3 destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
+            //Check for obstacle
+            if (CheckObstacle(destination))
+            {
+                //Set destination to closest way to player that avoids obstacles
+                destination = transform.position + AvoidObstacle(destination);
+            }
+            //Seek destination
+            Vector3 netForce = Seek(destination);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+
+            //Rotate in towards direction of velocity
+            if (_velocity != Vector3.zero)
+            {
+                Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+                SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            }
+            _timeCurrent += Time.deltaTime;
+
+            ApplyForce(netForce);
+
+            //ApplyFriction(0.25f);
+            if (_animator != null)
+                _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+        //When crab is close enough, move down to hide again
+        else if (transform.position.y > _startPos.y)
+        {
+            //Set passive cooldown so rock crab cannot be triggered during transition
+            _passiveCooldown = 1.0f;
+            //Move down
+            ApplyConstantMoveForce(Vector3.down, 3.0f, 1.0f);
+        }
+        //If crab moves down to far, return to initial y pos
+        else if (transform.position.y < _startPos.y)
+        {
+            StopMotion();
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
+        }
+    }
 
     /// <summary>
     /// Hostile AI for Rock Crab
     /// Rock crab hides underwater and jumps up when Hostile AI is triggered
     /// Attacks by jumping towards the player every so often
     /// </summary>
-    public void HostileRockCrab()
+    protected void HostileRockCrab()
     {
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
@@ -436,9 +504,9 @@ public partial class Enemy : Physics
             _passiveCooldown = 5.0f;
         }
         //When crab first activates, jump out of the water
-        else if(!_activeStates[(int)AttackState.FormChanged])
+        else if (!_activeStates[(int)AttackState.FormChanged])
         {
-            if(!_activeStates[(int)AttackState.FormChangeInProgress])
+            if (!_activeStates[(int)AttackState.FormChangeInProgress])
             {
                 //Only jump out of the water if the crab is underwater
                 //When reactivating hostile AI, crab may be still above water
@@ -457,7 +525,7 @@ public partial class Enemy : Physics
 
             ApplyForce(_gravity);
 
-            if(_currTime >= 0.85f)
+            if (_currTime >= 0.85f)
             {
                 _activeStates[(int)AttackState.FormChanged] = true;
                 StopMotion();
@@ -466,7 +534,7 @@ public partial class Enemy : Physics
             _currTime += Time.deltaTime;
         }
         else
-        { 
+        {
             //If enemy is not in special
             if (!_activeStates[(int)AttackState.Active])
             {
@@ -485,7 +553,7 @@ public partial class Enemy : Physics
                     _currTime = 0;
                     _initalPos = transform.position.y;
                     //Load an attack that charges a dash then attacks
-                    _actionQueue.Enqueue(CrabRockFling);
+                    _actionQueue.Enqueue(RockCrabFling);
                 }
             }
             else
@@ -500,22 +568,72 @@ public partial class Enemy : Physics
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
     }
+}
 
-    /// <summary>
-    /// Enemy runs away from player in their hostile state
-    /// rather than trying to fight the player
-    /// </summary>
-    public void HostileRunAway()
+public partial class FlowerFrog : Enemy
+{
+    protected void HostileFlowerFrog()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
         }
+        else
+        {
+            //If enemy is not in special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                if (!_activeStates[(int)FlowerFrogAttackState.Latched])
+                {
+                    //Follow the player
+                    FollowPlayer();
 
-        FleePlayer(1.5f);
+                    //Cooldown special while in a 10 units of player
+                    if (_playerDistance < 20.0f)
+                    {
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                    }
+                    //If cooldown is finished, switch to special
+                    if (_specialCooldown[(int)AttackState.Active] <= 0)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _currTime = 0;
+                        //Load an attack that shoots the frogs tounge out to latch on to player
+                        _actionQueue.Enqueue(ToungeCharge);
+                        _actionQueue.Enqueue(ShootTounge);
+                        _actionQueue.Enqueue(ToungeReturn);
+                    }
+                }
+                else
+                {
+                    //While latched
+                    ToungeDrag();
+                    _tounge.transform.rotation = Quaternion.identity;
+                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+                    if(_latchStartHealth - _health > LATCH_DAMAGE_CAP)
+                    {
+                        _activeStates[(int)FlowerFrogAttackState.Latched] = false;
+                        _activeStates[(int)AttackState.Active] = true;
+                        _currTime = 0;
+                        _actionQueue.Enqueue(ToungeReturn);
+                    }
+                    SendFriction(0.4f);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                }
+            }
+            //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
     }
 }
