@@ -71,36 +71,14 @@ public partial class Enemy : Physics
         ApplyForce(netForce * speed);
     }
 
-    //General method for making the moster circle around the player
-    //Used when monster is too close to player
-    protected void CirclePlayer()
+    /// <summary>
+    /// General method for making the monster stay facing the player
+    /// </summary>
+    protected void LookAtPlayer()
     {
-        //Calculate net force
-        Vector3 netForce = new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
-
-        if (CheckObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z)))
-        {
-            netForce += transform.position + AvoidObstacle(new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z));
-        }
-        else
-        {
-            Vector3 crossForce = PlayerPosition() - transform.position;
-            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
-            crossForce.Normalize();
-            crossForce *= 1f;
-            crossForce = Vector3.Cross(Vector3.up, crossForce);
-            crossForce = new Vector3(crossForce.x, 0, crossForce.z);
-            netForce += crossForce;
-        }
-
-        //Rotate in towards direction of velocity
-        if (_velocity != Vector3.zero)
-        {
-            Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
-            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
-        }
-
-        ApplyForce(netForce);
+        _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+        SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
     }
 
     /// <summary>
@@ -824,9 +802,9 @@ public partial class FlowerFrog : Enemy
             }
 
             //Look towards player
-            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity();
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
-            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            SetSmoothRotation(desiredRotation, 1.2f, 0.75f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
         }
 
@@ -859,7 +837,7 @@ public partial class FlowerFrog : Enemy
         if(_playerCollision)
         {
             //LATCH ONTO PLAYER
-                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+            _tounge.SetPosition(1, PlayerPosition() - transform.position);
             _activeStates[(int)FlowerFrogAttackState.Latched] = true;
             _latchStartHealth = _health;
             time = MAX_TIME;
@@ -906,7 +884,7 @@ public partial class FlowerFrog : Enemy
         _tounge.SetPosition(1, _tounge.GetPosition(1) - (_tounge.GetPosition(1) - _tounge.GetPosition(0)).normalized * 30.0f * Time.deltaTime);
 
         //If tonge moves back too far, set time to max
-        if (_tounge.GetPosition(1).z <= 0)
+        if (_tounge.GetPosition(1).z < 0.5f && _tounge.GetPosition(1).z > -0.5f)
         {
             _tounge.SetPosition(1, Vector3.zero);
             return false;
@@ -918,9 +896,7 @@ public partial class FlowerFrog : Enemy
     }
 
     protected void ToungeDrag()
-    {
-        const float MAX_DRAG_DIST = 15.0f;
-
+    { 
         //Seek destination
         Vector3 netForce = Vector3.zero;
         if(Vector3.SqrMagnitude(transform.position - PlayerPosition()) > MAX_DRAG_DIST * MAX_DRAG_DIST)

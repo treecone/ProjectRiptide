@@ -73,6 +73,43 @@ public class CannonFire : MonoBehaviour
         return angle;
     }
 
+    public float Fire(Vector3 direction, Vector3 targetDir, float offset, Upgrade upgrade)
+    {
+        //Calculate angle to fire shot
+        float angle = Mathf.Acos(Vector3.Dot(targetDir.normalized, transform.forward.normalized));
+        Vector3 cross = Vector3.Cross(targetDir, transform.forward);
+        if (Vector3.Dot(Vector3.up, cross) < 0)
+        { // Or > 0
+            angle = -angle;
+        }
+        angle *= Mathf.Rad2Deg;
+
+        //Clamp shot angle
+        float shotClamp = (180f - _shotAngle) / 2;
+        if (angle > 0 && angle < shotClamp)
+        {
+            angle = shotClamp;
+        }
+        if (angle > 180 - shotClamp)
+        {
+            angle = 180 - shotClamp;
+        }
+        if (angle < 0 && angle > -shotClamp)
+        {
+            angle = -shotClamp;
+        }
+        if (angle < -180 + shotClamp)
+        {
+            angle = -180 + shotClamp;
+        }
+
+        //Camera camera = Camera.main;
+        //camera.transform.Translate(0f, 2.0f, 2.0f);
+        CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade);
+        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        return angle;
+    }
+
     public class CannonShot
     {
         private int _damage;

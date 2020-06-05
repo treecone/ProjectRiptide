@@ -70,6 +70,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
     protected GetVector PlayerPosition;
+    protected GetVector PlayerVelocity;
     protected GiveVector SendKnockback;
     protected GiveFloat SendFriction;
 
@@ -130,9 +131,11 @@ public partial class Enemy : Physics
         _healthBarObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
-        PlayerPosition = player.GetComponent<ShipMovement>().GetPosition;
-        SendKnockback = player.GetComponent<ShipMovement>().TakeKnockback;
-        SendFriction = player.GetComponent<ShipMovement>().ApplyFriction;
+        ShipMovement movement = player.GetComponent<ShipMovement>();
+        PlayerPosition = movement.GetPosition;
+        PlayerVelocity = movement.GetVelocity;
+        SendKnockback = movement.TakeKnockback;
+        SendFriction = movement.ApplyFriction;
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {
             hitbox.OnTrigger += HitboxTriggered;
@@ -164,7 +167,7 @@ public partial class Enemy : Physics
                     //also make sure enemy is not in a passive cooldown
                     if (_playerDistance < _hostileRadius && _passiveCooldown <= 0)
                     {
-                        _healthBarObject.SetActive(true);
+                        OnHostile();
                         _state = EnemyState.Hostile;
                     }
                     break;
@@ -173,18 +176,11 @@ public partial class Enemy : Physics
                     //check for passive behavior trigger, if you get far enough away
                     if (_playerDistance >= _passiveRadius)
                     {
-                        if (_health == _maxHealth)
-                        {
-                            _healthBarObject.SetActive(false);
-                        }
-                        ResetHostile();
+                        OnPassive();
                         _state = EnemyState.Passive;
                     }
                     break;
             }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                TakeDamage(10);
 
             //Make health bar face player
             _healthBarObject.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
@@ -221,7 +217,7 @@ public partial class Enemy : Physics
             _healthBar.UpdateHealth(_health);
             if (_state == EnemyState.Passive && _passiveCooldown <= 0)
             {
-                _healthBarObject.SetActive(true);
+                OnHostile();
                 _state = EnemyState.Hostile;
             }
             if (_health <= 0)
@@ -511,7 +507,7 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 20.0f * _pushMult;
+                backForce *= 5.0f * _pushMult;
                 ApplyForce(backForce);
             }
         }
@@ -570,4 +566,27 @@ public partial class Enemy : Physics
         else
             _rotationalVeloctiy = minRotationalVelocity;
     }
+
+    /// <summary>
+    /// Called when monster becomes passive
+    /// </summary>
+    protected virtual void OnPassive()
+    {
+        if (_health == _maxHealth)
+        {
+            _healthBarObject.SetActive(false);
+        }
+        ResetHostile();
+        //Keep monster passive for 5 seconds at least
+        _passiveCooldown = 5.0f;
+    }
+    
+    /// <summary>
+    /// Called when monster becomes hostile
+    /// </summary>
+    protected virtual void OnHostile()
+    {
+        _healthBarObject.SetActive(true);
+    }
+
 }

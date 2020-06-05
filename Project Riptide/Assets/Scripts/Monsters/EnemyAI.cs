@@ -111,6 +111,10 @@ public partial class Enemy : Physics
             if (_animator != null)
                 _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
+        else if(_velocity != Vector3.zero)
+        {
+            StopMotion();
+        }
     }
 
     /// <summary>
@@ -578,9 +582,8 @@ public partial class FlowerFrog : Enemy
         if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
-            ResetHostile();
-            //Keep monster passive for 5 seconds at least
-            _passiveCooldown = 5.0f;
+            //Reset tounge position
+            OnPassive();
         }
         else
         {
@@ -590,7 +593,10 @@ public partial class FlowerFrog : Enemy
                 if (!_activeStates[(int)FlowerFrogAttackState.Latched])
                 {
                     //Follow the player
-                    FollowPlayer();
+                    //FollowPlayer();
+                    LookAtPlayer();
+
+                    ApplyFriction(0.5f);
 
                     //Cooldown special while in a 10 units of player
                     if (_playerDistance < 20.0f)
@@ -614,7 +620,7 @@ public partial class FlowerFrog : Enemy
                     ToungeDrag();
                     _tounge.transform.rotation = Quaternion.identity;
                     _tounge.SetPosition(1, PlayerPosition() - transform.position);
-                    if(_latchStartHealth - _health > LATCH_DAMAGE_CAP)
+                    if(_latchStartHealth - _health > LATCH_DAMAGE_CAP || _playerDistance > MAX_LATCH_DIST)
                     {
                         _activeStates[(int)FlowerFrogAttackState.Latched] = false;
                         _activeStates[(int)AttackState.Active] = true;
