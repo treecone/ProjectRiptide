@@ -613,6 +613,7 @@ GameObject:
   - component: {fileID: 8210748076640493402}
   - component: {fileID: 271508308}
   - component: {fileID: 271508309}
+  - component: {fileID: 569296686}
   m_Layer: 2
   m_Name: Player
   m_TagString: Player
@@ -742,6 +743,23 @@ MonoBehaviour:
   _mass: 1
   _maxSpeed: 1
   shipUpgradeScript: {fileID: 271508308}
+--- !u!114 &569296686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8210748076640493403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f1170b3e2b83fe45a8778481c24e0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputManager: {fileID: 0}
+  _skillType: 0000000001000000
+  button:
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!1 &8989433592284252480
 GameObject:
   m_ObjectHideFlags: 0
