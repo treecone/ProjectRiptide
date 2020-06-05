@@ -164,7 +164,6 @@ public class IslandGenerator : MonoBehaviour
                     built = false;
                 }
             }
-        Debug.Log(built);
         //}
         GameObject clone = Instantiate(obj.gameObject);
         clone.transform.position = result;
@@ -180,7 +179,6 @@ public class IslandGenerator : MonoBehaviour
                            result + new Vector3(Mathf.Cos(i + Mathf.PI / 8f), 0, Mathf.Sin(i + Mathf.PI / 8f)) * obj.radius,
                            Color.cyan, 100f);
         }
-        Debug.Log("placed object");
         _decoObjects.Add(obj);
         
     }

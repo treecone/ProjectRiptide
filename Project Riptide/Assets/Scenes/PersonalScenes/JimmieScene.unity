@@ -493,6 +493,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!120 &1390557574 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 1055299688, guid: 59ea9c24f4295d744a4b3d24a318a75b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1927507382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1519383628
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,6 +572,12 @@ MonoBehaviour:
   debugSphere2: {fileID: 1286652720}
   _numUrbanCenters: 3
   _numEnvironmentalCenters: 3
+--- !u!120 &1547614038 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 1006721888, guid: 59ea9c24f4295d744a4b3d24a318a75b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1927507382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1581052696
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,6 +678,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
+      propertyPath: _leftIndicator
+      value: 
+      objectReference: {fileID: 1547614038}
+    - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
+      propertyPath: _rightIndicator
+      value: 
+      objectReference: {fileID: 1390557574}
+    - target: {fileID: 663314058, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
+      propertyPath: _glMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: aa1cfcbcfa410054ab7349784c20e6cf, type: 2}
     - target: {fileID: 1912491708, guid: 08023d8f5d737d546916f57cf3805d62, type: 3}
       propertyPath: shipUpgradeScript
       value: 
@@ -1311,7 +1335,7 @@ PrefabInstance:
       objectReference: {fileID: 359698384}
     - target: {fileID: 271508309, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8210748076640493394, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
@@ -1444,7 +1468,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4753308728694349698}
-  m_Mesh: {fileID: 3237046608918968389, guid: ee4ccbdd2d7e8dc4aab8f489c0214c15, type: 3}
+  m_Mesh: {fileID: -2238999070388985150, guid: 7cbd036e421674d4eb4f8cd16a2bd46a, type: 3}
 --- !u!1 &4753308728694349698
 GameObject:
   m_ObjectHideFlags: 0
@@ -1585,7 +1609,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4753308728694349698}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.35121882, y: -9.6, z: 26}
+  m_LocalPosition: {x: -0.35121882, y: -1.1, z: 26}
   m_LocalScale: {x: 4, y: 3, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
