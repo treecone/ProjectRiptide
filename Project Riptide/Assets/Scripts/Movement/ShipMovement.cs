@@ -151,6 +151,15 @@ public class ShipMovement : Physics
     }
 
     /// <summary>
+    /// Returns the velocity of the player
+    /// </summary>
+    /// <returns>Velocity of player</returns>
+    public Vector3 GetVelocity()
+    {
+        return _velocity;
+    }
+
+    /// <summary>
     /// Creates a force that moves in a direction at a given speed
     /// Should be applied each frame to move at desired speed
     /// </summary>
