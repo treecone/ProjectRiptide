@@ -208,7 +208,7 @@ public partial class KoiBoss : Enemy
     {
         const float MAX_TIME = 0.25f;
 
-        ApplyFriction(0.50f);
+        ApplyFriction(0.5f);
 
         if (time >= MAX_TIME)
         {
