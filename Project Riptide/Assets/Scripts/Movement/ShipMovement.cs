@@ -131,7 +131,6 @@ public class ShipMovement : Physics
 
         //Apply net force
         ApplyForce(netForce);
-        //Apply Friction
         ApplyFriction(0.75f);
         //Apply force against the side of the ship, reduces drift
         ApplyCounterSideForce(0.98f);
