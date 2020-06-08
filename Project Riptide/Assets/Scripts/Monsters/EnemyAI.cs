@@ -619,7 +619,7 @@ public partial class FlowerFrog : Enemy
                     //While latched
                     ToungeDrag();
                     _tounge.transform.rotation = Quaternion.identity;
-                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+                    _tounge.SetPosition(1, (PlayerPosition() - transform.position) * 1.1f);
                     if(_latchStartHealth - _health > LATCH_DAMAGE_CAP || _playerDistance > MAX_LATCH_DIST)
                     {
                         _activeStates[(int)FlowerFrogAttackState.Latched] = false;
