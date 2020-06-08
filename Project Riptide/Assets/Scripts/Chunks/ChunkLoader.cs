@@ -83,16 +83,16 @@ public class ChunkLoader : MonoBehaviour
             for(int z = 0; z < _zLen; z++)
             {
                 string regionText = parts[z];
-                int index = regionText.IndexOf("<");
-                if(index > -1)
-                {
-                    string description = regionText.Substring(index);
-                    regionText = regionText.Substring(0, index);
-                }
-                while (regionText.IndexOf("<") > -1)
-                {
+                //int index = regionText.IndexOf("<");
+                //if(index > -1)
+                //{
+                //    string description = regionText.Substring(index);
+                //    regionText = regionText.Substring(0, index);
+                //}
+                //while (regionText.IndexOf("<") > -1)
+                //{
 
-                }
+                //}
                 int index = regionText.IndexOf("<");
                 bool hasEnemies = false;
                 int numEnemies = 0;
