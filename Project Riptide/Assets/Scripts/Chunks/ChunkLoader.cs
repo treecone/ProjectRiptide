@@ -21,6 +21,7 @@ public class ChunkLoader : MonoBehaviour
 {
     public GameObject koiPrefab;
     public GameObject rockCrabPrefab;
+    public GameObject seaSheepPrefab;
 
     private Dictionary<string, GameObject> monsters;
     private List<GameObject> enemies;
@@ -81,8 +82,18 @@ public class ChunkLoader : MonoBehaviour
             // March through each chunk descriptor.
             for(int z = 0; z < _zLen; z++)
             {
-                string s = parts[z];
-                int index = s.IndexOf("<");
+                string regionText = parts[z];
+                int index = regionText.IndexOf("<");
+                if(index > -1)
+                {
+                    string description = regionText.Substring(index);
+                    regionText = regionText.Substring(0, index);
+                }
+                while (regionText.IndexOf("<") > -1)
+                {
+
+                }
+                int index = regionText.IndexOf("<");
                 bool hasEnemies = false;
                 int numEnemies = 0;
                 List<GameObject> enemies = new List<GameObject>();
@@ -91,7 +102,7 @@ public class ChunkLoader : MonoBehaviour
                 if (index > -1)
                 {
                     hasEnemies = true;
-                    string[] details = s.Substring(index + 1, s.IndexOf('>') - index - 1).Split('|');
+                    string[] details = regionText.Substring(index + 1, regionText.IndexOf('>') - index - 1).Split('|');
                     string enemyName = details[0];
                     numEnemies = Int32.Parse(details[1]);
                     for (int i = 2; i < 2 + numEnemies; i++)
@@ -112,12 +123,12 @@ public class ChunkLoader : MonoBehaviour
                         // Store a reference in the list of enemies corresponding to this species.
                         enemies.Add(enemy);
                     }
-                    s = s.Substring(0, index);
+                    regionText = regionText.Substring(0, index);
                 }
                 string pathName = "Chunks";
                 Region r = Region.OCEAN;
                 bool hasMonster = false;
-                switch (s)
+                switch (regionText)
                 {
                     // Set the chunks pathname to the next china chunk.
                     case "CHINA":
@@ -423,6 +434,8 @@ public class ChunkLoader : MonoBehaviour
         {
             case "rockCrab":
                 return rockCrabPrefab;
+            case "seaSheep":
+                return seaSheepPrefab;
             case "koi":
                 return koiPrefab;
         }
