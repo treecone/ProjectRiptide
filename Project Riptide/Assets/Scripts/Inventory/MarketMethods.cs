@@ -122,7 +122,7 @@ public class MarketMethods : MonoBehaviour
     /// </summary>
     public void ChooseButton(GameObject button)
     {
-        button.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 80);
+        button.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 120);
         button.GetComponent<Image>().color = new Color32(132, 132, 132, 255);
         button.GetComponent<Button>().interactable = false;
     }
@@ -133,7 +133,7 @@ public class MarketMethods : MonoBehaviour
     /// <param name="button"></param>
     public void ResetButton(GameObject button)
     {
-        button.GetComponent<RectTransform>().sizeDelta = new Vector2(180, 50);
+        button.GetComponent<RectTransform>().sizeDelta = new Vector2(250, 80);
         button.GetComponent<Image>().color = new Color32(100, 100, 100, 255);
         button.GetComponent<Button>().interactable = true;
     }
