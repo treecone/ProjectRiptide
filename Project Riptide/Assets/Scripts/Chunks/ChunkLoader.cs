@@ -22,6 +22,7 @@ public class ChunkLoader : MonoBehaviour
     public GameObject koiPrefab;
     public GameObject rockCrabPrefab;
     public GameObject seaSheepPrefab;
+    public GameObject flowerFrogPrefab;
 
     private Dictionary<string, GameObject> monsters;
     private List<GameObject> enemies;
@@ -83,35 +84,34 @@ public class ChunkLoader : MonoBehaviour
             for(int z = 0; z < _zLen; z++)
             {
                 string regionText = parts[z];
-                //int index = regionText.IndexOf("<");
-                //if(index > -1)
-                //{
-                //    string description = regionText.Substring(index);
-                //    regionText = regionText.Substring(0, index);
-                //}
-                //while (regionText.IndexOf("<") > -1)
-                //{
-
-                //}
+                Debug.Log("Before: " + regionText);
                 int index = regionText.IndexOf("<");
+                string description = "";
                 bool hasEnemies = false;
                 int numEnemies = 0;
                 List<GameObject> enemies = new List<GameObject>();
-                // There is extra information about the chunk other than the Region and Region Descriptor, 
-                // such as what type of enemy, how many, and their starting positions.
                 if (index > -1)
                 {
                     hasEnemies = true;
-                    string[] details = regionText.Substring(index + 1, regionText.IndexOf('>') - index - 1).Split('|');
+                    description = regionText.Substring(index);
+                    regionText = regionText.Substring(0, index);
+                    index = 0;
+                }
+                // Load in enemies as they are described in the text file.
+                while(index > -1)
+                {
+                   // Debug.Log(description);
+                    string[] details = description.Substring(index + 1, description.IndexOf('>') - index - 1).Split('|');
                     string enemyName = details[0];
                     numEnemies = Int32.Parse(details[1]);
                     for (int i = 2; i < 2 + numEnemies; i++)
                     {
+                        Debug.Log(i - 2);
                         string coords = details[i];
                         float xCoord = float.Parse(coords.Substring(1, coords.IndexOf(",") - 1)) + (x - 0.5f) * _CHUNKSIDELENGTH;
                         float zCoord = float.Parse(coords.Substring(coords.IndexOf(",") + 1, coords.IndexOf(")") - coords.IndexOf(",") - 1))
                             + (z - 0.5f) * _CHUNKSIDELENGTH;
-                        Debug.Log(enemyName);
+                        //Debug.Log(enemyName);
                         GameObject enemy = Instantiate(GetPrefabByName(enemyName), new Vector3(xCoord, 0, zCoord), Quaternion.identity);
                         enemy.SetActive(false);
 
@@ -123,11 +123,15 @@ public class ChunkLoader : MonoBehaviour
                         // Store a reference in the list of enemies corresponding to this species.
                         enemies.Add(enemy);
                     }
-                    regionText = regionText.Substring(0, index);
+                    // Look at the next portion of the string.
+                    description = description.Substring(description.IndexOf(">") + 1);
+                    // Get the index of the next detail if it exists, otherwise index becomes -1.
+                    index = description.IndexOf("<");
                 }
                 string pathName = "Chunks";
                 Region r = Region.OCEAN;
                 bool hasMonster = false;
+                Debug.Log("After: " + regionText);
                 switch (regionText)
                 {
                     // Set the chunks pathname to the next china chunk.
@@ -438,6 +442,8 @@ public class ChunkLoader : MonoBehaviour
                 return seaSheepPrefab;
             case "koi":
                 return koiPrefab;
+            case "flowerFrog":
+                return flowerFrogPrefab;
         }
         return null;
     }
