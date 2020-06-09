@@ -284,32 +284,32 @@ public class ChunkLoader : MonoBehaviour
         previousRegion = currentRegion;
         DisplayChunks();
         //Determine if the players has entered a new region.
-        if (!currentRegion.Equals(previousRegion))
-        {
-            // Display the text for a few seconds.
-            StartCoroutine(DisplayRegion(currentRegion));
-        }
+        //if (!currentRegion.Equals(previousRegion))
+        //{
+        //    // Display the text for a few seconds.
+        //    StartCoroutine(DisplayRegion(currentRegion));
+        //}
 
     }
     // Fade in and out for region switching.
-    private IEnumerator DisplayRegion(string newRegion)
-    {
-        regionDisplay.text = "Now Entering " +newRegion.ToUpper();
-        regionDisplay.enabled = true;
-        Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
-        while(regionDisplay.color.a < 1.0f)
-        {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
-            yield return null;
-        }
-        yield return new WaitForSeconds(2f);
-        while (regionDisplay.color.a > 0f)
-        {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
-            yield return null;
-        }
-        regionDisplay.enabled = false;
-    }
+    //private IEnumerator DisplayRegion(string newRegion)
+    //{
+    //    regionDisplay.text = "Now Entering " +newRegion.ToUpper();
+    //    regionDisplay.enabled = true;
+    //    Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
+    //    while(regionDisplay.color.a < 1.0f)
+    //    {
+    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
+    //        yield return null;
+    //    }
+    //    yield return new WaitForSeconds(2f);
+    //    while (regionDisplay.color.a > 0f)
+    //    {
+    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
+    //        yield return null;
+    //    }
+    //    regionDisplay.enabled = false;
+    //}
     /// <summary>
     /// Gets the distance between the ship and the specified chunks center.
     /// </summary>
