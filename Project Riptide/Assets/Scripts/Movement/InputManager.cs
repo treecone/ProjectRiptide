@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public delegate bool EnemySort(Enemy re, Enemy le);
+
 public class InputManager : MonoBehaviour
 {
 	private Camera _camera;
@@ -54,6 +56,7 @@ public class InputManager : MonoBehaviour
     private Enemy _leftEnemy;
     private Enemy _rightEnemy;
     private bool _isRightEnemy;
+    public EnemySort EnemyCompare;
 
     void Awake()
 	{
@@ -67,6 +70,7 @@ public class InputManager : MonoBehaviour
 		_cannonFireScript = _ship.GetComponent<CannonFire>();
 	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
+        EnemyCompare = ClosestHostileEnemy;
 	}
 
 	void Update()
@@ -90,7 +94,7 @@ public class InputManager : MonoBehaviour
             _leftEnemy = CheckEnemy(-_ship.transform.right);
 
             //Only take the enemy closest to the player
-            if (_rightEnemy != null && !_rightEnemy.IsDying && (_leftEnemy == null || _leftEnemy.IsDying || Vector3.SqrMagnitude(_rightEnemy.Position - transform.position) < Vector3.SqrMagnitude(_leftEnemy.Position - transform.position)))
+            if (_rightEnemy != null && !_rightEnemy.IsDying && (_leftEnemy == null || _leftEnemy.IsDying || EnemyCompare(_rightEnemy, _leftEnemy)))
             {
                 _currEnemy = _rightEnemy;
                 _isRightEnemy = true;
@@ -335,7 +339,6 @@ public class InputManager : MonoBehaviour
     public Enemy CheckEnemy(Vector3 targetDir)
     {
         Enemy foundEnemy = null;
-        float dist = 999999;
         RaycastHit[] hits;
         Vector3 detectPosition = _ship.transform.position;
         targetDir.Normalize();
@@ -354,12 +357,10 @@ public class InputManager : MonoBehaviour
                     Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
                     if (enemy != null && !enemy.IsDying)
                     {
-                        //Take only the closest enenmy
-                        float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
-                        if (enemyDist < dist)
+                        //If new enemy compares better, take that enemy instead
+                        if(foundEnemy == null || EnemyCompare(enemy, foundEnemy))
                         {
                             foundEnemy = enemy;
-                            dist = enemyDist;
                         }
                     }
                 }
@@ -374,12 +375,10 @@ public class InputManager : MonoBehaviour
                     Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
                     if (enemy != null && !enemy.IsDying)
                     {
-                        //Take only the closest enenmy
-                        float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
-                        if (enemyDist < dist)
+                        //If new enemy compares better, take that enemy instead
+                        if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
                         {
                             foundEnemy = enemy;
-                            dist = enemyDist;
                         }
                     }
                 }
@@ -399,7 +398,6 @@ public class InputManager : MonoBehaviour
     {
         Collider[] colliders;
         Enemy foundEnemy = null;
-        float dist = 999999;
         colliders = UnityEngine.Physics.OverlapSphere(_ship.transform.position, radius);
         //Check all colliders found to find closest enemy
         foreach (Collider collider in colliders)
@@ -417,11 +415,10 @@ public class InputManager : MonoBehaviour
                             continue;
                         }
                     }
-                    float enemyDist = Vector3.SqrMagnitude(_ship.transform.position - enemy.transform.position);
-                    if (enemyDist < dist)
+                    //If new enemy compares better, take that enemy instead
+                    if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
                     {
                         foundEnemy = enemy;
-                        dist = enemyDist;
                     }
                 }
             }
@@ -443,6 +440,39 @@ public class InputManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// Compares two enemys to find the closer one
+    /// </summary>
+    /// <param name="re">Right Enemy</param>
+    /// <param name="le">Left Enemy</param>
+    /// <returns>True if right enemy chosen</returns>
+    private bool ClosestEnemy(Enemy re, Enemy le)
+    {
+        return Vector3.SqrMagnitude(re.Position - _ship.transform.position) < Vector3.SqrMagnitude(le.Position - _ship.transform.position);
+    }
+
+    /// <summary>
+    /// Compares two enemys to find the closer hostile one
+    /// </summary>
+    /// <param name="re">Right Enemy</param>
+    /// <param name="le">Left Enemy</param>
+    /// <returns>True if right enemy chosen</returns>
+    private bool ClosestHostileEnemy(Enemy re, Enemy le)
+    {
+        //If one enemy is passive and the other is hostile, the hostile enemy is taken
+        if(re.State == EnemyState.Hostile && le.State == EnemyState.Passive)
+        {
+            return true;
+        }
+        else if(le.State == EnemyState.Hostile && re.State == EnemyState.Passive)
+        {
+            return false;
+        }
+        
+        //If states are the same, take closest enemy
+        return Vector3.SqrMagnitude(re.Position - _ship.transform.position) < Vector3.SqrMagnitude(le.Position - _ship.transform.position);
     }
 }
 
