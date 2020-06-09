@@ -543,6 +543,7 @@ public partial class KoiBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
             StopMotion();
             return false;
         }
@@ -688,6 +689,7 @@ public partial class KoiBoss : Enemy
         //At the end of the attack, stop motion and remove hitbox
         if (time > 0.95f && _hitboxes.Count > 0)
         {
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
             StopMotion();
             Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);

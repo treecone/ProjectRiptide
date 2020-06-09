@@ -80,12 +80,12 @@ public class ActiveAbilities : MonoBehaviour
             {
                 Enemy rightEnemy = _inputManager.CheckEnemy(transform.right);
                 Enemy leftEnemy = _inputManager.CheckEnemy(-transform.right);
-                if (rightEnemy != null && (leftEnemy == null || Vector3.SqrMagnitude(rightEnemy.Position - transform.position) < Vector3.SqrMagnitude(leftEnemy.Position - transform.position)))
+                if (rightEnemy != null && !rightEnemy.IsDying && (leftEnemy == null || leftEnemy.IsDying || Vector3.SqrMagnitude(rightEnemy.Position - transform.position) < Vector3.SqrMagnitude(leftEnemy.Position - transform.position)))
                 {
                     _rightEnemy = true;
                     _skill[i].Activate(rightEnemy);
                 }
-                else if (leftEnemy != null)
+                else if (leftEnemy != null && !leftEnemy.IsDying)
                 {
                     _rightEnemy = false;
                     _skill[i].Activate(leftEnemy);

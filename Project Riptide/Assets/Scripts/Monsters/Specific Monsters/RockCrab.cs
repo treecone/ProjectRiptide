@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CrabAnim { Jump = 2, Open = 3 };
+
 public partial class RockCrab : Enemy
 {
     // Start is called before the first frame update
@@ -23,10 +25,11 @@ public partial class RockCrab : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[1] { 5.0f };
         _activeStates = new bool[3] { false, false, false };
-        _animParm = new int[3] {
+        _animParm = new int[4] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
-                    Animator.StringToHash("jump")};
+                    Animator.StringToHash("jump"),
+                    Animator.StringToHash("open")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;

@@ -14,9 +14,7 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private GameObject _shotIndicator;
     [SerializeField]
-    private LineRenderer _leftIndicator;
-    [SerializeField]
-    private LineRenderer _rightIndicator;
+    private LineRenderer _lineIndicator;
 
 	//-----References-----
 	private GameObject _ship;
@@ -52,8 +50,10 @@ public class InputManager : MonoBehaviour
     public bool InCombatMode => _combatMode;
     private const float MAX_COMBAT_RANGE = 50.0f;
     private Enemy _targetEnemy;
+    private Enemy _currEnemy;
     private Enemy _leftEnemy;
     private Enemy _rightEnemy;
+    private bool _isRightEnemy;
 
     void Awake()
 	{
@@ -81,40 +81,47 @@ public class InputManager : MonoBehaviour
         {
             _currFireTime += Time.deltaTime;
 
-            _rightIndicator.SetPosition(0, Vector3.zero);
-            _leftIndicator.SetPosition(0, Vector3.zero);
-            _rightIndicator.transform.rotation = Quaternion.identity;
-            _leftIndicator.transform.rotation = Quaternion.identity;
+            _lineIndicator.SetPosition(0, Vector3.zero);
+            _lineIndicator.transform.rotation = Quaternion.identity;
 
             bool fired = false;
-            //Check right side for enemies
+            //Check both sides for enemies
             _rightEnemy = CheckEnemy(_ship.transform.right);
-            if (_rightEnemy != null && !_rightEnemy.IsDying)
+            _leftEnemy = CheckEnemy(-_ship.transform.right);
+
+            //Only take the enemy closest to the player
+            if (_rightEnemy != null && !_rightEnemy.IsDying && (_leftEnemy == null || _leftEnemy.IsDying || Vector3.SqrMagnitude(_rightEnemy.Position - transform.position) < Vector3.SqrMagnitude(_leftEnemy.Position - transform.position)))
             {
-                if(AutoFire(_rightEnemy, 15.0f))
-                {
-                    fired = true;
-                }
-                _rightIndicator.SetPosition(1, _rightEnemy.transform.position - _ship.transform.position);
+                _currEnemy = _rightEnemy;
+                _isRightEnemy = true;
+            }
+            else if (_leftEnemy != null && !_leftEnemy.IsDying)
+            {
+                _currEnemy = _leftEnemy;
+                _isRightEnemy = false;
             }
             else
             {
-                _rightIndicator.SetPosition(1, Vector3.zero);
+                _currEnemy = null;
             }
 
-            //Check left side for enemies
-            _leftEnemy = CheckEnemy(-_ship.transform.right);
-            if (_leftEnemy != null && !_leftEnemy.IsDying)
+            //If an enemy is found, fire towards that enemy
+            if (_currEnemy != null)
             {
-                if(AutoFire(_leftEnemy, -15.0f))
+                if(_isRightEnemy && AutoFire(_currEnemy, 15.0f))
                 {
                     fired = true;
                 }
-                _leftIndicator.SetPosition(1, _leftEnemy.transform.position - _ship.transform.position);
+                else if(AutoFire(_currEnemy, -15.0f))
+                {
+                    fired = true;
+                }
+                Vector3 indVec = new Vector3(_currEnemy.Position.x - _ship.transform.position.x, 0, _currEnemy.Position.z - _ship.transform.position.z);
+                _lineIndicator.SetPosition(1, indVec);
             }
             else
             {
-                _leftIndicator.SetPosition(1, Vector3.zero);
+                _lineIndicator.SetPosition(1, Vector3.zero);
             }
 
             //Check to see if combat mode should be turned off
@@ -126,8 +133,7 @@ public class InputManager : MonoBehaviour
                 {
                     _combatMode = false;
                     _cameraController.ToggleCombatView(false);
-                    _leftIndicator.enabled = false;
-                    _rightIndicator.enabled = false;
+                    _lineIndicator.enabled = false;
                 }
             }
 
@@ -224,8 +230,7 @@ public class InputManager : MonoBehaviour
                      _combatMode = true;
                      _cameraController.ToggleCombatView(true);
                      _movementScript.IndicatorActive = false;
-                    _leftIndicator.enabled = true;
-                    _rightIndicator.enabled = true;
+                     _lineIndicator.enabled = true;
                 }
             }
         }
