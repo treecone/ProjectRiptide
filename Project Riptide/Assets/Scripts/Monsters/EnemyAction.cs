@@ -543,6 +543,7 @@ public partial class KoiBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
             StopMotion();
             return false;
         }
@@ -688,6 +689,7 @@ public partial class KoiBoss : Enemy
         //At the end of the attack, stop motion and remove hitbox
         if (time > 0.95f && _hitboxes.Count > 0)
         {
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
             StopMotion();
             Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
@@ -791,7 +793,7 @@ public partial class FlowerFrog : Enemy
     protected bool ToungeCharge(ref float time)
     {
         const float MAX_TIME = 1.5f;
-        const float STALL_TIME = 0.1f;
+        const float STALL_TIME = 0.0f;
 
         if (time < MAX_TIME - STALL_TIME)
         {
@@ -826,34 +828,40 @@ public partial class FlowerFrog : Enemy
     /// <returns></returns>
     protected bool ShootTounge(ref float time)
     {
-        const float MAX_TIME = 0.8f;
+        const float SHOOT_TIME = 0.8f;
+        const float WINDUP_TIME = 0.2f;
+        const float MAX_TIME = SHOOT_TIME + WINDUP_TIME;
 
         if(time == 0)
         {
+            _animator.SetTrigger(_animParm[(int)FrogAnim.Attack]);
             _hitboxes.Add(CreateHitbox(_tounge.transform.localPosition, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
             _hitboxes[_hitboxes.Count - 1].transform.parent = _tounge.transform;
         }
 
-        if(_playerCollision)
+        if (time > WINDUP_TIME)
         {
-            //LATCH ONTO PLAYER
-            _tounge.SetPosition(1, PlayerPosition() - transform.position);
-            _activeStates[(int)FlowerFrogAttackState.Latched] = true;
-            _latchStartHealth = _health;
-            time = MAX_TIME;
-        }
-            
-        if(_obsticalCollision)
-        {
-            //If obstical is hit, move to return phase
-            time = MAX_TIME;
-        }
+            if (_playerCollision)
+            {
+                //LATCH ONTO PLAYER
+                _tounge.SetPosition(1, PlayerPosition() - transform.position);
+                _activeStates[(int)FlowerFrogAttackState.Latched] = true;
+                _latchStartHealth = _health;
+                time = MAX_TIME;
+            }
 
-        if (time < MAX_TIME)
-        {
-            //Move tounge forward
-            _tounge.SetPosition(1, _tounge.GetPosition(1) + transform.forward * 25.0f * Time.deltaTime);
-            _hitboxes[_hitboxes.Count - 1].transform.localPosition = _tounge.GetPosition(1);
+            if (_obsticalCollision)
+            {
+                //If obstical is hit, move to return phase
+                time = MAX_TIME;
+            }
+
+            if (time < MAX_TIME)
+            {
+                //Move tounge forward
+                _tounge.SetPosition(1, _tounge.GetPosition(1) + transform.forward * 25.0f * Time.deltaTime);
+                _hitboxes[_hitboxes.Count - 1].transform.localPosition = _tounge.GetPosition(1);
+            }
         }
 
         if(time >= MAX_TIME)
@@ -886,6 +894,7 @@ public partial class FlowerFrog : Enemy
         //If tonge moves back too far, set time to max
         if (_tounge.GetPosition(1).z < 0.5f && _tounge.GetPosition(1).z > -0.5f)
         {
+            _animator.SetTrigger(_animParm[(int)FrogAnim.Close]);
             _tounge.SetPosition(1, Vector3.zero);
             return false;
         }
@@ -907,7 +916,7 @@ public partial class FlowerFrog : Enemy
         }
 
         Quaternion desiredRotation = Quaternion.LookRotation(PlayerPosition() - transform.position);
-        SetSmoothRotation(desiredRotation, 2.0f, 0.75f, 3.0f);
+        SetSmoothRotation(desiredRotation, 2.0f, 2.0f, 3.0f);
 
         ApplyForce(netForce);
         ApplyFriction(0.5f);

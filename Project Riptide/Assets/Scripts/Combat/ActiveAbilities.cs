@@ -21,7 +21,8 @@ public class ActiveAbilities : MonoBehaviour
     private SkillType[] _skillType = new SkillType[SKILL_AMOUNT];
 
     [SerializeField]
-    private Button[] button = new Button[SKILL_AMOUNT];
+    private Button[] _buttons = new Button[SKILL_AMOUNT];
+    private Slider[] _sliders = new Slider[SKILL_AMOUNT];
 
     private ActiveSkill[] _skill = new ActiveSkill[SKILL_AMOUNT];
 
@@ -36,6 +37,8 @@ public class ActiveAbilities : MonoBehaviour
         for(int i = 0; i < SKILL_AMOUNT; i++)
         {
             SetActiveSkill(i, _skillType[i]);
+            _sliders[i] = _buttons[i].GetComponentInChildren<Slider>();
+            _sliders[i].gameObject.SetActive(false);
         }
     }
 
@@ -48,22 +51,23 @@ public class ActiveAbilities : MonoBehaviour
             if(_skill[i].InCooldown)
             {
                 _skill[i].DoCooldown(Time.deltaTime);
+                _sliders[i].value = _skill[i].CurrCooldown / _skill[i].MaxCooldown;
             }
         }
 
         //Check if buttons should be enabled or disabled
-        if (button[0].gameObject.activeSelf && !_inputManager.InCombatMode)
+        if (_buttons[0].gameObject.activeSelf && !_inputManager.InCombatMode)
         {
             for(int i = 0; i < SKILL_AMOUNT; i++)
             {
-                button[i].gameObject.SetActive(false);
+                _buttons[i].gameObject.SetActive(false);
             }
         }
-        if (!button[0].gameObject.activeSelf && _inputManager.InCombatMode)
+        if (!_buttons[0].gameObject.activeSelf && _inputManager.InCombatMode)
         {
             for (int i = 0; i < SKILL_AMOUNT; i++)
             {
-                button[i].gameObject.SetActive(true);
+                _buttons[i].gameObject.SetActive(true);
             }
         }
     }
@@ -80,12 +84,12 @@ public class ActiveAbilities : MonoBehaviour
             {
                 Enemy rightEnemy = _inputManager.CheckEnemy(transform.right);
                 Enemy leftEnemy = _inputManager.CheckEnemy(-transform.right);
-                if (rightEnemy != null && (leftEnemy == null || Vector3.SqrMagnitude(rightEnemy.Position - transform.position) < Vector3.SqrMagnitude(leftEnemy.Position - transform.position)))
+                if (rightEnemy != null && !rightEnemy.IsDying && (leftEnemy == null || leftEnemy.IsDying || _inputManager.EnemyCompare(rightEnemy, leftEnemy)))
                 {
                     _rightEnemy = true;
                     _skill[i].Activate(rightEnemy);
                 }
-                else if (leftEnemy != null)
+                else if (leftEnemy != null && !leftEnemy.IsDying)
                 {
                     _rightEnemy = false;
                     _skill[i].Activate(leftEnemy);
@@ -100,10 +104,12 @@ public class ActiveAbilities : MonoBehaviour
             if (_skill[i].InCooldown)
             {
                 //Change button to darken
-                ColorBlock colors = button[i].colors;
+                ColorBlock colors = _buttons[i].colors;
                 colors.normalColor = new Color32(150, 150, 150, 255);
                 colors.highlightedColor = new Color32(150, 150, 150, 255);
-                button[i].colors = colors;
+                _buttons[i].colors = colors;
+                _sliders[i].gameObject.SetActive(true);
+                _sliders[i].value = 0;
             }
         }
     }
@@ -115,10 +121,11 @@ public class ActiveAbilities : MonoBehaviour
     private void ResetButton(int i)
     {
         //Change button to normal
-        ColorBlock colors = button[i].colors;
+        ColorBlock colors = _buttons[i].colors;
         colors.normalColor = new Color32(255, 255, 255, 255);
         colors.highlightedColor = new Color32(255, 255, 255, 255);
-        button[i].colors = colors;
+        _buttons[i].colors = colors;
+        _sliders[i].gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -131,14 +138,14 @@ public class ActiveAbilities : MonoBehaviour
         _skill[i] = GetActiveSkill(_skillType[i], i);
         if (_skill[i] != null)
         {
-            button[i].GetComponentInChildren<TMP_Text>().text = _skill[i].Name;
+            _buttons[i].GetComponentInChildren<TMP_Text>().text = _skill[i].Name;
             _skill[i].OnCooldownEnd += ResetButton;
         }
         else
         {
-            button[i].GetComponentInChildren<TMP_Text>().text = "None";
+            _buttons[i].GetComponentInChildren<TMP_Text>().text = "None";
         }
-        button[i].gameObject.SetActive(false);
+        _buttons[i].gameObject.SetActive(false);
     }
 
     /// <summary>
