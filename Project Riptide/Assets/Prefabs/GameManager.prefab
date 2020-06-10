@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6847726073716374344}
   - component: {fileID: 6847726073716374343}
-  - component: {fileID: 6847726073716374342}
   - component: {fileID: 6847726073716374345}
   - component: {fileID: 5105691598381198447}
   m_Layer: 0
@@ -51,31 +50,6 @@ MonoBehaviour:
   - {r: 0.33842143, g: 0.9339623, b: 0.2599235, a: 1}
   - {r: 0.1745283, g: 0.7283257, b: 1, a: 1}
   - {r: 0.80315065, g: 0, b: 1, a: 1}
---- !u!114 &6847726073716374342
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6847726073716374341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11c389a08d11e7248b867fe110afda0c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tempOffset: {x: -14.4, y: 0, z: 5.9}
-  buttonsPressed: 0
-  camera: {fileID: 0}
-  touchingLeft: 0
-  touchingRight: 0
-  speedSlider: {fileID: 0}
-  iconPoint: {fileID: 0}
-  IconPrefab: {fileID: 0}
-  mobile: 0
-  turnTouchArea: 300
-  minSwipeDisplacement: 100
-  minSwipeSpeed: 1000
-  maxTapDuration: 0.5
 --- !u!114 &6847726073716374345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,9 +62,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a023ad00236b4f47b45bc47c614d7c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  koiPrefab: {fileID: 0}
+  rockCrabPrefab: {fileID: 0}
+  seaSheepPrefab: {fileID: 0}
   ship: {fileID: 0}
-  currentChunk: {x: 0, y: 0}
+  currentChunkPosition: {x: 0, y: 0}
+  showAllChunks: 0
   currentRegion: 0
+  _xLen: 0
+  _zLen: 0
 --- !u!114 &5105691598381198447
 MonoBehaviour:
   m_ObjectHideFlags: 0

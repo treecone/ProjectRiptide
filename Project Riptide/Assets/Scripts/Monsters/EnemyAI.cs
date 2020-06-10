@@ -330,8 +330,8 @@ public partial class KoiBoss : Enemy
                     //Change obstical detection position
                     Transform detect = transform.GetChild(transform.childCount - 1);
                     detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
-                    //initalPos = initalPos - 1.0f * transform.localScale.y;
-                    //ReturnToInitalPosition();
+                    _initalPos = _initalPos - 1.0f * transform.localScale.y;
+                    ReturnToInitalPosition();
 
                     StopMotion();
                     _currTime = 0;
@@ -488,6 +488,7 @@ public partial class RockCrab : Enemy
         else if (transform.position.y < _startPos.y)
         {
             StopMotion();
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
             _position = new Vector3(_position.x, _startPos.y, _position.z);
         }
     }
@@ -518,6 +519,7 @@ public partial class RockCrab : Enemy
                 {
                     _gravity = ApplyArcForce(transform.forward, 0, 3, 1.0f);
                     _currTime = 0;
+                    _animator.SetTrigger(_animParm[(int)CrabAnim.Open]);
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;
                 }
                 else
@@ -529,9 +531,10 @@ public partial class RockCrab : Enemy
 
             ApplyForce(_gravity);
 
-            if (_currTime >= 0.85f)
+            if (_currTime >= 0.80f)
             {
                 _activeStates[(int)AttackState.FormChanged] = true;
+                _position = new Vector3(_position.x, _startPos.y + 2.0f, _position.z);
                 StopMotion();
                 _currTime = 0;
             }
@@ -619,7 +622,7 @@ public partial class FlowerFrog : Enemy
                     //While latched
                     ToungeDrag();
                     _tounge.transform.rotation = Quaternion.identity;
-                    _tounge.SetPosition(1, PlayerPosition() - transform.position);
+                    _tounge.SetPosition(1, (PlayerPosition() - transform.position) * 1.1f);
                     if(_latchStartHealth - _health > LATCH_DAMAGE_CAP || _playerDistance > MAX_LATCH_DIST)
                     {
                         _activeStates[(int)FlowerFrogAttackState.Latched] = false;

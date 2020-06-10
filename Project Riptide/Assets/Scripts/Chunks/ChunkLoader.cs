@@ -21,6 +21,8 @@ public class ChunkLoader : MonoBehaviour
 {
     public GameObject koiPrefab;
     public GameObject rockCrabPrefab;
+    public GameObject seaSheepPrefab;
+    public GameObject flowerFrogPrefab;
 
     private Dictionary<string, GameObject> monsters;
     private List<GameObject> enemies;
@@ -81,26 +83,34 @@ public class ChunkLoader : MonoBehaviour
             // March through each chunk descriptor.
             for(int z = 0; z < _zLen; z++)
             {
-                string s = parts[z];
-                int index = s.IndexOf("<");
+                string regionText = parts[z];
+                int index = regionText.IndexOf("<");
+                string description = "";
                 bool hasEnemies = false;
                 int numEnemies = 0;
                 List<GameObject> enemies = new List<GameObject>();
-                // There is extra information about the chunk other than the Region and Region Descriptor, 
-                // such as what type of enemy, how many, and their starting positions.
                 if (index > -1)
                 {
                     hasEnemies = true;
-                    string[] details = s.Substring(index + 1, s.IndexOf('>') - index - 1).Split('|');
+                    description = regionText.Substring(index);
+                    regionText = regionText.Substring(0, index);
+                    index = 0;
+                }
+                // Load in enemies as they are described in the text file.
+                while(index > -1)
+                {
+                   // Debug.Log(description);
+                    string[] details = description.Substring(index + 1, description.IndexOf('>') - index - 1).Split('|');
                     string enemyName = details[0];
                     numEnemies = Int32.Parse(details[1]);
                     for (int i = 2; i < 2 + numEnemies; i++)
                     {
+                        Debug.Log(i - 2);
                         string coords = details[i];
                         float xCoord = float.Parse(coords.Substring(1, coords.IndexOf(",") - 1)) + (x - 0.5f) * _CHUNKSIDELENGTH;
                         float zCoord = float.Parse(coords.Substring(coords.IndexOf(",") + 1, coords.IndexOf(")") - coords.IndexOf(",") - 1))
                             + (z - 0.5f) * _CHUNKSIDELENGTH;
-                        Debug.Log(enemyName);
+                        //Debug.Log(enemyName);
                         GameObject enemy = Instantiate(GetPrefabByName(enemyName), new Vector3(xCoord, 0, zCoord), Quaternion.identity);
                         enemy.SetActive(false);
 
@@ -112,12 +122,16 @@ public class ChunkLoader : MonoBehaviour
                         // Store a reference in the list of enemies corresponding to this species.
                         enemies.Add(enemy);
                     }
-                    s = s.Substring(0, index);
+                    // Look at the next portion of the string.
+                    description = description.Substring(description.IndexOf(">") + 1);
+                    // Get the index of the next detail if it exists, otherwise index becomes -1.
+                    index = description.IndexOf("<");
                 }
                 string pathName = "Chunks";
                 Region r = Region.OCEAN;
                 bool hasMonster = false;
-                switch (s)
+
+                switch (regionText)
                 {
                     // Set the chunks pathname to the next china chunk.
                     case "CHINA":
@@ -138,6 +152,18 @@ public class ChunkLoader : MonoBehaviour
                         {
                             pathName = "Chunks/china/china_island1";
                             r = Region.CHINA_ISLAND1;
+                            break;
+                        }
+                    case "CHINA_ISLAND2":
+                        {
+                            pathName = "Chunks/china/china_island2";
+                            r = Region.CHINA_ISLAND2;
+                            break;
+                        }
+                    case "CHINA_ISLAND3":
+                        {
+                            pathName = "Chunks/china/china_island3";
+                            r = Region.CHINA_ISLAND3;
                             break;
                         }
                     // Set the chunks pathname to the next "none" chunk
@@ -202,7 +228,7 @@ public class ChunkLoader : MonoBehaviour
             if (monster)
             {
                 Vector2 start = monster.GetComponent<Enemy>().EnemyStartingChunk;
-                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(ship.transform.position.z - monster.transform.position.z, 2)) < 2 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
+                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
                 bool monstersInChunk = (DistanceFromChunkCenter(monster, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
@@ -269,32 +295,32 @@ public class ChunkLoader : MonoBehaviour
         previousRegion = currentRegion;
         DisplayChunks();
         //Determine if the players has entered a new region.
-        if (!currentRegion.Equals(previousRegion))
-        {
-            // Display the text for a few seconds.
-            StartCoroutine(DisplayRegion(currentRegion));
-        }
+        //if (!currentRegion.Equals(previousRegion))
+        //{
+        //    // Display the text for a few seconds.
+        //    StartCoroutine(DisplayRegion(currentRegion));
+        //}
 
     }
     // Fade in and out for region switching.
-    private IEnumerator DisplayRegion(string newRegion)
-    {
-        regionDisplay.text = "Now Entering " +newRegion.ToUpper();
-        regionDisplay.enabled = true;
-        Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
-        while(regionDisplay.color.a < 1.0f)
-        {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
-            yield return null;
-        }
-        yield return new WaitForSeconds(2f);
-        while (regionDisplay.color.a > 0f)
-        {
-            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
-            yield return null;
-        }
-        regionDisplay.enabled = false;
-    }
+    //private IEnumerator DisplayRegion(string newRegion)
+    //{
+    //    regionDisplay.text = "Now Entering " +newRegion.ToUpper();
+    //    regionDisplay.enabled = true;
+    //    Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
+    //    while(regionDisplay.color.a < 1.0f)
+    //    {
+    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
+    //        yield return null;
+    //    }
+    //    yield return new WaitForSeconds(2f);
+    //    while (regionDisplay.color.a > 0f)
+    //    {
+    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
+    //        yield return null;
+    //    }
+    //    regionDisplay.enabled = false;
+    //}
     /// <summary>
     /// Gets the distance between the ship and the specified chunks center.
     /// </summary>
@@ -311,6 +337,18 @@ public class ChunkLoader : MonoBehaviour
     /// </summary>
     public void DisplayChunks()
     {
+        if(!displayedAllChunks && showAllChunks)
+        {
+            for(int i = 0; i < chunks.Length; i++)
+            {
+                for(int j = 0; j < chunks.GetLength(1); j++)
+                {
+                    chunks[i, j].chunk.SetActive(true);
+                }
+            }
+            displayedAllChunks = true;
+            return;
+        }
         // The current chunk position before the loop executes and potentially alters the current chunk positon.
         Vector2 stashedChunkPos = currentChunkPosition;
         // Check the 8 surrounding chunks.
@@ -339,7 +377,6 @@ public class ChunkLoader : MonoBehaviour
                         visibleChunks.Add(chunks[x, z]);
                         // Get the name of the boss to add if there is supposed to be a boss in this chunk.
                         string monsterName = GetMonsterName(chunks[x, z].region);
-                        Debug.Log("Monster Name " + monsterName);
                         // Monster is not yet loaded in this chunk
                         if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
                         {
@@ -423,8 +460,12 @@ public class ChunkLoader : MonoBehaviour
         {
             case "rockCrab":
                 return rockCrabPrefab;
+            case "seaSheep":
+                return seaSheepPrefab;
             case "koi":
                 return koiPrefab;
+            case "flowerFrog":
+                return flowerFrogPrefab;
         }
         return null;
     }

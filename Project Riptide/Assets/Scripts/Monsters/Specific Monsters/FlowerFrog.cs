@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum FrogAnim { Attack = 2, Close = 3};
+
 public partial class FlowerFrog : Enemy
 {
     [SerializeField]
@@ -31,9 +33,11 @@ public partial class FlowerFrog : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[2] { 0.0f, 0.0f};
         _activeStates = new bool[2] { false, false };
-        _animParm = new int[2] {
+        _animParm = new int[4] {
                     Animator.StringToHash("die"),
-                    Animator.StringToHash("velocity")};
+                    Animator.StringToHash("velocity"),
+                    Animator.StringToHash("attack"),
+                    Animator.StringToHash("close")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;

@@ -69,6 +69,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hitboxes;
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
+    protected Transform _detectPosition;
     protected GetVector PlayerPosition;
     protected GetVector PlayerVelocity;
     protected GiveVector SendKnockback;
@@ -145,6 +146,11 @@ public partial class Enemy : Physics
         _animator = GetComponentInChildren<Animator>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
+        _detectPosition = transform.GetChild(transform.childCount - 1);
+        if(_detectPosition.tag != "Detect")
+        {
+            _detectPosition = null;
+        }
 
         base.Start();
     }
@@ -237,7 +243,7 @@ public partial class Enemy : Physics
     /// <summary>
     /// Destorys the enemy and drops loot
     /// </summary>
-    public void DestroyEnemy()
+    public virtual void DestroyEnemy()
     {
         //GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(transform.position.x + Random.Range(-2.0f, 2.0f), transform.position.y, transform.position.z + Random.Range(-2.0f, 2.0f)), Quaternion.identity) as GameObject;
         //lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
@@ -400,6 +406,10 @@ public partial class Enemy : Physics
     {
         RaycastHit[] hits;
         Vector3 detectPosition = transform.position;
+        if (_detectPosition != null)
+        {
+            detectPosition = _detectPosition.position;
+        }
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
         
@@ -428,15 +438,6 @@ public partial class Enemy : Physics
                     return true;
                 }
             }
-
-            /*if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange))
-            {
-                return true;
-            }
-            if (UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, out hit, _viewRange))
-            {
-                return true;
-            }*/
         }
 
         return false;
@@ -453,6 +454,11 @@ public partial class Enemy : Physics
         bool found = false;
 
         Vector3 detectPosition = transform.position;
+        if(_detectPosition != null)
+        {
+            detectPosition = _detectPosition.position;
+        }
+
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
         RaycastHit hit;
@@ -499,7 +505,7 @@ public partial class Enemy : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
-        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
+        else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
             if(attached != gameObject)
@@ -511,7 +517,7 @@ public partial class Enemy : Physics
                 ApplyForce(backForce);
             }
         }
-        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
+        else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
         {
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);

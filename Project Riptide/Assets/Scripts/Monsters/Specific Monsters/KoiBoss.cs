@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5 };
-public enum CrabAnim { Jump = 2 };
 
 public partial class KoiBoss : Enemy
 {
@@ -47,6 +46,10 @@ public partial class KoiBoss : Enemy
     // Update is called once per frame
     protected override void Update()
     {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            TakeDamage(10);
+        }
         base.Update();
     }
 }
