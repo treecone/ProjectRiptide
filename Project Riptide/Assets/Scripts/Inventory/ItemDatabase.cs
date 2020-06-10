@@ -40,12 +40,9 @@ public class ItemDatabase : MonoBehaviour
             {
                 JsonData upgradeData = _itemData[i]["upgrades"][j];
                 string name = (string)upgradeData["name"];
-                Dictionary<string, float> upgradeInfo = new Dictionary<string, float>();
-                foreach(string key in upgradeData["data"].Keys)
-                {
-                    upgradeInfo[key] = Convert.ToSingle(upgradeData["data"][key].ToString());
-                }
-                upgrades.Add(new Upgrade(name, upgradeInfo));
+                string upgradeType = (string)upgradeData["upgradeType"];
+                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"]);
+                upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
             }
 
 
