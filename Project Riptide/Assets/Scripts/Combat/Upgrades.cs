@@ -106,82 +106,73 @@ public class Upgrade
     /// A dictionary of the different properties of the upgrade
     /// The key represents the upgrade category
     /// </summary>
-    public Dictionary<string, float> upgradeInfo;
+    public string upgradeType;
+    public float upgradeValue;
 
     /// <summary>
     /// Creates a new upgrade, given a name and data
     /// </summary>
     /// <param name="_name">The name of the upgrade. This is entirely for flavor 
     /// and should not affect functionality.</param>
-    /// <param name="data">The actual gameplay data of the upgrade. This is input in
-    /// the form of an anonymous object - for example:
-    /// 
-    ///     new { velocity = 0.2f }
-    ///     
-    /// TODO: add check to make sure all anonymous object parameters are actual stats that exist
-    /// current stats:
-    /// count       - The amount of cannonballs that are fired
-    /// damage      - The amount of damage each cannonball does
-    /// fireSpeed   - The physical speed the cannonball comes out at
-    /// verticalRatio- The ratio of the vertical component of the shot velocity to the horizontal
-    ///                At the moment, if you increase this, horizontal speed will not decrease
-    ///                to accomodate for it, so the cannonball will go super far
-    /// shipSpeed    - The ship's movement speed
-    /// hardiness   - The amount of knockback reduction the ship has (2 hardiness means you take 1/2 knockback, etc)
-    /// 
-    /// </param>
-    public Upgrade(string _name, object data)
+    /// <param name="_upgradeType">The upgrade type - the stat that the upgrade affects</param>
+    /// <param name="_upgradeValue">The value of the upgrade - a float</param>
+    public Upgrade(string _name, string _upgradeType, float _upgradeValue)
     {
         name = _name;
-        upgradeInfo = new Dictionary<string, float>();
+        upgradeType = _upgradeType;
+        upgradeValue = _upgradeValue;
+    }
 
-        if(data != null)
+    public virtual float this[string key]
+    {
+        get
         {
-            foreach(PropertyDescriptor pd in TypeDescriptor.GetProperties(data))
+            if(upgradeType == key)
             {
-                float f = Convert.ToSingle(pd.GetValue(data));
-                upgradeInfo.Add(pd.Name, f);
-            }
-        }
-    }
-
-    public Upgrade(string _name, Dictionary<string, float> data)
-    {
-        name = _name;
-        upgradeInfo = data;
-    }
-
-    /// <summary>
-    /// An indexer to access the different stats of the upgrade.
-    /// This is primarily used by the master upgrade in actual gameplay
-    /// but having it on any individual upgrade could be helpful for UI stuff
-    /// </summary>
-    /// <param name="key">The name of the </param>
-    /// <returns></returns>
-    public float this[string key]
-    {
-        get {
-            if (upgradeInfo.ContainsKey(key))
-            {
-                return upgradeInfo[key];
+                return upgradeValue;
             } else
             {
                 return 0;
             }
         }
     }
+
 }
 
+public class AdvancedUpgrade : Upgrade
+{
+    private string scalingStat;
+    private float scalingAmount;
+
+    public AdvancedUpgrade(string _name, string _upgradeType, string _scalingStat, float _scalingAmount)
+        :base(_name, _upgradeType, 0)
+    {
+        scalingStat = _scalingStat;
+        scalingAmount = _scalingAmount;
+    }
+
+    public void Recalculate(MasterUpgrade masterUpgrade)
+    {
+        upgradeValue = masterUpgrade[scalingStat] * scalingAmount;
+    }
+}
 public class MasterUpgrade : Upgrade
 {
     /// <summary>
     /// The upgrades that make up the Master Upgrade at the time
     /// </summary>
     List<Upgrade> componentUpgrades;
+    private Dictionary<string, float> upgradeInfo;
 
-    public MasterUpgrade() : base("master upgrade", null)
+    List<AdvancedUpgrade> advancedUpgrades;
+    public MasterUpgrade() : base("master upgrade", "null", 0)
     {
         upgradeInfo = new Dictionary<string, float>();
+    }
+
+    public MasterUpgrade(string _name, Dictionary<string, float> _upgradeInfo) : base(_name, "null", 0)
+    {
+        upgradeInfo = _upgradeInfo;
     }
     /// <summary>
     /// Combines a list of upgrades into one master upgrade
@@ -193,15 +184,36 @@ public class MasterUpgrade : Upgrade
         upgradeInfo.Clear();
         foreach(Upgrade upgrade in upgrades)
         {
-            foreach(string category in upgrade.upgradeInfo.Keys)
+            if(upgradeInfo.ContainsKey(upgrade.upgradeType))
             {
-                if(upgradeInfo.ContainsKey(category))
-                {
-                    upgradeInfo[category] += upgrade.upgradeInfo[category];
-                } else
-                {
-                    upgradeInfo[category] = upgrade.upgradeInfo[category];
-                }
+                upgradeInfo[upgrade.upgradeType] += upgrade.upgradeValue;
+            } else
+            {
+                upgradeInfo[upgrade.upgradeType] = upgrade.upgradeValue;
+            }
+        }
+        foreach(AdvancedUpgrade advancedUpgrade in advancedUpgrades)
+        {
+            advancedUpgrade.Recalculate(this);
+        }
+    }
+
+    /// <summary>
+    /// An indexer to access the different stats of the master upgrade.
+    /// </summary>
+    /// <param name="key">The name of the </param>
+    /// <returns></returns>
+    public override float this[string key]
+    {
+        get
+        {
+            if (upgradeInfo.ContainsKey(key))
+            {
+                return upgradeInfo[key];
+            }
+            else
+            {
+                return 0;
             }
         }
     }
