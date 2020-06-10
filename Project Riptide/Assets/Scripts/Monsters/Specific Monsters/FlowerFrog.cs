@@ -54,7 +54,7 @@ public partial class FlowerFrog : Enemy
     {
         _tounge.transform.rotation = Quaternion.identity;
         base.Update();
-        if(IsDying)
+        if(IsInvincible)
         {
             _tounge.SetPosition(1, Vector3.zero);
         }

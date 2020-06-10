@@ -11,7 +11,7 @@ public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6, ClamBoss = 7}
 public enum Anim { Die = 0, Velocity = 1};
 
 
@@ -60,6 +60,7 @@ public partial class Enemy : Physics
     protected bool _playerCollision;
     protected bool _obsticalCollision;
     protected bool _isRaming;
+    protected bool _isInvincible;
     protected bool _inKnockback = false;
     protected float _initalPos;
     protected float _currTime = 0.0f;
@@ -99,7 +100,7 @@ public partial class Enemy : Physics
     protected float _rotationalVeloctiy = 0.5f;
 
     public float Health => _health;
-    public bool IsDying => _dying;
+    public bool IsInvincible => _isInvincible;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -217,7 +218,7 @@ public partial class Enemy : Physics
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        if (_health > 0)
+        if (_health > 0 && !_isInvincible)
         {
             _health -= damage;
             _healthBar.UpdateHealth(_health);
@@ -235,6 +236,7 @@ public partial class Enemy : Physics
                     _deathAnim = Animator.StringToHash("death");
                 }
                 _dying = true;
+                _isInvincible = true;
                 _deathTimer = 0;
             }
         }

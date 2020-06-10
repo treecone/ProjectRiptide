@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CrabAnim { Jump = 2, Open = 3 };
+public enum CrabAnim { Jump = 2, Open = 3, Close = 4 };
 
 public partial class RockCrab : Enemy
 {
@@ -25,11 +25,12 @@ public partial class RockCrab : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[1] { 5.0f };
         _activeStates = new bool[3] { false, false, false };
-        _animParm = new int[4] {
+        _animParm = new int[5] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
                     Animator.StringToHash("jump"),
-                    Animator.StringToHash("open")};
+                    Animator.StringToHash("open"),
+                    Animator.StringToHash("close")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;

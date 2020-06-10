@@ -105,6 +105,7 @@ public partial class Enemy : Physics
             }
             else
             {
+                _currTime = 0;
                 return false;
             }
         }
@@ -267,7 +268,7 @@ public partial class KoiBoss : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
+            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 2.2f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
         }
@@ -904,6 +905,9 @@ public partial class FlowerFrog : Enemy
         }
     }
 
+    /// <summary>
+    /// Frog drags behind player by it's tounge
+    /// </summary>
     protected void ToungeDrag()
     { 
         //Seek destination
@@ -915,10 +919,146 @@ public partial class FlowerFrog : Enemy
             netForce = netForce.normalized * 20.0f;
         }
 
-        Quaternion desiredRotation = Quaternion.LookRotation(PlayerPosition() - transform.position);
+        _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
         SetSmoothRotation(desiredRotation, 2.0f, 2.0f, 3.0f);
 
         ApplyForce(netForce);
         ApplyFriction(0.5f);
+    }
+}
+
+public partial class ClamBoss : Enemy
+{
+    /// <summary>
+    /// Spawns a circle of tentacles around the clam that slap down away
+    /// from the clam
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamCircleAttack(ref float time)
+    {
+        float MAX_TIME = 2.0f * _speedScale;
+
+        if(time == 0)
+        {
+            //Spawn Tentcales around clam in a radius
+            const float CIRCLE_TENTACLES = 10;
+            const float CIRCLE_RADIUS = 5.0f;
+            float tentaclePerDegree = 360 / 10;
+            for (int i = 0; i < CIRCLE_TENTACLES; i++)
+            {
+                Vector3 tentaclePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS;
+                Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - transform.position);
+                Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, tentacleRotation)
+                    .GetComponent<ClamTentacle>()
+                    .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, 2.0f, 1.0f, 1.0f, _speedScale);
+            }
+        }
+
+        if(time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Spawns a tentacle near the player that
+    /// will track their movement to try and hit them
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamTrackAttack(ref float time)
+    {
+        float MAX_TIME = 1.0f * _speedScale;
+
+        if (time == 0)
+        {
+            //Spawn Tentcale near the player
+            const float CIRCLE_RADIUS = 5.0f;
+            Vector2 randomOnCircle = Random.insideUnitCircle.normalized * CIRCLE_RADIUS;
+            Vector3 tentaclePosition = PlayerPosition() + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
+            Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - PlayerPosition());
+            Instantiate(_tentaclePrefab, tentaclePosition, tentacleRotation)
+                .GetComponent<ClamTentacle>()
+                .SetTentacle(TentacleMode.TrackingSlap, PlayerPosition, 2.0f, 1.0f, 1.0f, _speedScale);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Spawns tentacles in a line in front of the clam
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamLineAttack(ref float time)
+    {
+        float MAX_TIME = 0.25f * _speedScale;
+
+        if (time == 0)
+        {
+            //Spawn Tentcale near the player
+            Vector3 tentaclePosition = transform.position + transform.forward * _lineOffset;
+            Quaternion tentacleRotation = _rotation;
+            Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2f, tentacleRotation)
+                .GetComponent<ClamTentacle>()
+                .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 1.0f, 1.0f, 1.0f, _speedScale);
+            _lineOffset += 5.0f;
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Summons various tentacles in a radius around the clam
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamBurstAttack(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+
+        if (time == 0)
+        {
+            //Spawn Tentcales around clam in a radius
+            const float CIRCLE_TENTACLES = 50;
+            const float CIRCLE_RADIUS = 30.0f;
+            for (int i = 0; i < CIRCLE_TENTACLES; i++)
+            {
+                Vector2 randomOnCircle = Random.insideUnitCircle * CIRCLE_RADIUS;
+                Vector3 tentaclePosition = transform.position + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
+                Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, _rotation)
+                    .GetComponent<ClamTentacle>()
+                    .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 1.0f, 1.0f, 1.0f, _speedScale);
+            }
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 }

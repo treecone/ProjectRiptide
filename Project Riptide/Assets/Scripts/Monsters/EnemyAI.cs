@@ -8,6 +8,7 @@ using UnityEngine;
 public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 public enum FlowerFrogAttackState { Latched = 1 }
+public enum ClamAttackState { Opened = 1, TentacleBurst = 2, OpenAttack = 3, TentacleCircle = 4, TentacleTrack = 5, TentacleLine = 6 }
 
 //AI available to all enemys
 public partial class Enemy : Physics
@@ -203,7 +204,7 @@ public partial class KoiBoss : Enemy
     /// charged projectile attack
     /// underwater attack (maybe)
     /// </summary>
-    public void KoiBossHostile()
+    public void HostileKoiBoss()
     {
         //If enemy is outside max radius, set to passive
         if (_enemyDistance > _maxRadius)
@@ -488,7 +489,7 @@ public partial class RockCrab : Enemy
         else if (transform.position.y < _startPos.y)
         {
             StopMotion();
-            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
+            _animator.SetTrigger(_animParm[(int)CrabAnim.Close]);
             _position = new Vector3(_position.x, _startPos.y, _position.z);
         }
     }
@@ -548,7 +549,7 @@ public partial class RockCrab : Enemy
                 //Follow the player
                 FollowPlayer();
 
-                //Cooldown special while in a 10 units of player
+                //Cooldown special while in 20 units of player
                 if (_playerDistance < 20.0f)
                 {
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
@@ -643,6 +644,173 @@ public partial class FlowerFrog : Enemy
                 }
             }
             //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+    }
+}
+
+public partial class ClamBoss : Enemy
+{
+    /// <summary>
+    /// Defines the AI for the Clam Boss Fight
+    /// Uses tentacles to attack
+    /// 4 different tentacle attacks
+    /// Will sometimes open up and use a different
+    /// attack based on what shows up in its mouth
+    /// 3 different open attacks
+    /// attacks get faster as hp gets lower
+    /// </summary>
+    public void HostileClamBoss()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If the Clam is not in any special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                //When clam is not opened do normal attacks
+                if (!_activeStates[(int)ClamAttackState.Opened])
+                {
+                    //Decrement overall special cooldown, no special can be used while this is in cooldown.
+                    if (_specialCooldown[(int)AttackState.Active] > 0)
+                    {
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                    }
+
+                    //If clam is under 10% health, do trigger attack
+                    if(!_activeStates[(int)ClamAttackState.TentacleBurst] && _health < _maxHealth / 2)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _activeStates[(int)ClamAttackState.TentacleBurst] = true;
+                        _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                        _currTime = 0;
+                        //Set up circle tentacle attack attack
+                        //_actionQueue.Enqueue(ClamBurstCharge);
+                        _actionQueue.Enqueue(ClamBurstAttack);
+                    }
+
+                    //Proritize open attack if it is out of cooldown
+                    if (_specialCooldown[(int)ClamAttackState.OpenAttack] > 0)
+                    {
+                        //Check to see if monster can use circle tentacle special attack
+                        if (_playerDistance < 15.0f)
+                        {
+                            _specialCooldown[(int)ClamAttackState.TentacleCircle] -= Time.deltaTime;
+                            if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleCircle] < 0.0f && Random.Range(1, 4) == 1)
+                            {
+                                _activeStates[(int)AttackState.Active] = true;
+                                _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleCircle] = 3.0f * _speedScale;
+                                _currTime = 0;
+                                //Set up circle tentacle attack attack
+                                //_actionQueue.Enqueue(ClamCircleCharge);
+                                _actionQueue.Enqueue(ClamCircleAttack);
+                            }
+                        }
+
+                        //Check to see if monster can use tracking tentacle attack
+                        if (_playerDistance < 25.0f)
+                        {
+                            _specialCooldown[(int)ClamAttackState.TentacleTrack] -= Time.deltaTime;
+                            if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleTrack] < 0.0f && Random.Range(1, 4) == 1)
+                            {
+                                //Load projectile
+                                _activeStates[(int)AttackState.Active] = true;
+                                _specialCooldown[(int)AttackState.Active] = 4.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleTrack] = 5.0f * _speedScale;
+                                _currTime = 0;
+                                //Set up tracking tentacles attack
+                                _actionQueue.Enqueue(ClamTrackAttack);
+                                _actionQueue.Enqueue(ClamTrackAttack);
+                                _actionQueue.Enqueue(ClamTrackAttack);
+                            }
+                        }
+
+                        //Check to see if player can use tentacle line attack
+                        if (_playerDistance < 20.0f)
+                        {
+                            _specialCooldown[(int)ClamAttackState.TentacleLine] -= Time.deltaTime;
+                            if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleLine] < 0.0f && Random.Range(1, 4) == 1)
+                            {
+                                _activeStates[(int)AttackState.Active] = true;
+                                _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleLine] = 8.0f * _speedScale;
+                                _currTime = 0;
+                                _lineOffset = 5.0f;
+                                //Set up line attack
+                                _actionQueue.Enqueue(ClamLineAttack);
+                                _actionQueue.Enqueue(ClamLineAttack);
+                                _actionQueue.Enqueue(ClamLineAttack);
+                                _actionQueue.Enqueue(ClamLineAttack);
+                                _actionQueue.Enqueue(ClamLineAttack);
+                                _actionQueue.Enqueue(ClamLineAttack);
+                            }
+                        }
+                    }
+
+                    //Check to see if player can use open attack
+                    /*if (_playerDistance < 25.0f)
+                    {
+                        _specialCooldown[(int)ClamAttackState.OpenAttack] -= Time.deltaTime;
+                        if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.OpenAttack] < 0.0f)
+                        {
+                            _activeStates[(int)AttackState.Active] = true;
+                            _activeStates[(int)ClamAttackState.Opened] = true;
+                            _specialCooldown[(int)AttackState.Active] = 0.0f;
+                            _specialCooldown[(int)ClamAttackState.OpenAttack] = 20.0f;
+                            _currTime = 0;
+                            //Set up open attack
+                            //_actionQueue.Enqueue(ClamOpen);
+                        }
+                    }*/
+                }
+                //If in opened state
+                else
+                {
+                    //Prepare open attack
+                    _activeStates[(int)AttackState.Active] = true;
+                    _activeStates[(int)ClamAttackState.Opened] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                    _currTime = 0;
+
+                    //Do a different attack based on open state
+                    switch (_openState)
+                    {
+                        case ClamOpenState.Bird:
+                            //Set up open attack
+                            //_actionQueue.Enqueue(ClamBirdCharge);
+                            //_actionQueue.Enqueue(ClamBirdAttack);
+                            break;
+                        case ClamOpenState.WaterSpout:
+                            //_actionQueue.Enqueue(ClamWaterSpoutCharge);
+                            //_actionQueue.Enqueue(ClamWaterSpoutAttack);
+                            break;
+                        case ClamOpenState.Dragon:
+                            //_actionQueue.Enqueue(ClamDragonCharge);
+                            //_actionQueue.Enqueue(ClamDragonAttack);
+                            break;
+                    }
+                    //_actionQueue.Enqueue(ClamClose);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
+                }
+            }
+        }
+        if (_animator != null)
+        {
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
     }
 }

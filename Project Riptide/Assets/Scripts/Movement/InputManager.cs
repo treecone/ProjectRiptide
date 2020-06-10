@@ -94,12 +94,12 @@ public class InputManager : MonoBehaviour
             _leftEnemy = CheckEnemy(-_ship.transform.right);
 
             //Only take the enemy closest to the player
-            if (_rightEnemy != null && !_rightEnemy.IsDying && (_leftEnemy == null || _leftEnemy.IsDying || EnemyCompare(_rightEnemy, _leftEnemy)))
+            if (_rightEnemy != null && !_rightEnemy.IsInvincible && (_leftEnemy == null || _leftEnemy.IsInvincible || EnemyCompare(_rightEnemy, _leftEnemy)))
             {
                 _currEnemy = _rightEnemy;
                 _isRightEnemy = true;
             }
-            else if (_leftEnemy != null && !_leftEnemy.IsDying)
+            else if (_leftEnemy != null && !_leftEnemy.IsInvincible)
             {
                 _currEnemy = _leftEnemy;
                 _isRightEnemy = false;
@@ -129,7 +129,7 @@ public class InputManager : MonoBehaviour
             }
 
             //Check to see if combat mode should be turned off
-            if (_targetEnemy.IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+            if (_targetEnemy.IsInvincible || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
             {
                 _targetEnemy = CheckEnemyInRadius(MAX_COMBAT_RANGE, true);
 
@@ -150,7 +150,7 @@ public class InputManager : MonoBehaviour
         {
             _targetEnemy = CheckEnemyInRadius(_viewRange, false);
             //Set indicator if enemy is in range
-            if (_targetEnemy != null && !_targetEnemy.IsDying)
+            if (_targetEnemy != null && !_targetEnemy.IsInvincible)
             {
                 _movementScript.IndicatorActive = true;
             }
@@ -355,7 +355,7 @@ public class InputManager : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {
                     Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                    if (enemy != null && !enemy.IsDying)
+                    if (enemy != null && !enemy.IsInvincible)
                     {
                         //If new enemy compares better, take that enemy instead
                         if(foundEnemy == null || EnemyCompare(enemy, foundEnemy))
@@ -373,7 +373,7 @@ public class InputManager : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {
                     Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                    if (enemy != null && !enemy.IsDying)
+                    if (enemy != null && !enemy.IsInvincible)
                     {
                         //If new enemy compares better, take that enemy instead
                         if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
@@ -405,7 +405,7 @@ public class InputManager : MonoBehaviour
             if (collider.gameObject.tag == "Hitbox")
             {
                 Enemy enemy = collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                if (enemy != null && !enemy.IsDying)
+                if (enemy != null && !enemy.IsInvincible)
                 {
                     //If check hostile is on, make sure enemy is not passive
                     if (checkHostile)
