@@ -41,7 +41,7 @@ public class ItemDatabase : MonoBehaviour
                 JsonData upgradeData = _itemData[i]["upgrades"][j];
                 string name = (string)upgradeData["name"];
                 string upgradeType = (string)upgradeData["upgradeType"];
-                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"]);
+                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"].ToString());
                 upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
             }
 

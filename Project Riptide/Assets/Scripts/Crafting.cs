@@ -47,7 +47,7 @@ public class Crafting : MonoBehaviour
             {
                 string name = (string)upgradeData["name"];
                 string upgradeType = (string)upgradeData["upgradeType"];
-                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"]);
+                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"].ToString());
                 upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
             }
             _recipes.Add(new Recipe(ingredients, ingredientAmounts, result, resultAmount, upgrades));
