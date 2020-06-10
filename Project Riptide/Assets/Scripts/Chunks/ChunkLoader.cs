@@ -84,7 +84,6 @@ public class ChunkLoader : MonoBehaviour
             for(int z = 0; z < _zLen; z++)
             {
                 string regionText = parts[z];
-                Debug.Log("Before: " + regionText);
                 int index = regionText.IndexOf("<");
                 string description = "";
                 bool hasEnemies = false;
@@ -131,7 +130,7 @@ public class ChunkLoader : MonoBehaviour
                 string pathName = "Chunks";
                 Region r = Region.OCEAN;
                 bool hasMonster = false;
-                Debug.Log("After: " + regionText);
+
                 switch (regionText)
                 {
                     // Set the chunks pathname to the next china chunk.
@@ -153,6 +152,18 @@ public class ChunkLoader : MonoBehaviour
                         {
                             pathName = "Chunks/china/china_island1";
                             r = Region.CHINA_ISLAND1;
+                            break;
+                        }
+                    case "CHINA_ISLAND2":
+                        {
+                            pathName = "Chunks/china/china_island2";
+                            r = Region.CHINA_ISLAND2;
+                            break;
+                        }
+                    case "CHINA_ISLAND3":
+                        {
+                            pathName = "Chunks/china/china_island3";
+                            r = Region.CHINA_ISLAND3;
                             break;
                         }
                     // Set the chunks pathname to the next "none" chunk
@@ -217,7 +228,7 @@ public class ChunkLoader : MonoBehaviour
             if (monster)
             {
                 Vector2 start = monster.GetComponent<Enemy>().EnemyStartingChunk;
-                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(ship.transform.position.z - monster.transform.position.z, 2)) < 2 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
+                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
                 bool monstersInChunk = (DistanceFromChunkCenter(monster, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
@@ -326,6 +337,18 @@ public class ChunkLoader : MonoBehaviour
     /// </summary>
     public void DisplayChunks()
     {
+        if(!displayedAllChunks && showAllChunks)
+        {
+            for(int i = 0; i < chunks.Length; i++)
+            {
+                for(int j = 0; j < chunks.GetLength(1); j++)
+                {
+                    chunks[i, j].chunk.SetActive(true);
+                }
+            }
+            displayedAllChunks = true;
+            return;
+        }
         // The current chunk position before the loop executes and potentially alters the current chunk positon.
         Vector2 stashedChunkPos = currentChunkPosition;
         // Check the 8 surrounding chunks.
@@ -354,7 +377,6 @@ public class ChunkLoader : MonoBehaviour
                         visibleChunks.Add(chunks[x, z]);
                         // Get the name of the boss to add if there is supposed to be a boss in this chunk.
                         string monsterName = GetMonsterName(chunks[x, z].region);
-                        Debug.Log("Monster Name " + monsterName);
                         // Monster is not yet loaded in this chunk
                         if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
                         {
