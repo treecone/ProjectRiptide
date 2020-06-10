@@ -46,12 +46,9 @@ public class Crafting : MonoBehaviour
             foreach(JsonData upgradeData in _recipeData[i]["upgrades"])
             {
                 string name = (string)upgradeData["name"];
-                Dictionary<string, float> upgradeInfo = new Dictionary<string, float>();
-                foreach (string key in upgradeData["data"].Keys)
-                {
-                    upgradeInfo[key] = Convert.ToSingle(upgradeData["data"][key].ToString());
-                }
-                upgrades.Add(new Upgrade(name, upgradeInfo));
+                string upgradeType = (string)upgradeData["upgradeType"];
+                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"].ToString());
+                upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
             }
             _recipes.Add(new Recipe(ingredients, ingredientAmounts, result, resultAmount, upgrades));
         }

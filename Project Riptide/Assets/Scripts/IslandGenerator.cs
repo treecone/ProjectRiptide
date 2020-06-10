@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class IslandGenerator : MonoBehaviour
 {
     [System.Serializable]
@@ -37,11 +39,6 @@ public class IslandGenerator : MonoBehaviour
     private GameObject _water;
 
     [SerializeField]
-    private GameObject debugSphere;
-    [SerializeField]
-    private GameObject debugSphere2;
-
-    [SerializeField]
     private int _numUrbanCenters;
     private List<Vector3> _urbanCenters;
 
@@ -49,13 +46,22 @@ public class IslandGenerator : MonoBehaviour
     private int _numEnvironmentalCenters;
     private List<Vector3> _environmentalCenters;
 
+    [SerializeField]
+    private int _numDecoObjects;
+    [Header("Island generation tools - check box to use")]
+    [SerializeField]
+    private bool _generate;
+    [SerializeField]
+    private bool _clear;
     private List<DecoObject> _decoObjects;
-
+    private List<GameObject> _clones;
+ 
     // Start is called before the first frame update
     void Start()
     {
+        _clones = new List<GameObject>();
         _decoObjects = new List<DecoObject>();
-        _mesh = gameObject.GetComponent<MeshFilter>().mesh;
+        _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
 
         _urbanCenters = new List<Vector3>();
         _environmentalCenters = new List<Vector3>();
@@ -73,7 +79,6 @@ public class IslandGenerator : MonoBehaviour
 
             _urbanCenters.Add(randPoint);
             
-            Instantiate(debugSphere, _urbanCenters[i], Quaternion.identity);
         }
         for (int i = 0; i < _numEnvironmentalCenters; i++)
         {
@@ -85,7 +90,6 @@ public class IslandGenerator : MonoBehaviour
             randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
             randPoint += transform.position;
             _environmentalCenters.Add(randPoint);
-            Instantiate(debugSphere2, _environmentalCenters[i], Quaternion.identity);
         }
         
     }
@@ -93,13 +97,20 @@ public class IslandGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
+        if(_generate)
         {
-            for(int i = 0; i < 100; i++)
+            _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+            _generate = false;
+            for(int i = 0; i < _numDecoObjects; i++)
             {
                 CreateDecoObject();
             }
             
+        }
+        if(_clear)
+        {
+            _clear = false;
+            ClearIsland();
         }
     }
 
@@ -171,18 +182,28 @@ public class IslandGenerator : MonoBehaviour
         clone.transform.localScale = Vector3.one * obj.scale;
         clone.transform.up = normal;
         clone.transform.position += normal * obj.verticalOffset;
-
-
-        for (float i = 0; i < Mathf.PI * 2; i += Mathf.PI / 8f)
+        
+        clone.transform.SetParent(transform);
+        _clones.Add(clone);
+        /*for (float i = 0; i < Mathf.PI * 2; i += Mathf.PI / 8f)
         {
             Debug.DrawLine(result + new Vector3(Mathf.Cos(i), 0, Mathf.Sin(i)) * obj.radius,
                            result + new Vector3(Mathf.Cos(i + Mathf.PI / 8f), 0, Mathf.Sin(i + Mathf.PI / 8f)) * obj.radius,
                            Color.cyan, 100f);
-        }
+        }*/
         _decoObjects.Add(obj);
         
     }
 
+    private void ClearIsland()
+    {
+        for(int i = 0; i < _clones.Count; i++)
+        {
+            DestroyImmediate(_clones[i]);
+        }
+        _decoObjects.Clear();
+        _clones.Clear();
+    }
     private float Urbanness(Vector3 pos) {
         float urbanTotal = 0;
         float environmentalTotal = 0;

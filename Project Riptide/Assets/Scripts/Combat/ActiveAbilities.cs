@@ -199,7 +199,7 @@ public class ActiveAbilities : MonoBehaviour
             {"damage", 3 },
             {"shotSize", 0.5f}
         };
-        Upgrade burstUpgrade = new Upgrade("burst_fire", shotValues);
+        MasterUpgrade burstUpgrade = new MasterUpgrade("burst_fire", shotValues);
 
         Vector3 diff = (enemy.transform.position - transform.position).normalized;
 
