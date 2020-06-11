@@ -367,7 +367,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = (DistanceFromChunkCenter(ship, x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
+                    bool close = (DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/ _CHUNKSIDELENGTH + 50.0f);
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)

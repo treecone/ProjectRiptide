@@ -1,6 +1,6 @@
 ﻿/*This script contains AI used by various enemy classes
  * uses partial classes to declare AI
-*/
+ */
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +8,7 @@ using UnityEngine;
 public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 public enum FlowerFrogAttackState { Latched = 1 }
-public enum ClamAttackState { Opened = 1, TentacleBurst = 2, OpenAttack = 3, TentacleCircle = 4, TentacleTrack = 5, TentacleLine = 6 }
+public enum ClamAttackState { Opened = 1, TentacleBurst = 2, TentacleTripleBurst = 3, OpenAttack = 4, TentacleCircle = 5, TentacleTrack = 6, TentacleLine = 7 }
 
 //AI available to all enemys
 public partial class Enemy : Physics
@@ -683,7 +683,7 @@ public partial class ClamBoss : Enemy
                         _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                     }
 
-                    //If clam is under 10% health, do trigger attack
+                    //If clam is under 50% health, do trigger attack
                     if(!_activeStates[(int)ClamAttackState.TentacleBurst] && _health < _maxHealth / 2)
                     {
                         _activeStates[(int)AttackState.Active] = true;
@@ -695,6 +695,20 @@ public partial class ClamBoss : Enemy
                         _actionQueue.Enqueue(ClamBurstAttack);
                     }
 
+                    //If clam is under 10% health, do trigger attack
+                    if (!_activeStates[(int)ClamAttackState.TentacleTripleBurst] && _health < _maxHealth / 10)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _activeStates[(int)ClamAttackState.TentacleTripleBurst] = true;
+                        _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                        _currTime = 0;
+                        //Set up circle tentacle attack attack
+                        //_actionQueue.Enqueue(ClamBurstCharge);
+                        _actionQueue.Enqueue(ClamBurstAttack);
+                        _actionQueue.Enqueue(ClamBurstAttack);
+                        _actionQueue.Enqueue(ClamBurstAttack);
+                    }
+
                     //Proritize open attack if it is out of cooldown
                     if (_specialCooldown[(int)ClamAttackState.OpenAttack] > 0)
                     {
@@ -702,7 +716,7 @@ public partial class ClamBoss : Enemy
                         if (_playerDistance < 15.0f)
                         {
                             _specialCooldown[(int)ClamAttackState.TentacleCircle] -= Time.deltaTime;
-                            if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleCircle] < 0.0f && Random.Range(1, 4) == 1)
+                            if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleCircle] < 0.0f)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
@@ -743,7 +757,11 @@ public partial class ClamBoss : Enemy
                                 _specialCooldown[(int)ClamAttackState.TentacleLine] = 8.0f * _speedScale;
                                 _currTime = 0;
                                 _lineOffset = 5.0f;
+                                _lineForward = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity() * 4.0f;
+                                _lineForward -= transform.position;
+                                _lineForward.Normalize();
                                 //Set up line attack
+                                //_actionQueue.Enqueue(ClamLineCharge);
                                 _actionQueue.Enqueue(ClamLineAttack);
                                 _actionQueue.Enqueue(ClamLineAttack);
                                 _actionQueue.Enqueue(ClamLineAttack);
@@ -808,6 +826,7 @@ public partial class ClamBoss : Enemy
                 }
             }
         }
+        ApplyFriction(0.99f);
         if (_animator != null)
         {
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);

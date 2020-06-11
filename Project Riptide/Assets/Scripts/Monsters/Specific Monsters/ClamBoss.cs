@@ -8,6 +8,7 @@ public partial class ClamBoss : Enemy
 {
     protected ClamOpenState _openState;
     protected float _lineOffset;
+    protected Vector3 _lineForward;
     protected float _speedScale;
 
     [SerializeField]
@@ -30,8 +31,8 @@ public partial class ClamBoss : Enemy
         _hostileRadius = 30.0f;
         _passiveRadius = 120.0f;
         _maxRadius = 240.0f;
-        _specialCooldown = new float[7] { 1.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f };
-        _activeStates = new bool[3] { false, false, false };
+        _specialCooldown = new float[8] { 1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f };
+        _activeStates = new bool[4] { false, false, false, false };
         _animParm = new int[2] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity")};

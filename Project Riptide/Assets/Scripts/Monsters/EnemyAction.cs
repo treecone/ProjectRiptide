@@ -154,7 +154,7 @@ public partial class Enemy : Physics
         //Add hitbox at begining
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage));
+            _hitboxes.Add(CreateHitbox(transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage));
         }
 
         if (!_inKnockback)
@@ -268,7 +268,7 @@ public partial class KoiBoss : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 2.2f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
+            _hitboxes.Add(CreateHitbox(transform.forward * 2.2f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
         }
@@ -439,7 +439,7 @@ public partial class KoiBoss : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position + transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
+            _hitboxes.Add(CreateHitbox(transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
             _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
         }
 
@@ -655,7 +655,7 @@ public partial class KoiBoss : Enemy
 
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
             _gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
             _animator.SetTrigger(_animParm[(int)CarpAnim.UAttack]);
         }
@@ -739,7 +739,7 @@ public partial class RockCrab : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.position, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
             _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed * 1.5f, 2f * transform.localScale.y, 1.0f);
             _animator.SetTrigger(_animParm[(int)CrabAnim.Jump]);
         }
@@ -944,7 +944,7 @@ public partial class ClamBoss : Enemy
         {
             //Spawn Tentcales around clam in a radius
             const float CIRCLE_TENTACLES = 10;
-            const float CIRCLE_RADIUS = 5.0f;
+            const float CIRCLE_RADIUS = 7.0f;
             float tentaclePerDegree = 360 / 10;
             for (int i = 0; i < CIRCLE_TENTACLES; i++)
             {
@@ -952,7 +952,7 @@ public partial class ClamBoss : Enemy
                 Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - transform.position);
                 Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, tentacleRotation)
                     .GetComponent<ClamTentacle>()
-                    .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, 2.0f, 1.0f, 1.0f, _speedScale);
+                    .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, 5.0f, 2.0f, 1.0f, 2.0f, _speedScale, 1);
             }
         }
 
@@ -985,7 +985,42 @@ public partial class ClamBoss : Enemy
             Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - PlayerPosition());
             Instantiate(_tentaclePrefab, tentaclePosition, tentacleRotation)
                 .GetComponent<ClamTentacle>()
-                .SetTentacle(TentacleMode.TrackingSlap, PlayerPosition, 2.0f, 1.0f, 1.0f, _speedScale);
+                .SetTentacle(TentacleMode.TrackingSlap, PlayerPosition, 5.0f, 2.0f, 1.0f, 1.0f, _speedScale, 1);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam charges up it's line attack
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamLineCharge(ref float time)
+    {
+        const float MAX_TIME = 0.5f;
+        const float STALL_TIME = 0.0f;
+
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Stop motion at start
+            if (time == 0)
+            {
+                StopMotion();
+            }
+
+            //Look towards player
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity() * 4.0f;
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+            _rotation = desiredRotation;
+            //SetSmoothRotation(desiredRotation, 1.2f, 3.0f, 6.0f);
         }
 
         if (time >= MAX_TIME)
@@ -1009,12 +1044,12 @@ public partial class ClamBoss : Enemy
 
         if (time == 0)
         {
-            //Spawn Tentcale near the player
-            Vector3 tentaclePosition = transform.position + transform.forward * _lineOffset;
+            //Spawn Tentcale in a line towards the player
+            Vector3 tentaclePosition = transform.position + _lineForward * _lineOffset;
             Quaternion tentacleRotation = _rotation;
             Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2f, tentacleRotation)
                 .GetComponent<ClamTentacle>()
-                .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 1.0f, 1.0f, 1.0f, _speedScale);
+                .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1.5f);
             _lineOffset += 5.0f;
         }
 
@@ -1048,7 +1083,7 @@ public partial class ClamBoss : Enemy
                 Vector3 tentaclePosition = transform.position + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
                 Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, _rotation)
                     .GetComponent<ClamTentacle>()
-                    .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 1.0f, 1.0f, 1.0f, _speedScale);
+                    .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1);
             }
         }
 

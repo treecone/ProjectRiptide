@@ -36,7 +36,7 @@ public class Hitbox : MonoBehaviour
     public void SetHitbox(GameObject attached, Vector3 position, Vector3 size, HitboxType type, float damage)
     {
         _attachedObject = attached;
-        transform.position = position;
+        transform.localPosition = position;
         transform.localScale = size;
         this._type = type;
         this._damage = damage;
@@ -55,7 +55,7 @@ public class Hitbox : MonoBehaviour
     public void SetHitbox(GameObject attached, Vector3 position, Vector3 size, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
     {
         _attachedObject = attached;
-        transform.position = position;
+        transform.localPosition = position;
         transform.localScale = size;
         _type = type;
         _damage = damage;

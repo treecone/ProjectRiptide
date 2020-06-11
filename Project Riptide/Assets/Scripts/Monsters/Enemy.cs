@@ -287,7 +287,9 @@ public partial class Enemy : Physics
             _obsticalCollision = true;
         }
         if (collision.tag == "Player")
+        {
             _playerCollision = true;
+        }
 
     }
 
