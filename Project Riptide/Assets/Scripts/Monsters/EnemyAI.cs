@@ -773,7 +773,7 @@ public partial class ClamBoss : Enemy
                     }
 
                     //Check to see if player can use open attack
-                    /*if (_playerDistance < 25.0f)
+                    if (_playerDistance < 25.0f)
                     {
                         _specialCooldown[(int)ClamAttackState.OpenAttack] -= Time.deltaTime;
                         if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.OpenAttack] < 0.0f)
@@ -784,9 +784,10 @@ public partial class ClamBoss : Enemy
                             _specialCooldown[(int)ClamAttackState.OpenAttack] = 20.0f;
                             _currTime = 0;
                             //Set up open attack
-                            //_actionQueue.Enqueue(ClamOpen);
+                            _actionQueue.Enqueue(ClamOpen);
+                            _actionQueue.Enqueue(ClamWait);
                         }
-                    }*/
+                    }
                 }
                 //If in opened state
                 else
@@ -814,7 +815,7 @@ public partial class ClamBoss : Enemy
                             //_actionQueue.Enqueue(ClamDragonAttack);
                             break;
                     }
-                    //_actionQueue.Enqueue(ClamClose);
+                    _actionQueue.Enqueue(ClamClose);
                 }
             }
             else

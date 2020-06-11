@@ -999,41 +999,6 @@ public partial class ClamBoss : Enemy
     }
 
     /// <summary>
-    /// Clam charges up it's line attack
-    /// </summary>
-    /// <param name="time"></param>
-    /// <returns></returns>
-    protected bool ClamLineCharge(ref float time)
-    {
-        const float MAX_TIME = 0.5f;
-        const float STALL_TIME = 0.0f;
-
-        if (time < MAX_TIME - STALL_TIME)
-        {
-            //Stop motion at start
-            if (time == 0)
-            {
-                StopMotion();
-            }
-
-            //Look towards player
-            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity() * 4.0f;
-            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
-            _rotation = desiredRotation;
-            //SetSmoothRotation(desiredRotation, 1.2f, 3.0f, 6.0f);
-        }
-
-        if (time >= MAX_TIME)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-
-    /// <summary>
     /// Spawns tentacles in a line in front of the clam
     /// </summary>
     /// <param name="time"></param>
@@ -1085,6 +1050,79 @@ public partial class ClamBoss : Enemy
                     .GetComponent<ClamTentacle>()
                     .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1);
             }
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Opens up clam to prepare for open attack
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamOpen(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+
+        if(time == 0)
+        {
+            _animator.Play(_animParm[(int)ClamAnim.Open]);
+            //Choose a random open state
+            _openState = (ClamOpenState)Random.Range(0, 3);
+        }
+
+        if(time >= MAX_TIME)
+        {
+            //Activate canvas, show creature inside
+            SetPuppetCanvas(true);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam waits 2 seconds to show off puppet
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamWait(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+
+        if(time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam closes after open attack
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamClose(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+
+        if (time == 0)
+        {
+            _animator.Play(_animParm[(int)ClamAnim.Close]);
+            //Deactivate canvas
+            SetPuppetCanvas(false);
         }
 
         if (time >= MAX_TIME)

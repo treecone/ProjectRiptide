@@ -253,7 +253,7 @@ public class ClamTentacle : Physics
                 //Go back underwater
                 if(_time == 0)
                 {
-                    _animator.SetTrigger(_animParm[(int)TentacleAnim.Return]);
+                    _animator.Play(_animParm[(int)TentacleAnim.Return]);
                     _particles.GetComponent<ParticleSystem>().Stop();
                 }
 
