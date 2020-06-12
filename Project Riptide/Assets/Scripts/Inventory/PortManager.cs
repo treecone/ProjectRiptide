@@ -34,7 +34,7 @@ public class PortManager : MonoBehaviour
         }
         if (_portUI == null)
         {
-            _portUI = _canvas.transform.GetChild(8).gameObject;
+            _portUI = _canvas.transform.GetChild(6).gameObject;
         }
         
         if (_leavePort == null)
