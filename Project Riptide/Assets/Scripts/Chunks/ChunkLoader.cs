@@ -84,7 +84,6 @@ public class ChunkLoader : MonoBehaviour
             string line = "";
             for(int j = 0; j < _zLen; j++)
             {
-                Debug.Log(partsOfText[indexOfLines]);
                 line += partsOfText[indexOfLines] + " ";
                 indexOfLines++;
             }
