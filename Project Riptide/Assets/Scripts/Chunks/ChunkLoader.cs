@@ -74,7 +74,24 @@ public class ChunkLoader : MonoBehaviour
     {
         GameObject world = GameObject.Find("World");
         // Get every line from the world text file.
-        _lines = File.ReadAllLines("World.txt");
+        TextAsset t = Resources.Load<TextAsset>("World");
+        string text = t.text;
+        string[] partsOfText = text.Split(' ');
+        int indexOfLines = 0;
+        _lines = new string[_xLen];
+        for(int i = 0; i < _xLen; i++)
+        {
+            string line = "";
+            for(int j = 0; j < _zLen; j++)
+            {
+                Debug.Log(partsOfText[indexOfLines]);
+                line += partsOfText[indexOfLines] + " ";
+                indexOfLines++;
+            }
+            indexOfLines++;
+            _lines[i] = line;
+        }
+
         // March through each line of the file.
         for(int x = 0; x < _xLen; x++)
         {
@@ -229,12 +246,10 @@ public class ChunkLoader : MonoBehaviour
             {
                 Vector2 start = monster.GetComponent<Enemy>().EnemyStartingChunk;
                 bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
-                bool monstersInChunk = (DistanceFromChunkCenter(monster, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
-                bool playersInChunk = (DistanceFromChunkCenter(ship, (int)start.x, (int)start.y) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2)));
                 Debug.Log((DistanceFromChunkCenter(monster, (int)start.x, (int)start.y)));
                 Debug.Log(start);
                 // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
-                if (!playerCloseToMonster && monster.GetComponent<Enemy>().State == EnemyState.Passive)
+                if ((!playerCloseToMonster && monster.GetComponent<Enemy>().State == EnemyState.Passive) || monster.GetComponent<Enemy>().ReadyToDelete)
                 {
                     // Add this monster to the list of monsters to destroy.
                     destroyMonsters.Add(name);
@@ -247,12 +262,12 @@ public class ChunkLoader : MonoBehaviour
             UnloadMonster(n);
         }
 
-        // Check each monster and unload it if neccessary.
+        // Check each smaller enemy and unload it if neccessary.
         for(int i = 0; i < enemies.Count; i++)
         {
             bool enemyIsFar = Mathf.Sqrt(Mathf.Pow(enemies[i].transform.position.x - ship.transform.position.x, 2) 
                 + Mathf.Pow(enemies[i].transform.position.z - ship.transform.position.z, 2)) > 2 * Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
-            if (enemyIsFar)
+            if (enemyIsFar || enemies[i].GetComponent<Enemy>().ReadyToDelete)
             {
                 // Get the origin chunk of the enemy.
                 Vector2 originChunk = enemies[i].GetComponent<Enemy>().EnemyStartingChunk;
@@ -367,7 +382,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = (DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/ _CHUNKSIDELENGTH + 50.0f);
+                    bool close = DistanceFromChunkCenter(ship, x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -468,5 +483,11 @@ public class ChunkLoader : MonoBehaviour
                 return flowerFrogPrefab;
         }
         return null;
+    }
+
+    public static void DeleteHostile(GameObject g)
+    {
+        Debug.Log("Dead");
+
     }
 }

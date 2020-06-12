@@ -11,6 +11,7 @@ public delegate bool MonsterAction(ref float time);
 public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
+public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6, ClamBoss = 7}
 public enum Anim { Die = 0, Velocity = 1};
 
@@ -123,9 +124,21 @@ public partial class Enemy : Physics
         set { _enemyID = value; }
     }
 
+    protected bool _readyToDelete;
+    public bool ReadyToDelete
+    {
+        get { return _readyToDelete; }
+        set { _readyToDelete = value; }
+    }
+
+    // Events:
+    public event DeleteHostile delete;
+
     // Start is called before the first frame update
     protected override void Start()
     {
+        _readyToDelete = false;
+
         _state = EnemyState.Passive;
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         _playerDistance = Vector3.Distance(transform.position, player.transform.position);
@@ -155,7 +168,6 @@ public partial class Enemy : Physics
 
         base.Start();
     }
-
     // Update is called once per frame
     protected override void Update()
     {
@@ -206,7 +218,7 @@ public partial class Enemy : Physics
         {
             if(_deathTimer > 3.0f)
             {
-                DestroyEnemy();
+                _readyToDelete = true;
             }
             _deathTimer += Time.deltaTime;
         }
@@ -251,7 +263,7 @@ public partial class Enemy : Physics
         //lootable.GetComponent<Lootable>().itemStored = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().FindItem("Carp Scale");
         //lootable.GetComponent<Lootable>().lightColor = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>().rarityColors[lootable.GetComponent<Lootable>().itemStored.Rarity];
         //Kill monster
-        Destroy(gameObject);
+        //Destroy(gameObject);
     }
 
     /// <summary>
