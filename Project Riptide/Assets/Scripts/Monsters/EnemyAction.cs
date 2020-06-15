@@ -1069,7 +1069,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamOpen(ref float time)
     {
-        const float MAX_TIME = 2.0f;
+        float MAX_TIME = 2.0f * _speedScale;
 
         if(time == 0)
         {
@@ -1097,7 +1097,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamWait(ref float time)
     {
-        const float MAX_TIME = 2.0f;
+        float MAX_TIME = 2.0f * _speedScale;
 
         if(time >= MAX_TIME)
         {
@@ -1116,7 +1116,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamClose(ref float time)
     {
-        const float MAX_TIME = 2.0f;
+        float MAX_TIME = 2.0f * _speedScale;
 
         if (time == 0)
         {
@@ -1127,6 +1127,213 @@ public partial class ClamBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam starts water spout
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamWaterSpoutStart(ref float time)
+    {
+        float MAX_TIME = 0.5f * _speedScale;
+
+        if (time == 0)
+        {
+            _waterSpoutUp = Instantiate(_waterSpoutUpPrefab, transform.position, _waterSpoutUpPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule main = _waterSpoutUp.main;
+            Debug.Log(main.startSpeedMultiplier);
+            main.startSpeedMultiplier *= 1 / _speedScale;
+            main.startLifetimeMultiplier *= _speedScale;
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam starts water spout
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamWaterSpoutAttack(ref float time)
+    {
+        float MAX_TIME = 5.0f * _speedScale;
+        float STALL_TIME = 0.5f * _speedScale;
+
+        ParticleSystem.ShapeModule shape;
+
+        if (time == 0)
+        {
+            //Create hitbox and water spout
+            _waterSpoutDown = Instantiate(_waterSpoutDownPrefab, new Vector3(_position.x, _position.y + 42f, _position.z), _waterSpoutDownPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
+            shape = _waterSpoutDown.shape;
+            shape.scale = new Vector3(0, 0, -1);
+            ParticleSystem.MainModule main = _waterSpoutDown.main;
+            main.startSpeedMultiplier *= 1 / _speedScale;
+            main.startLifetimeMultiplier *= _speedScale;
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0,2,0), HitboxType.EnemyHitbox, 0));
+            _hitboxes[_hitboxes.Count - 1].GetComponent<Hitbox>().OnStay += DealWaterSpoutDamage;
+        }
+
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Make water spout and hitbox grow over time
+            shape = _waterSpoutDown.shape;
+            shape.scale = new Vector3(shape.scale.x + 40 * Time.deltaTime / (MAX_TIME - STALL_TIME), shape.scale.y + 40 * Time.deltaTime / (MAX_TIME - STALL_TIME), -1);
+            _hitboxes[_hitboxes.Count - 1].transform.localScale = new Vector3(_hitboxes[_hitboxes.Count - 1].transform.localScale.x + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME), _hitboxes[_hitboxes.Count - 1].transform.localScale.y, _hitboxes[_hitboxes.Count - 1].transform.localScale.z + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME));
+        }
+        else
+        {
+            //Stop emmitting and clear hitboxes
+            if (_waterSpoutUp.isEmitting)
+            {
+                ClearHitboxes();
+                //Don't stop particles instantly, let them trickel off
+                _waterSpoutUp.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                _waterSpoutDown.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            }
+        }
+
+        if(time > MAX_TIME)
+        {
+            Destroy(_waterSpoutDown);
+            Destroy(_waterSpoutUp);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Clam throws sticks and rocks towards the player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamBirdAttack(ref float time)
+    {
+        float MAX_TIME = 4.0f * _speedScale;
+
+        //Fire a random projectile randomly every couple frames
+        if(Random.Range(0, (int)Mathf.Ceil(8 * _speedScale)) == 0)
+        {
+            //Get Spawn in position
+            Vector3 spawnPosition = _position + (PlayerPosition() - _position).normalized * 3.0f;
+            spawnPosition.y += 1.0f;
+
+            //Get Direction of fire
+            Vector2 randomOnCircle = Random.insideUnitCircle * 5.0f;
+            Vector3 fireTarget = PlayerPosition() + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
+            Vector3 fireDirection = fireTarget - spawnPosition;
+            fireDirection = new Vector3(fireDirection.x, 0, fireDirection.z).normalized;
+
+            //Set up projectile
+            GameObject projectile;
+            if(Random.Range(0,2) == 0)
+            {
+                projectile = Instantiate(_rockPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
+            }
+            else
+            {
+                projectile = Instantiate(_stickPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
+            }
+            projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 5, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
+
+            //Randomly rotate projectile
+            Quaternion randomRotation = Random.rotation;
+            projectile.transform.GetChild(0).transform.rotation = randomRotation;
+        }
+
+        if(time > MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Charges up dragon smoke attack by making smoke clouds around clam
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamDragonCharge(ref float time)
+    {
+        float MAX_TIME = 2.0f * _speedScale;
+
+        if(time == 0)
+        {
+            //Spawn clouds of poison smoke around clam in a radius
+            const float CIRCLE_RADIUS = 6.0f;
+            float tentaclePerDegree = 360 / DRAGON_SMOKE_CLOUDS;
+            for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+            {
+                Vector3 smokePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.up * 2.0f;
+                Vector3 smokeDistanceVec = smokePosition - transform.position;
+                Quaternion smokeRotation = Quaternion.LookRotation(new Vector3(smokeDistanceVec.x, 0, smokeDistanceVec.z));
+                _dragonSmokeParticles.Add(Instantiate(_dragonSmokePrefab, smokePosition + Vector3.up * -2, smokeRotation).GetComponent<ParticleSystem>());
+                _dragonSmokeParticles[i].transform.localScale = Vector3.zero;
+                GameObject hitbox = Instantiate(_hitbox, _dragonSmokeParticles[i].transform);
+                hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, Vector3.zero, new Vector3(4.5f, 4.5f, 4.5f), HitboxType.EnemyHitbox, 0);
+
+                //TEMPORARY EFFECT, LATER ADD POISON ON ENTER AND SMALL DAMAGE OVER TIME
+                hitbox.GetComponent<Hitbox>().OnStay += DealWaterSpoutDamage;
+            }
+        }
+
+        for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+        {
+            _dragonSmokeParticles[i].transform.localScale = new Vector3(_dragonSmokeParticles[i].transform.localScale.x + Time.deltaTime / MAX_TIME, _dragonSmokeParticles[i].transform.localScale.y + Time.deltaTime / MAX_TIME, _dragonSmokeParticles[i].transform.localScale.z + Time.deltaTime / MAX_TIME);
+        }
+
+        if (time > MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Uses dragon smoke attack by sending out smoke clouds towards player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClamDragonAttack(ref float time)
+    {
+        float MAX_TIME = 2.0f * _speedScale;
+
+        //Move smoke clouds forward
+        for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+        {
+            _dragonSmokeParticles[i].transform.Translate(_dragonSmokeParticles[i].transform.forward * 35 * Time.deltaTime / MAX_TIME, Space.World);
+        }
+
+        if (time > MAX_TIME)
+        {
+            for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+            {
+                Destroy(_dragonSmokeParticles[i]);
+            }
+            _dragonSmokeParticles.Clear();
             return false;
         }
         else

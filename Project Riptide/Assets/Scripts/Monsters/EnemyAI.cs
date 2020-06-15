@@ -781,7 +781,7 @@ public partial class ClamBoss : Enemy
                             _activeStates[(int)AttackState.Active] = true;
                             _activeStates[(int)ClamAttackState.Opened] = true;
                             _specialCooldown[(int)AttackState.Active] = 0.0f;
-                            _specialCooldown[(int)ClamAttackState.OpenAttack] = 20.0f;
+                            _specialCooldown[(int)ClamAttackState.OpenAttack] = 15.0f * _speedScale;
                             _currTime = 0;
                             //Set up open attack
                             _actionQueue.Enqueue(ClamOpen);
@@ -795,24 +795,22 @@ public partial class ClamBoss : Enemy
                     //Prepare open attack
                     _activeStates[(int)AttackState.Active] = true;
                     _activeStates[(int)ClamAttackState.Opened] = false;
-                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
                     _currTime = 0;
 
                     //Do a different attack based on open state
                     switch (_openState)
                     {
                         case ClamOpenState.Bird:
-                            //Set up open attack
-                            //_actionQueue.Enqueue(ClamBirdCharge);
-                            //_actionQueue.Enqueue(ClamBirdAttack);
+                            _actionQueue.Enqueue(ClamBirdAttack);
                             break;
                         case ClamOpenState.WaterSpout:
-                            //_actionQueue.Enqueue(ClamWaterSpoutCharge);
-                            //_actionQueue.Enqueue(ClamWaterSpoutAttack);
+                            _actionQueue.Enqueue(ClamWaterSpoutStart);
+                            _actionQueue.Enqueue(ClamWaterSpoutAttack);
                             break;
                         case ClamOpenState.Dragon:
-                            //_actionQueue.Enqueue(ClamDragonCharge);
-                            //_actionQueue.Enqueue(ClamDragonAttack);
+                            _actionQueue.Enqueue(ClamDragonCharge);
+                            _actionQueue.Enqueue(ClamDragonAttack);
                             break;
                     }
                     _actionQueue.Enqueue(ClamClose);
