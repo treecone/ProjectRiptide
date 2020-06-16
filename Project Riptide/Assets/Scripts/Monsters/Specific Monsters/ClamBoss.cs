@@ -55,7 +55,7 @@ public partial class ClamBoss : Enemy
         _startPos = transform.position;
         _wanderRadius = 60.0f;
         _hostileRadius = 30.0f;
-        _passiveRadius = 120.0f;
+        _passiveRadius = 80.0f;
         _maxRadius = 240.0f;
         _specialCooldown = new float[8] { 1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[4] { false, false, false, false };
