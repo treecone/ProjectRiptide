@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 /// <summary>
@@ -17,17 +18,21 @@ public class HealthBar : MonoBehaviour
 
     //health bar
     public Slider slider;
+    [SerializeField]
+    private GameObject _sliderText;
+    private TextMeshProUGUI _textMesh;
 
     // Start is called before the first frame update
     void Start()
     {
+        _textMesh = _sliderText.GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
         slider.value = CalculateHealth();
-
+        _textMesh.text = "" +currentHealth.ToString("N0") + "/" + maxHealth;
         if(currentHealth <= 0)
         {
             //Kill Monster

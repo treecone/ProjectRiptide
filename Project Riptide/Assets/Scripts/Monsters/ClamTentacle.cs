@@ -153,18 +153,24 @@ public class ClamTentacle : Physics
                     //Play attacking animation and spawn hitbox
                     _animator.Play(_animParm[(int)TentacleAnim.Slam]);
                     _hitbox = Instantiate(_hitboxPrefab, transform);
-                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 6), new Vector3(2, 2, 13), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
+                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 3), new Vector3(2, 2, 9), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
                 }
-                //Move hitbox down with animation
-                _hitbox.transform.Translate(Vector3.down * HEIGHT * (1 / 0.8f) * (1 / _speedScale) * Time.deltaTime);
-                _time += Time.deltaTime;
+                if (_time <= _attackingTime)
+                {
+                    //Move hitbox down with animation
+                    _hitbox.transform.Translate(Vector3.down * HEIGHT * (1 / 0.8f) * (1 / _speedScale) * Time.deltaTime);
+                    _time += Time.deltaTime;
+                }
 
                 //Instantiate hitbox when needed
                 if (_time > _attackingTime)
                 {
-                    Destroy(_hitbox);
-                    _time = 0;
-                    _state = TentacleState.Returning;
+                    if (!_animator.IsInTransition(0))
+                    {
+                        Destroy(_hitbox);
+                        _time = 0;
+                        _state = TentacleState.Returning;
+                    }
                 }
                 break;
             case TentacleState.Returning:
@@ -236,17 +242,23 @@ public class ClamTentacle : Physics
                 {
                     _animator.Play(_animParm[(int)TentacleAnim.Slam]);
                     _hitbox = Instantiate(_hitboxPrefab, transform);
-                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 6), new Vector3(2, 2, 13), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
+                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 3), new Vector3(2, 2, 9), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
                 }
-                //Move hitbox down with animation
-                _hitbox.transform.Translate(Vector3.down * HEIGHT * (1 / 0.8f) * (1 / _speedScale) * Time.deltaTime);
-                _time += Time.deltaTime;
+                if (_time <= _attackingTime)
+                {
+                    //Move hitbox down with animation
+                    _hitbox.transform.Translate(Vector3.down * HEIGHT * (1 / 0.8f) * (1 / _speedScale) * Time.deltaTime);
+                    _time += Time.deltaTime;
+                }
                 //Instantiate hitbox when needed
                 if (_time > _attackingTime)
                 {
-                    Destroy(_hitbox);
-                    _time = 0;
-                    _state = TentacleState.Returning;
+                    if (!_animator.IsInTransition(0))
+                    {
+                        Destroy(_hitbox);
+                        _time = 0;
+                        _state = TentacleState.Returning;
+                    }
                 }
                 break;
             case TentacleState.Returning:

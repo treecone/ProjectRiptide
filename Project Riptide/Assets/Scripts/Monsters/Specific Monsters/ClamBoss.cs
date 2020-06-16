@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public enum ClamOpenState { Dragon = 0, Bird = 1, WaterSpout = 2}; 
-public enum ClamAnim { Open = 2, Close = 3};
+public enum ClamAnim { Open = 2, Close = 3, SpeedScale = 4};
 
 public partial class ClamBoss : Enemy
 {
@@ -21,7 +21,23 @@ public partial class ClamBoss : Enemy
     protected Image _puppet;
     [SerializeField]
     protected Sprite[] _puppetSprites;
-    
+    [SerializeField]
+    protected GameObject _waterSpoutUpPrefab;
+    [SerializeField]
+    protected GameObject _waterSpoutDownPrefab;
+    [SerializeField]
+    protected GameObject _rockPrefab;
+    [SerializeField]
+    protected GameObject _stickPrefab;
+    [SerializeField]
+    protected GameObject _dragonSmokePrefab;
+
+    protected ParticleSystem _waterSpoutUp;
+    protected ParticleSystem _waterSpoutDown;
+    protected List<ParticleSystem> _dragonSmokeParticles = new List<ParticleSystem>();
+
+    const int DRAGON_SMOKE_CLOUDS = 10;
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -41,11 +57,12 @@ public partial class ClamBoss : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[8] { 1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[4] { false, false, false, false };
-        _animParm = new int[4] {
+        _animParm = new int[5] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
                     Animator.StringToHash("open"),
-                    Animator.StringToHash("close")};
+                    Animator.StringToHash("close"),
+                    Animator.StringToHash("speedScale")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
@@ -64,11 +81,22 @@ public partial class ClamBoss : Enemy
         {
             TakeDamage(10);
         }
+
+        if(_activeStates[(int)ClamAttackState.Opened])
+        {
+            _puppetCanvas.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
+        }
+
         //Calculate speed scale for attacks
         _speedScale = 0.5f + _health / _maxHealth * 0.5f;
+        _animator.SetFloat(_animParm[(int)ClamAnim.SpeedScale], 1 / _speedScale);
         base.Update();
     }
 
+    /// <summary>
+    /// Toggles activity of puppet canvas
+    /// </summary>
+    /// <param name="on">Toggle on or off</param>
     protected void SetPuppetCanvas(bool on)
     {
         if (on)
@@ -79,6 +107,27 @@ public partial class ClamBoss : Enemy
         else
         {
             _puppetCanvas.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Deals damage to the player overtime from waterspout
+    /// </summary>
+    /// <param name="hitbox"></param>
+    protected void DealWaterSpoutDamage(GameObject other)
+    {
+        const float WATER_SPOUT_DAMAGE_PER_SECOND = 15.0f;
+
+        //If the collision was with another hitbox
+        if (other.CompareTag("Hitbox"))
+        {
+            Hitbox hitbox = other.GetComponent<Hitbox>();
+            //If the collision was with a player hurtbox
+            if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
+            {
+                //Player takes damage
+                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime);
+            }
         }
     }
 }
