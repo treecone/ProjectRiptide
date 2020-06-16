@@ -9,6 +9,7 @@ public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack =
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
 public enum FlowerFrogAttackState { Latched = 1 }
 public enum ClamAttackState { Opened = 1, TentacleBurst = 2, TentacleTripleBurst = 3, OpenAttack = 4, TentacleCircle = 5, TentacleTrack = 6, TentacleLine = 7 }
+public enum PandateePassiveState { Eat = 1, Underwater = 3};
 
 //AI available to all enemys
 public partial class Enemy : Physics
@@ -829,6 +830,220 @@ public partial class ClamBoss : Enemy
         if (_animator != null)
         {
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+    }
+}
+
+public partial class Pandatee : Enemy
+{
+    /// <summary>
+    /// Passive AI for Pandatee where he wanders around randomly
+    /// and sometime eats
+    /// </summary>
+    protected void PassivePandateeWander()
+    {
+        //If pandatee is underwater, check to see if it should come up
+        if (_isUnderwater)
+        {
+            //Check to see if form changing is just beginning
+            if (!_activeStates[(int)AttackState.FormChangeInProgress])
+            {
+                _currTime = 0;
+                StopMotion();
+                _activeStates[(int)AttackState.FormChangeInProgress] = true;
+                _initalPos = transform.position.y;
+                _passiveCooldown = 1.1f;
+            }
+
+            if (_currTime < 1.0f)
+            {
+                ApplyConstantMoveForce(Vector3.up, 2.5f, 1.0f);
+                _currTime += Time.deltaTime;
+            }
+            else
+            {
+                //Change obstical detection position
+                Transform detect = transform.GetChild(transform.childCount - 1);
+                _initalPos = _initalPos + 3.0f;
+                ReturnToInitalPosition();
+                detect.position = transform.position;
+
+                StopMotion();
+                _currTime = 0;
+                _isUnderwater = false;
+            }
+        }
+        //If the Clam is not in any special
+        else if (!_activeStates[(int)AttackState.Active])
+        {
+            //Decrement overall special cooldown, no special can be used while this is in cooldown.
+            if (_specialCooldown[(int)AttackState.Active] > 0)
+            {
+                _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+            }
+
+            //If the monster is currently outside the wander radius, go back to the radius.
+            //This is important if the monster 
+            if (_enemyDistance > _wanderRadius)
+            {
+                _destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
+            }
+            else
+            {
+                //If time between movements is over select a new destination
+                if (_timeCurrent >= _timeBetween)
+                {
+                    //Select new destination that is inside wander radius
+                    do
+                    {
+                        _destination = new Vector3(transform.position.x + Random.Range(-30, 30), transform.position.y, transform.position.z + Random.Range(-30, 30));
+                    } while (Vector3.Distance(_destination, _startPos) > _wanderRadius);
+                    _timeCurrent = 0;
+                }
+            }
+
+            Vector3 destination = Vector3.zero;
+            //Check for obstacle
+            if (CheckObstacle(_destination))
+            {
+                //Set destination to closest way to player that avoids obstacles
+                destination = transform.position + AvoidObstacle(_destination);
+            }
+            else
+            {
+                //Set destination to player
+                destination = _destination;
+            }
+            //Seek destination
+            Vector3 netForce = Seek(destination);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+
+            //Rotate in towards direction of velocity
+            if (_velocity != Vector3.zero)
+            {
+                Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+                SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            }
+            _timeCurrent += Time.deltaTime;
+
+            ApplyForce(netForce * 0.7f);
+
+            _specialCooldown[(int)PandateePassiveState.Eat] -= Time.deltaTime;
+
+            if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)PandateePassiveState.Eat] < 0.0f)
+            {
+                _activeStates[(int)AttackState.Active] = true;
+                _activeStates[(int)PandateePassiveState.Eat] = true;
+                _specialCooldown[(int)AttackState.Active] = 5.0f;
+                _specialCooldown[(int)PandateePassiveState.Eat] = 20.0f;
+                _actionQueue.Enqueue(PandateeEat);
+            }
+
+            //ApplyFriction(0.25f);
+            if (_animator != null)
+                _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+        else
+        {
+            //Go through enmeies action queue
+            if (!DoActionQueue())
+            {
+                _activeStates[(int)AttackState.Active] = false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Enemy runs away from player in their hostile state
+    /// rather than trying to fight the player
+    /// </summary>
+    protected void HostilePandateeRunAway()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+
+        FleePlayer(1.5f);
+
+        //If pandatee is underwater, check to see if it should come up
+        if (_activeStates[(int)PandateePassiveState.Underwater])
+        {
+            _specialCooldown[(int)PandateePassiveState.Underwater] -= Time.deltaTime;
+            //After underwater cooldown is finished, move pandatee back up
+            if (_specialCooldown[(int)PandateePassiveState.Underwater] < 0)
+            {
+                //Check to see if form changing is just beginning
+                if (!_activeStates[(int)AttackState.FormChangeInProgress])
+                {
+                    _currTime = 0;
+                    StopMotion();
+                    _activeStates[(int)AttackState.FormChangeInProgress] = true;
+                    _initalPos = transform.position.y;
+                    _hostileCooldown = 1.1f;
+                }
+
+                if (_currTime < 1.0f)
+                {
+                    ApplyConstantMoveForce(Vector3.up, 2.5f, 1.0f);
+                    _currTime += Time.deltaTime;
+                }
+                else
+                {
+                    //Change obstical detection position
+                    Transform detect = transform.GetChild(transform.childCount - 1);
+                    _initalPos = _initalPos + 3.0f;
+                    ReturnToInitalPosition();
+                    detect.position = transform.position;
+
+                    StopMotion();
+                    _currTime = 0;
+                    _activeStates[(int)AttackState.FormChangeInProgress] = false;
+                    _activeStates[(int)PandateePassiveState.Underwater] = false;
+                    _isUnderwater = false;
+                }
+            }
+        }
+
+        //Check if pandatee is under half health and has not been underwater yet
+        if (!_wentUnderwater && _health < _maxHealth / 2)
+        {
+            //Check to see if form changing is just beginning
+            if (!_activeStates[(int)AttackState.FormChangeInProgress])
+            {
+                _currTime = 0;
+                StopMotion();
+                _activeStates[(int)AttackState.FormChangeInProgress] = true;
+                _animator.Play(_animParm[(int)PandateeAnim.Dive]);
+                _initalPos = transform.position.y;
+                _hostileCooldown = 1.1f;
+            }
+
+            if (_currTime < 1.0f)
+            {
+                ApplyConstantMoveForce(Vector3.down, 2.5f, 1.0f);
+                _currTime += Time.deltaTime;
+            }
+            else
+            {
+                //Change obstical detection position
+                Transform detect = transform.GetChild(transform.childCount - 1);
+                detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
+                _initalPos = _initalPos - 2.5f;
+                ReturnToInitalPosition();
+
+                StopMotion();
+                _currTime = 0;
+                _activeStates[(int)AttackState.FormChangeInProgress] = false;
+                _activeStates[(int)PandateePassiveState.Underwater] = true;
+                _specialCooldown[(int)PandateePassiveState.Underwater] = 15.0f;
+                _wentUnderwater = true;
+                _isUnderwater = true;
+            }
         }
     }
 }

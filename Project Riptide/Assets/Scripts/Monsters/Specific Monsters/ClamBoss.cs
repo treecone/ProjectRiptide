@@ -31,6 +31,8 @@ public partial class ClamBoss : Enemy
     protected GameObject _stickPrefab;
     [SerializeField]
     protected GameObject _dragonSmokePrefab;
+    [SerializeField]
+    protected ParticleSystem _darknessParticles;
 
     protected ParticleSystem _waterSpoutUp;
     protected ParticleSystem _waterSpoutDown;
@@ -90,6 +92,8 @@ public partial class ClamBoss : Enemy
         //Calculate speed scale for attacks
         _speedScale = 0.5f + _health / _maxHealth * 0.5f;
         _animator.SetFloat(_animParm[(int)ClamAnim.SpeedScale], 1 / _speedScale);
+        ParticleSystem.EmissionModule emission = _darknessParticles.emission;
+        emission.rateOverTime = 100 / _speedScale - 95;
         base.Update();
     }
 
@@ -129,5 +133,33 @@ public partial class ClamBoss : Enemy
                 hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime);
             }
         }
+    }
+
+    /// <summary>
+    /// Called when clam turns hostile
+    /// Turn on particles
+    /// </summary>
+    protected override void OnHostile()
+    {
+        _darknessParticles.Play();
+        base.OnHostile();
+    }
+
+    /// <summary>
+    /// Called when clam turns passive
+    /// Turn off particles
+    /// </summary>
+    protected override void OnPassive()
+    {
+        _darknessParticles.Stop();
+        base.OnPassive();
+    }
+
+    /// <summary>
+    /// Stop particles on death
+    /// </summary>
+    protected override void OnDeath()
+    {
+        _darknessParticles.Stop();
     }
 }
