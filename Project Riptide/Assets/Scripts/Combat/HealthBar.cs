@@ -25,14 +25,20 @@ public class HealthBar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _textMesh = _sliderText.GetComponent<TextMeshProUGUI>();
+        if (_sliderText != null)
+        {
+            _textMesh = _sliderText.GetComponent<TextMeshProUGUI>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
         slider.value = CalculateHealth();
-        _textMesh.text = "" +currentHealth.ToString("N0") + "/" + maxHealth;
+        if (_textMesh != null)
+        {
+            _textMesh.text = "" + currentHealth.ToString("N0") + "/" + maxHealth;
+        }
         if(currentHealth <= 0)
         {
             //Kill Monster

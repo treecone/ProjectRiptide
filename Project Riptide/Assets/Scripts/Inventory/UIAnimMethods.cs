@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class UIAnimMethods : MonoBehaviour
 {
+    public void Start()
+    {
+        LeanTween.cancelAll();
+        LeanTween.reset();
+    }
 
     public void SlideTLeft(GameObject gObj)
     {
@@ -27,7 +32,8 @@ public class UIAnimMethods : MonoBehaviour
 
     public void SlideRight(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(0, .7f).SetUpdate(true);
+        LeanTween.DOLocalMoveX(gObj, -1050f, 1f);
+        LeanTween.update();
         Debug.Log("SlideR");
     }
 
