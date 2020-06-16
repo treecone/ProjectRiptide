@@ -137,5 +137,4 @@ public class InventoryMethods : MonoBehaviour
         _totalGoldInventory.SetText("{0}", _inventory.TotalGold);
     }
 
-
 }
