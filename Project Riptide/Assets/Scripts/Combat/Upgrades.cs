@@ -22,7 +22,8 @@ public class Upgrades : MonoBehaviour
     /// 
 
     public Inventory inventory;
-        
+    private StatusEffects _statusEffects;
+
     public List<Upgrade> upgrades;
     public MasterUpgrade masterUpgrade;
     // Start is called before the first frame update
@@ -30,6 +31,7 @@ public class Upgrades : MonoBehaviour
     {
         upgrades = new List<Upgrade>();
         masterUpgrade = new MasterUpgrade();
+        _statusEffects = GetComponent<StatusEffects>();
     }
 
     // Some debug upgrades that could be added
@@ -91,6 +93,10 @@ public class Upgrades : MonoBehaviour
                 }
             }
         }
+        for(int i = 0; i < _statusEffects.ActiveStatusEffects.Count; i++)
+        {
+            equippedUpgrades.Add(new Upgrade(_statusEffects.ActiveStatusEffects[i]));
+        }
         masterUpgrade.Recalculate(equippedUpgrades);
     }
 }
@@ -121,6 +127,13 @@ public class Upgrade
         name = _name;
         upgradeType = _upgradeType;
         upgradeValue = _upgradeValue;
+    }
+
+    public Upgrade(StatusEffect statusEffect)
+    {
+        name = statusEffect.Type + " status effect";
+        upgradeType = statusEffect.Type;
+        upgradeValue = statusEffect.Level;
     }
 
     public virtual float this[string key]
