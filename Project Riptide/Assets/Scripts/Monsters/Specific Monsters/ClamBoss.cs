@@ -36,7 +36,7 @@ public partial class ClamBoss : Enemy
     protected ParticleSystem _waterSpoutDown;
     protected List<ParticleSystem> _dragonSmokeParticles = new List<ParticleSystem>();
 
-    const int DRAGON_SMOKE_CLOUDS = 8;
+    const int DRAGON_SMOKE_CLOUDS = 10;
 
     // Start is called before the first frame update
     protected override void Start()

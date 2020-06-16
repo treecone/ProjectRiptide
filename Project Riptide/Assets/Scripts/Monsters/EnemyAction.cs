@@ -1148,7 +1148,6 @@ public partial class ClamBoss : Enemy
         {
             _waterSpoutUp = Instantiate(_waterSpoutUpPrefab, transform.position, _waterSpoutUpPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
             ParticleSystem.MainModule main = _waterSpoutUp.main;
-            Debug.Log(main.startSpeedMultiplier);
             main.startSpeedMultiplier *= 1 / _speedScale;
             main.startLifetimeMultiplier *= _speedScale;
         }
@@ -1331,7 +1330,7 @@ public partial class ClamBoss : Enemy
         {
             for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
             {
-                Destroy(_dragonSmokeParticles[i]);
+                Destroy(_dragonSmokeParticles[i].gameObject);
             }
             _dragonSmokeParticles.Clear();
             return false;
