@@ -5,6 +5,11 @@ using DentedPixel;
 
 public class UIAnimMethods : MonoBehaviour
 {
+    public void Start()
+    {
+        LeanTween.cancelAll();
+        LeanTween.reset();
+    }
 
     public void SlideLeft(GameObject gObj)
     {
@@ -15,6 +20,7 @@ public class UIAnimMethods : MonoBehaviour
     public void SlideRight(GameObject gObj)
     {
         LeanTween.moveLocalX(gObj, -1050f, 1f);
+        LeanTween.update();
         Debug.Log("SlideR");
     }
 
