@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChickenFishFlock : Enemy
+public enum ChickenFishAnim { Fly = 2, Swim = 3};
+
+public partial class ChickenFishFlock : Enemy
 {
     [SerializeField]
     protected List<ChickenFish> _chickenFlock;
+
+    protected int _attackingChickenID = -1;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -21,22 +25,22 @@ public class ChickenFishFlock : Enemy
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
         _wanderRadius = 45.0f;
-        _hostileRadius = 10.0f;
-        _passiveRadius = 20.0f;
+        _hostileRadius = 20.0f;
+        _passiveRadius = 40.0f;
         _maxRadius = 100.0f;
-        _specialCooldown = new float[4] { 5.0f, 0.0f, 0.0f, 0.0f };
-        _activeStates = new bool[4] { false, false, false, false };
+        _specialCooldown = new float[2] { 5.0f, 0.0f };
+        _activeStates = new bool[1] { false };
         _animParm = new int[4] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
-                    Animator.StringToHash("situp"),
-                    Animator.StringToHash("dive")};
+                    Animator.StringToHash("fly"),
+                    Animator.StringToHash("swim")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 1.0f;
-        //_HostileAI = HostilePandateeRunAway;
-        //_PassiveAI = PassivePandateeWander;
+        _pushMult = 0.0f;
+        _HostileAI = HostileChickenFish;
+        _PassiveAI = PassiveWanderRadius;
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
@@ -46,6 +50,7 @@ public class ChickenFishFlock : Enemy
     // Update is called once per frame
     protected override void Update()
     {
+        MoveFlock();
         base.Update();
     }
 
@@ -56,10 +61,14 @@ public class ChickenFishFlock : Enemy
     {
         for(int i = 0; i < _chickenFlock.Count; i++)
         {
+            if(i == _attackingChickenID)
+            {
+                continue;
+            }
             //Find closest chicken to current chicken
             Vector3 closest = Vector3.zero;
             float dist = 99999;
-            for(int j = 0; j < _chickenFlock.Count; i++)
+            for(int j = 0; j < _chickenFlock.Count; j++)
             {
                 if(j == i)
                 {
@@ -76,6 +85,10 @@ public class ChickenFishFlock : Enemy
             }
 
             _chickenFlock[i].Alignment(_velocity);
+            _chickenFlock[i].Cohesion(transform.position);
+            _chickenFlock[i].Seperation(closest);
+            _chickenFlock[i].MoveUpAndDown();
+            _chickenFlock[i].ChickenAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
         }
     }
 }

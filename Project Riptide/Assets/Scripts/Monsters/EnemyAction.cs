@@ -1369,3 +1369,68 @@ public partial class Pandatee : Enemy
         }
     }
 }
+
+public partial class ChickenFishFlock : Enemy
+{
+    /// <summary>
+    /// One chicken fish in the pack jumps out towards the player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ChickenFishAttack(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            StopMotion();
+            _attackingChickenID = Random.Range(0, _chickenFlock.Count);
+            Vector3 attackDirection = PlayerPosition() - _chickenFlock[_attackingChickenID].Position;
+            _initalPos = _chickenFlock[_attackingChickenID].Position.y;
+            _chickenFlock[_attackingChickenID].StopMotion();
+            _chickenFlock[_attackingChickenID].Rotation = Quaternion.LookRotation(new Vector3(attackDirection.x, 0, attackDirection.z).normalized);
+            _gravity = _chickenFlock[_attackingChickenID].ApplyArcForce(new Vector3(attackDirection.x, 0, attackDirection.z).normalized, 15.0f, 6.0f, 1.0f);
+            _chickenFlock[_attackingChickenID].ChickenAnimator.Play(_animParm[(int)ChickenFishAnim.Fly]);
+            GameObject hitbox = Instantiate(_hitbox, _chickenFlock[_attackingChickenID].transform);
+            hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 0.11f), new Vector3(2.2f, 2.2f, 2.2f), HitboxType.EnemyHitbox, 10);
+        }
+
+        if (!_inKnockback)
+        {
+            //If monster hits player, stop special
+            if (_playerCollision || _obsticalCollision)
+            {
+                _inKnockback = true;
+                _chickenFlock[_attackingChickenID].StopHorizontalMotion();
+                _chickenFlock[_attackingChickenID].ApplyMoveForce(-_chickenFlock[_attackingChickenID].transform.forward, 2.0f, 0.3f);
+            }
+            _chickenFlock[_attackingChickenID].ApplyForce(_gravity);
+        }
+        //Do knockback if there was a hit
+        else
+        {
+            _chickenFlock[_attackingChickenID].ApplyForce(_gravity);
+
+            //Stop moving fish if it goes below its original height
+            if (_chickenFlock[_attackingChickenID].transform.position.y <= _initalPos)
+            {
+                time = MAX_TIME;
+            }
+        }
+
+        if (time >= MAX_TIME)
+        {
+            _inKnockback = false;
+            _chickenFlock[_attackingChickenID].ChickenAnimator.SetTrigger(_animParm[(int)ChickenFishAnim.Swim]);
+            _chickenFlock[_attackingChickenID].StopMotion();
+            _chickenFlock[_attackingChickenID].Position = new Vector3(_chickenFlock[_attackingChickenID].Position.x, _initalPos, _chickenFlock[_attackingChickenID].Position.z);
+            Destroy(_chickenFlock[_attackingChickenID].transform.GetChild(_chickenFlock[_attackingChickenID].transform.childCount - 1).gameObject);
+            _attackingChickenID = -1;
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
