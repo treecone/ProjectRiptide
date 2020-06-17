@@ -1047,3 +1047,40 @@ public partial class Pandatee : Enemy
         }
     }
 }
+
+public partial class ChickenFishFlock : Enemy
+{
+    protected void HostileChickenFish()
+    {
+        //If enemy is not in special
+        if (!_activeStates[(int)AttackState.Active])
+        {
+            //Follow the player
+            FollowPlayer();
+
+            //Cooldown special while in 20 units of player
+            if (_playerDistance < 20.0f)
+            {
+                _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+            }
+            //If cooldown is finished, switch to special
+            if (_specialCooldown[(int)AttackState.Active] <= 0)
+            {
+                _activeStates[(int)AttackState.Active] = true;
+                _specialCooldown[(int)AttackState.Active] = 2.0f;
+                _currTime = 0;
+                _initalPos = transform.position.y;
+                //Load an attack that charges a dash then attacks
+                _actionQueue.Enqueue(ChickenFishAttack);
+            }
+        }
+        else
+        {
+            //Go through enmeies action queue
+            if (!DoActionQueue())
+            {
+                _activeStates[(int)AttackState.Active] = false;
+            }
+        }
+    }
+}
