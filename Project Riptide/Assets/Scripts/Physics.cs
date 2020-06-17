@@ -20,6 +20,12 @@ public class Physics : MonoBehaviour
         set { _position = value; }
     }
 
+    public Vector3 Velocity
+    {
+        get { return _velocity; }
+        set { _velocity = value; }
+    }
+
     public Quaternion Rotation
     {
         get { return _rotation; }

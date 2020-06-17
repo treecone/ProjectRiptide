@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7828468387575925331}
   - component: {fileID: 4582632449290106538}
   - component: {fileID: 8296172668834117840}
+  - component: {fileID: 1433520359}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -28,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 2856427728059449974}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 15, y: 1, z: 15}
+  m_LocalScale: {x: 22.4925, y: 1, z: 20.673}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -59,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f986009fd55579c4e8c1c65af4d48496, type: 2}
+  - {fileID: 2100000, guid: b1f915366a69a7f4fa5d84aca4969d77, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93,3 +94,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waterOffset: {x: 0, y: -0.1, z: 0}
+  splashParticle: {fileID: 6236235779434373813, guid: 2aff6320073f0a14da237628dd56a3fa,
+    type: 3}
+--- !u!65 &1433520359
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2856427728059449974}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 10, y: 0, z: 9.999999}
+  m_Center: {x: 0, y: 0, z: 0}

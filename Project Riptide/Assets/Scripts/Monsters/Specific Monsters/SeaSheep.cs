@@ -36,6 +36,7 @@ public partial class SeaSheep : Enemy
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
+        _healthBar.UpdateHealth(_health);
     }
 
     // Update is called once per frame

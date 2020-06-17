@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum PandateeAnim { Situp = 2, Dive = 3};
-
-public partial class Pandatee : Enemy
+public class ChickenFishFlock : Enemy
 {
-    protected bool _wentUnderwater = false;
-    protected bool _isUnderwater = false;
+    [SerializeField]
+    protected List<ChickenFish> _chickenFlock;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -15,7 +13,7 @@ public partial class Pandatee : Enemy
         base.Start();
 
         //Set parameters
-        _enemyType = EnemyType.Pandatee;
+        _enemyType = EnemyType.ChickenFlock;
         _speed = 0.7f;
         _health = 50;
         _maxHealth = 50;
@@ -37,8 +35,8 @@ public partial class Pandatee : Enemy
         _isRaming = false;
         _ramingDamage = 20;
         _pushMult = 1.0f;
-        _HostileAI = HostilePandateeRunAway;
-        _PassiveAI = PassivePandateeWander;
+        //_HostileAI = HostilePandateeRunAway;
+        //_PassiveAI = PassivePandateeWander;
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
@@ -51,15 +49,33 @@ public partial class Pandatee : Enemy
         base.Update();
     }
 
-    protected override void OnHostile()
+    /// <summary>
+    /// Moves flock according to flocking algorithm
+    /// </summary>
+    protected void MoveFlock()
     {
-        ResetHostile();
-        base.OnHostile();
-    }
+        for(int i = 0; i < _chickenFlock.Count; i++)
+        {
+            //Find closest chicken to current chicken
+            Vector3 closest = Vector3.zero;
+            float dist = 99999;
+            for(int j = 0; j < _chickenFlock.Count; i++)
+            {
+                if(j == i)
+                {
+                    continue;
+                }
 
-    protected override void OnPassive()
-    {
-        base.OnPassive();
-        _passiveCooldown = 1.0f;
+                //Check if current chicken is closer then found chicken
+                float currDist = Vector3.SqrMagnitude(_chickenFlock[i].Position - _chickenFlock[j].Position);
+                if(currDist < dist)
+                {
+                    dist = currDist;
+                    closest = _chickenFlock[j].Position;
+                }
+            }
+
+            _chickenFlock[i].Alignment(_velocity);
+        }
     }
 }
