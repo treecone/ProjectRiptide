@@ -79,6 +79,7 @@ public class ChunkLoader : MonoBehaviour
         string[] partsOfText = text.Split(' ');
         int indexOfLines = 0;
         _lines = new string[_xLen];
+        // Loop through string and extract each lines worth of 
         for(int i = 0; i < _xLen; i++)
         {
             string line = "";
@@ -381,7 +382,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(ship, x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
+                    bool close = DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/150f;
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -482,11 +483,5 @@ public class ChunkLoader : MonoBehaviour
                 return flowerFrogPrefab;
         }
         return null;
-    }
-
-    public static void DeleteHostile(GameObject g)
-    {
-        Debug.Log("Dead");
-
     }
 }
