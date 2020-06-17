@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class InventoryMethods : MonoBehaviour
 {
+    #region Fields
     [SerializeField]
     private TextMeshProUGUI _trashField;
     [SerializeField]
@@ -27,11 +28,12 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private Inventory _inventory;
 
-
-    const float soundValue = .5f;
+    private float soundValue = .5f;
+    private float volumeValue = .5f;
 
     private Item _activeItem = null;            //set it automatically to null, closing inventory resets to null as well
-    
+    #endregion
+
     /// <summary>
     /// changes trash number
     /// </summary>
@@ -63,7 +65,7 @@ public class InventoryMethods : MonoBehaviour
 
     /// <summary>
     /// Sets time scale to 0, may add animation here later
-    /// called when opening 
+    /// called when opening UI
     /// </summary>
     public void PauseGame()
     {
@@ -71,6 +73,10 @@ public class InventoryMethods : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
+    /// <summary>
+    /// Sets time scale to 0, resets movement
+    /// called when opening Port Menu
+    /// </summary>
     public void PauseMarketGame()
     {
         _inputManagerScript.ResetMovement();
@@ -87,7 +93,7 @@ public class InventoryMethods : MonoBehaviour
         Invoke("Unpause", .5f);
         Debug.Log("WHY");
     }
-
+    //for invoking
     public void Unpause()
     {
         _inputManagerScript.enabled = true;
@@ -124,7 +130,10 @@ public class InventoryMethods : MonoBehaviour
         _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
     }
 
-
+    /// <summary>
+    /// trashes the item in inventory, checks number amounts
+    /// </summary>
+    /// <param name="inventory"></param>
     public void TrashItem(Inventory inventory)
     {
         int amount = System.Convert.ToInt32(_trashField.text);
@@ -139,10 +148,48 @@ public class InventoryMethods : MonoBehaviour
         inventory.RemoveItem(saved.Name, amount);
     }
 
+    /// <summary>
+    /// Resets sound/volume to default value
+    /// </summary>
     public void ResetSound()
     {
-        _volumeSlider.value = soundValue;
-        _soundSlider.value = soundValue;
+        _volumeSlider.value = .5f;
+        _soundSlider.value = .5f;
+    }
+
+    /// <summary>
+    /// Press volume, switch between the two
+    /// </summary>
+    public void PressVolume()
+    {
+        //if it is 0, reset it
+        if (_volumeSlider.value == 0)
+        {
+            _volumeSlider.value = volumeValue;
+        }
+        //save value, sets 0
+        else
+        {
+            volumeValue = _volumeSlider.value;
+            _volumeSlider.value = 0;
+        }
+    }
+    /// <summary>
+    /// Press sound, switch between the two
+    /// </summary>
+    public void PressSound()
+    {
+        //if it is 0, reset it
+        if (_soundSlider.value == 0)
+        {
+            _soundSlider.value = soundValue;
+        }
+        //save value, sets 0
+        else
+        {
+            soundValue = _soundSlider.value;
+            _soundSlider.value = 0;
+        }
     }
 
     public void UpdateGold()

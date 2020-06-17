@@ -47,7 +47,7 @@ TrailRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 3
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1bb739cd0483e1b418b07e6eb533a339, type: 2}
@@ -70,7 +70,7 @@ TrailRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Time: 2
   m_Parameters:
     serializedVersion: 3
@@ -581,6 +581,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shipUpgradeScript: {fileID: 271508308}
   healthBarObject: {fileID: 0}
+  maxHealth: 0
+  health: 0
 --- !u!114 &8210748076640493402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -593,7 +595,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760f364ac801178478928d03e78bc328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
+  currentHealth: 0
   slider: {fileID: 0}
+  _sliderText: {fileID: 0}
 --- !u!114 &271508308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -608,6 +613,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventory: {fileID: 0}
   upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: null
+    upgradeValue: 0
+    _componentUpgrades: []
 --- !u!114 &271508309
 MonoBehaviour:
   m_ObjectHideFlags: 0
