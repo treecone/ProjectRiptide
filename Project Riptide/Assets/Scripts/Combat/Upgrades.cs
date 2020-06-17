@@ -169,23 +169,27 @@ public class AdvancedUpgrade : Upgrade
         upgradeValue = masterUpgrade[scalingStat] * scalingAmount;
     }
 }
+[Serializable]
 public class MasterUpgrade : Upgrade
 {
     /// <summary>
     /// The upgrades that make up the Master Upgrade at the time
     /// </summary>
-    List<Upgrade> componentUpgrades;
+    [SerializeField]
+    private List<Upgrade> _componentUpgrades;
     private Dictionary<string, float> upgradeInfo;
 
-    List<AdvancedUpgrade> advancedUpgrades;
+    private List<AdvancedUpgrade> _advancedUpgrades;
     public MasterUpgrade() : base("master upgrade", "null", 0)
     {
         upgradeInfo = new Dictionary<string, float>();
+        _advancedUpgrades = new List<AdvancedUpgrade>();
     }
 
     public MasterUpgrade(string _name, Dictionary<string, float> _upgradeInfo) : base(_name, "null", 0)
     {
         upgradeInfo = _upgradeInfo;
+        _advancedUpgrades = new List<AdvancedUpgrade>();
     }
     /// <summary>
     /// Combines a list of upgrades into one master upgrade
@@ -193,7 +197,7 @@ public class MasterUpgrade : Upgrade
     /// </summary>
     public void Recalculate(List<Upgrade> upgrades)
     {
-        componentUpgrades = upgrades;
+        _componentUpgrades = upgrades;
         upgradeInfo.Clear();
         foreach(Upgrade upgrade in upgrades)
         {
@@ -205,7 +209,7 @@ public class MasterUpgrade : Upgrade
                 upgradeInfo[upgrade.upgradeType] = upgrade.upgradeValue;
             }
         }
-        foreach(AdvancedUpgrade advancedUpgrade in advancedUpgrades)
+        foreach(AdvancedUpgrade advancedUpgrade in _advancedUpgrades)
         {
             advancedUpgrade.Recalculate(this);
         }

@@ -13,7 +13,9 @@ public class HealthBar : MonoBehaviour
     private float timing;
 
     //health
+    [SerializeField]
     private float maxHealth;
+    [SerializeField]
     private float currentHealth;
 
     //health bar
@@ -37,8 +39,7 @@ public class HealthBar : MonoBehaviour
         {
             //Kill Monster
         }
-
-        if(currentHealth >= maxHealth)
+        if (currentHealth > maxHealth)
         {
             currentHealth = maxHealth;
         }
@@ -53,12 +54,11 @@ public class HealthBar : MonoBehaviour
     public void SetMaxHealth(float maxHealth)
     {
         this.maxHealth = maxHealth;
-        currentHealth = this.maxHealth;
     }
 
-    public void UpdateHealth(float currentHealth)
+    public void UpdateHealth(float health)
     {
-        this.currentHealth = currentHealth;
+        currentHealth = health;
     }
 
     /// <summary>

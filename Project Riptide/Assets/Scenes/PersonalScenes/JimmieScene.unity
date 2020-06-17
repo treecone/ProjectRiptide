@@ -327,6 +327,81 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1927507382}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &683556539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 683556540}
+  - component: {fileID: 683556541}
+  - component: {fileID: 683556542}
+  m_Layer: 2
+  m_Name: StatusEffectIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &683556540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683556539}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_Children: []
+  m_Father: {fileID: 590701105}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &683556541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683556539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc7496c4cac77c4ba6a10884b4e3d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 2141036995}
+--- !u!114 &683556542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683556539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f50368c7f686a145ba2347e43fde3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - name: fire
+    sprite: {fileID: 21300000, guid: 05277f867c4b3bd47aaded3009da01fc, type: 3}
+  - name: luck
+    sprite: {fileID: 21300000, guid: 66f0849083c56114e87ddf57982bfccb, type: 3}
+  - name: maxHealth
+    sprite: {fileID: 21300000, guid: 553e699502dab7e46b665d61f6363560, type: 3}
+  - name: power
+    sprite: {fileID: 21300000, guid: 493c64a149e504f4aab0b87d56de8b16, type: 3}
+  - name: regeneration
+    sprite: {fileID: 21300000, guid: 1a74661c494ee754e8b521e5c04d2891, type: 3}
+  - name: speed
+    sprite: {fileID: 21300000, guid: c021aa74c10372c4d98cd252ea72b42c, type: 3}
+  iconPrefab: {fileID: 1682248118311170207, guid: d454677c94cf9ce4da490f459276a01f,
+    type: 3}
+  _maxRowSize: 5
+  _spriteWidth: 5
+  _spriteHeight: 5
 --- !u!1 &823478656 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6558784914200866197, guid: 08023d8f5d737d546916f57cf3805d62,
@@ -1919,6 +1994,11 @@ PrefabInstance:
       propertyPath: _sliderText
       value: 
       objectReference: {fileID: 2102914499}
+    - target: {fileID: 8210748076640493402, guid: 59ea9c24f4295d744a4b3d24a318a75b,
+        type: 3}
+      propertyPath: currentHealth
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8210748076640493403, guid: 59ea9c24f4295d744a4b3d24a318a75b,
         type: 3}
       propertyPath: m_Name
@@ -1941,6 +2021,12 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3193434890808796039, guid: 08023d8f5d737d546916f57cf3805d62,
     type: 3}
   m_PrefabInstance: {fileID: 1772883668}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &2141036995 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 6477495758465067197, guid: fb58c0a273275ae478587ea76a52ef51,
+    type: 3}
+  m_PrefabInstance: {fileID: 251248688}
   m_PrefabAsset: {fileID: 0}
 --- !u!33 &790234937735174055
 MeshFilter:

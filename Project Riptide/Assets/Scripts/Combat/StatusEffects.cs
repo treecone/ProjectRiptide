@@ -5,8 +5,9 @@ using UnityEngine;
 public class StatusEffects : MonoBehaviour
 {
     private List<StatusEffect> _activeStatusEffects;
-    private Upgrade _totalUpgrade;
     private PlayerHealth _playerHealth;
+    private Upgrades _upgrades;
+    private StatusIcons _statusIcons;
     //TODO: add enemy health interaction
 
 
@@ -23,9 +24,11 @@ public class StatusEffects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _statusIcons = GetComponentInChildren<StatusIcons>();
         _activeStatusEffects = new List<StatusEffect>();
         if(isPlayer)
         {
+            _upgrades = GetComponent<Upgrades>();
             _playerHealth = GetComponent<PlayerHealth>();
         }else
         {
@@ -55,14 +58,32 @@ public class StatusEffects : MonoBehaviour
             } else
             {
                 _activeStatusEffects.RemoveAt(i);
+                _upgrades.Recalculate();
+                _statusIcons.RearrangeStatuses(ActiveStatusEffects);
                 i--;
             }
         }
 
         if(Input.GetKeyDown(KeyCode.Alpha0))
         {
-            ActiveStatusEffects.Add(new StatusEffect("fire", 5, 5));
+            AddStatus("fire", 5, 5);
         }
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            AddStatus("regeneration", 5, 5);
+        }
+        if(Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            AddStatus("maxHealth", 5, 30);
+        }
+    }
+
+    public void AddStatus(string name, float duration, float level)
+    {
+        StatusEffect s = new StatusEffect(name, duration, level);
+        ActiveStatusEffects.Add(s);
+        _statusIcons.RearrangeStatuses(ActiveStatusEffects);
+        _upgrades.Recalculate();
     }
 }
 
@@ -90,6 +111,14 @@ public class StatusEffect
             return _level;
         }
     }
+
+    public float Duration
+    {
+        get
+        {
+            return _duration;
+        }
+    }
     public bool Active
     {
         get
@@ -109,5 +138,24 @@ public class StatusEffect
     public void Update()
     {
         _currentDuration += Time.deltaTime;
+    }
+}
+
+public class StatusEffectComparer : IComparer<StatusEffect>
+{
+    public int Compare(StatusEffect x, StatusEffect y)
+    {
+        if(x.Type.CompareTo(y.Type) != 0)
+        {
+            return x.Type.CompareTo(y.Type);
+        } else if (x.Level.CompareTo(y.Level) != 0){
+            return x.Level.CompareTo(y.Level);
+        } else if(x.Duration.CompareTo(y.Duration) != 0)
+        {
+            return x.Duration.CompareTo(y.Duration);
+        } else
+        {
+            return 0;
+        }
     }
 }
