@@ -3,48 +3,50 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-
+/// <summary>
+/// Left/Right -> way it goes out
+/// F (faster), S (Slower)
+/// </summary>
 public class UIAnimMethods : MonoBehaviour
 {
-    //SLIDING TITLE IN AND OUT
-    public void SlideTLeft(GameObject gObj)
+    //Fast Transition
+    public void SlideLeftF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(-1505f, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .65f).SetUpdate(true);
     }
-    public void SlideTRight(GameObject gObj)
+    public void SlideRightF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(0, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .65f).SetUpdate(true);
     }
 
-    //SLIDING BASE MATERIALS IN AND OUT
+    //Normal Transition
     public void SlideLeft(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(-1505f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .7f).SetUpdate(true);
     }
     public void SlideRight(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(0, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .7f).SetUpdate(true);
     }
 
-    //SLIDING CLOSE BUTTON IN AND OUT
-    public void SlideCLeft(GameObject gObj)
+    //Slow Transition   
+    public void SlideLeftS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(-897f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .75f).SetUpdate(true);
     }
-    public void SlideCRight(GameObject gObj)
+    public void SlideRightS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(608f, .7f).SetUpdate(true);
-    }
-
-    //SLIDING GOLD IN AND OUT
-    public void SlideGLeft(GameObject gObj)
-    {
-        gObj.transform.DOLocalMoveX(-1977f, .7f).SetUpdate(true);
-    }
-    public void SlideGRight(GameObject gObj)
-    {
-        gObj.transform.DOLocalMoveX(-472.2f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .75f).SetUpdate(true);
     }
 
+    //Slowest Transition
+    public void SlideLeftVS(GameObject gObj)
+    {
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .8f).SetUpdate(true);
+    }
+    public void SlideRightVS(GameObject gObj)
+    {
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .8f).SetUpdate(true);
+    }
 
 }

@@ -76,6 +76,10 @@ public class StatusEffects : MonoBehaviour
         {
             AddStatus("maxHealth", 5, 30);
         }
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            AddStatus("poison", 5, 5);
+        }
     }
 
     public void AddStatus(string name, float duration, float level)
