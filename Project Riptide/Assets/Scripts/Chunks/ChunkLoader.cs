@@ -79,6 +79,7 @@ public class ChunkLoader : MonoBehaviour
         string[] partsOfText = text.Split(' ');
         int indexOfLines = 0;
         _lines = new string[_xLen];
+        // Loop through string and extract each lines worth of 
         for(int i = 0; i < _xLen; i++)
         {
             string line = "";
@@ -482,11 +483,5 @@ public class ChunkLoader : MonoBehaviour
                 return flowerFrogPrefab;
         }
         return null;
-    }
-
-    public static void DeleteHostile(GameObject g)
-    {
-        Debug.Log("Dead");
-
     }
 }
