@@ -55,7 +55,7 @@ public class PortManager : MonoBehaviour
             _inPort = true;
 			_portUI.SetActive(true);
             _player.GetComponent<ShipMovement>().StopMotion();
-            _inventoryMethods.PauseGame();
+            _inventoryMethods.PauseMarketGame();
         }
         
     }

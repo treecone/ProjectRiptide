@@ -154,7 +154,7 @@ public partial class Enemy : Physics
         //Add hitbox at begining
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage));
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 3.0f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage));
         }
 
         if (!_inKnockback)
@@ -268,7 +268,7 @@ public partial class KoiBoss : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.forward * 2.2f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
         }
@@ -439,7 +439,7 @@ public partial class KoiBoss : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(transform.forward * 1.5f * transform.localScale.x, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
             _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
         }
 
@@ -1148,7 +1148,6 @@ public partial class ClamBoss : Enemy
         {
             _waterSpoutUp = Instantiate(_waterSpoutUpPrefab, transform.position, _waterSpoutUpPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
             ParticleSystem.MainModule main = _waterSpoutUp.main;
-            Debug.Log(main.startSpeedMultiplier);
             main.startSpeedMultiplier *= 1 / _speedScale;
             main.startLifetimeMultiplier *= _speedScale;
         }
@@ -1331,9 +1330,37 @@ public partial class ClamBoss : Enemy
         {
             for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
             {
-                Destroy(_dragonSmokeParticles[i]);
+                Destroy(_dragonSmokeParticles[i].gameObject);
             }
             _dragonSmokeParticles.Clear();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
+
+public partial class Pandatee : Enemy
+{
+    /// <summary>
+    /// Pandatee eats for 5 seconds then returns to swimming
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool PandateeEat(ref float time)
+    {
+        const float MAX_TIME = 5.0f;
+
+        if(time == 0)
+        {
+            StopMotion();
+            _animator.Play(_animParm[(int)PandateeAnim.Situp]);
+        }
+
+        if(time > MAX_TIME)
+        {
             return false;
         }
         else

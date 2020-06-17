@@ -71,13 +71,26 @@ public class InventoryMethods : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
+    public void PauseMarketGame()
+    {
+        _inputManagerScript.ResetMovement();
+        _inputManagerScript.enabled = false;
+        Time.timeScale = 0.0f;
+    }
+
     /// <summary>
     /// Sets time scale to 1, may add animation here later
     /// </summary>
     public void UnpauseGame()
     {
+        Time.timeScale = 1f;
+        Invoke("Unpause", .5f);
+        Debug.Log("WHY");
+    }
+
+    public void Unpause()
+    {
         _inputManagerScript.enabled = true;
-        Time.timeScale = 1.0f;
     }
 
     /// <summary>
@@ -136,6 +149,5 @@ public class InventoryMethods : MonoBehaviour
     {
         _totalGoldInventory.SetText("{0}", _inventory.TotalGold);
     }
-
 
 }

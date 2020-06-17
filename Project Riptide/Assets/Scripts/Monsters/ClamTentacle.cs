@@ -153,7 +153,7 @@ public class ClamTentacle : Physics
                     //Play attacking animation and spawn hitbox
                     _animator.Play(_animParm[(int)TentacleAnim.Slam]);
                     _hitbox = Instantiate(_hitboxPrefab, transform);
-                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 6), new Vector3(2, 2, 13), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
+                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 3), new Vector3(2, 2, 9), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
                 }
                 if (_time <= _attackingTime)
                 {
@@ -242,7 +242,7 @@ public class ClamTentacle : Physics
                 {
                     _animator.Play(_animParm[(int)TentacleAnim.Slam]);
                     _hitbox = Instantiate(_hitboxPrefab, transform);
-                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 6), new Vector3(2, 2, 13), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
+                    _hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 3), new Vector3(2, 2, 9 ), HitboxType.EnemyHitbox, _damage, new Vector2(90, 0), 500);
                 }
                 if (_time <= _attackingTime)
                 {

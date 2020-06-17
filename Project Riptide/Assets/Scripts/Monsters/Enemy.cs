@@ -12,7 +12,7 @@ public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6, ClamBoss = 7}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6, ClamBoss = 7, Pandatee = 8}
 public enum Anim { Die = 0, Velocity = 1};
 
 
@@ -55,6 +55,7 @@ public partial class Enemy : Physics
     protected float _wanderRadius;
     protected float _maxRadius;
     protected float _passiveCooldown;
+    protected float _hostileCooldown;
     protected float _pushMult = 1.0f;
     protected float[] _specialCooldown;
     protected bool[] _activeStates;
@@ -193,7 +194,7 @@ public partial class Enemy : Physics
                 case EnemyState.Hostile:
                     _HostileAI();
                     //check for passive behavior trigger, if you get far enough away
-                    if (_playerDistance >= _passiveRadius)
+                    if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0)
                     {
                         OnPassive();
                         _state = EnemyState.Passive;
@@ -206,6 +207,9 @@ public partial class Enemy : Physics
 
             if (_passiveCooldown > 0)
                 _passiveCooldown -= Time.deltaTime;
+
+            if (_hostileCooldown > 0)
+                _hostileCooldown -= Time.deltaTime;
 
             SetHealthBarPosition();
 
@@ -250,6 +254,7 @@ public partial class Enemy : Physics
                 _dying = true;
                 _isInvincible = true;
                 _deathTimer = 0;
+                OnDeath();
             }
         }
     }
@@ -611,4 +616,11 @@ public partial class Enemy : Physics
         _healthBarObject.SetActive(true);
     }
 
+    /// <summary>
+    /// Called when monster's death is triggered
+    /// </summary>
+    protected virtual void OnDeath()
+    {
+
+    }
 }
