@@ -83,16 +83,22 @@ public class Upgrades : MonoBehaviour
     public void Recalculate()
     {
         List<Upgrade> equippedUpgrades = new List<Upgrade>();
-        for (int i = 0; i < inventory.Size; i++) {
-            Item item = inventory[i];
-            if (item.Id != 0 && item.Equipped == true)
+
+        if(inventory != null)
+        {
+            for (int i = 0; i < inventory.Size; i++)
             {
-                foreach(Upgrade u in item.Upgrades)
+                Item item = inventory[i];
+                if (item.Id != 0 && item.Equipped == true)
                 {
-                    equippedUpgrades.Add(u);
+                    foreach (Upgrade u in item.Upgrades)
+                    {
+                        equippedUpgrades.Add(u);
+                    }
                 }
             }
         }
+        
         for(int i = 0; i < _statusEffects.ActiveStatusEffects.Count; i++)
         {
             equippedUpgrades.Add(new Upgrade(_statusEffects.ActiveStatusEffects[i]));
