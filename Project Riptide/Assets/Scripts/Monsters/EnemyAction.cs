@@ -1080,8 +1080,7 @@ public partial class ClamBoss : Enemy
         {
             _animator.Play(_animParm[(int)ClamAnim.Open]);
             //Choose a random open state
-            //_openState = (ClamOpenState)Random.Range(0, 3);
-            _openState = ClamOpenState.Dragon;
+            _openState = (ClamOpenState)Random.Range(0, 3);
         }
 
         if(time >= MAX_TIME)
