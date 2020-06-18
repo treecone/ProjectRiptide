@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class StatusEffects : MonoBehaviour
 {
+    [SerializeField]
     private List<StatusEffect> _activeStatusEffects;
     private PlayerHealth _playerHealth;
+    private Enemy _enemyHealth;
     private Upgrades _upgrades;
     private StatusIcons _statusIcons;
     //TODO: add enemy health interaction
@@ -26,13 +28,13 @@ public class StatusEffects : MonoBehaviour
     {
         _statusIcons = GetComponentInChildren<StatusIcons>();
         _activeStatusEffects = new List<StatusEffect>();
-        if(isPlayer)
+        _upgrades = GetComponent<Upgrades>();
+        if (isPlayer)
         {
-            _upgrades = GetComponent<Upgrades>();
             _playerHealth = GetComponent<PlayerHealth>();
         }else
         {
-
+            _enemyHealth = GetComponent<Enemy>();
         }
     }
 
@@ -52,7 +54,7 @@ public class StatusEffects : MonoBehaviour
                         _playerHealth.TakeDamage(status.Level * Time.deltaTime);
                     } else
                     {
-
+                        _enemyHealth.TakeDamage(status.Level * Time.deltaTime);
                     }
                 }
             } else
@@ -91,6 +93,7 @@ public class StatusEffects : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class StatusEffect
 {
     private string _type;
