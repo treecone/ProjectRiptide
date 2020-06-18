@@ -18,20 +18,33 @@ public class Mine : MonoBehaviour
     private float statusDuration;
     [SerializeField]
     private float statusLevel;
+    [SerializeField]
+    private float bobAmount;
+    private float bobOffset;
+
 
     // Start is called before the first frame update
     void Start()
     {
         _playerStatusEffects = _player.GetComponent<StatusEffects>();
         _playerHealth = _player.GetComponent<PlayerHealth>();
+        bobOffset = Random.Range(0, Mathf.PI * 2);
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        transform.position += Vector3.up * Mathf.Sin(Time.time + bobOffset) * bobAmount * Time.deltaTime;
     }
 
+    public void SetData(GameObject player, float damage, string statusType, float statusDuration, float statusLevel)
+    {
+        this._player = player;
+        this.damage = damage;
+        this.statusType = statusType;
+        this.statusDuration = statusDuration;
+        this.statusLevel = statusLevel;
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.gameObject.tag == "Player")
