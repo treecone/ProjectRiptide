@@ -151,7 +151,6 @@ public partial class ClamBoss : Enemy
     {
         if(player.tag == "Player")
         {
-            Debug.Log("Poison Triggered");
             //Deal 2 damage per second for 5 seconds
             player.GetComponent<StatusEffects>().AddStatus("poison", 5.0f, 4.0f);
         }
@@ -174,7 +173,28 @@ public partial class ClamBoss : Enemy
     protected override void OnPassive()
     {
         _darknessParticles.Stop();
-        base.OnPassive();
+        SetPuppetCanvas(false);
+        if (_health == _maxHealth)
+        {
+            _healthBarObject.SetActive(false);
+        }
+        //Only reset states that aren't triggers
+        for (int i = 0; i < 2; i++)
+        {
+            _activeStates[i] = false;
+        }
+        //reset cooldowns
+        for (int i = 0; i < _specialCooldown.Length; i++)
+        {
+            _specialCooldown[i] = 5.0f;
+        }
+        _isRaming = false;
+        _inKnockback = false;
+        _actionQueue.Clear();
+        ClearHitboxes();
+        _currTime = 0;
+        //Keep monster passive for 5 seconds at least
+        _passiveCooldown = 5.0f;
     }
 
     /// <summary>
@@ -183,5 +203,7 @@ public partial class ClamBoss : Enemy
     protected override void OnDeath()
     {
         _darknessParticles.Stop();
+        SetPuppetCanvas(false);
+        base.OnDeath();
     }
 }
