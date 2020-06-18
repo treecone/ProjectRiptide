@@ -26,6 +26,8 @@ public partial class Enemy : Physics
     protected GameObject _healthBarObject;
     [SerializeField]
     protected GameObject _hitbox;
+    [SerializeField]
+    protected GameObject _splashParticle;
     protected Camera _camera;
 
     //Health fields
@@ -153,11 +155,6 @@ public partial class Enemy : Physics
         PlayerVelocity = movement.GetVelocity;
         SendKnockback = movement.TakeKnockback;
         SendFriction = movement.ApplyFriction;
-        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
-        {
-            hitbox.OnTrigger += HitboxTriggered;
-            hitbox.OnStay += OnObsticalCollision;
-        }
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
 
@@ -247,14 +244,6 @@ public partial class Enemy : Physics
             if (_health <= 0)
             {
                 _health = 0;
-                if (_animator != null)
-                {
-                    _animator.SetTrigger(_animParm[(int)Anim.Die]);
-                    _deathAnim = Animator.StringToHash("death");
-                }
-                _dying = true;
-                _isInvincible = true;
-                _deathTimer = 0;
                 OnDeath();
             }
         }
@@ -596,6 +585,37 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
+    /// Plays a splash effect around the enemy
+    /// </summary>
+    protected void PlaySplash()
+    {
+        if(_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(transform.position.x, PlayerPosition().y, transform.position.z), _splashParticle.transform.rotation);
+        //Scale particle effect based on enemy's x scale
+        particle.transform.localScale *= transform.localScale.x;
+    }
+
+    /// <summary>
+    /// Plays splash animation around a given point
+    /// </summary>
+    /// <param name="position">Position to play animation</param>
+    /// <param name="scale">Scale of animation</param>
+    protected void PlaySplash(Vector3 position, float scale)
+    {
+        if (_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(position.x, PlayerPosition().y, position.z), _splashParticle.transform.rotation);
+        particle.transform.localScale *= scale;
+    }
+
+    /// <summary>
     /// Called when monster becomes passive
     /// </summary>
     protected virtual void OnPassive()
@@ -622,6 +642,12 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnDeath()
     {
-
+        if (_animator != null)
+        {
+            _animator.SetTrigger(_animParm[(int)Anim.Die]);
+        }
+        _dying = true;
+        _isInvincible = true;
+        _deathTimer = 0;
     }
 }

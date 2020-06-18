@@ -318,6 +318,7 @@ public partial class KoiBoss : Enemy
                     StopMotion();
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;
                     _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
+                    PlaySplash();
                     _initalPos = transform.position.y;
                 }
 
@@ -1019,6 +1020,7 @@ public partial class Pandatee : Enemy
                 StopMotion();
                 _activeStates[(int)AttackState.FormChangeInProgress] = true;
                 _animator.Play(_animParm[(int)PandateeAnim.Dive]);
+                PlaySplash();
                 _initalPos = transform.position.y;
                 _hostileCooldown = 1.1f;
             }
@@ -1050,8 +1052,19 @@ public partial class Pandatee : Enemy
 
 public partial class ChickenFishFlock : Enemy
 {
+    /// <summary>
+    /// Chicken fish flock hostile AI
+    /// Chase the player and occasionally send a fish out
+    /// to attack player
+    /// </summary>
     protected void HostileChickenFish()
     {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
+        {
+            _state = EnemyState.Passive;
+            OnPassive();
+        }
         //If enemy is not in special
         if (!_activeStates[(int)AttackState.Active])
         {

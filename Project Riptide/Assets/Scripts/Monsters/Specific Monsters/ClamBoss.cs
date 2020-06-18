@@ -75,6 +75,13 @@ public partial class ClamBoss : Enemy
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
+
+        //Set up hitboxes
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
+            hitbox.OnTrigger += HitboxTriggered;
+            hitbox.OnStay += OnObsticalCollision;
+        }
     }
 
     // Update is called once per frame
@@ -133,6 +140,20 @@ public partial class ClamBoss : Enemy
                 //Player takes damage
                 hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime);
             }
+        }
+    }
+
+    /// <summary>
+    /// Add poison effect to player when dragon breath hitbox is triggered
+    /// </summary>
+    /// <param name="player"></param>
+    protected void DealDragonPoison(GameObject player)
+    {
+        if(player.tag == "Player")
+        {
+            Debug.Log("Poison Triggered");
+            //Deal 2 damage per second for 5 seconds
+            player.GetComponent<StatusEffects>().AddStatus("poison", 5.0f, 4.0f);
         }
     }
 

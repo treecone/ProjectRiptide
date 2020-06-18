@@ -478,6 +478,99 @@ Transform:
   m_Father: {fileID: 8210748076640493394}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7375723731408273204
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8439939814679519370}
+  - component: {fileID: 5433652000154605682}
+  - component: {fileID: 7393229265824303345}
+  m_Layer: 2
+  m_Name: StatusEffectIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8439939814679519370
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7375723731408273204}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_Children: []
+  m_Father: {fileID: 8210748076640493394}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5433652000154605682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7375723731408273204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc7496c4cac77c4ba6a10884b4e3d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camera: {fileID: 0}
+--- !u!114 &7393229265824303345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7375723731408273204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f50368c7f686a145ba2347e43fde3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - name: armor
+    sprite: {fileID: 21300000, guid: 77e351fbe685ed7488046e120b74a923, type: 3}
+  - name: count
+    sprite: {fileID: 21300000, guid: 7e9c4c958e778c04db1b52eb4109bb86, type: 3}
+  - name: dropQuality
+    sprite: {fileID: 21300000, guid: 854737a01d9c15a4fb27b548b1cbbacc, type: 3}
+  - name: dropRate
+    sprite: {fileID: 21300000, guid: 66f0849083c56114e87ddf57982bfccb, type: 3}
+  - name: fire
+    sprite: {fileID: 21300000, guid: 05277f867c4b3bd47aaded3009da01fc, type: 3}
+  - name: freeze
+    sprite: {fileID: 21300000, guid: 84654a60e52ff0143b1b0b0025883a0f, type: 3}
+  - name: hardiness
+    sprite: {fileID: 21300000, guid: 17d9c31b8fd987140801a5a4723a1aaa, type: 3}
+  - name: maneuverability
+    sprite: {fileID: 21300000, guid: 01f5379fdcba8a945b4c64eca544b550, type: 3}
+  - name: maxHealth
+    sprite: {fileID: 21300000, guid: 553e699502dab7e46b665d61f6363560, type: 3}
+  - name: poison
+    sprite: {fileID: 21300000, guid: 10c86dcc047ecc24f8c0fa5ce17b9577, type: 3}
+  - name: power
+    sprite: {fileID: 21300000, guid: 493c64a149e504f4aab0b87d56de8b16, type: 3}
+  - name: regeneration
+    sprite: {fileID: 21300000, guid: 1a74661c494ee754e8b521e5c04d2891, type: 3}
+  - name: shotSize
+    sprite: {fileID: 21300000, guid: aca48221efb27f340809fd83b9c9ab0b, type: 3}
+  - name: slow
+    sprite: {fileID: 21300000, guid: 2916f49a406faba4e98fc571f5355c3b, type: 3}
+  - name: speed
+    sprite: {fileID: 21300000, guid: c021aa74c10372c4d98cd252ea72b42c, type: 3}
+  iconPrefab: {fileID: 1682248118311170207, guid: d454677c94cf9ce4da490f459276a01f,
+    type: 3}
+  _maxRowSize: 5
+  _spriteWidth: 5
+  _spriteHeight: 5
 --- !u!1 &8210748076640493403
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,6 +611,7 @@ Transform:
   - {fileID: 641288377}
   - {fileID: 1814147818}
   - {fileID: 1055299687}
+  - {fileID: 8439939814679519370}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

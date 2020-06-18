@@ -45,12 +45,21 @@ public partial class ChickenFishFlock : Enemy
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
+
+        //Set up hitboxes
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
+            hitbox.OnTrigger += HitboxTriggered;
+        }
     }
 
     // Update is called once per frame
     protected override void Update()
     {
-        MoveFlock();
+        if (!_dying)
+        {
+            MoveFlock();
+        }
         base.Update();
     }
 
@@ -90,5 +99,19 @@ public partial class ChickenFishFlock : Enemy
             _chickenFlock[i].MoveUpAndDown();
             _chickenFlock[i].ChickenAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
         }
+    }
+
+    /// <summary>
+    /// Kill chicken flock on death
+    /// </summary>
+    protected override void OnDeath()
+    {
+        //Kill all chickens in the flock
+        for (int i = 0; i < _chickenFlock.Count; i++)
+        {
+            _chickenFlock[i].StopMotion();
+            _chickenFlock[i].ChickenAnimator.SetTrigger(_animParm[(int)Anim.Die]);
+        }
+        base.OnDeath();
     }
 }

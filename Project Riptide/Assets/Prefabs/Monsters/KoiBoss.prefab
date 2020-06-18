@@ -526,6 +526,8 @@ MonoBehaviour:
     type: 3}
   _healthBarObject: {fileID: 1212731510}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
+  _splashParticle: {fileID: 2356386736741349648, guid: a28ad58532a5f1e4294dd2cf1c578e4b,
+    type: 3}
   _lengthMult: 6
   _widthMult: 1.5
   _heightMult: 0.5
@@ -541,7 +543,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760f364ac801178478928d03e78bc328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
+  currentHealth: 0
   slider: {fileID: 1212731512}
+  _sliderText: {fileID: 0}
 --- !u!1001 &4417234414937173236
 PrefabInstance:
   m_ObjectHideFlags: 0

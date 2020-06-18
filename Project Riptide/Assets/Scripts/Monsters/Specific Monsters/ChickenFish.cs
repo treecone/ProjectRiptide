@@ -16,7 +16,7 @@ public class ChickenFish : Physics
     // Start is called before the first frame update
     protected override void Start()
     {
-        _gravity = ApplyArcForce(Vector3.forward, 0, 4.0f, 1.5f);
+        _gravity = ApplyArcForce(Vector3.forward, 0, 3.5f, 1.5f);
         _acceleration = Vector3.zero;
         _animator = GetComponentInChildren<Animator>();
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
@@ -29,8 +29,11 @@ public class ChickenFish : Physics
     // Update is called once per frame
     protected override void Update()
     {
-        Quaternion desiredRotation = Quaternion.LookRotation(new Vector3(_velocity.x, 0, _velocity.z));
-        _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, 2.0f);
+        if (_velocity != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(new Vector3(_velocity.x, 0, _velocity.z));
+            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, 2.0f);
+        }
         base.Update();
     }
 
@@ -41,7 +44,7 @@ public class ChickenFish : Physics
     {
         if(transform.position.y < MIN_Y)
         {
-            ApplyArcForce(Vector3.up, 0, 4.0f, 1.5f);
+            ApplyArcForce(Vector3.up, 0, 3.5f, 1.5f);
         }
         ApplyForce(_gravity);
     }
@@ -99,7 +102,7 @@ public class ChickenFish : Physics
         else if (obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
-            if (attached != gameObject)
+            if (attached != transform.parent.gameObject)
             {
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
