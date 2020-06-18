@@ -137,6 +137,20 @@ public partial class ClamBoss : Enemy
     }
 
     /// <summary>
+    /// Add poison effect to player when dragon breath hitbox is triggered
+    /// </summary>
+    /// <param name="player"></param>
+    protected void DealDragonPoison(GameObject player)
+    {
+        if(player.tag == "Player")
+        {
+            Debug.Log("Poison Triggered");
+            //Deal 2 damage per second for 5 seconds
+            player.GetComponent<StatusEffects>().AddStatus("poison", 5.0f, 4.0f);
+        }
+    }
+
+    /// <summary>
     /// Called when clam turns hostile
     /// Turn on particles
     /// </summary>

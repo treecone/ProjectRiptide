@@ -247,14 +247,6 @@ public partial class Enemy : Physics
             if (_health <= 0)
             {
                 _health = 0;
-                if (_animator != null)
-                {
-                    _animator.SetTrigger(_animParm[(int)Anim.Die]);
-                    _deathAnim = Animator.StringToHash("death");
-                }
-                _dying = true;
-                _isInvincible = true;
-                _deathTimer = 0;
                 OnDeath();
             }
         }
@@ -622,6 +614,12 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnDeath()
     {
-
+        if (_animator != null)
+        {
+            _animator.SetTrigger(_animParm[(int)Anim.Die]);
+        }
+        _dying = true;
+        _isInvincible = true;
+        _deathTimer = 0;
     }
 }
