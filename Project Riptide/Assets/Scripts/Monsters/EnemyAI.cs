@@ -318,6 +318,7 @@ public partial class KoiBoss : Enemy
                     StopMotion();
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;
                     _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
+                    PlaySplash();
                     _initalPos = transform.position.y;
                 }
 
@@ -1019,6 +1020,7 @@ public partial class Pandatee : Enemy
                 StopMotion();
                 _activeStates[(int)AttackState.FormChangeInProgress] = true;
                 _animator.Play(_animParm[(int)PandateeAnim.Dive]);
+                PlaySplash();
                 _initalPos = transform.position.y;
                 _hostileCooldown = 1.1f;
             }

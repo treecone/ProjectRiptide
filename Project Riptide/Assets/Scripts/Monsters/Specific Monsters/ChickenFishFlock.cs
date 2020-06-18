@@ -45,6 +45,12 @@ public partial class ChickenFishFlock : Enemy
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
+
+        //Set up hitboxes
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
+            hitbox.OnTrigger += HitboxTriggered;
+        }
     }
 
     // Update is called once per frame

@@ -26,6 +26,8 @@ public partial class Enemy : Physics
     protected GameObject _healthBarObject;
     [SerializeField]
     protected GameObject _hitbox;
+    [SerializeField]
+    protected GameObject _splashParticle;
     protected Camera _camera;
 
     //Health fields
@@ -153,11 +155,6 @@ public partial class Enemy : Physics
         PlayerVelocity = movement.GetVelocity;
         SendKnockback = movement.TakeKnockback;
         SendFriction = movement.ApplyFriction;
-        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
-        {
-            hitbox.OnTrigger += HitboxTriggered;
-            hitbox.OnStay += OnObsticalCollision;
-        }
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
 
@@ -585,6 +582,37 @@ public partial class Enemy : Physics
         //Reset velocity when not rotating
         else
             _rotationalVeloctiy = minRotationalVelocity;
+    }
+
+    /// <summary>
+    /// Plays a splash effect around the enemy
+    /// </summary>
+    protected void PlaySplash()
+    {
+        if(_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(transform.position.x, PlayerPosition().y, transform.position.z), _splashParticle.transform.rotation);
+        //Scale particle effect based on enemy's x scale
+        particle.transform.localScale *= transform.localScale.x;
+    }
+
+    /// <summary>
+    /// Plays splash animation around a given point
+    /// </summary>
+    /// <param name="position">Position to play animation</param>
+    /// <param name="scale">Scale of animation</param>
+    protected void PlaySplash(Vector3 position, float scale)
+    {
+        if (_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(position.x, PlayerPosition().y, position.z), _splashParticle.transform.rotation);
+        particle.transform.localScale *= scale;
     }
 
     /// <summary>

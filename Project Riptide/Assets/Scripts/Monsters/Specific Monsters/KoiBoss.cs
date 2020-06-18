@@ -42,6 +42,13 @@ public partial class KoiBoss : Enemy
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
+
+        //Set up hitboxes
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
+            hitbox.OnTrigger += HitboxTriggered;
+            hitbox.OnStay += OnObsticalCollision;
+        }
     }
 
     // Update is called once per frame

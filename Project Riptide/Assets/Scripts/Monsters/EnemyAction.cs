@@ -319,6 +319,7 @@ public partial class KoiBoss : Enemy
         {
             StopMotion();
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
+            PlaySplash();
         }
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
@@ -506,6 +507,7 @@ public partial class KoiBoss : Enemy
         else if (time < MAX_TIME + 0.5f)
         {
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
+            PlaySplash();
             time = MAX_TIME + 0.5f;
         }
         //Move fish back underwater
@@ -572,6 +574,7 @@ public partial class KoiBoss : Enemy
         else if (time >= STALL_TIME && time < MAX_TIME)
         {
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
+            PlaySplash();
             time = MAX_TIME;
         }
         else if (transform.position.y > _initalPos)
@@ -691,6 +694,7 @@ public partial class KoiBoss : Enemy
         if (time > 0.95f && _hitboxes.Count > 0)
         {
             _position = new Vector3(_position.x, _startPos.y, _position.z);
+            PlaySplash();
             StopMotion();
             Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
@@ -771,6 +775,7 @@ public partial class RockCrab : Enemy
         if (time >= MAX_TIME)
         {
             ReturnToInitalPosition();
+            PlaySplash();
             StopMotion();
             GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
@@ -1404,7 +1409,7 @@ public partial class ChickenFishFlock : Enemy
             //Set up hitbox
             GameObject hitbox = Instantiate(_hitbox, _chickenFlock[_attackingChickenID].transform);
             hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 0.11f), new Vector3(2.2f, 2.2f, 2.2f), HitboxType.EnemyHitbox, 10);
-            hitbox.GetComponent<Hitbox>().OnTrigger += delegate (GameObject other) { Debug.Log(other); };
+            hitbox.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
         }
 
         //While not in knockback
@@ -1413,6 +1418,7 @@ public partial class ChickenFishFlock : Enemy
             //If monster hits player or obstical do knockback
             if (_playerCollision || _obsticalCollision)
             {
+                Debug.Log(_playerCollision);
                 _inKnockback = true;
                 _chickenFlock[_attackingChickenID].StopHorizontalMotion();
                 _chickenFlock[_attackingChickenID].ApplyMoveForce(-_chickenFlock[_attackingChickenID].transform.forward, 2.0f, 0.3f);
@@ -1440,6 +1446,9 @@ public partial class ChickenFishFlock : Enemy
             //Reset motion and position of chicken
             _chickenFlock[_attackingChickenID].StopMotion();
             _chickenFlock[_attackingChickenID].Position = new Vector3(_chickenFlock[_attackingChickenID].Position.x, _initalPos, _chickenFlock[_attackingChickenID].Position.z);
+
+            //Play splash animation
+            PlaySplash(_chickenFlock[_attackingChickenID].Position, _chickenFlock[_attackingChickenID].transform.localScale.x);
 
             //Destroy hitbox
             Destroy(_chickenFlock[_attackingChickenID].transform.GetChild(_chickenFlock[_attackingChickenID].transform.childCount - 1).gameObject);
