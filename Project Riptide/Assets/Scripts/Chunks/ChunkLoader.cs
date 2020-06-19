@@ -10,10 +10,6 @@ using LitJson;
 public enum Region
 {
     CHINA,
-    CHINA_KOI,
-    CHINA_ISLAND1,
-    CHINA_ISLAND2,
-    CHINA_ISLAND3,
     OCEAN
 };
 
@@ -101,7 +97,9 @@ public class ChunkLoader : MonoBehaviour
             // March through each chunk descriptor.
             for(int z = 0; z < _zLen; z++)
             {
+                // The name of the chunk to load in.
                 string regionText = parts[z];
+                // If there is an extra specifier.
                 int index = regionText.IndexOf("_");
                 string region = "ocean";
                 if(index > -1)
@@ -113,6 +111,7 @@ public class ChunkLoader : MonoBehaviour
                 List<GameObject> enemies = new List<GameObject>();
                 string pathName = "";
                 Region r = Region.OCEAN;
+                // Determine which region this chunk is in.
                 switch (region)
                 {
                     case "china":
@@ -128,6 +127,7 @@ public class ChunkLoader : MonoBehaviour
                             break;
                         }
                 }
+                // Make the chunk.
                 GameObject obj = Instantiate(Resources.Load<GameObject>(pathName), new Vector3(x * _CHUNKSIDELENGTH, 0, z * _CHUNKSIDELENGTH), Quaternion.identity);
 
                 // There are monsters to load in.
@@ -342,7 +342,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/150f;
+                    bool close = DistanceFromChunkCenter(ship, x, z) < _CHUNKSIDELENGTH;
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -400,19 +400,6 @@ public class ChunkLoader : MonoBehaviour
                     name = "china";
                     break;
                 }
-            case Region.CHINA_KOI:
-                {
-                    name = "china";
-                    break;
-             
-                }
-            case Region.CHINA_ISLAND1:
-            case Region.CHINA_ISLAND2:
-            case Region.CHINA_ISLAND3:
-                {
-                    name = "china";
-                    break;
-                }
             case Region.OCEAN:
                 {
                     name = "ocean";
@@ -422,15 +409,6 @@ public class ChunkLoader : MonoBehaviour
         return name;
     }
 
-    public string GetMonsterName(Region r)
-    {
-        switch (r)
-        {
-            case Region.CHINA_KOI:
-                    return "koi";
-        }
-        return "NONE";
-    }
     public GameObject GetPrefabByName(string s)
     {
         switch (s)
