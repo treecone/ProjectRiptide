@@ -563,6 +563,7 @@ public partial class RockCrab : Enemy
                     _currTime = 0;
                     _initalPos = transform.position.y;
                     //Load an attack that charges a dash then attacks
+                    _actionQueue.Enqueue(RockCrabFlingCharge);
                     _actionQueue.Enqueue(RockCrabFling);
                 }
             }
