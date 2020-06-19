@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/// <summary>
-/// Mira Antolovich
-/// 3/7/2019
-/// Camera movement
-/// </summary>
+
 public class CameraController : MonoBehaviour
 {
     //fields
@@ -14,13 +10,30 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private Vector3 _offset = new Vector3(35, 35 , 0);
     [SerializeField]
-    private float _smoothSpeed = 0.01f;
+    private float _smoothTime = 2;
+    private Vector3 _moveVelocity;
+    private Vector3 _movePosition;
+    [SerializeField]
+    private List<Enemy> allTargets;
+    [SerializeField]
+    private float _playerWeight = 0.3f;
+
+    //Zoom
+    private Enemy _farthestTarget;
+    [SerializeField]
+    private Vector3 _minZoom;
+    [SerializeField]
+    private Vector3 _maxZoom;
+    private InputManager _inputManager;
+
 
     void Start ()
     {
         if(_player == null)
         {
             _player = GameObject.FindWithTag("Player").transform;
+            _inputManager = GameObject.Find("Canvas").GetComponent<InputManager>();
+            allTargets = _inputManager.TargetEnemies;
             Debug.LogWarning("No player was assigned to the camera. Default: Player Tag. ");
         }
     }
@@ -32,13 +45,49 @@ public class CameraController : MonoBehaviour
 
     public void UpdateCamera()
     {
-        //position the camera needs to be in
-        Vector3 smoothingPosition = _player.position + _offset;
-        //position the camera is in to get to the needed position, takes time to reach that point
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, smoothingPosition, _smoothSpeed * Time.deltaTime);
-        transform.position = smoothedPosition;
+        if (allTargets.Count > 0)
+        {
+            DynamicZoom();
+            _movePosition = Vector3.zero;
+            //In combat
+            for (int i = 0; i < allTargets.Count; i++)
+            {
+                if (_farthestTarget == null)
+                {
+                    _farthestTarget = allTargets[i];
+                }
+                else if(allTargets.Count > 1)
+                {
+                    if (_farthestTarget.transform.position.sqrMagnitude - _player.transform.position.sqrMagnitude < allTargets[i].transform.position.sqrMagnitude - _player.transform.position.sqrMagnitude) //Distance
+                    {
+                        _farthestTarget = allTargets[i];
+                    }
+                }
+                _movePosition += allTargets[i].transform.position;
+            }
+            _movePosition /= allTargets.Count;
+            _movePosition = Vector3.Lerp(_player.transform.position, _movePosition, _playerWeight);
+            _movePosition += _offset;
+        }
+        else
+        {
+            //Not in combat
+            _movePosition = _player.position + _offset;
+        }
+        transform.position = Vector3.SmoothDamp(transform.position, _movePosition, ref _moveVelocity, _smoothTime);
+        transform.LookAt(_movePosition-_offset);
 
-        transform.LookAt(_player);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(_movePosition, 0.5f);
+    }
+
+    void DynamicZoom ()
+    {
+        if(_farthestTarget != null)
+        _offset = Vector3.Lerp(_minZoom, _maxZoom, (_player.transform.position - _farthestTarget.transform.position).sqrMagnitude / Mathf.Pow(_inputManager.MaxCombatRange,2) - 0.3f);
     }
 
     public void ToggleCombatView(bool on)
