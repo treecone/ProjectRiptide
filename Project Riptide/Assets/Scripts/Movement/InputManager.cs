@@ -58,6 +58,7 @@ public class InputManager : MonoBehaviour
     private bool _isRightEnemy;
     public EnemySort EnemyCompare;
     public List<Enemy> TargetEnemies => _targetEnemies;
+    public float MaxCombatRange => MAX_COMBAT_RANGE;
 
     void Awake()
 	{
@@ -492,6 +493,12 @@ public class InputManager : MonoBehaviour
             //Check each hit from raycast
             foreach (RaycastHit hit in hits)
             {
+                //If obstical is detected, stop checking hits
+                if (hit.collider.gameObject.tag == "Obstical")
+                {
+                    break;
+                }
+
                 //Check if hit was from enemy
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {
@@ -510,6 +517,12 @@ public class InputManager : MonoBehaviour
             //Check each hit from raycast
             foreach (RaycastHit hit in hits)
             {
+                //If obstical is detected, stop checking hits
+                if (hit.collider.gameObject.tag == "Obstical")
+                {
+                    break;
+                }
+
                 //Check if hit was from enemy
                 if (hit.collider.gameObject.tag == "Hitbox")
                 {

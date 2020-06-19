@@ -1022,7 +1022,7 @@ public partial class Pandatee : Enemy
                 _animator.Play(_animParm[(int)PandateeAnim.Dive]);
                 PlaySplash();
                 _initalPos = transform.position.y;
-                _hostileCooldown = 1.1f;
+                _hostileCooldown = 5.0f;
             }
 
             if (_currTime < 1.0f)

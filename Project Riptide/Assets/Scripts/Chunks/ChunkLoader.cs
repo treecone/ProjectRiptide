@@ -285,7 +285,7 @@ public class ChunkLoader : MonoBehaviour
     {
         Vector2 pos = enemy.GetComponent<Enemy>().EnemyStartingPosition;
         Debug.Log(pos);
-        enemy.transform.position = new Vector3(pos.x, 0, pos.y);
+        enemy.GetComponent<Enemy>().Position = new Vector3(pos.x, 0, pos.y);
         // other resetting stuffs
     }
     public void CheckLoadEnemies(Chunk c)
