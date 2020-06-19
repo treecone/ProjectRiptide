@@ -40,12 +40,12 @@ public class PlayerHealth : MonoBehaviour
     /// </summary>
     private void UpdateHealth()
     {
-        AddHealth(shipUpgradeScript.masterUpgrade["regeneration"] * Time.deltaTime);
+        AddHealth(shipUpgradeScript.masterUpgrade[StatusType.Regeneration] * Time.deltaTime);
 
         //if the player's max health changed, then add health according to the change
         //in other words, adding max health adds the same amount of current health
         float lastMaxHealth = maxHealth;
-        maxHealth = 100 + shipUpgradeScript.masterUpgrade["maxHealth"];
+        maxHealth = 100 + shipUpgradeScript.masterUpgrade[StatusType.MaxHealth];
         if(lastMaxHealth != maxHealth)
         {
             AddHealth(maxHealth - lastMaxHealth);
@@ -80,7 +80,7 @@ public class PlayerHealth : MonoBehaviour
             AddHealth(-damage);
         } else
         {
-            health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
+            health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 1.0f));
             healthBar.UpdateHealth(health);
             if (health <= 0)
             {

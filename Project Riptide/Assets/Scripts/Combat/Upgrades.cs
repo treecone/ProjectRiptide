@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
+public enum StatusType {Armor, Hardiness, MaxHealth, Regeneration, DropQuality, DropRate, Maneuverability, ShipSpeed, Count, Damage, FireSpeed, ShotSize, SpreadAngle, VerticalRatio, Fire, Poison}
 public class Upgrades : MonoBehaviour
 {
     /// <summary>
@@ -118,7 +119,7 @@ public class Upgrade
     /// A dictionary of the different properties of the upgrade
     /// The key represents the upgrade category
     /// </summary>
-    public string upgradeType;
+    public StatusType upgradeType;
     public float upgradeValue;
 
     /// <summary>
@@ -131,7 +132,8 @@ public class Upgrade
     public Upgrade(string _name, string _upgradeType, float _upgradeValue)
     {
         name = _name;
-        upgradeType = _upgradeType;
+        Enum.TryParse(_upgradeType, out StatusType __upgradeType);
+        upgradeType = __upgradeType;
         upgradeValue = _upgradeValue;
     }
 
@@ -142,7 +144,7 @@ public class Upgrade
         upgradeValue = statusEffect.Level;
     }
 
-    public virtual float this[string key]
+    public virtual float this[StatusType key]
     {
         get
         {
@@ -160,13 +162,14 @@ public class Upgrade
 
 public class AdvancedUpgrade : Upgrade
 {
-    private string scalingStat;
+    private StatusType scalingStat;
     private float scalingAmount;
 
     public AdvancedUpgrade(string _name, string _upgradeType, string _scalingStat, float _scalingAmount)
         :base(_name, _upgradeType, 0)
     {
-        scalingStat = _scalingStat;
+        Enum.TryParse(_scalingStat, out StatusType __scalingStat);
+        scalingStat = __scalingStat;
         scalingAmount = _scalingAmount;
     }
 
@@ -183,16 +186,16 @@ public class MasterUpgrade : Upgrade
     /// </summary>
     [SerializeField]
     private List<Upgrade> _componentUpgrades;
-    private Dictionary<string, float> upgradeInfo;
+    private Dictionary<StatusType, float> upgradeInfo;
 
     private List<AdvancedUpgrade> _advancedUpgrades;
     public MasterUpgrade() : base("master upgrade", "null", 0)
     {
-        upgradeInfo = new Dictionary<string, float>();
+        upgradeInfo = new Dictionary<StatusType, float>();
         _advancedUpgrades = new List<AdvancedUpgrade>();
     }
 
-    public MasterUpgrade(string _name, Dictionary<string, float> _upgradeInfo) : base(_name, "null", 0)
+    public MasterUpgrade(string _name, Dictionary<StatusType, float> _upgradeInfo) : base(_name, "null", 0)
     {
         upgradeInfo = _upgradeInfo;
         _advancedUpgrades = new List<AdvancedUpgrade>();
@@ -226,7 +229,7 @@ public class MasterUpgrade : Upgrade
     /// </summary>
     /// <param name="key">The name of the </param>
     /// <returns></returns>
-    public override float this[string key]
+    public override float this[StatusType key]
     {
         get
         {

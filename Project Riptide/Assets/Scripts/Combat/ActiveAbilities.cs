@@ -193,11 +193,11 @@ public class ActiveAbilities : MonoBehaviour
             return false;
         }
 
-        Dictionary<string, float> shotValues = new Dictionary<string, float>()
+        Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
         {
-            {"count", 2 },
-            {"damage", 3 },
-            {"shotSize", 0.5f}
+            {StatusType.Count, 2 },
+            {StatusType.Damage, 3 },
+            {StatusType.ShotSize, 0.5f}
         };
         MasterUpgrade burstUpgrade = new MasterUpgrade("burst_fire", shotValues);
 

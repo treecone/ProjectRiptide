@@ -123,14 +123,14 @@ public class CannonFire : MonoBehaviour
 
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
-            this._count = 1 + (int)upgrade["count"];
-            this._damage = 1 + (int)upgrade["damage"];
+            this._count = 1 + (int)upgrade[StatusType.Count];
+            this._damage = 1 + (int)upgrade[StatusType.Damage];
             this._direction = direction;
-            this._fireSpeed = 40 + upgrade["fireSpeed"];
+            this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
             this._fireAngle = fireAngle;
-            this._verticalRatio = 0.1f + upgrade["verticalRatio"];
+            this._verticalRatio = 0.1f + upgrade[StatusType.VerticalRatio];
             this._spreadAngle = 20;
-            this._size = 0.5f + upgrade["shotSize"];
+            this._size = 0.5f + upgrade[StatusType.ShotSize];
         }
 
         public void Fire(GameObject cannonBall, GameObject ship, GameObject cannonSmoke)

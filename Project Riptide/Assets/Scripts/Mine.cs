@@ -13,7 +13,7 @@ public class Mine : MonoBehaviour
     [SerializeField]
     private float damage;
     [SerializeField]
-    private string statusType;
+    private StatusType statusType;
     [SerializeField]
     private float statusDuration;
     [SerializeField]
@@ -23,11 +23,14 @@ public class Mine : MonoBehaviour
     private float bobOffset;
     private float startY;
 
+    private Hitbox _hitbox;
     // Start is called before the first frame update
     void Start()
     {
         _playerStatusEffects = _player.GetComponent<StatusEffects>();
         _playerHealth = _player.GetComponent<PlayerHealth>();
+        _hitbox = GetComponentInChildren<Hitbox>();
+        _hitbox.OnTrigger += Explode;
         bobOffset = Random.Range(0, Mathf.PI * 2);
         startY = transform.position.y;
     }
@@ -38,7 +41,7 @@ public class Mine : MonoBehaviour
         transform.position = new Vector3(transform.position.x, startY + Mathf.Sin(Time.time + bobOffset) * bobAmount, transform.position.z);
     }
 
-    public void SetData(GameObject player, float damage, string statusType, float statusDuration, float statusLevel)
+    public void SetData(GameObject player, float damage, StatusType statusType, float statusDuration, float statusLevel)
     {
         this._player = player;
         this.damage = damage;
@@ -46,13 +49,14 @@ public class Mine : MonoBehaviour
         this.statusDuration = statusDuration;
         this.statusLevel = statusLevel;
     }
-    private void OnCollisionEnter(Collision collision)
+    private void Explode(GameObject obj)
     {
-        if(collision.gameObject.tag == "Player")
+        if(obj.tag == "Player")
         {
             _playerHealth.TakeDamage(damage);
             _playerStatusEffects.AddStatus(statusType, statusDuration, statusLevel);
             Destroy(gameObject);
         }
+        
     }
 }
