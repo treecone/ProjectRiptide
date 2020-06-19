@@ -20,6 +20,7 @@ public class ChunkLoader : MonoBehaviour
     public GameObject seaSheepPrefab;
     public GameObject flowerFrogPrefab;
     public GameObject pandaTreePrefab;
+    public GameObject clamPrefab;
 
     private Dictionary<string, GameObject> monsters;
     private List<GameObject> enemies;
@@ -342,7 +343,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(ship, x, z) < _CHUNKSIDELENGTH;
+                    bool close = DistanceFromChunkCenter(ship, x, z) < _CHUNKSIDELENGTH + 30;
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -423,6 +424,8 @@ public class ChunkLoader : MonoBehaviour
                 return flowerFrogPrefab;
             case "pandaTree":
                 return pandaTreePrefab;
+            case "clam":
+                return clamPrefab;
         }
         return null;
     }
