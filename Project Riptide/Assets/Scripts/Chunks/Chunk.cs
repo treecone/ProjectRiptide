@@ -10,7 +10,6 @@ public class Chunk
     public Region region;
     public Vector2 center;
     public bool hasEnemies;
-    public bool hasMonster;
 
     public List<GameObject> enemies = new List<GameObject>();
     public bool[] enemieIsLoaded;

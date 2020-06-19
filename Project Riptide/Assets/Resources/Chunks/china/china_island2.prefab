@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8583738020664976924}
   m_Layer: 4
   m_Name: china_island2
-  m_TagString: Obstical
+  m_TagString: enemyChunk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,6 +28,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 3.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 4239768588607854247}
   - {fileID: 2729739367776943071}
   - {fileID: 3112944918728685889}
   - {fileID: 5474283461928664014}
@@ -48,6 +49,67 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 100, y: 10, z: 100}
   m_Center: {x: 0, y: 5, z: 0}
+--- !u!1 &2680942215942019773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4239768588607854247}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4239768588607854247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2680942215942019773}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 545190446774179470}
+  m_Father: {fileID: 686222013300795742}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3293850339785053053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 545190446774179470}
+  m_Layer: 0
+  m_Name: koi
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &545190446774179470
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3293850339785053053}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4239768588607854247}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &65696299631455916
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93,7 +155,7 @@ PrefabInstance:
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
@@ -188,7 +250,7 @@ PrefabInstance:
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
@@ -283,7 +345,7 @@ PrefabInstance:
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
@@ -378,7 +440,7 @@ PrefabInstance:
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2668555478697071987, guid: 30fe6f2b9e8311640aef7ed5e9b56cc9,
         type: 3}
