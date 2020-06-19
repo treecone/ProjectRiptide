@@ -7,14 +7,14 @@ public class StatusIcons : MonoBehaviour
     [System.Serializable]
     private struct NamedSprite
     {
-        public string name;
+        public StatusType name;
         public Sprite sprite;
     }
 
     [SerializeField]
     private List<NamedSprite> sprites;
 
-    private Dictionary<string, Sprite> spriteDict;
+    private Dictionary<StatusType, Sprite> spriteDict;
 
     [SerializeField]
     private GameObject iconPrefab;
@@ -29,7 +29,7 @@ public class StatusIcons : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spriteDict = new Dictionary<string, Sprite>();
+        spriteDict = new Dictionary<StatusType, Sprite>();
         for(int i = 0; i < sprites.Count;i++)
         {
             spriteDict[sprites[i].name] = sprites[i].sprite;

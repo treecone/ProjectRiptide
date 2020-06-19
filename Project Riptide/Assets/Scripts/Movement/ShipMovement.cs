@@ -123,7 +123,7 @@ public class ShipMovement : Physics
             //Add force moving towards desired location based on ship speed and speed scale
             netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * _speedScale, 1.0f);
             //Add force moving forwards
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * _speedScale * (1.0f + shipUpgradeScript.masterUpgrade["shipSpeed"]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * _speedScale * (1.0f + shipUpgradeScript.masterUpgrade[StatusType.ShipSpeed]);
         }
         //Draw debug lines for net force and move direction
         Debug.DrawLine(_position, _position + netForce, Color.blue);
@@ -224,6 +224,6 @@ public class ShipMovement : Physics
     /// <param name="knockback">Knockback Force</param>
     public void TakeKnockback(Vector3 knockback)
     {
-        ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade["hardiness"]));
+        ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Hardiness]));
     }
 }

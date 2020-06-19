@@ -47,7 +47,7 @@ public class StatusEffects : MonoBehaviour
             status.Update();
             if(status.Active)
             {
-                if(status.Type == "fire" || status.Type == "poison")
+                if(status.Type == StatusType.Fire|| status.Type == StatusType.Poison)
                 {
                     if(isPlayer)
                     {
@@ -84,9 +84,18 @@ public class StatusEffects : MonoBehaviour
         }
     }
 
-    public void AddStatus(string name, float duration, float level)
+    public void AddStatus(string type, float duration, float level)
     {
-        StatusEffect s = new StatusEffect(name, duration, level);
+        StatusType.TryParse(type, out StatusType __type);
+        StatusEffect s = new StatusEffect(__type, duration, level);
+        ActiveStatusEffects.Add(s);
+        _statusIcons.RearrangeStatuses(ActiveStatusEffects);
+        _upgrades.Recalculate();
+    }
+
+    public void AddStatus(StatusType type, float duration, float level)
+    {
+        StatusEffect s = new StatusEffect(type, duration, level);
         ActiveStatusEffects.Add(s);
         _statusIcons.RearrangeStatuses(ActiveStatusEffects);
         _upgrades.Recalculate();
@@ -96,14 +105,14 @@ public class StatusEffects : MonoBehaviour
 [System.Serializable]
 public class StatusEffect
 {
-    private string _type;
+    private StatusType _type;
     private float _duration;
     private float _level;
     private Color _color;
 
     private float _currentDuration;
 
-    public string Type
+    public StatusType Type
     {
         get
         {
@@ -133,7 +142,7 @@ public class StatusEffect
             return _currentDuration < _duration;
         }
     }
-    public StatusEffect(string type, float duration, float level)
+    public StatusEffect(StatusType type, float duration, float level)
     {
         _type = type;
         _duration = duration;
