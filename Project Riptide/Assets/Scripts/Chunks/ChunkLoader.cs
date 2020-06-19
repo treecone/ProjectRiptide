@@ -10,10 +10,6 @@ using LitJson;
 public enum Region
 {
     CHINA,
-    CHINA_KOI,
-    CHINA_ISLAND1,
-    CHINA_ISLAND2,
-    CHINA_ISLAND3,
     OCEAN
 };
 
@@ -23,6 +19,7 @@ public class ChunkLoader : MonoBehaviour
     public GameObject rockCrabPrefab;
     public GameObject seaSheepPrefab;
     public GameObject flowerFrogPrefab;
+    public GameObject pandaTreePrefab;
 
     private Dictionary<string, GameObject> monsters;
     private List<GameObject> enemies;
@@ -100,101 +97,64 @@ public class ChunkLoader : MonoBehaviour
             // March through each chunk descriptor.
             for(int z = 0; z < _zLen; z++)
             {
+                // The name of the chunk to load in.
                 string regionText = parts[z];
-                int index = regionText.IndexOf("<");
-                string description = "";
+                // If there is an extra specifier.
+                int index = regionText.IndexOf("_");
+                string region = "ocean";
+                if(index > -1)
+                {
+                    region = regionText.Substring(0, index);
+                }
+                Debug.Log(region);
                 bool hasEnemies = false;
-                int numEnemies = 0;
                 List<GameObject> enemies = new List<GameObject>();
-                if (index > -1)
-                {
-                    hasEnemies = true;
-                    description = regionText.Substring(index);
-                    regionText = regionText.Substring(0, index);
-                    index = 0;
-                }
-                // Load in enemies as they are described in the text file.
-                while(index > -1)
-                {
-                   // Debug.Log(description);
-                    string[] details = description.Substring(index + 1, description.IndexOf('>') - index - 1).Split('|');
-                    string enemyName = details[0];
-                    numEnemies = Int32.Parse(details[1]);
-                    for (int i = 2; i < 2 + numEnemies; i++)
-                    {
-                        Debug.Log(i - 2);
-                        string coords = details[i];
-                        float xCoord = float.Parse(coords.Substring(1, coords.IndexOf(",") - 1)) + (x - 0.5f) * _CHUNKSIDELENGTH;
-                        float zCoord = float.Parse(coords.Substring(coords.IndexOf(",") + 1, coords.IndexOf(")") - coords.IndexOf(",") - 1))
-                            + (z - 0.5f) * _CHUNKSIDELENGTH;
-                        //Debug.Log(enemyName);
-                        GameObject enemy = Instantiate(GetPrefabByName(enemyName), new Vector3(xCoord, 0, zCoord), Quaternion.identity);
-                        enemy.SetActive(false);
-
-                        // Cash the starting position of this enemy
-                        enemy.GetComponent<Enemy>().EnemyStartingPosition = new Vector2(xCoord, zCoord);
-                        enemy.GetComponent<Enemy>().EnemyStartingChunk = new Vector2(x, z);
-                        enemy.GetComponent<Enemy>().EnemyID = i - 2;
-                        enemy.transform.parent = world.transform;
-                        // Store a reference in the list of enemies corresponding to this species.
-                        enemies.Add(enemy);
-                    }
-                    // Look at the next portion of the string.
-                    description = description.Substring(description.IndexOf(">") + 1);
-                    // Get the index of the next detail if it exists, otherwise index becomes -1.
-                    index = description.IndexOf("<");
-                }
-                string pathName = "Chunks";
+                string pathName = "";
                 Region r = Region.OCEAN;
-                bool hasMonster = false;
-
-                switch (regionText)
+                // Determine which region this chunk is in.
+                switch (region)
                 {
-                    // Set the chunks pathname to the next china chunk.
-                    case "CHINA":
+                    case "china":
                         {
-                            pathName = "Chunks/china/china";
+                            pathName = "Chunks/china/" + regionText;
                             r = Region.CHINA;
                             break;
                         }
-
-                    case "CHINA_KOI":
+                    case "ocean":
                         {
-                            pathName = "Chunks/china/china_koi";
-                            r = Region.CHINA_KOI;
-                            hasMonster = true;
-                            break;
-                        }
-                    case "CHINA_ISLAND1":
-                        {
-                            pathName = "Chunks/china/china_island1";
-                            r = Region.CHINA_ISLAND1;
-                            break;
-                        }
-                    case "CHINA_ISLAND2":
-                        {
-                            pathName = "Chunks/china/china_island2";
-                            r = Region.CHINA_ISLAND2;
-                            break;
-                        }
-                    case "CHINA_ISLAND3":
-                        {
-                            pathName = "Chunks/china/china_island3";
-                            r = Region.CHINA_ISLAND3;
-                            break;
-                        }
-                    // Set the chunks pathname to the next "none" chunk
-                    case "OCEAN":
-                        {
-                            pathName = "Chunks/none/ocean";
+                            pathName = "Chunks/none/" + regionText;
                             r = Region.OCEAN;
                             break;
                         }
                 }
+                // Make the chunk.
                 GameObject obj = Instantiate(Resources.Load<GameObject>(pathName), new Vector3(x * _CHUNKSIDELENGTH, 0, z * _CHUNKSIDELENGTH), Quaternion.identity);
+
+                // There are monsters to load in.
+                if(obj.tag == "enemyChunk")
+                {
+                    hasEnemies = true;
+                    GameObject listOfSpawnPoints = obj.transform.GetChild(0).gameObject;
+                    int numEnemies = listOfSpawnPoints.transform.childCount;
+                    for(int i = 0; i < numEnemies; i++)
+                    {
+                        GameObject spawnPoint = listOfSpawnPoints.transform.GetChild(i).gameObject;
+                        string monsterName = spawnPoint.name;
+                        GameObject enemy = Instantiate(GetPrefabByName(monsterName), spawnPoint.transform.position, Quaternion.identity);
+                        enemy.SetActive(false);
+
+                        // Cash the starting position of this enemy
+                        enemy.GetComponent<Enemy>().EnemyStartingPosition = new Vector2(spawnPoint.transform.position.x, spawnPoint.transform.position.z);
+                        enemy.GetComponent<Enemy>().EnemyStartingChunk = new Vector2(x, z);
+                        enemy.GetComponent<Enemy>().EnemyID = i;
+                        enemy.transform.parent = world.transform;
+                        // Store a reference in the list of enemies corresponding to this species.
+                        enemies.Add(enemy);
+                    }
+                }
+
                 obj.transform.parent = world.transform;
                 Chunk c = new Chunk(obj, r, new Vector2(x * _CHUNKSIDELENGTH, z * _CHUNKSIDELENGTH), enemies);
-                c.hasMonster = hasMonster;
                 c.hasEnemies = hasEnemies;
                 chunks[x, z] = c;
                 chunks[x, z].chunk.SetActive(false);
@@ -285,7 +245,7 @@ public class ChunkLoader : MonoBehaviour
     {
         Vector2 pos = enemy.GetComponent<Enemy>().EnemyStartingPosition;
         Debug.Log(pos);
-        enemy.transform.position = new Vector3(pos.x, 0, pos.y);
+        enemy.GetComponent<Enemy>().Position = new Vector3(pos.x, 0, pos.y);
         // other resetting stuffs
     }
     public void CheckLoadEnemies(Chunk c)
@@ -382,7 +342,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/150f;
+                    bool close = DistanceFromChunkCenter(ship, x, z) < _CHUNKSIDELENGTH;
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -391,13 +351,13 @@ public class ChunkLoader : MonoBehaviour
                         chunks[x, z].chunk.SetActive(true);
                         visibleChunks.Add(chunks[x, z]);
                         // Get the name of the boss to add if there is supposed to be a boss in this chunk.
-                        string monsterName = GetMonsterName(chunks[x, z].region);
-                        // Monster is not yet loaded in this chunk
-                        if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
-                        {
-                            // Load in the monster.
-                            LoadMonster(chunks[x, z].center, new Vector2(x,z), monsterName);
-                        }
+                        //string monsterName = GetMonsterName(chunks[x, z].region);
+                        //// Monster is not yet loaded in this chunk
+                        //if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
+                        //{
+                        //    // Load in the monster.
+                        //    LoadMonster(chunks[x, z].center, new Vector2(x,z), monsterName);
+                        //}
                         // There are enemies that are supposed to be in this chunk so see if they need to be loaded in...
                         if (chunks[x, z].hasEnemies)
                         {
@@ -440,17 +400,6 @@ public class ChunkLoader : MonoBehaviour
                     name = "china";
                     break;
                 }
-            case Region.CHINA_KOI:
-                {
-                    name = "china";
-                    break;
-             
-                }
-            case Region.CHINA_ISLAND1:
-                {
-                    name = "china";
-                    break;
-                }
             case Region.OCEAN:
                 {
                     name = "ocean";
@@ -460,15 +409,6 @@ public class ChunkLoader : MonoBehaviour
         return name;
     }
 
-    public string GetMonsterName(Region r)
-    {
-        switch (r)
-        {
-            case Region.CHINA_KOI:
-                    return "koi";
-        }
-        return "NONE";
-    }
     public GameObject GetPrefabByName(string s)
     {
         switch (s)
@@ -481,6 +421,8 @@ public class ChunkLoader : MonoBehaviour
                 return koiPrefab;
             case "flowerFrog":
                 return flowerFrogPrefab;
+            case "pandaTree":
+                return pandaTreePrefab;
         }
         return null;
     }

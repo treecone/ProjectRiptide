@@ -27,6 +27,8 @@ public partial class Enemy : Physics
     [SerializeField]
     protected GameObject _hitbox;
     [SerializeField]
+    protected GameObject _telegraphPrefab;
+    [SerializeField]
     protected GameObject _splashParticle;
     protected Camera _camera;
 
@@ -74,6 +76,7 @@ public partial class Enemy : Physics
     protected AI _PassiveAI;
     protected List<GameObject> _hitboxes;
     protected List<GameObject> _hurtboxes;
+    protected List<GameObject> _telegraphs;
     protected Queue<MonsterAction> _actionQueue;
     protected Transform _detectPosition;
     protected GameObject _targetIndicator;
@@ -396,6 +399,35 @@ public partial class Enemy : Physics
         _hitboxes.Clear();
     }
 
+    protected void CreateTelegraph(Vector3 position, Vector3 scale, bool parented)
+    {
+        GameObject temp;
+        if(parented)
+        {
+            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation, transform);
+        }
+        else
+        {
+            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation);
+        }
+        temp.transform.localPosition = new Vector3(0, 0, 7.5f);
+        temp.transform.localScale = new Vector3(2, 1, 15f);
+
+        _telegraphs.Add(temp);
+    }
+
+    /// <summary>
+    /// Clears all telegraphs off the enemy
+    /// </summary>
+    protected void ClearTelegraphs()
+    {
+        for (int i = 0; i < _telegraphs.Count; i++)
+        {
+            _telegraphs[i].GetComponentInChildren<ParticleSystem>().Stop();
+        }
+        _hitboxes.Clear();
+    }
+
     /// <summary>
     /// Returns enemy to inital position on Y axis
     /// </summary>
@@ -662,5 +694,14 @@ public partial class Enemy : Physics
     public void SetTargetIndicator(bool on)
     {
         _targetIndicator.SetActive(on);
+    }
+
+    /// <summary>
+    /// Returns whether or not telegraphs should be used
+    /// </summary>
+    /// <returns></returns>
+    protected bool DoTelegraphs()
+    {
+        return true;
     }
 }
