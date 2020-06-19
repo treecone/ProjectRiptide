@@ -72,10 +72,12 @@ public class CameraController : MonoBehaviour
         else
         {
             //Not in combat
+            _farthestTarget = null;
+            _offset = Vector3.Lerp(_offset, _minZoom, 0.01f);
             _movePosition = _player.position + _offset;
         }
         transform.position = Vector3.SmoothDamp(transform.position, _movePosition, ref _moveVelocity, _smoothTime);
-        transform.LookAt(_movePosition-_offset);
+        //transform.LookAt(_movePosition-_offset);
 
     }
 
@@ -87,12 +89,12 @@ public class CameraController : MonoBehaviour
     void DynamicZoom ()
     {
         if(_farthestTarget != null)
-        _offset = Vector3.Lerp(_minZoom, _maxZoom, (_player.transform.position - _farthestTarget.transform.position).sqrMagnitude / Mathf.Pow(_inputManager.MaxCombatRange,2) - 0.3f);
+        _offset = Vector3.Lerp(_minZoom, _maxZoom, (_player.transform.position - _farthestTarget.transform.position).sqrMagnitude / Mathf.Pow(_inputManager.MaxCombatRange,2) - 0.1f);
     }
 
     public void ToggleCombatView(bool on)
     {
-        if(on)
+        /*if(on)
         {
             _offset = new Vector3(30, 30, 0);
         }
@@ -100,5 +102,6 @@ public class CameraController : MonoBehaviour
         {
             _offset = new Vector3(35, 35, 0);
         }
+        */
     }
 }
