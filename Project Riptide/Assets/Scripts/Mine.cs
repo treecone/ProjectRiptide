@@ -21,7 +21,7 @@ public class Mine : MonoBehaviour
     [SerializeField]
     private float bobAmount;
     private float bobOffset;
-
+    private float startY;
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +29,13 @@ public class Mine : MonoBehaviour
         _playerStatusEffects = _player.GetComponent<StatusEffects>();
         _playerHealth = _player.GetComponent<PlayerHealth>();
         bobOffset = Random.Range(0, Mathf.PI * 2);
+        startY = transform.position.y;
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position += Vector3.up * Mathf.Sin(Time.time + bobOffset) * bobAmount * Time.deltaTime;
+        transform.position = new Vector3(transform.position.x, startY + Mathf.Sin(Time.time + bobOffset) * bobAmount, transform.position.z);
     }
 
     public void SetData(GameObject player, float damage, string statusType, float statusDuration, float statusLevel)
