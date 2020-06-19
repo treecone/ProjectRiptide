@@ -23,7 +23,7 @@ public partial class Enemy : Physics
     [SerializeField]
     protected GameObject _projectile;
     [SerializeField]
-    protected GameObject _healthBarObject;
+    protected GameObject _canvas;
     [SerializeField]
     protected GameObject _hitbox;
     [SerializeField]
@@ -76,6 +76,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
     protected Transform _detectPosition;
+    protected GameObject _targetIndicator;
     protected GetVector PlayerPosition;
     protected GetVector PlayerVelocity;
     protected GiveVector SendKnockback;
@@ -106,6 +107,7 @@ public partial class Enemy : Physics
 
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
+    public bool IsDying => _dying;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -147,7 +149,7 @@ public partial class Enemy : Physics
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         _playerDistance = Vector3.Distance(transform.position, player.transform.position);
         _healthBar = GetComponent<HealthBar>();
-        _healthBarObject.SetActive(false);
+        _canvas.transform.GetChild(0).gameObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
         ShipMovement movement = player.GetComponent<ShipMovement>();
@@ -164,6 +166,8 @@ public partial class Enemy : Physics
         {
             _detectPosition = null;
         }
+        if(_canvas.transform.Find("TargetIndicator"))
+            _targetIndicator = _canvas.transform.Find("TargetIndicator").gameObject;
 
         base.Start();
     }
@@ -201,7 +205,7 @@ public partial class Enemy : Physics
             }
 
             //Make health bar face player
-            _healthBarObject.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
+            _canvas.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
 
             if (_passiveCooldown > 0)
                 _passiveCooldown -= Time.deltaTime;
@@ -406,7 +410,7 @@ public partial class Enemy : Physics
     /// </summary>
     protected void SetHealthBarPosition()
     {
-        _healthBarObject.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
+        _canvas.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
 
     /// <summary>
@@ -622,7 +626,7 @@ public partial class Enemy : Physics
     {
         if (_health == _maxHealth)
         {
-            _healthBarObject.SetActive(false);
+            _canvas.transform.GetChild(0).gameObject.SetActive(false);
         }
         ResetHostile();
         //Keep monster passive for 5 seconds at least
@@ -634,7 +638,7 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnHostile()
     {
-        _healthBarObject.SetActive(true);
+        _canvas.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -649,5 +653,14 @@ public partial class Enemy : Physics
         _dying = true;
         _isInvincible = true;
         _deathTimer = 0;
+    }
+
+    /// <summary>
+    /// Sets state of target indicator
+    /// </summary>
+    /// <param name="on"></param>
+    public void SetTargetIndicator(bool on)
+    {
+        _targetIndicator.SetActive(on);
     }
 }

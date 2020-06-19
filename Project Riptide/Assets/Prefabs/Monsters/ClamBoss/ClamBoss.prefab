@@ -151,8 +151,9 @@ MonoBehaviour:
   _mass: 1
   _maxSpeed: 5
   _projectile: {fileID: 0}
-  _healthBarObject: {fileID: 654840230812501359}
+  _canvas: {fileID: 654840230812501359}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
+  _splashParticle: {fileID: 0}
   _lengthMult: 2
   _widthMult: 2
   _heightMult: 0
@@ -187,6 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 760f364ac801178478928d03e78bc328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 0
+  currentHealth: 0
   slider: {fileID: 5588033143367087219}
   _sliderText: {fileID: 0}
 --- !u!1 &2126417049451070363

@@ -176,7 +176,7 @@ public partial class ClamBoss : Enemy
         SetPuppetCanvas(false);
         if (_health == _maxHealth)
         {
-            _healthBarObject.SetActive(false);
+            _canvas.transform.GetChild(0).gameObject.SetActive(false);
         }
         //Only reset states that aren't triggers
         for (int i = 0; i < 2; i++)
