@@ -51,12 +51,13 @@ public class InputManager : MonoBehaviour
     private bool _combatMode = false;
     public bool InCombatMode => _combatMode;
     private const float MAX_COMBAT_RANGE = 50.0f;
-    private Enemy _targetEnemy;
+    private List<Enemy> _targetEnemies = new List<Enemy>();
     private Enemy _currEnemy;
     private Enemy _leftEnemy;
     private Enemy _rightEnemy;
     private bool _isRightEnemy;
     public EnemySort EnemyCompare;
+    public List<Enemy> TargetEnemies => _targetEnemies;
 
     void Awake()
 	{
@@ -81,7 +82,88 @@ public class InputManager : MonoBehaviour
 
 	    TakeKeyboardInput();
 
-        if (_combatMode)
+        //If there are enemies to target
+        if(_targetEnemies.Count > 0 && !_combatMode)
+        {
+            //ACTIVATE COMBAT MODE
+            _combatMode = true;
+            _cameraController.ToggleCombatView(true);
+            _lineIndicator.enabled = true;
+        }
+
+        if(_targetEnemies.Count == 0 && _combatMode)
+        {
+            //DEACTIVATE COMBAT MODE
+            _combatMode = false;
+            _cameraController.ToggleCombatView(false);
+            _lineIndicator.enabled = false;
+        }
+        
+        if(_combatMode)
+        {
+            _currFireTime += Time.deltaTime;
+
+            _lineIndicator.SetPosition(0, Vector3.zero);
+            _lineIndicator.transform.rotation = Quaternion.identity;
+            bool fired = false;
+
+            _rightEnemy = CheckTargetEnemy(_ship.transform.right);
+            _leftEnemy = CheckTargetEnemy(-_ship.transform.right);
+
+            //AUTO FIRE ON CURRENT ENEMY
+            if (_rightEnemy != null && !_rightEnemy.IsInvincible && (_leftEnemy == null || _leftEnemy.IsInvincible || EnemyCompare(_rightEnemy, _leftEnemy)))
+            {
+                _currEnemy = _rightEnemy;
+                _isRightEnemy = true;
+            }
+            else if (_leftEnemy != null && !_leftEnemy.IsInvincible)
+            {
+                _currEnemy = _leftEnemy;
+                _isRightEnemy = false;
+            }
+            else
+            {
+                _currEnemy = null;
+            }
+
+            //If an enemy is found, fire towards that enemy
+            if (_currEnemy != null)
+            {
+                if (_isRightEnemy && AutoFire(_currEnemy, 15.0f))
+                {
+                    fired = true;
+                }
+                else if (AutoFire(_currEnemy, -15.0f))
+                {
+                    fired = true;
+                }
+                Vector3 indVec = new Vector3(_currEnemy.Position.x - _ship.transform.position.x, 0, _currEnemy.Position.z - _ship.transform.position.z);
+                _lineIndicator.SetPosition(1, indVec);
+            }
+            else
+            {
+                _lineIndicator.SetPosition(1, Vector3.zero);
+            }
+
+            //Reset
+            if (fired)
+            {
+                _currFireTime = 0;
+            }
+
+            //CHECK IF A TARGET ENEMY IS OUT OF RANGE OR DEAD
+            for(int i = 0; i < _targetEnemies.Count; i++)
+            {
+                if(_targetEnemies[i].IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemies[i].Position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+                {
+                    _targetEnemies[i].SetTargetIndicator(false);
+                    _targetEnemies.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        /*if (_combatMode)
         {
             _currFireTime += Time.deltaTime;
 
@@ -158,7 +240,7 @@ public class InputManager : MonoBehaviour
             {
                 _movementScript.IndicatorActive = false;
             }
-        }
+        }*/
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
@@ -236,6 +318,8 @@ public class InputManager : MonoBehaviour
                      _movementScript.IndicatorActive = false;
                      _lineIndicator.enabled = true;
                 }
+
+                CheckEnemyTap();
             }
         }
     }
@@ -331,7 +415,7 @@ public class InputManager : MonoBehaviour
         _startedMove = false;
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Checks for an enemy to fire at by using ray casts
     /// </summary>
     /// <param name="targetDir">Direction to check for enemy</param>
@@ -386,9 +470,66 @@ public class InputManager : MonoBehaviour
         }
 
         return foundEnemy;
-    }
+    }*/
 
     /// <summary>
+    /// Checks for an enemy to fire at by using ray casts
+    /// </summary>
+    /// <param name="targetDir">Direction to check for enemy</param>
+    /// <returns>Enemy found, null if none</returns>
+    public Enemy CheckTargetEnemy(Vector3 targetDir)
+    {
+        Enemy foundEnemy = null;
+        RaycastHit[] hits;
+        Vector3 detectPosition = _ship.transform.position;
+        targetDir.Normalize();
+
+        for (int i = 0; i <= _cannonFireScript.ShotAngle / 2; i += 4)
+        {
+            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
+            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
+            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, _viewRange);
+            //Check each hit from raycast
+            foreach (RaycastHit hit in hits)
+            {
+                //Check if hit was from enemy
+                if (hit.collider.gameObject.tag == "Hitbox")
+                {
+                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    if (enemy != null && _targetEnemies.Contains(enemy) && !enemy.IsInvincible)
+                    {
+                        //If new enemy compares better, take that enemy instead
+                        if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
+                        {
+                            foundEnemy = enemy;
+                        }
+                    }
+                }
+            }
+            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, _viewRange);
+            //Check each hit from raycast
+            foreach (RaycastHit hit in hits)
+            {
+                //Check if hit was from enemy
+                if (hit.collider.gameObject.tag == "Hitbox")
+                {
+                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                    if (enemy != null && _targetEnemies.Contains(enemy) && !enemy.IsInvincible)
+                    {
+                        //If new enemy compares better, take that enemy instead
+                        if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
+                        {
+                            foundEnemy = enemy;
+                        }
+                    }
+                }
+            }
+        }
+
+        return foundEnemy;
+    }
+
+    /*/// <summary>
     /// Finds the closest enemy in a radius around the player
     /// </summary>
     /// <param name="radius">Radius to check</param>
@@ -424,7 +565,7 @@ public class InputManager : MonoBehaviour
             }
         }
         return foundEnemy;
-    }
+    }*/
 
     /// <summary>
     /// Automatically fire a shot towards the enemy
@@ -473,6 +614,37 @@ public class InputManager : MonoBehaviour
         
         //If states are the same, take closest enemy
         return Vector3.SqrMagnitude(re.Position - _ship.transform.position) < Vector3.SqrMagnitude(le.Position - _ship.transform.position);
+    }
+
+    /// <summary>
+    /// Checks to see if the player has tapped on an enemy
+    /// </summary>
+    private void CheckEnemyTap()
+    {
+        RaycastHit hit;
+        if (UnityEngine.Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+        {
+            if (hit.collider.gameObject.tag == "Hitbox")
+            {
+                Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
+                if(enemy != null && !_targetEnemies.Contains(enemy))
+                {
+                    //Check if enemy is close enough to target
+                    if (Vector3.SqrMagnitude(enemy.Position - _ship.transform.position) < MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+                    {
+                        //Target enemy
+                        _targetEnemies.Add(enemy);
+                        enemy.SetTargetIndicator(true);
+                    }
+                }
+                else if(enemy != null)
+                {
+                    //Untarget enemy
+                    _targetEnemies.Remove(enemy);
+                    enemy.SetTargetIndicator(false);
+                }
+            }
+        }
     }
 }
 
