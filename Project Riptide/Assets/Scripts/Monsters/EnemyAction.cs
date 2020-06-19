@@ -730,6 +730,34 @@ public partial class KoiBoss : Enemy
 //Actions available to rock crabs
 public partial class RockCrab : Enemy
 {
+    protected bool RockCrabFlingCharge(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            //Set up telegraph
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), true);
+            }
+        }
+
+        //Look towards player
+        _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+        SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
     /// <summary>
     /// Used for Rock Crab
     /// Crab flings itself forward towards the player
@@ -746,6 +774,11 @@ public partial class RockCrab : Enemy
             _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
             _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed * 1.5f, 2f * transform.localScale.y, 1.0f);
             _animator.SetTrigger(_animParm[(int)CrabAnim.Jump]);
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         if (!_inKnockback)
