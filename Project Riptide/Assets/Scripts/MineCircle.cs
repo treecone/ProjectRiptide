@@ -19,7 +19,7 @@ public class MineCircle : MonoBehaviour
     [SerializeField]
     private float damage;
     [SerializeField]
-    private string statusType;
+    private StatusType statusType;
     [SerializeField]
     private float statusDuration;
     [SerializeField]
