@@ -5,16 +5,19 @@ using UnityEngine;
 public class FaceCamera : MonoBehaviour
 {
     [SerializeField]
-    private Camera camera;
+    private Camera _camera;
     // Start is called before the first frame update
     void Start()
     {
-        
+        if(_camera == null)
+        {
+            _camera = Camera.main;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.forward = camera.transform.forward;
+        transform.forward = _camera.transform.forward;
     }
 }

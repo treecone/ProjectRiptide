@@ -20,6 +20,12 @@ public class Physics : MonoBehaviour
         set { _position = value; }
     }
 
+    public Vector3 Velocity
+    {
+        get { return _velocity; }
+        set { _velocity = value; }
+    }
+
     public Quaternion Rotation
     {
         get { return _rotation; }
@@ -130,8 +136,18 @@ public class Physics : MonoBehaviour
     /// <param name="gravity">Gravity being applied each frame</param>
     public void ApplyArcForce(Vector3 dir, float dist, float time, Vector3 gravity)
     {
-        float xForce = _mass * (dist / (time * Time.deltaTime));
-        float yForce = (-gravity.y * time) / (2 * Time.deltaTime);
+        float deltaTime = 0;
+        if (Time.deltaTime == 0)
+        {
+            deltaTime = 1f / 60f;
+        }
+        else
+        {
+            deltaTime = Time.deltaTime;
+        }
+
+        float xForce = _mass * (dist / (time * deltaTime));
+        float yForce = (-gravity.y * time) / (2 * deltaTime);
         Vector3 netForce = dir * xForce;
         netForce += yForce * Vector3.up;
         ApplyForce(netForce);
@@ -147,9 +163,19 @@ public class Physics : MonoBehaviour
     /// <returns>Gravity to be applied each frame</returns>
     public Vector3 ApplyArcForce(Vector3 dir, float dist, float yMax, float time)
     {
-        float xForce = _mass * (dist / (time * Time.deltaTime));
+        float deltaTime = 0;
+        if (Time.deltaTime == 0)
+        {
+            deltaTime = 1f / 60f;
+        }
+        else
+        {
+            deltaTime = Time.deltaTime;
+        }
+
+        float xForce = _mass * (dist / (time * deltaTime));
         float gravity = (-8 * _mass * yMax) / (time * time);
-        float yForce = (-gravity * time) / (2 * Time.deltaTime);
+        float yForce = (-gravity * time) / (2 * deltaTime);
         Vector3 netForce = dir * xForce;
         netForce += yForce * Vector3.up;
         ApplyForce(netForce);
@@ -165,6 +191,16 @@ public class Physics : MonoBehaviour
     /// <param name="time">Time frame to move dstance</param>
     public void ApplyMoveForce(Vector3 dir, float dist, float time)
     {
+        float deltaTime = 0;
+        if (Time.deltaTime == 0)
+        {
+            deltaTime = 1f / 60f;
+        }
+        else
+        {
+            deltaTime = Time.deltaTime;
+        }
+
         float moveForce = _mass * (dist / (time * Time.deltaTime));
         Vector3 netForce = dir * moveForce;
         ApplyForce(netForce);

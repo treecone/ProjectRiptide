@@ -75,13 +75,20 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
-        healthBar.UpdateHealth(health);
-        if (health <= 0)
+        if(damage < 0)
         {
-            health = 0;
-            //Kill Player
-            //SceneManager.LoadScene("CadenScene");
+            AddHealth(-damage);
+        } else
+        {
+            health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
+            healthBar.UpdateHealth(health);
+            if (health <= 0)
+            {
+                health = 0;
+                //Kill Player
+                //SceneManager.LoadScene("CadenScene");
+            }
         }
+        
     }
 }

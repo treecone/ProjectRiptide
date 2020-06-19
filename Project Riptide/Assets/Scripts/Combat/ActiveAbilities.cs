@@ -82,8 +82,8 @@ public class ActiveAbilities : MonoBehaviour
         {
             if (_skill[i].NeedsEnemy)
             {
-                Enemy rightEnemy = _inputManager.CheckEnemy(transform.right);
-                Enemy leftEnemy = _inputManager.CheckEnemy(-transform.right);
+                Enemy rightEnemy = _inputManager.CheckTargetEnemy(transform.right);
+                Enemy leftEnemy = _inputManager.CheckTargetEnemy(-transform.right);
                 if (rightEnemy != null && !rightEnemy.IsInvincible && (leftEnemy == null || leftEnemy.IsInvincible || _inputManager.EnemyCompare(rightEnemy, leftEnemy)))
                 {
                     _rightEnemy = true;

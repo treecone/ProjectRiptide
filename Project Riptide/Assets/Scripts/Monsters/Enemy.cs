@@ -12,7 +12,8 @@ public delegate Vector3 GetVector();
 public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
-public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5, FlowerFrog = 6, ClamBoss = 7, Pandatee = 8}
+public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
+    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9}
 public enum Anim { Die = 0, Velocity = 1};
 
 
@@ -22,9 +23,11 @@ public partial class Enemy : Physics
     [SerializeField]
     protected GameObject _projectile;
     [SerializeField]
-    protected GameObject _healthBarObject;
+    protected GameObject _canvas;
     [SerializeField]
     protected GameObject _hitbox;
+    [SerializeField]
+    protected GameObject _splashParticle;
     protected Camera _camera;
 
     //Health fields
@@ -73,6 +76,7 @@ public partial class Enemy : Physics
     protected List<GameObject> _hurtboxes;
     protected Queue<MonsterAction> _actionQueue;
     protected Transform _detectPosition;
+    protected GameObject _targetIndicator;
     protected GetVector PlayerPosition;
     protected GetVector PlayerVelocity;
     protected GiveVector SendKnockback;
@@ -103,6 +107,7 @@ public partial class Enemy : Physics
 
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
+    public bool IsDying => _dying;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -144,7 +149,7 @@ public partial class Enemy : Physics
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         _playerDistance = Vector3.Distance(transform.position, player.transform.position);
         _healthBar = GetComponent<HealthBar>();
-        _healthBarObject.SetActive(false);
+        _canvas.transform.GetChild(0).gameObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
         ShipMovement movement = player.GetComponent<ShipMovement>();
@@ -152,11 +157,6 @@ public partial class Enemy : Physics
         PlayerVelocity = movement.GetVelocity;
         SendKnockback = movement.TakeKnockback;
         SendFriction = movement.ApplyFriction;
-        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
-        {
-            hitbox.OnTrigger += HitboxTriggered;
-            hitbox.OnStay += OnObsticalCollision;
-        }
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
 
@@ -166,6 +166,8 @@ public partial class Enemy : Physics
         {
             _detectPosition = null;
         }
+        if(_canvas.transform.Find("TargetIndicator"))
+            _targetIndicator = _canvas.transform.Find("TargetIndicator").gameObject;
 
         base.Start();
     }
@@ -203,7 +205,7 @@ public partial class Enemy : Physics
             }
 
             //Make health bar face player
-            _healthBarObject.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
+            _canvas.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
 
             if (_passiveCooldown > 0)
                 _passiveCooldown -= Time.deltaTime;
@@ -246,14 +248,6 @@ public partial class Enemy : Physics
             if (_health <= 0)
             {
                 _health = 0;
-                if (_animator != null)
-                {
-                    _animator.SetTrigger(_animParm[(int)Anim.Die]);
-                    _deathAnim = Animator.StringToHash("death");
-                }
-                _dying = true;
-                _isInvincible = true;
-                _deathTimer = 0;
                 OnDeath();
             }
         }
@@ -416,7 +410,7 @@ public partial class Enemy : Physics
     /// </summary>
     protected void SetHealthBarPosition()
     {
-        _healthBarObject.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
+        _canvas.transform.position = new Vector3(transform.position.x, _heightMult + 1.5f * transform.localScale.y, transform.position.z);
     }
 
     /// <summary>
@@ -595,13 +589,44 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
+    /// Plays a splash effect around the enemy
+    /// </summary>
+    protected void PlaySplash()
+    {
+        if(_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(transform.position.x, PlayerPosition().y, transform.position.z), _splashParticle.transform.rotation);
+        //Scale particle effect based on enemy's x scale
+        particle.transform.localScale *= transform.localScale.x;
+    }
+
+    /// <summary>
+    /// Plays splash animation around a given point
+    /// </summary>
+    /// <param name="position">Position to play animation</param>
+    /// <param name="scale">Scale of animation</param>
+    protected void PlaySplash(Vector3 position, float scale)
+    {
+        if (_splashParticle == null)
+        {
+            Debug.LogError("Splash particle not set in inspector");
+            return;
+        }
+        GameObject particle = Instantiate(_splashParticle, new Vector3(position.x, PlayerPosition().y, position.z), _splashParticle.transform.rotation);
+        particle.transform.localScale *= scale;
+    }
+
+    /// <summary>
     /// Called when monster becomes passive
     /// </summary>
     protected virtual void OnPassive()
     {
         if (_health == _maxHealth)
         {
-            _healthBarObject.SetActive(false);
+            _canvas.transform.GetChild(0).gameObject.SetActive(false);
         }
         ResetHostile();
         //Keep monster passive for 5 seconds at least
@@ -613,7 +638,7 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnHostile()
     {
-        _healthBarObject.SetActive(true);
+        _canvas.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -621,6 +646,21 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnDeath()
     {
+        if (_animator != null)
+        {
+            _animator.SetTrigger(_animParm[(int)Anim.Die]);
+        }
+        _dying = true;
+        _isInvincible = true;
+        _deathTimer = 0;
+    }
 
+    /// <summary>
+    /// Sets state of target indicator
+    /// </summary>
+    /// <param name="on"></param>
+    public void SetTargetIndicator(bool on)
+    {
+        _targetIndicator.SetActive(on);
     }
 }

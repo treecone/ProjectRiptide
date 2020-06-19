@@ -245,7 +245,7 @@ public class ChunkLoader : MonoBehaviour
     {
         Vector2 pos = enemy.GetComponent<Enemy>().EnemyStartingPosition;
         Debug.Log(pos);
-        enemy.transform.position = new Vector3(pos.x, 0, pos.y);
+        enemy.GetComponent<Enemy>().Position = new Vector3(pos.x, 0, pos.y);
         // other resetting stuffs
     }
     public void CheckLoadEnemies(Chunk c)
@@ -342,7 +342,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(ship, x, z) < Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2));
+                    bool close = DistanceFromChunkCenter(ship, x, z) < /*Mathf.Sqrt(2 * Mathf.Pow(_CHUNKSIDELENGTH / 2, 2))*/150f;
                     bool inVisibleChunks = visibleChunks.Contains(chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)

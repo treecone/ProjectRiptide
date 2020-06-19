@@ -54,12 +54,15 @@ public class StatusIcons : MonoBehaviour
 
         int numRows = Mathf.CeilToInt((1.0f * numObjs) / _maxRowSize);
 
+        int i = 0;
+
         float startY = _spriteHeight * numRows;
-        float startX = -_spriteWidth * _maxRowSize / 2.0f;
+        float startX = -_spriteWidth * Mathf.Min(_maxRowSize, numObjs - i) / 2.0f;
 
         float currentY = startY;
         float currentX = startX;
-        int i = 0;
+        
+
         foreach(StatusEffect s in statusEffects)
         {
             GameObject iconClone = Instantiate(iconPrefab, transform);
@@ -67,15 +70,17 @@ public class StatusIcons : MonoBehaviour
             iconClone.transform.localPosition = new Vector3(currentX, currentY, 0);
 
             i++;
+            
             if(i == _maxRowSize)
             {
-                currentX = startX;
+                currentX = -_spriteWidth * Mathf.Min(_maxRowSize, numObjs - i) / 2.0f;
                 currentY -= _spriteHeight;
                 i = 0;
             } else
             {
                 currentX += _spriteWidth;
             }
+            
         }
     }
 }
