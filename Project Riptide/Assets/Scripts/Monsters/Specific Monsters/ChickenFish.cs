@@ -29,10 +29,10 @@ public class ChickenFish : Physics
     // Update is called once per frame
     protected override void Update()
     {
-        if (_velocity != Vector3.zero)
+        if (_velocity.x != 0 && _velocity.z != 0)
         {
             Quaternion desiredRotation = Quaternion.LookRotation(new Vector3(_velocity.x, 0, _velocity.z));
-            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, 2.0f);
+            _rotation = Quaternion.RotateTowards(_rotation, desiredRotation, 2.0f * 60 * Time.deltaTime);
         }
         base.Update();
     }
