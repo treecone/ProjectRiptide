@@ -40,12 +40,12 @@ public class PlayerHealth : MonoBehaviour
     /// </summary>
     private void UpdateHealth()
     {
-        AddHealth(shipUpgradeScript.masterUpgrade["regeneration"] * Time.deltaTime);
+        AddHealth(shipUpgradeScript.masterUpgrade[StatusType.Regeneration] * Time.deltaTime);
 
         //if the player's max health changed, then add health according to the change
         //in other words, adding max health adds the same amount of current health
         float lastMaxHealth = maxHealth;
-        maxHealth = 100 + shipUpgradeScript.masterUpgrade["maxHealth"];
+        maxHealth = 100 + shipUpgradeScript.masterUpgrade[StatusType.MaxHealth];
         if(lastMaxHealth != maxHealth)
         {
             AddHealth(maxHealth - lastMaxHealth);
@@ -75,13 +75,20 @@ public class PlayerHealth : MonoBehaviour
     /// <param name="damage">Amount of damage taken</param>
     public void TakeDamage(float damage)
     {
-        health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade["armor"] + 1.0f));
-        healthBar.UpdateHealth(health);
-        if (health <= 0)
+        if(damage < 0)
         {
-            health = 0;
-            //Kill Player
-            //SceneManager.LoadScene("CadenScene");
+            AddHealth(-damage);
+        } else
+        {
+            health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 1.0f));
+            healthBar.UpdateHealth(health);
+            if (health <= 0)
+            {
+                health = 0;
+                //Kill Player
+                //SceneManager.LoadScene("CadenScene");
+            }
         }
+        
     }
 }
