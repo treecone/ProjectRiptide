@@ -175,7 +175,7 @@ public class ActiveAbilities : MonoBehaviour
     {
         //Applies force in direction of player velocity
         Vector3 netForce = _movementScript.GetVelocity().normalized;
-        netForce *= 500.0f;
+        netForce *= 9.0f / Time.deltaTime;
         _movementScript.ApplyForce(netForce);
         return true;
     }
