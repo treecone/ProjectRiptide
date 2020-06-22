@@ -84,7 +84,7 @@ public class Hitbox : MonoBehaviour
                     //Add knockback if there is any
                     if (_launchStrength != 0)
                     {
-                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength;
+                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength * (1f / 60f / Time.deltaTime);
                         hitbox.AttachedObject.GetComponent<ShipMovement>().TakeKnockback(knockback);
                     }
                     //Trigger any events assosiated with collision
@@ -100,7 +100,7 @@ public class Hitbox : MonoBehaviour
                     //Add knockback if there is any
                     if (_launchStrength != 0)
                     {
-                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength;
+                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength * (1f / 60f / Time.deltaTime);
                         hitbox.AttachedObject.GetComponent<Enemy>().TakeKnockback(knockback);
                     }
                     //Calculate damage for enemies
