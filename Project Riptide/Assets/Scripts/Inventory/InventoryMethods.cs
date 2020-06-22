@@ -28,6 +28,11 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private Inventory _inventory;
 
+    [SerializeField]
+    private Image[] _soundImages;
+    [SerializeField]
+    private Image[] _volumeImages;
+
     private float soundValue = .5f;
     private float volumeValue = .5f;
 
@@ -191,6 +196,15 @@ public class InventoryMethods : MonoBehaviour
             _soundSlider.value = 0;
         }
     }
+
+    public void ChangeSoundImage()
+    {
+        if (_soundSlider.value == 0)
+        {
+
+        }
+    }
+
 
     public void UpdateGold()
     {
