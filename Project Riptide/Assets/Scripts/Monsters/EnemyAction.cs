@@ -1107,6 +1107,11 @@ public partial class ClamBoss : Enemy
                 .GetComponent<ClamTentacle>()
                 .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1.5f);
             _lineOffset += 5.0f;
+            if(DoTelegraphs() && _lineOffset == 10.0f)
+            {
+                CreateTelegraph(transform.InverseTransformVector(_lineForward.normalized) * 20, new Vector3(1.2f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(_lineForward), true);
+                ClearTelegraphs();
+            }
         }
 
         if (time >= MAX_TIME)
@@ -1268,7 +1273,7 @@ public partial class ClamBoss : Enemy
         if (time == 0)
         {
             //Create hitbox and water spout
-            _waterSpoutDown = Instantiate(_waterSpoutDownPrefab, new Vector3(_position.x, _position.y + 42f, _position.z), _waterSpoutDownPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
+            _waterSpoutDown = Instantiate(_waterSpoutDownPrefab, new Vector3(_position.x, _position.y + 26f, _position.z), _waterSpoutDownPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
             shape = _waterSpoutDown.shape;
             shape.scale = new Vector3(0, 0, -1);
             ParticleSystem.MainModule main = _waterSpoutDown.main;
@@ -1276,6 +1281,10 @@ public partial class ClamBoss : Enemy
             main.startLifetimeMultiplier *= _speedScale;
             _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0,2,0), HitboxType.EnemyHitbox, 0));
             _hitboxes[_hitboxes.Count - 1].GetComponent<Hitbox>().OnStay += DealWaterSpoutDamage;
+            if(DoTelegraphs())
+            {
+                CreateTelegraph(Vector3.zero, new Vector3(13, 1, 13), Quaternion.identity, true);
+            }
         }
 
         if (time < MAX_TIME - STALL_TIME)
@@ -1291,6 +1300,7 @@ public partial class ClamBoss : Enemy
             if (_waterSpoutUp.isEmitting)
             {
                 ClearHitboxes();
+                ClearTelegraphs();
                 //Don't stop particles instantly, let them trickel off
                 _waterSpoutUp.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 _waterSpoutDown.Stop(true, ParticleSystemStopBehavior.StopEmitting);
@@ -1342,6 +1352,11 @@ public partial class ClamBoss : Enemy
                 projectile = Instantiate(_stickPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
             }
             projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 5, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), true);
+                ClearTelegraphs();
+            }
 
             //Randomly rotate projectile
             Quaternion randomRotation = Random.rotation;
@@ -1376,7 +1391,8 @@ public partial class ClamBoss : Enemy
             {
                 Vector3 smokePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.up * 2.0f;
                 Vector3 smokeDistanceVec = smokePosition - transform.position;
-                Quaternion smokeRotation = Quaternion.LookRotation(new Vector3(smokeDistanceVec.x, 0, smokeDistanceVec.z));
+                Vector3 smokeDirection = new Vector3(smokeDistanceVec.x, 0, smokeDistanceVec.z);
+                Quaternion smokeRotation = Quaternion.LookRotation(smokeDirection);
                 _dragonSmokeParticles.Add(Instantiate(_dragonSmokePrefab, smokePosition + Vector3.up * -2, smokeRotation).GetComponent<ParticleSystem>());
                 _dragonSmokeParticles[i].transform.localScale = Vector3.zero;
                 GameObject hitbox = Instantiate(_hitbox, _dragonSmokeParticles[i].transform);
@@ -1384,6 +1400,11 @@ public partial class ClamBoss : Enemy
 
                 //Add poison damage when player enters hitbox
                 hitbox.GetComponent<Hitbox>().OnTrigger += DealDragonPoison;
+
+                if(DoTelegraphs())
+                {
+                    CreateTelegraph(transform.InverseTransformVector(smokeDirection.normalized) * 23, new Vector3(1.5f, 1, 46 / transform.localScale.z), Quaternion.LookRotation(smokeDirection), true);
+                }
             }
         }
 
@@ -1394,6 +1415,7 @@ public partial class ClamBoss : Enemy
 
         if (time > MAX_TIME)
         {
+            ClearTelegraphs();
             return false;
         }
         else

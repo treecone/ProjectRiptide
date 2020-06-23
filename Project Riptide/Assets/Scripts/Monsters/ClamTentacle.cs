@@ -149,7 +149,7 @@ public class ClamTentacle : Physics
                 {
                     if (DoTelegraphs())
                     {
-                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 6 / transform.localScale.z), new Vector3(3.0f, 1.0f, 12.0f));
+                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 5 / transform.localScale.z), new Vector3(3.0f, 1.0f, 10.0f));
 
                     }
                 }
@@ -244,7 +244,7 @@ public class ClamTentacle : Physics
                 {
                     if (DoTelegraphs())
                     {
-                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 6 / transform.localScale.z), new Vector3(3.0f, 1.0f, 12.0f));
+                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 5 / transform.localScale.z), new Vector3(3.0f, 1.0f, 10.0f));
                     }
                 }
 
