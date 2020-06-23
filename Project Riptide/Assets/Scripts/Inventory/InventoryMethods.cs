@@ -29,9 +29,9 @@ public class InventoryMethods : MonoBehaviour
     private Inventory _inventory;
 
     [SerializeField]
-    private Image[] _soundImages;
+    private Sprite[] _soundSprites;
     [SerializeField]
-    private Image[] _volumeImages;
+    private Sprite[] _volumeSprites;
 
     private float soundValue = .5f;
     private float volumeValue = .5f;
@@ -141,16 +141,21 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventory"></param>
     public void TrashItem(Inventory inventory)
     {
-        int amount = System.Convert.ToInt32(_trashField.text);
-
-        Item saved = _activeItem;
-
-        if (amount >= _activeItem.Amount)
+        //checks if null item
+        if (_activeItem.Id != 0)
         {
-            ResetActiveItem();
-        }
+            int amount = System.Convert.ToInt32(_trashField.text);
 
-        inventory.RemoveItem(saved.Name, amount);
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+
+            inventory.RemoveItem(saved.Name, amount);
+
+        }
     }
 
     /// <summary>
@@ -197,11 +202,23 @@ public class InventoryMethods : MonoBehaviour
         }
     }
 
-    public void ChangeSoundImage()
+    public void ChangeSoundImage(Image button)
     {
         if (_soundSlider.value == 0)
         {
-
+            button.sprite = _soundSprites[0];
+        }
+        else if (_soundSlider.value <= .25f)
+        {
+            button.sprite = _soundSprites[1];
+        }
+        else if (_soundSlider.value <= .5f)
+        {
+            button.sprite = _soundSprites[2];
+        }
+        else
+        {
+            button.sprite = _soundSprites[3];
         }
     }
 
