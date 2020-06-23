@@ -140,8 +140,8 @@ public class ChunkLoader : MonoBehaviour
                     for(int i = 0; i < numEnemies; i++)
                     {
                         GameObject spawnPoint = listOfSpawnPoints.transform.GetChild(i).gameObject;
-                        string monsterName = spawnPoint.name;
-                        GameObject enemy = Instantiate(GetPrefabByName(monsterName), spawnPoint.transform.position, Quaternion.identity);
+                        GameObject enemyPrefab = spawnPoint.GetComponent<SpawnPoint>().EnemyPrefab;
+                        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
                         enemy.SetActive(false);
 
                         // Cash the starting position of this enemy
