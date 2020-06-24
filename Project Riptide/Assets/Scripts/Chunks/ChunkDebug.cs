@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[ExecuteAlways]
 public class ChunkDebug : MonoBehaviour
 {
     [SerializeField]

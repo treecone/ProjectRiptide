@@ -119,8 +119,8 @@ public partial class Enemy : Physics
         set { _enemyStartingChunk = value; }
     }
 
-    protected Vector2 _enemyStartingPosition;
-    public Vector2 EnemyStartingPosition
+    protected Vector3 _enemyStartingPosition;
+    public Vector3 EnemyStartingPosition
     {
         get { return _enemyStartingPosition; }
         set { _enemyStartingPosition = value; }

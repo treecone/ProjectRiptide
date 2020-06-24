@@ -205,8 +205,6 @@ public class ShipMovement : Physics
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 40.0f * (1f / 60f / Time.deltaTime);
-            Debug.Log(backForce);
-            Debug.Log((1f / 60f / Time.deltaTime));
             ApplyForce(backForce);
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
