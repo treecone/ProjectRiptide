@@ -51,6 +51,11 @@ public partial class ChickenFishFlock : Enemy
         {
             hitbox.OnTrigger += HitboxTriggered;
         }
+
+        for (int i = 0; i < _chickenFlock.Count; i++)
+        {
+            _chickenFlock[i].MinY = transform.position.y - 1f;
+        }
     }
 
     // Update is called once per frame

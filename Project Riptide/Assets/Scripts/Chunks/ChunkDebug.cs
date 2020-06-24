@@ -24,11 +24,11 @@ public class ChunkDebug : MonoBehaviour
     {
         Vector3 scale = GetComponent<BoxCollider>().size;
         Gizmos.color = new Color32(0, 255, 0, 100);
-        Gizmos.DrawWireCube(transform.position, scale);
+        Gizmos.DrawWireCube(transform.position, scale * transform.localScale.x);
         if (_drawWater && _waterMesh != null && _waterMat != null)
         { 
             _waterMat.SetPass(0);
-            Graphics.DrawMeshNow(_waterMesh, Matrix4x4.Translate(new Vector3(transform.position.x, transform.position.y + _waterLevel, transform.position.z)) * Matrix4x4.Scale(new Vector3(10,1,10)) * Matrix4x4.Rotate(Quaternion.identity));
+            Graphics.DrawMeshNow(_waterMesh, Matrix4x4.Translate(new Vector3(transform.position.x, transform.position.y + _waterLevel, transform.position.z)) * Matrix4x4.Scale(new Vector3(10 * transform.localScale.x,1, 10 * transform.localScale.z)) * Matrix4x4.Rotate(Quaternion.identity));
             //Gizmos.DrawMesh(_waterMesh, new Vector3(transform.position.x, transform.position.y + _waterLevel, transform.position.z), Quaternion.identity, new Vector3(10,10,10));
         }
     }
