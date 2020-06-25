@@ -314,6 +314,7 @@ public partial class KoiBoss : Enemy
                     _inKnockback = false;
                     _actionQueue.Clear();
                     ClearHitboxes();
+                    ClearTelegraphs();
                     _currTime = 0;
                     StopMotion();
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;

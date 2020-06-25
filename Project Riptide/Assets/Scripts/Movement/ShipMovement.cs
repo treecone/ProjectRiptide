@@ -204,7 +204,7 @@ public class ShipMovement : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 40.0f;
+            backForce *= 40.0f * (1f / 60f / Time.deltaTime);
             ApplyForce(backForce);
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
@@ -213,7 +213,7 @@ public class ShipMovement : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 20.0f;
+            backForce *= 20.0f * (1f / 60f / Time.deltaTime);
             ApplyForce(backForce);
         }
     }

@@ -17,19 +17,19 @@ public class Physics : MonoBehaviour
     public Vector3 Position
     {
         get { return _position; }
-        set { _position = value; }
+        set { _position = value; transform.position = value; }
     }
 
     public Vector3 Velocity
     {
         get { return _velocity; }
-        set { _velocity = value; }
+        set { _velocity = value;}
     }
 
     public Quaternion Rotation
     {
         get { return _rotation; }
-        set { _rotation = value; }
+        set { _rotation = value; transform.rotation = _rotation; }
     }
 
     // Start is called before the first frame update
