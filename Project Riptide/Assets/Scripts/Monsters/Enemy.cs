@@ -108,9 +108,19 @@ public partial class Enemy : Physics
 
     protected float _rotationalVeloctiy = 0.5f;
 
+    protected Renderer _renderer;
+    protected bool _isVisible;
+    protected GameObject _offScreenIndicator;
+    public GameObject OffScreenIndicator
+    {
+        get { return _offScreenIndicator; }
+        set { _offScreenIndicator = value; }
+    }
+
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
     public bool IsDying => _dying;
+    public bool IsVisible => _isVisible;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -163,6 +173,7 @@ public partial class Enemy : Physics
         SendFriction = movement.ApplyFriction;
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
+        _renderer = GetComponentInChildren<Renderer>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
         _detectPosition = transform.GetChild(transform.childCount - 1);
@@ -221,6 +232,15 @@ public partial class Enemy : Physics
 
             _playerCollision = false;
             _obsticalCollision = false;
+
+            if(!_isVisible && _renderer.isVisible)
+            {
+                _isVisible = true;
+            }
+            else if(_isVisible && !_renderer.isVisible)
+            {
+                _isVisible = false;
+            }
 
             base.Update();
         }
