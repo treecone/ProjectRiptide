@@ -80,7 +80,7 @@ public class PlayerHealth : MonoBehaviour
             AddHealth(-damage);
         } else
         {
-            health -= damage / (1.0f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 1.0f));
+            health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
             healthBar.UpdateHealth(health);
             if (health <= 0)
             {

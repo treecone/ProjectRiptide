@@ -18,10 +18,6 @@ public class Mine : MonoBehaviour
     private float statusDuration;
     [SerializeField]
     private float statusLevel;
-    [SerializeField]
-    private float bobAmount;
-    private float bobOffset;
-    private float startY;
 
     private Hitbox _hitbox;
     // Start is called before the first frame update
@@ -31,14 +27,14 @@ public class Mine : MonoBehaviour
         _playerHealth = _player.GetComponent<PlayerHealth>();
         _hitbox = GetComponentInChildren<Hitbox>();
         _hitbox.OnTrigger += Explode;
-        bobOffset = Random.Range(0, Mathf.PI * 2);
-        startY = transform.position.y;
+        
     }
+    
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = new Vector3(transform.position.x, startY + Mathf.Sin(Time.time + bobOffset) * bobAmount, transform.position.z);
+        
     }
 
     public void SetData(GameObject player, float damage, StatusType statusType, float statusDuration, float statusLevel)

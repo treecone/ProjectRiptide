@@ -8,6 +8,7 @@ using System;
 //USING LITJSON
 public class ItemDatabase : MonoBehaviour
 {
+    public static ItemDatabase instance;
     private string _defaultPath;
     private string _jsonString;
     private JsonData _itemData;
@@ -19,6 +20,7 @@ public class ItemDatabase : MonoBehaviour
 
     void Awake()
     {
+        instance = this;
         _defaultPath = Application.dataPath + "/Resources/Inventory/Items.json";
         _jsonString = File.ReadAllText(_defaultPath);
         _itemData = JsonMapper.ToObject(_jsonString);
