@@ -10,7 +10,8 @@ using LitJson;
 public enum Region
 {
     CHINA,
-    OCEAN
+    OCEAN,
+    OUT_OF_BOUNDS
 };
 
 public class ChunkLoader : MonoBehaviour
@@ -20,7 +21,7 @@ public class ChunkLoader : MonoBehaviour
 
     private Chunk[,] _chunks;  // List of all the chunk prefabs
     private List<Chunk> _visibleChunks; // A dynamic list of all chunks visible to the player.
-    private const float CHUNKSIDELENGTH = 100; // Base length of each chunk.
+    private float _chunkSideLength = 100; // Base length of each chunk.
     [SerializeField]
     private GameObject _ship; // Player
     [SerializeField]
@@ -33,6 +34,8 @@ public class ChunkLoader : MonoBehaviour
     private string _previousRegion;
     [SerializeField]
     private string _currentRegion;
+    [SerializeField]
+    private GameObject _outOfBoundsUI;
 
     private TextMeshProUGUI _regionDisplay;
 
@@ -47,10 +50,13 @@ public class ChunkLoader : MonoBehaviour
     private int _xStartingChunk;
     [SerializeField]
     private int _yStartingChunk;
+    [SerializeField]
+    private float _worldScale = 1.0f;
 
     // Start is called before the first frame update
     void Start()
     {
+        _chunkSideLength *= _worldScale;
         _chunks = new Chunk[_xLen, _zLen];
         SetUpMonsters();
         _unloadTimer = 0;
@@ -63,7 +69,7 @@ public class ChunkLoader : MonoBehaviour
         _regionDisplay = GameObject.Find("Canvas").GetComponent<TextMeshProUGUI>();
         _currentChunkPosition = new Vector2(_xStartingChunk, _yStartingChunk);
         // Physially move the player to the center of that chunk.
-        _ship.transform.position = new Vector3(CHUNKSIDELENGTH * _currentChunkPosition.x, 1f, CHUNKSIDELENGTH * _currentChunkPosition.y);
+        _ship.transform.position = new Vector3(_chunkSideLength * _currentChunkPosition.x, 1f, _chunkSideLength * _currentChunkPosition.y);
         _enemies = new List<GameObject>();
         LoadWorld();
 
@@ -118,20 +124,29 @@ public class ChunkLoader : MonoBehaviour
                 switch (region)
                 {
                     case "china":
-                        {
-                            pathName = "Chunks/china/" + regionText;
-                            r = Region.CHINA;
-                            break;
-                        }
+                        pathName = "Chunks/china/" + regionText;
+                        r = Region.CHINA;
+                        break;
                     case "ocean":
-                        {
-                            pathName = "Chunks/none/" + regionText;
-                            r = Region.OCEAN;
-                            break;
-                        }
+                        pathName = "Chunks/none/" + regionText;
+                        r = Region.OCEAN;
+                        break;
+                    case "out-of-bounds":
+                        pathName = "Chunks/out-of-bounds/" + regionText;
+                        r = Region.OUT_OF_BOUNDS;
+                        break;
                 }
                 // Make the chunk.
-                GameObject obj = Instantiate(Resources.Load<GameObject>(pathName), new Vector3(x * CHUNKSIDELENGTH, 0, z * CHUNKSIDELENGTH), Quaternion.identity);
+                GameObject obj = Instantiate(Resources.Load<GameObject>(pathName), new Vector3(x * _chunkSideLength, 0, z * _chunkSideLength), Quaternion.identity);
+                obj.transform.localScale = obj.transform.localScale *= _worldScale;
+                Transform unscaledEnviroment = obj.transform.Find("Unscaled Enviroment");
+                if(unscaledEnviroment != null)
+                {
+                    for(int i = 0; i < unscaledEnviroment.childCount; i++)
+                    {
+                        unscaledEnviroment.GetChild(i).localScale = unscaledEnviroment.GetChild(i).localScale / _worldScale;
+                    }
+                }
                 obj.transform.parent = world.transform;
 
                 // There are monsters to load in.
@@ -139,6 +154,7 @@ public class ChunkLoader : MonoBehaviour
                 if (spawnTransform != null && spawnTransform.childCount > 0)
                 {
                     hasEnemies = true;
+                    spawnTransform.localScale = new Vector3(spawnTransform.localScale.x, spawnTransform.localScale.y / _worldScale, spawnTransform.localScale.z);
                     GameObject listOfSpawnPoints = spawnTransform.gameObject;
                     int numEnemies = listOfSpawnPoints.transform.childCount;
                     for(int i = 0; i < numEnemies; i++)
@@ -157,7 +173,7 @@ public class ChunkLoader : MonoBehaviour
                         enemies.Add(enemy);
                     }
                 }
-                Chunk c = new Chunk(obj, r, new Vector2(x * CHUNKSIDELENGTH, z * CHUNKSIDELENGTH), enemies);
+                Chunk c = new Chunk(obj, r, new Vector2(x * _chunkSideLength, z * _chunkSideLength), enemies);
                 c.hasEnemies = hasEnemies;
                 _chunks[x, z] = c;
                 _chunks[x, z].chunk.SetActive(false);
@@ -208,7 +224,7 @@ public class ChunkLoader : MonoBehaviour
             if (monster)
             {
                 Vector2 start = monster.GetComponent<Enemy>().EnemyStartingChunk;
-                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(_ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(_ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(CHUNKSIDELENGTH / 2, 2));
+                bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(_ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(_ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(_chunkSideLength / 2, 2));
                 // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
                 if ((!playerCloseToMonster && monster.GetComponent<Enemy>().State == EnemyState.Passive) || monster.GetComponent<Enemy>().ReadyToDelete)
                 {
@@ -227,7 +243,7 @@ public class ChunkLoader : MonoBehaviour
         for(int i = 0; i < _enemies.Count; i++)
         {
             bool enemyIsFar = Mathf.Sqrt(Mathf.Pow(_enemies[i].transform.position.x - _ship.transform.position.x, 2) 
-                + Mathf.Pow(_enemies[i].transform.position.z - _ship.transform.position.z, 2)) > 2 * Mathf.Sqrt(2 * Mathf.Pow(CHUNKSIDELENGTH / 2, 2));
+                + Mathf.Pow(_enemies[i].transform.position.z - _ship.transform.position.z, 2)) > 2 * Mathf.Sqrt(2 * Mathf.Pow(_chunkSideLength / 2, 2));
             if (enemyIsFar || _enemies[i].GetComponent<Enemy>().ReadyToDelete)
             {
                 // Get the origin chunk of the enemy.
@@ -270,33 +286,41 @@ public class ChunkLoader : MonoBehaviour
     {
         _previousRegion = _currentRegion;
         DisplayChunks();
+        if(_previousRegion != _currentRegion && _currentRegion == GetRegionName(Region.OUT_OF_BOUNDS))
+        {
+            _outOfBoundsUI.SetActive(true);
+        }
+        if(_previousRegion != _currentRegion && _previousRegion == GetRegionName(Region.OUT_OF_BOUNDS))
+        {
+            _outOfBoundsUI.SetActive(false);
+        }
         //Determine if the players has entered a new region.
-        //if (!currentRegion.Equals(previousRegion))
-        //{
-        //    // Display the text for a few seconds.
-        //    StartCoroutine(DisplayRegion(currentRegion));
-        //}
+        /*if (!currentRegion.Equals(previousRegion))
+        {
+            // Display the text for a few seconds.
+            StartCoroutine(DisplayRegion(currentRegion));
+        }*/
 
     }
     // Fade in and out for region switching.
-    //private IEnumerator DisplayRegion(string newRegion)
-    //{
-    //    regionDisplay.text = "Now Entering " +newRegion.ToUpper();
-    //    regionDisplay.enabled = true;
-    //    Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
-    //    while(regionDisplay.color.a < 1.0f)
-    //    {
-    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
-    //        yield return null;
-    //    }
-    //    yield return new WaitForSeconds(2f);
-    //    while (regionDisplay.color.a > 0f)
-    //    {
-    //        regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
-    //        yield return null;
-    //    }
-    //    regionDisplay.enabled = false;
-    //}
+    /*private IEnumerator DisplayRegion(string newRegion)
+    {
+        regionDisplay.text = "Now Entering " +newRegion.ToUpper();
+        regionDisplay.enabled = true;
+        Color originalColor = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, 0);
+        while(regionDisplay.color.a < 1.0f)
+        {
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a + (Time.deltaTime * 1));
+            yield return null;
+        }
+        yield return new WaitForSeconds(2f);
+        while (regionDisplay.color.a > 0f)
+        {
+            regionDisplay.color = new Color(regionDisplay.color.r, regionDisplay.color.g, regionDisplay.color.b, regionDisplay.color.a - (Time.deltaTime * 1));
+            yield return null;
+        }
+        regionDisplay.enabled = false;
+    }*/
     /// <summary>
     /// Gets the distance between the ship and the specified chunks center.
     /// </summary>
@@ -305,8 +329,8 @@ public class ChunkLoader : MonoBehaviour
     /// <returns> The distance between the ship and the chunks center.</returns>
     public float DistanceFromChunkCenter(GameObject g, int x, int z)
     {
-        return Mathf.Sqrt(Mathf.Pow(g.transform.position.x - (x * CHUNKSIDELENGTH), 2)
-            + Mathf.Pow(g.transform.position.z - (z * CHUNKSIDELENGTH), 2));
+        return Mathf.Sqrt(Mathf.Pow(g.transform.position.x - (x * _chunkSideLength), 2)
+            + Mathf.Pow(g.transform.position.z - (z * _chunkSideLength), 2));
     }
     /// <summary>
     /// Updates the current chunk field to accurately represent which chunk the user is in.
@@ -338,12 +362,12 @@ public class ChunkLoader : MonoBehaviour
                     continue;
                 }
                 // The bounds of this chunk.
-                Rect chunkBounds = new Rect((x - .5f) * CHUNKSIDELENGTH, (z - .5f) * CHUNKSIDELENGTH, CHUNKSIDELENGTH, CHUNKSIDELENGTH);
+                Rect chunkBounds = new Rect((x - .5f) * _chunkSideLength, (z - .5f) * _chunkSideLength, _chunkSideLength, _chunkSideLength);
                 // Chunk is valid.
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && _chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(_ship, x, z) < CHUNKSIDELENGTH + 30;
+                    bool close = DistanceFromChunkCenter(_ship, x, z) < _chunkSideLength + 30;
                     bool inVisibleChunks = _visibleChunks.Contains(_chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)
@@ -397,15 +421,14 @@ public class ChunkLoader : MonoBehaviour
         switch (region)
         {
             case Region.CHINA:
-                {
-                    name = "china";
-                    break;
-                }
+                name = "china";
+                break;
             case Region.OCEAN:
-                {
-                    name = "ocean";
-                    break;
-                }
+                name = "ocean";
+                break;
+            case Region.OUT_OF_BOUNDS:
+                name = "out-of-bounds";
+                break;
         }
         return name;
     }
