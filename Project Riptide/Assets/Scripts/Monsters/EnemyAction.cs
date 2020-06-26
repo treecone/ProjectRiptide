@@ -1173,7 +1173,8 @@ public partial class ClamBoss : Enemy
         {
             _animator.Play(_animParm[(int)ClamAnim.Open]);
             //Choose a random open state
-            _openState = (ClamOpenState)Random.Range(0, 3);
+            //_openState = (ClamOpenState)Random.Range(0, 3);
+            _openState = ClamOpenState.Dragon;
         }
 
         if(time >= MAX_TIME)
@@ -1445,7 +1446,7 @@ public partial class ClamBoss : Enemy
         {
             for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
             {
-                Destroy(_dragonSmokeParticles[i].gameObject);
+                _dragonSmokeParticles[i].Stop();
             }
             _dragonSmokeParticles.Clear();
             return false;
