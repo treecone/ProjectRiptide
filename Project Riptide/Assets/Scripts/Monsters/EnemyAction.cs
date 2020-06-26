@@ -237,7 +237,7 @@ public partial class KoiBoss : Enemy
             StopMotion();
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, (_lengthMult + 15f) / transform.localScale.z), new Vector3(_widthMult, 1, 32.0f / transform.localScale.z), Quaternion.identity, true);
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, (_lengthMult + 15f) / transform.localScale.z), new Vector3(_widthMult, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -389,7 +389,7 @@ public partial class KoiBoss : Enemy
                 StopMotion();
                 if(DoTelegraphs())
                 {
-                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30f) / transform.localScale.z), new Vector3(5.0f, 1, 62.0f / transform.localScale.z), Quaternion.identity, true);
+                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30f) / transform.localScale.z), new Vector3(22.0f, 1, 62.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Cone, true);
                 }
             }
 
@@ -442,6 +442,8 @@ public partial class KoiBoss : Enemy
     protected bool KoiBubbleAttack(ref float time)
     {
         SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(1.0f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
+        ClearTelegraphs();
 
         return false;
     }
@@ -631,7 +633,7 @@ public partial class KoiBoss : Enemy
             _maxSpeed += 5.0f;
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, true);
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, TelegraphType.Circle, true);
             }
         }
 
@@ -777,7 +779,7 @@ public partial class RockCrab : Enemy
             //Set up telegraph
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), Quaternion.identity, true);
+                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -880,7 +882,7 @@ public partial class FlowerFrog : Enemy
                 StopMotion();
                 if(DoTelegraphs())
                 {
-                    CreateTelegraph(new Vector3(0, 0, 10 / transform.localScale.z), new Vector3(_widthMult, 1, 20), Quaternion.identity, true);
+                    CreateTelegraph(new Vector3(0, 0, 10 / transform.localScale.z), new Vector3(_widthMult, 1, 20), Quaternion.identity, TelegraphType.Square, true);
                 }
             }
 
@@ -1109,7 +1111,7 @@ public partial class ClamBoss : Enemy
             _lineOffset += 5.0f;
             if(DoTelegraphs() && _lineOffset == 10.0f)
             {
-                CreateTelegraph(transform.InverseTransformVector(_lineForward.normalized) * 20, new Vector3(1.2f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(_lineForward), true);
+                CreateTelegraph(transform.InverseTransformVector(_lineForward.normalized) * 20, new Vector3(1.2f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(_lineForward), TelegraphType.Square, true);
                 ClearTelegraphs();
             }
         }
@@ -1283,7 +1285,7 @@ public partial class ClamBoss : Enemy
             _hitboxes[_hitboxes.Count - 1].GetComponent<Hitbox>().OnStay += DealWaterSpoutDamage;
             if(DoTelegraphs())
             {
-                CreateTelegraph(Vector3.zero, new Vector3(13, 1, 13), Quaternion.identity, true);
+                CreateTelegraph(Vector3.zero, new Vector3(13, 1, 13), Quaternion.identity, TelegraphType.Circle, true);
             }
         }
 
@@ -1354,7 +1356,7 @@ public partial class ClamBoss : Enemy
             projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 5, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
             if (DoTelegraphs())
             {
-                CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), true);
+                CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), TelegraphType.Square, true);
                 ClearTelegraphs();
             }
 
@@ -1403,7 +1405,7 @@ public partial class ClamBoss : Enemy
 
                 if(DoTelegraphs())
                 {
-                    CreateTelegraph(transform.InverseTransformVector(smokeDirection.normalized) * 23, new Vector3(1.5f, 1, 46 / transform.localScale.z), Quaternion.LookRotation(smokeDirection), true);
+                    CreateTelegraph(transform.InverseTransformVector(smokeDirection.normalized) * 23, new Vector3(1.5f, 1, 46 / transform.localScale.z), Quaternion.LookRotation(smokeDirection), TelegraphType.Square, true);
                 }
             }
         }
@@ -1521,7 +1523,7 @@ public partial class ChickenFishFlock : Enemy
             //Set up telegraph
             if (DoTelegraphs())
             {
-                GameObject temp = Instantiate(_telegraphPrefab, _chickenFlock[_attackingChickenID].transform.position, _chickenFlock[_attackingChickenID].transform.rotation, _chickenFlock[_attackingChickenID].transform);
+                GameObject temp = Instantiate(_telegraphPrefab[(int)TelegraphType.Square], _chickenFlock[_attackingChickenID].transform.position, _chickenFlock[_attackingChickenID].transform.rotation, _chickenFlock[_attackingChickenID].transform);
                 temp.transform.localPosition = new Vector3(0,0, 7.5f / _chickenFlock[_attackingChickenID].transform.localScale.z);
                 temp.transform.localScale = new Vector3(1, 1, 15f);
                 _telegraphs.Add(temp);
