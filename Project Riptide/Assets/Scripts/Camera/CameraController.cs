@@ -42,7 +42,6 @@ public class CameraController : MonoBehaviour
             allTargets = _inputManager.TargetEnemies;
             Debug.LogWarning("No player was assigned to the camera. Default: Player Tag. ");
         }
-        Debug.Log("Height: " + Screen.height + ", Width: " + Screen.width);
         _screenLength = Mathf.Sqrt(Mathf.Pow(Screen.width / 2, 2) + Mathf.Pow(Screen.height / 2, 2));
         _maxScreenX = (Screen.width / 2f) - 100;
         _maxScreenY = (Screen.height / 2f) - 100;
