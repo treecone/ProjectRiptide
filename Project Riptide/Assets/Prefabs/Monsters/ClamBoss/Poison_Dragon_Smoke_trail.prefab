@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2429638161552292825}
   - component: {fileID: 7434727543317869088}
   m_Layer: 0
-  m_Name: Poison_Dragon_Smoke
+  m_Name: Poison_Dragon_Smoke_trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,10 +26,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3053770537837303822}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 13.13, y: 2.5, z: -35.6}
+  m_LocalPosition: {x: 11.121048, y: 2.65, z: -57.34}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4544593329568055995}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
@@ -106,7 +105,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -170,7 +169,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 0.25
-      minScalar: 0.1
+      minScalar: 0.3
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -185,7 +184,7 @@ ParticleSystem:
           outWeight: 0.33333334
         - serializedVersion: 3
           time: 1
-          value: -1
+          value: 1
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -866,7 +865,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 30
+      scalar: 25
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -984,35 +983,35 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 8.746066
-          outSlope: 8.746066
+          inSlope: 1.868121
+          outSlope: 1.868121
           tangentMode: 34
           weightedMode: 0
           inWeight: 0
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.07036123
-          value: 0.6153839
-          inSlope: 0.41802597
-          outSlope: 0.41802597
+          time: 0.19536419
+          value: 0.36496395
+          inSlope: 5.1989746
+          outSlope: 5.1989746
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.44556272
-          outWeight: 0.20969212
+          outWeight: 0.33333334
         - serializedVersion: 3
-          time: 0.6988454
-          value: 0.661538
-          inSlope: -1.1405518
-          outSlope: -1.1405518
+          time: 0.7988393
+          value: 1
+          inSlope: 0.04838129
+          outSlope: 0.04838129
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
-          outWeight: 0.35750368
+          outWeight: 0.74999917
         - serializedVersion: 3
-          time: 0.9721985
+          time: 1
           value: 0
-          inSlope: -2.420086
-          outSlope: -2.420086
+          inSlope: -4.9711494
+          outSlope: -4.9711494
           tangentMode: 34
           weightedMode: 0
           inWeight: 0.33333334
@@ -1511,8 +1510,8 @@ ParticleSystem:
     enabled: 0
     x:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 1
+      minMaxState: 0
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1564,8 +1563,8 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 1
+      minMaxState: 0
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -1617,15 +1616,15 @@ ParticleSystem:
         m_RotationOrder: 4
     z:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 1
+      minMaxState: 0
+      scalar: 0
       minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 1
+          value: 0
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -3781,7 +3780,7 @@ ParticleSystem:
     enabled: 0
     subEmitters:
     - serializedVersion: 3
-      emitter: {fileID: 6553316464841470946}
+      emitter: {fileID: 0}
       type: 0
       properties: 0
       emitProbability: 1
@@ -3957,7 +3956,7 @@ ParticleSystem:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-    minVertexDistance: 0.5
+    minVertexDistance: 0.2
     textureMode: 0
     ribbonCount: 1
     shadowBias: 0.5
@@ -4035,7 +4034,7 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4754,7 +4753,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_RenderMode: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -4778,144 +4777,3 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!1001 &8882718679638640699
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 4923668171498785408}
-    m_Modifications:
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].value
-      value: 0.24615575
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].inSlope
-      value: 2.9033422
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[0].outSlope
-      value: 2.9033422
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].time
-      value: 0.17869397
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].value
-      value: 0.7649655
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[2].time
-      value: 0.84882706
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[2].value
-      value: 0.49230766
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[3].inSlope
-      value: -3.256586
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[3].outSlope
-      value: -3.256586
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].inSlope
-      value: -0.26609975
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].outSlope
-      value: -0.26609975
-      objectReference: {fileID: 0}
-    - target: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: SizeModule.curve.maxCurve.m_Curve.Array.data[1].outWeight
-      value: 0.23490423
-      objectReference: {fileID: 0}
-    - target: {fileID: 3053770537837303822, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_Name
-      value: Poison_Dragon_Smoke_trail
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 98c2dacec65679244b2b60d238243bc9, type: 3}
---- !u!4 &4544593329568055995 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4923668171498785408, guid: 98c2dacec65679244b2b60d238243bc9,
-    type: 3}
-  m_PrefabInstance: {fileID: 8882718679638640699}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &6553316464841470946 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 2429638161552292825, guid: 98c2dacec65679244b2b60d238243bc9,
-    type: 3}
-  m_PrefabInstance: {fileID: 8882718679638640699}
-  m_PrefabAsset: {fileID: 0}

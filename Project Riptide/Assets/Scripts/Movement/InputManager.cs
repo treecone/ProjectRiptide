@@ -35,7 +35,8 @@ public class InputManager : MonoBehaviour
 
 	//-----Config values-----
 
-	private static Vector3 ScreenCorrect;
+	private Vector3 _screenCorrect;
+    public Vector3 ScreenCorrect => _screenCorrect;
     private Vector2 _screenScale;
 
     private Vector2 _clickStartPosition;
@@ -64,7 +65,7 @@ public class InputManager : MonoBehaviour
 	{
 		_camera = Camera.main;
         _cameraController = _camera.GetComponent<CameraController>();
-        ScreenCorrect = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
+        _screenCorrect = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
         _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
         _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
 		_ship = GameObject.FindWithTag("Player");
@@ -158,90 +159,15 @@ public class InputManager : MonoBehaviour
                 if(_targetEnemies[i].IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemies[i].Position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
                 {
                     _targetEnemies[i].SetTargetIndicator(false);
+                    if (_targetEnemies[i].OffScreenIndicator != null)
+                    {
+                        Destroy(_targetEnemies[i].OffScreenIndicator);
+                    }
                     _targetEnemies.RemoveAt(i);
                     i--;
                 }
             }
         }
-
-        /*if (_combatMode)
-        {
-            _currFireTime += Time.deltaTime;
-
-            _lineIndicator.SetPosition(0, Vector3.zero);
-            _lineIndicator.transform.rotation = Quaternion.identity;
-
-            bool fired = false;
-            //Check both sides for enemies
-            _rightEnemy = CheckEnemy(_ship.transform.right);
-            _leftEnemy = CheckEnemy(-_ship.transform.right);
-
-            //Only take the enemy closest to the player
-            if (_rightEnemy != null && !_rightEnemy.IsInvincible && (_leftEnemy == null || _leftEnemy.IsInvincible || EnemyCompare(_rightEnemy, _leftEnemy)))
-            {
-                _currEnemy = _rightEnemy;
-                _isRightEnemy = true;
-            }
-            else if (_leftEnemy != null && !_leftEnemy.IsInvincible)
-            {
-                _currEnemy = _leftEnemy;
-                _isRightEnemy = false;
-            }
-            else
-            {
-                _currEnemy = null;
-            }
-
-            //If an enemy is found, fire towards that enemy
-            if (_currEnemy != null)
-            {
-                if(_isRightEnemy && AutoFire(_currEnemy, 15.0f))
-                {
-                    fired = true;
-                }
-                else if(AutoFire(_currEnemy, -15.0f))
-                {
-                    fired = true;
-                }
-                Vector3 indVec = new Vector3(_currEnemy.Position.x - _ship.transform.position.x, 0, _currEnemy.Position.z - _ship.transform.position.z);
-                _lineIndicator.SetPosition(1, indVec);
-            }
-            else
-            {
-                _lineIndicator.SetPosition(1, Vector3.zero);
-            }
-
-            //Check to see if combat mode should be turned off
-            if (_targetEnemy.IsInvincible || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemy.transform.position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
-            {
-                _targetEnemy = CheckEnemyInRadius(MAX_COMBAT_RANGE, true);
-
-                if(_targetEnemy == null)
-                {
-                    _combatMode = false;
-                    _cameraController.ToggleCombatView(false);
-                    _lineIndicator.enabled = false;
-                }
-            }
-
-            if(fired)
-            {
-                _currFireTime = 0;
-            }
-        }
-        else
-        {
-            _targetEnemy = CheckEnemyInRadius(_viewRange, false);
-            //Set indicator if enemy is in range
-            if (_targetEnemy != null && !_targetEnemy.IsInvincible)
-            {
-                _movementScript.IndicatorActive = true;
-            }
-            else
-            {
-                _movementScript.IndicatorActive = false;
-            }
-        }*/
 
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
@@ -256,7 +182,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0)) //mouse down
         {
             //Set start position of click
-            _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
+            _clickStartPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
             _clickCurrentPosition = _clickStartPosition;
 
             //If click is close enough to base, don't move base when move starts
@@ -271,7 +197,7 @@ public class InputManager : MonoBehaviour
         else if (Input.GetMouseButton(0)) //mouse held
         {
             _clickDuration += Time.deltaTime;
-            _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
+            _clickCurrentPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
             Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
             //If click has moved enough and enough time has passed, stop checking for double click
             if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
@@ -284,7 +210,7 @@ public class InputManager : MonoBehaviour
                 if (!_startedMove)
                 {
                     //Set position of icon base
-                    _clickStartPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
+                    _clickStartPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
                     if (_iconBase != null)
                     {
                         _iconBase.anchoredPosition = _clickStartPosition;
@@ -292,7 +218,7 @@ public class InputManager : MonoBehaviour
                     _startedMove = true;
                 }
                 _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
-                _clickCurrentPosition = (Input.mousePosition - ScreenCorrect) * _screenScale;
+                _clickCurrentPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
 
                 //Pet position of movement icon
                 if (_iconPoint != null)
@@ -416,63 +342,6 @@ public class InputManager : MonoBehaviour
         _startedMove = false;
     }
 
-    /*/// <summary>
-    /// Checks for an enemy to fire at by using ray casts
-    /// </summary>
-    /// <param name="targetDir">Direction to check for enemy</param>
-    /// <returns>Enemy found, null if none</returns>
-    public Enemy CheckEnemy(Vector3 targetDir)
-    {
-        Enemy foundEnemy = null;
-        RaycastHit[] hits;
-        Vector3 detectPosition = _ship.transform.position;
-        targetDir.Normalize();
-
-        for (int i = 0; i <= _cannonFireScript.ShotAngle / 2; i += 4)
-        {
-            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
-            //Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
-            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir, _viewRange);
-            //Check each hit from raycast
-            foreach (RaycastHit hit in hits)
-            {
-                //Check if hit was from enemy
-                if (hit.collider.gameObject.tag == "Hitbox")
-                {
-                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                    if (enemy != null && !enemy.IsInvincible)
-                    {
-                        //If new enemy compares better, take that enemy instead
-                        if(foundEnemy == null || EnemyCompare(enemy, foundEnemy))
-                        {
-                            foundEnemy = enemy;
-                        }
-                    }
-                }
-            }
-            hits = UnityEngine.Physics.RaycastAll(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir, _viewRange);
-            //Check each hit from raycast
-            foreach (RaycastHit hit in hits)
-            {
-                //Check if hit was from enemy
-                if (hit.collider.gameObject.tag == "Hitbox")
-                {
-                    Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                    if (enemy != null && !enemy.IsInvincible)
-                    {
-                        //If new enemy compares better, take that enemy instead
-                        if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
-                        {
-                            foundEnemy = enemy;
-                        }
-                    }
-                }
-            }
-        }
-
-        return foundEnemy;
-    }*/
-
     /// <summary>
     /// Checks for an enemy to fire at by using ray casts
     /// </summary>
@@ -541,44 +410,6 @@ public class InputManager : MonoBehaviour
 
         return foundEnemy;
     }
-
-    /*/// <summary>
-    /// Finds the closest enemy in a radius around the player
-    /// </summary>
-    /// <param name="radius">Radius to check</param>
-    /// <param name="checkHostile">Ensure monster is hostile</param>
-    /// <returns>Enemy found, null if none</returns>
-    private Enemy CheckEnemyInRadius(float radius, bool checkHostile)
-    {
-        Collider[] colliders;
-        Enemy foundEnemy = null;
-        colliders = UnityEngine.Physics.OverlapSphere(_ship.transform.position, radius);
-        //Check all colliders found to find closest enemy
-        foreach (Collider collider in colliders)
-        {
-            if (collider.gameObject.tag == "Hitbox")
-            {
-                Enemy enemy = collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                if (enemy != null && !enemy.IsInvincible)
-                {
-                    //If check hostile is on, make sure enemy is not passive
-                    if (checkHostile)
-                    {
-                        if (enemy.State == EnemyState.Passive)
-                        {
-                            continue;
-                        }
-                    }
-                    //If new enemy compares better, take that enemy instead
-                    if (foundEnemy == null || EnemyCompare(enemy, foundEnemy))
-                    {
-                        foundEnemy = enemy;
-                    }
-                }
-            }
-        }
-        return foundEnemy;
-    }*/
 
     /// <summary>
     /// Automatically fire a shot towards the enemy
@@ -653,6 +484,10 @@ public class InputManager : MonoBehaviour
                 else if(enemy != null)
                 {
                     //Untarget enemy
+                    if (enemy.OffScreenIndicator != null)
+                    {
+                        Destroy(enemy.OffScreenIndicator);
+                    }
                     _targetEnemies.Remove(enemy);
                     enemy.SetTargetIndicator(false);
                 }

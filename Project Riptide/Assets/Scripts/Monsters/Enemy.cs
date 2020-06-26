@@ -15,6 +15,7 @@ public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
     FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9}
 public enum Anim { Die = 0, Velocity = 1};
+public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 
 
 public partial class Enemy : Physics
@@ -27,7 +28,7 @@ public partial class Enemy : Physics
     [SerializeField]
     protected GameObject _hitbox;
     [SerializeField]
-    protected GameObject _telegraphPrefab;
+    protected List<GameObject> _telegraphPrefab;
     [SerializeField]
     protected GameObject _splashParticle;
     [SerializeField]
@@ -112,9 +113,19 @@ public partial class Enemy : Physics
 
     protected float _rotationalVeloctiy = 0.5f;
 
+    protected Renderer _renderer;
+    protected bool _isVisible;
+    protected GameObject _offScreenIndicator;
+    public GameObject OffScreenIndicator
+    {
+        get { return _offScreenIndicator; }
+        set { _offScreenIndicator = value; }
+    }
+
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
     public bool IsDying => _dying;
+    public bool IsVisible => _isVisible;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -167,6 +178,7 @@ public partial class Enemy : Physics
         SendFriction = movement.ApplyFriction;
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
+        _renderer = GetComponentInChildren<Renderer>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
         _detectPosition = transform.GetChild(transform.childCount - 1);
@@ -225,6 +237,15 @@ public partial class Enemy : Physics
 
             _playerCollision = false;
             _obsticalCollision = false;
+
+            if(!_isVisible && _renderer.isVisible)
+            {
+                _isVisible = true;
+            }
+            else if(_isVisible && !_renderer.isVisible)
+            {
+                _isVisible = false;
+            }
 
             base.Update();
         }
@@ -412,22 +433,19 @@ public partial class Enemy : Physics
     /// <param name="scale">Local scale</param>
     /// <param name="rotation">Global rotation, if identity rotation doesn't change</param>
     /// <param name="parented">If the telegraph is parented to the enemy or not</param>
-    protected void CreateTelegraph(Vector3 position, Vector3 scale, Quaternion rotation, bool parented)
+    protected void CreateTelegraph(Vector3 position, Vector3 scale, Quaternion rotation, TelegraphType telegraphType, bool parented)
     {
         GameObject temp;
-        if(parented)
-        {
-            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation, transform);
-        }
-        else
-        {
-            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation);
-        }
+        temp = Instantiate(_telegraphPrefab[(int)telegraphType], transform.position, transform.rotation, transform);
         temp.transform.localPosition = position;
         temp.transform.localScale = scale;
         if (rotation != Quaternion.identity)
         {
             temp.transform.rotation = rotation;
+        }
+        if(!parented)
+        {
+            temp.transform.parent = null;
         }
 
         _telegraphs.Add(temp);
