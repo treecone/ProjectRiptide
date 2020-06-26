@@ -30,6 +30,10 @@ public partial class Enemy : Physics
     protected GameObject _telegraphPrefab;
     [SerializeField]
     protected GameObject _splashParticle;
+    [SerializeField]
+    protected GameObject _lootboxPrefab;
+    [SerializeField]
+    protected string _lootType;
     protected Camera _camera;
 
     //Health fields
@@ -699,6 +703,15 @@ public partial class Enemy : Physics
         _dying = true;
         _isInvincible = true;
         _deathTimer = 0;
+        if(_lootType != "")
+        {
+            GameObject lootboxClone = Instantiate(_lootboxPrefab);
+            lootboxClone.transform.position = transform.position;
+            lootboxClone.transform.position = new Vector3(lootboxClone.transform.position.x, -0.3f, lootboxClone.transform.position.z);
+            Lootbox lootbox = lootboxClone.GetComponent<Lootbox>();
+            lootbox.dropType = _lootType;
+            lootbox.GenerateItems();
+        }
     }
 
     /// <summary>

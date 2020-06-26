@@ -152,7 +152,7 @@ public partial class ClamBoss : Enemy
         if(player.tag == "Player")
         {
             //Deal 2 damage per second for 5 seconds
-            player.GetComponent<StatusEffects>().AddStatus("poison", 5.0f, 4.0f);
+            player.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, 5.0f, 4.0f);
         }
     }
 

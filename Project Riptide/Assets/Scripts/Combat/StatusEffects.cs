@@ -68,29 +68,20 @@ public class StatusEffects : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Alpha0))
         {
-            AddStatus("fire", 5, 5);
+            AddStatus(StatusType.Fire, 5, 5);
         }
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            AddStatus("regeneration", 5, 5);
+            AddStatus(StatusType.Regeneration, 5, 5);
         }
         if(Input.GetKeyDown(KeyCode.Alpha2))
         {
-            AddStatus("maxHealth", 5, 30);
+            AddStatus(StatusType.MaxHealth, 5, 30);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            AddStatus("poison", 5, 5);
+            AddStatus(StatusType.Poison, 5, 5);
         }
-    }
-
-    public void AddStatus(string type, float duration, float level)
-    {
-        StatusType.TryParse(type, out StatusType __type);
-        StatusEffect s = new StatusEffect(__type, duration, level);
-        ActiveStatusEffects.Add(s);
-        _statusIcons.RearrangeStatuses(ActiveStatusEffects);
-        _upgrades.Recalculate();
     }
 
     public void AddStatus(StatusType type, float duration, float level)

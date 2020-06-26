@@ -8,33 +8,33 @@ public class Lootbox : MonoBehaviour
     private List<Mesh> _meshes;
     [SerializeField]
     private List<Material> _rarityMaterials;
-
-    [SerializeField]
-    private string _dropType;
+    
+    public string dropType;
 
     public List<Item> items;
 
     private MeshFilter _meshFilter;
     private MeshRenderer _meshRenderer;
     private Hitbox _hitbox;
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
         _meshRenderer = GetComponent<MeshRenderer>();
-        _hitbox = GetComponentInChildren<Hitbox>();
+        _hitbox = GetComponent<Hitbox>();
         _hitbox.OnTrigger += DropItems;
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
         SetShape();
-        transform.rotation = Random.rotation;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            GenerateItems();
-        }
+
     }
 
     private void SetShape()
@@ -56,9 +56,9 @@ public class Lootbox : MonoBehaviour
         _meshRenderer.material = _rarityMaterials[maxRarity - 1];
 
     }
-    private void GenerateItems()
+    public void GenerateItems()
     {
-        items = DropData.instance.GetDrops(_dropType);
+        items = DropData.instance.GetDrops(dropType);
         SetRarity();
     }
 
