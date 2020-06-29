@@ -36,7 +36,7 @@ public class IslandGenerator : MonoBehaviour
     [SerializeField]
     private List<DecoObject> environmentalObjects;
     [SerializeField]
-    private GameObject _water;
+    private float _waterHeight;
 
     [SerializeField]
     private int _numUrbanCenters;
@@ -63,34 +63,7 @@ public class IslandGenerator : MonoBehaviour
         _decoObjects = new List<DecoObject>();
         _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
 
-        _urbanCenters = new List<Vector3>();
-        _environmentalCenters = new List<Vector3>();
-        for(int i = 0; i < _numUrbanCenters; i++)
-        {
-            Vector3 randPoint = new Vector3(0, _water.transform.position.y - 1, 0);
-            while(randPoint.y <= _water.transform.position.y)
-            {
-                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
-                randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
-                randPoint += transform.position;
-            }
-            
-            
-
-            _urbanCenters.Add(randPoint);
-            
-        }
-        for (int i = 0; i < _numEnvironmentalCenters; i++)
-        {
-            Vector3 randPoint = new Vector3(0, _water.transform.position.y - 1, 0);
-            while (randPoint.y <= _water.transform.position.y)
-            {
-                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
-            }
-            randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
-            randPoint += transform.position;
-            _environmentalCenters.Add(randPoint);
-        }
+        Setup();
         
     }
 
@@ -114,6 +87,38 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
+    private void Setup()
+    {
+
+        _urbanCenters = new List<Vector3>();
+        _environmentalCenters = new List<Vector3>();
+        for (int i = 0; i < _numUrbanCenters; i++)
+        {
+            Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+            while (randPoint.y <= _waterHeight)
+            {
+                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                randPoint += transform.position;
+            }
+
+
+
+            _urbanCenters.Add(randPoint);
+
+        }
+        for (int i = 0; i < _numEnvironmentalCenters; i++)
+        {
+            Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+            while (randPoint.y <= _waterHeight)
+            {
+                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+            }
+            randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+            randPoint += transform.position;
+            _environmentalCenters.Add(randPoint);
+        }
+    }
     private void CreateDecoObject()
     {
         bool built = false;
@@ -123,9 +128,9 @@ public class IslandGenerator : MonoBehaviour
         //while(!built)
         //{
             int numTris = _mesh.triangles.Length / 3;
-            result = new Vector3(0, _water.transform.position.y - 1, 0);
+            result = new Vector3(0, _waterHeight - 1, 0);
             normal = Vector3.zero;
-            while (result.y <= _water.transform.position.y)
+            while (result.y <= _waterHeight)
             {
                 
                 int randIndex = Random.Range(0, numTris);

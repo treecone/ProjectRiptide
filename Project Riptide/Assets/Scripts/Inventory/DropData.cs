@@ -15,24 +15,25 @@ public class DropData : MonoBehaviour
     private void Awake()
     {
         instance = this;
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
         _dropDict = new Dictionary<string, List<Drop>>();
         _dropTableData = JsonMapper.ToObject(File.ReadAllText(Application.dataPath + "/Resources/Inventory/Droptable.json"));
-        for(int i = 0; i < _dropTableData.Count; i++)
+        for (int i = 0; i < _dropTableData.Count; i++)
         {
             string name = _dropTableData[i]["name"].ToString();
             List<Drop> drops = new List<Drop>();
             JsonData singleDropData = _dropTableData[i]["drops"];
-            for(int j = 0; j < singleDropData.Count; j++)
+            for (int j = 0; j < singleDropData.Count; j++)
             {
                 drops.Add(new Drop(singleDropData[j]));
             }
 
             _dropDict[name] = drops;
         }
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
     // Update is called once per frame

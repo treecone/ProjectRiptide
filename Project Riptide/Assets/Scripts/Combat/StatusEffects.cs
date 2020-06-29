@@ -60,7 +60,11 @@ public class StatusEffects : MonoBehaviour
             } else
             {
                 _activeStatusEffects.RemoveAt(i);
-                _upgrades.Recalculate();
+                if(_upgrades != null)
+                {
+                    _upgrades.Recalculate();
+                }
+                
                 _statusIcons.RearrangeStatuses(ActiveStatusEffects);
                 i--;
             }
@@ -89,7 +93,12 @@ public class StatusEffects : MonoBehaviour
         StatusEffect s = new StatusEffect(type, duration, level);
         ActiveStatusEffects.Add(s);
         _statusIcons.RearrangeStatuses(ActiveStatusEffects);
-        _upgrades.Recalculate();
+        if(_upgrades != null)
+        {
+            _upgrades.Recalculate();
+        }
+
+        
     }
 }
 
