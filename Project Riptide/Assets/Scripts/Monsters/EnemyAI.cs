@@ -76,6 +76,7 @@ public partial class Enemy : Physics
     public void PassiveDoNothing()
     {
         //Do nothing
+        ApplyFriction(0.99f);
     }
     
     /// <summary>
@@ -448,6 +449,7 @@ public partial class RockCrab : Enemy
         if (_position.y == _startPos.y)
         {
             //Do nothing
+            ApplyFriction(0.99f);
             return;
         }
 

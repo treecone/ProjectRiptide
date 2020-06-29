@@ -135,6 +135,7 @@ public class ShipMovement : Physics
         //Apply force against the side of the ship, reduces drift
         ApplyCounterSideForce(0.98f);
         base.Update();
+        _velocity = Vector3.ClampMagnitude(_velocity, 20.0f);
         //Update camera
         _cameraControl.UpdateCamera();
         Debug.DrawLine(_position, _position + _velocity, Color.green);
@@ -198,13 +199,13 @@ public class ShipMovement : Physics
         if(obstical.tag == "Obstical")
         {
             //Stop motion
-            StopMotion();
+            //StopMotion();
 
             //Create a force away from obstacle
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 40.0f * (1f / 60f / Time.deltaTime);
+            backForce *= 20.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
@@ -213,7 +214,7 @@ public class ShipMovement : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 20.0f * (1f / 60f / Time.deltaTime);
+            backForce *= 20.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
     }

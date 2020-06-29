@@ -398,6 +398,7 @@ public partial class KoiBoss : Enemy
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+            ApplyFriction(0.99f);
         }
 
         if (time >= MAX_TIME)
@@ -733,7 +734,10 @@ public partial class KoiBoss : Enemy
         //At the end of the attack, stop motion and remove hitbox
         if (time > 0.95f && _hitboxes.Count > 0)
         {
-            _position = new Vector3(_position.x, _startPos.y, _position.z);
+            if (!_inKnockback)
+            {
+                _position = new Vector3(_position.x, _startPos.y, _position.z);
+            }
             PlaySplash();
             StopMotion();
             Destroy(_hitboxes[_hitboxes.Count - 1]);
