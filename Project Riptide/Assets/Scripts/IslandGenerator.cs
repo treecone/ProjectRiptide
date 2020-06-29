@@ -14,6 +14,7 @@ public class IslandGenerator : MonoBehaviour
         public float radius;
         public float verticalOffset;
         public float scale;
+        public int weight;
         
         public DecoObject(DecoObject other)
         {
@@ -22,6 +23,7 @@ public class IslandGenerator : MonoBehaviour
             this.radius = other.radius;
             this.verticalOffset = other.verticalOffset;
             this.scale = other.scale;
+            this.weight = other.weight;
         }
         public bool CollidesWith(DecoObject other)
         {
@@ -32,9 +34,9 @@ public class IslandGenerator : MonoBehaviour
     }
     private Mesh _mesh;
     [SerializeField]
-    private List<DecoObject> urbanObjects;
+    private List<DecoObject> _urbanObjects;
     [SerializeField]
-    private List<DecoObject> environmentalObjects;
+    private List<DecoObject> _environmentalObjects;
     [SerializeField]
     private float _waterHeight;
 
@@ -55,6 +57,8 @@ public class IslandGenerator : MonoBehaviour
     private bool _clear;
     private List<DecoObject> _decoObjects;
     private List<GameObject> _clones;
+    private int _totalUrbanWeight;
+    private int _totalEnviromentalWeight;
  
     // Start is called before the first frame update
     void Start()
@@ -63,8 +67,7 @@ public class IslandGenerator : MonoBehaviour
         _decoObjects = new List<DecoObject>();
         _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
 
-        Setup();
-        
+        Setup();   
     }
 
     // Update is called once per frame
@@ -72,6 +75,18 @@ public class IslandGenerator : MonoBehaviour
     {
         if(_generate)
         {
+            _totalUrbanWeight = 0;
+            //Calculate total weights of urban and enviroment
+            for (int i = 0; i < _urbanObjects.Count; i++)
+            {
+                _totalUrbanWeight += _urbanObjects[i].weight;
+            }
+            _totalEnviromentalWeight = 0;
+            for (int i = 0; i < _environmentalObjects.Count; i++)
+            {
+                _totalEnviromentalWeight += _environmentalObjects[i].weight;
+            }
+
             _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
             _generate = false;
             for(int i = 0; i < _numDecoObjects; i++)
@@ -89,7 +104,7 @@ public class IslandGenerator : MonoBehaviour
 
     private void Setup()
     {
-
+        _waterHeight = 0.9f;
         _urbanCenters = new List<Vector3>();
         _environmentalCenters = new List<Vector3>();
         for (int i = 0; i < _numUrbanCenters; i++)
@@ -102,10 +117,7 @@ public class IslandGenerator : MonoBehaviour
                 randPoint += transform.position;
             }
 
-
-
             _urbanCenters.Add(randPoint);
-
         }
         for (int i = 0; i < _numEnvironmentalCenters; i++)
         {
@@ -113,9 +125,9 @@ public class IslandGenerator : MonoBehaviour
             while (randPoint.y <= _waterHeight)
             {
                 randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                randPoint += transform.position;
             }
-            randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
-            randPoint += transform.position;
             _environmentalCenters.Add(randPoint);
         }
     }
@@ -160,11 +172,11 @@ public class IslandGenerator : MonoBehaviour
 
             if (randomValue < urbanness)
             {
-                randomObj = new DecoObject(urbanObjects[Random.Range(0, urbanObjects.Count)]);
+                randomObj = new DecoObject(_urbanObjects[GetWeightedRandom(_urbanObjects, _totalUrbanWeight)]);
             }
             else
             {
-                randomObj = new DecoObject(environmentalObjects[Random.Range(0, environmentalObjects.Count)]);
+                randomObj = new DecoObject(_environmentalObjects[GetWeightedRandom(_environmentalObjects, _totalEnviromentalWeight)]);
             }
 
             obj = new DecoObject(randomObj);
@@ -231,5 +243,22 @@ public class IslandGenerator : MonoBehaviour
 
         
         return urbanness;
+    }
+
+    private int GetWeightedRandom(List<DecoObject> objs, int maxTotalWeight)
+    {
+        int weightSum = maxTotalWeight;
+
+        for(int i = 0; i < objs.Count; i++)
+        {
+            if (Random.Range(0, weightSum) < objs[i].weight)
+            {
+                return i;
+            }
+
+            weightSum -= objs[i].weight;
+        }
+
+        return 0;
     }
 }
