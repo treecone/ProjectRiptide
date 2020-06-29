@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum FrogAnim { Attack = 2, Close = 3};
+public enum FlowerFrogAttackState { Latched = 1 }
 
 public partial class FlowerFrog : Enemy
 {

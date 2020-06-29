@@ -2,21 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5 };
-public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
+public enum StingrayAttackState { BoltAttack = 1, CrossZap = 2};
 
-public partial class KoiBoss : Enemy
+public partial class Stingray : Enemy
 {
+    [SerializeField]
+    private GameObject _electricParticles;
+
+    private bool _crossZapping;
+    public bool CrossZapping => _crossZapping;
+
+    private Enemy _zapBuddy;
+
     // Start is called before the first frame update
     protected override void Start()
     {
         base.Start();
 
         //Set parameters
-        _enemyType = EnemyType.KoiBoss;
+        _enemyType = EnemyType.Stingray;
         _speed = 1.0f;
-        _health = 200;
-        _maxHealth = 200;
+        _health = 100;
+        _maxHealth = 100;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
@@ -26,18 +33,14 @@ public partial class KoiBoss : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
-        _animParm = new int[6] {
+        _animParm = new int[2] {
                     Animator.StringToHash("die"),
-                    Animator.StringToHash("velocity"),
-                    Animator.StringToHash("swimSpeed"),
-                    Animator.StringToHash("dive"),
-                    Animator.StringToHash("shoot"),
-                    Animator.StringToHash("uAttack")};
+                    Animator.StringToHash("velocity")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.1f;
-        _HostileAI = HostileKoiBoss;
+        _pushMult = 0.5f;
+        //_HostileAI = HostileKoiBoss;
         _PassiveAI = PassiveWanderRadius;
 
         //Setup health bar
@@ -55,7 +58,7 @@ public partial class KoiBoss : Enemy
     // Update is called once per frame
     protected override void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(10);
         }

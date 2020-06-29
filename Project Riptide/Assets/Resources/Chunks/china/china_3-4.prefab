@@ -92,6 +92,36 @@ Transform:
   m_Father: {fileID: 2934589199493013456}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2830382312343231035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5875727875907077113}
+  m_Layer: 0
+  m_Name: urbancenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5875727875907077113
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2830382312343231035}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.28, y: 0.181, z: -0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7477357870650517703}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2934589199493013459
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,6 +199,7 @@ GameObject:
   - component: {fileID: 5047464613349854781}
   - component: {fileID: 3613534259406179250}
   - component: {fileID: 189510327157142042}
+  - component: {fileID: 3307254931621960725}
   m_Layer: 0
   m_Name: Landscape.002
   m_TagString: Obstical
@@ -186,7 +217,9 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.9727437, z: -0, w: 0.2318832}
   m_LocalPosition: {x: -18.053463, y: -0.8, z: -41.18429}
   m_LocalScale: {x: 12.572851, y: 12.572852, z: 12.572851}
-  m_Children: []
+  m_Children:
+  - {fileID: 7477357870650517703}
+  - {fileID: 7443746340997020224}
   m_Father: {fileID: 6539645239587012173}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 169.34001, z: 0}
@@ -251,6 +284,215 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7896541262103531020, guid: e06ac290c023fb2439af954f27e1e489, type: 3}
+--- !u!114 &3307254931621960725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3070349196272642925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeb600cefa823c9448a965955bbcda1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _urbanObjects:
+  - gameObject: {fileID: 3058440683413789155, guid: c841153c005611944a9e8f1b32ee3b19,
+      type: 3}
+    rotatesToGround: 0
+    radius: 1
+    verticalOffset: 0
+    scale: 1
+    weight: 6
+  - gameObject: {fileID: 8743815636953833605, guid: aa8c8ecbd62b5dd4ca7e123016eeca06,
+      type: 3}
+    rotatesToGround: 0
+    radius: 1
+    verticalOffset: 0
+    scale: 1
+    weight: 1
+  - gameObject: {fileID: 5303237210409156700, guid: b758776514adf384097fb487854c33d3,
+      type: 3}
+    rotatesToGround: 0
+    radius: 1
+    verticalOffset: 0
+    scale: 1
+    weight: 5
+  - gameObject: {fileID: 2339884094231612069, guid: bd8fd1b1f30b5f74dacec8f820a1feda,
+      type: 3}
+    rotatesToGround: 0
+    radius: 1
+    verticalOffset: 0
+    scale: 1
+    weight: 5
+  _environmentalObjects:
+  - gameObject: {fileID: 4635096560737462701, guid: 334168bd521dee3459a38527d0fa8453,
+      type: 3}
+    rotatesToGround: 1
+    radius: 1
+    verticalOffset: 0
+    scale: 0.1
+    weight: 1
+  - gameObject: {fileID: 5295656856987170344, guid: 97f3db0a347b93943a4897708b75506f,
+      type: 3}
+    rotatesToGround: 1
+    radius: 1
+    verticalOffset: 0
+    scale: 0.4
+    weight: 1
+  - gameObject: {fileID: 6386230386026282125, guid: 2cb1a735d76a80147a204ef6bbd4a8df,
+      type: 3}
+    rotatesToGround: 1
+    radius: 1
+    verticalOffset: 0
+    scale: 0.1
+    weight: 1
+  - gameObject: {fileID: 524079080251739595, guid: 1439e7585a8aef74a9c57b11574b12c7,
+      type: 3}
+    rotatesToGround: 0
+    radius: 3
+    verticalOffset: 0
+    scale: 1
+    weight: 3
+  - gameObject: {fileID: 6668936360918409274, guid: e59e833d8dadd2047ae154930c1cb4f7,
+      type: 3}
+    rotatesToGround: 0
+    radius: 3
+    verticalOffset: 0
+    scale: 1
+    weight: 3
+  _waterHeight: 0.9
+  _numUrbanCenters: 0
+  _numEnvironmentalCenters: 3
+  _numDecoObjects: 100
+  _manualUrbanCenters: 1
+  _manualEnviromentalCenters: 1
+  _setup: 0
+  _generate: 0
+  _clear: 0
+--- !u!1 &5067228218159377951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3672863292760344656}
+  m_Layer: 0
+  m_Name: envirocenter (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3672863292760344656
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5067228218159377951}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.105, y: 0.282, z: 0.46}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7443746340997020224}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6006800758400019620
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7443746340997020224}
+  m_Layer: 0
+  m_Name: EnvironmentalCenters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7443746340997020224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6006800758400019620}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5678464849601542546}
+  - {fileID: 3672863292760344656}
+  m_Father: {fileID: 2861283184606750466}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6135311148496573062
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7477357870650517703}
+  m_Layer: 0
+  m_Name: UrbanCenters
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7477357870650517703
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6135311148496573062}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5875727875907077113}
+  m_Father: {fileID: 2861283184606750466}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8456269507155126675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5678464849601542546}
+  m_Layer: 0
+  m_Name: envirocenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5678464849601542546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8456269507155126675}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.428, y: 0.282, z: -0.21}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7443746340997020224}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5590226217375489527
 PrefabInstance:
   m_ObjectHideFlags: 0

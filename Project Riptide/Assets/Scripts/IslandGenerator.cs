@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-[ExecuteInEditMode]
+[ExecuteAlways]
 public class IslandGenerator : MonoBehaviour
 {
     [System.Serializable]
@@ -50,6 +50,12 @@ public class IslandGenerator : MonoBehaviour
 
     [SerializeField]
     private int _numDecoObjects;
+
+    [SerializeField]
+    private bool _manualUrbanCenters;
+    [SerializeField]
+    private bool _manualEnviromentalCenters;
+
     [Header("Island generation tools - check box to use")]
     [SerializeField]
     private bool _setup;
@@ -115,28 +121,67 @@ public class IslandGenerator : MonoBehaviour
         _waterHeight = 0.9f;
         _urbanCenters = new List<Vector3>();
         _environmentalCenters = new List<Vector3>();
-        for (int i = 0; i < _numUrbanCenters; i++)
+        if (!_manualUrbanCenters)
         {
-            Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
-            while (randPoint.y <= _waterHeight)
+            for (int i = 0; i < _numUrbanCenters; i++)
             {
-                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
-                randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
-                randPoint += transform.position;
-            }
+                Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+                while (randPoint.y <= _waterHeight)
+                {
+                    randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                    randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                    randPoint += transform.position;
+                }
 
-            _urbanCenters.Add(randPoint);
-        }
-        for (int i = 0; i < _numEnvironmentalCenters; i++)
-        {
-            Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
-            while (randPoint.y <= _waterHeight)
-            {
-                randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
-                randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
-                randPoint += transform.position;
+                _urbanCenters.Add(randPoint);
             }
-            _environmentalCenters.Add(randPoint);
+        }
+        else
+        {
+            //Manually set up urban centers
+            Transform urbanCenters = transform.Find("UrbanCenters");
+            if(urbanCenters != null)
+            {
+                for(int i = 0; i < urbanCenters.childCount; i++)
+                {
+                    _urbanCenters.Add(urbanCenters.GetChild(i).position);
+                }
+            }
+            else
+            {
+                Debug.LogError("Place urban centers under a gameobject named 'UrbanCenters' parented to the island.");
+            }
+        }
+
+        if (!_manualEnviromentalCenters)
+        {
+            for (int i = 0; i < _numEnvironmentalCenters; i++)
+            {
+                Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+                while (randPoint.y <= _waterHeight)
+                {
+                    randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                    randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                    randPoint += transform.position;
+                }
+                _environmentalCenters.Add(randPoint);
+            }
+        }
+        else
+        {
+            //Manually set up enviromental centers
+            Transform environmentalCenters = transform.Find("EnvironmentalCenters");
+            if (environmentalCenters != null)
+            {
+                for (int i = 0; i < environmentalCenters.childCount; i++)
+                {
+                    _environmentalCenters.Add(environmentalCenters.GetChild(i).position);
+                }
+            }
+            else
+            {
+                Debug.LogError("Place environmental centers under a gameobject named 'EnvironmentalCenters' parented to the island.");
+            }
         }
     }
     private void CreateDecoObject()
