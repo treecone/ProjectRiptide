@@ -584,7 +584,7 @@ public partial class Enemy : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 200.0f * (1f / 60f / Time.deltaTime);
+            backForce *= 200.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
         else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
@@ -595,7 +595,7 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 5.0f * _pushMult * (1f / 60f / Time.deltaTime);
+                backForce *= 5.0f * _pushMult * (60 * Time.deltaTime);
                 ApplyForce(backForce);
             }
         }
@@ -604,7 +604,7 @@ public partial class Enemy : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 5.0f * _pushMult * (1f / 60f / Time.deltaTime);
+            backForce *= 5.0f * _pushMult * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
     }
