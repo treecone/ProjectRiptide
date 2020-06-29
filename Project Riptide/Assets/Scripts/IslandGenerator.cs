@@ -52,9 +52,12 @@ public class IslandGenerator : MonoBehaviour
     private int _numDecoObjects;
     [Header("Island generation tools - check box to use")]
     [SerializeField]
+    private bool _setup;
+    [SerializeField]
     private bool _generate;
     [SerializeField]
     private bool _clear;
+    
     private List<DecoObject> _decoObjects;
     private List<GameObject> _clones;
     private int _totalUrbanWeight;
@@ -67,12 +70,17 @@ public class IslandGenerator : MonoBehaviour
         _decoObjects = new List<DecoObject>();
         _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
 
-        Setup();   
+          
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (_setup)
+        {
+            _setup = false;
+            Setup();
+        }
         if(_generate)
         {
             _totalUrbanWeight = 0;
