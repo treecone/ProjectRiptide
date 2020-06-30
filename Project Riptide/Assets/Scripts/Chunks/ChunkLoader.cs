@@ -351,15 +351,6 @@ public class ChunkLoader : MonoBehaviour
                         // Set the chunk as active and add it to the list of active chunks.
                         chunks[x, z].chunk.SetActive(true);
                         visibleChunks.Add(chunks[x, z]);
-                        // Get the name of the boss to add if there is supposed to be a boss in this chunk.
-                        //string monsterName = GetMonsterName(chunks[x, z].region);
-                        //// Monster is not yet loaded in this chunk
-                        //if (monsters.ContainsKey(monsterName) && monsters[monsterName] == null)
-                        //{
-                        //    // Load in the monster.
-                        //    LoadMonster(chunks[x, z].center, new Vector2(x,z), monsterName);
-                        //}
-                        // There are enemies that are supposed to be in this chunk so see if they need to be loaded in...
                         if (chunks[x, z].hasEnemies)
                         {
                             CheckLoadEnemies(chunks[x, z]);
