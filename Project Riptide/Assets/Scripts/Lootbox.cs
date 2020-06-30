@@ -8,7 +8,9 @@ public class Lootbox : MonoBehaviour
     private List<Mesh> _meshes;
     [SerializeField]
     private List<Material> _rarityMaterials;
-    
+    [SerializeField]
+    public Inventory _inventory;
+
     public string dropType;
 
     public List<Item> items;
@@ -21,13 +23,13 @@ public class Lootbox : MonoBehaviour
     {
         _meshFilter = GetComponent<MeshFilter>();
         _meshRenderer = GetComponent<MeshRenderer>();
-        _hitbox = GetComponent<Hitbox>();
-        _hitbox.OnTrigger += DropItems;
+        _hitbox = GetComponentInChildren<Hitbox>();
+        
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+        _hitbox.OnTrigger += DropItems;
         SetShape();
     }
 
@@ -64,6 +66,14 @@ public class Lootbox : MonoBehaviour
 
     private void DropItems(GameObject obj)
     {
-
+        if (obj.tag == "Player")
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                _inventory.AddItem(items[i].Name, items[i].Amount);
+            }
+            Destroy(gameObject);
+        }
+        
     }
 }

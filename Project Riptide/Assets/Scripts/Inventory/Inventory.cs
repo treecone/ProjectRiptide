@@ -9,7 +9,6 @@ public class Inventory : MonoBehaviour
     //need to refactor
     #region Fields
     public List<GameObject> inventorySlots;
-    protected ItemDatabase _itemDatabase;
     public Upgrades shipUpgradeScript;
     private int _inventoryIndex = 0;
     private int _totalGold = 0;
@@ -29,7 +28,6 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
-        _itemDatabase = GameObject.FindWithTag("GameManager").GetComponent<ItemDatabase>();
     }
 
 
@@ -97,8 +95,8 @@ public class Inventory : MonoBehaviour
         if (Input.GetKey(KeyCode.J))
         {
             GameObject lootable = Instantiate(Resources.Load("Inventory/Lootable"), new Vector3(Random.Range(0, 5), Random.Range(0, 5), Random.Range(0, 5)), Quaternion.identity) as GameObject;
-            lootable.GetComponent<Lootable>().itemStored = _itemDatabase.GetRandomItem();
-            lootable.GetComponent<Lootable>().lightColor = _itemDatabase.rarityColors[lootable.GetComponent<Lootable>().itemStored.Rarity];
+            lootable.GetComponent<Lootable>().itemStored = ItemDatabase.instance.GetRandomItem();
+            lootable.GetComponent<Lootable>().lightColor = ItemDatabase.instance.rarityColors[lootable.GetComponent<Lootable>().itemStored.Rarity];
         }
     }
 
@@ -111,40 +109,40 @@ public class Inventory : MonoBehaviour
     {
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
-        Item itemToAdd = _itemDatabase.FindItem(itemName);
-        Debug.Log("Adding item " + itemToAdd.Name);
+        Item itemToAdd = ItemDatabase.instance.FindItem(itemName);
+        //Debug.Log("Adding item " + itemToAdd.Name);
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             
             InventorySlot slot = inventorySlots[i].GetComponent<InventorySlot>();
-            Debug.Log("trying to add in slot " + i + ". slot currently has " + slot.item.Amount + " " + slot.item.Name + " out of a max of " + slot.item.MaxAmount);
+            //Debug.Log("trying to add in slot " + i + ". slot currently has " + slot.item.Amount + " " + slot.item.Name + " out of a max of " + slot.item.MaxAmount);
             if (slot.item.Name == itemToAdd.Name && slot.item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
-                Debug.Log("slot " + i + " has same item and has room.");
+                //Debug.Log("slot " + i + " has same item and has room.");
                 if (slot.item.Amount + amountToAddTemp <= slot.item.MaxAmount)
                 {
-                    Debug.Log("can fit rest of items in this slot, finishing");
+                    //Debug.Log("can fit rest of items in this slot, finishing");
                     slot.item.Amount += amountToAddTemp;
                     slot.UpdateSlotVisuals();
                     return; //Item is completely in the inventory now, end
                 }
                 else //amount to add is too much, split it up
                 {
-                    Debug.Log("cannot fit all items in this slot, amountToAdd reduced from " + amountToAddTemp);
+                    //Debug.Log("cannot fit all items in this slot, amountToAdd reduced from " + amountToAddTemp);
                     slot.item.Amount = slot.item.MaxAmount;
                     amountToAddTemp -= (slot.item.MaxAmount - slot.item.Amount);
-                    Debug.Log("to " + amountToAddTemp);
+                    //Debug.Log("to " + amountToAddTemp);
                     slot.UpdateSlotVisuals();
                 }
             }
             else if (slot.item.Id == 0)
             {
-                Debug.Log("slot " + i + " is empty, enqueueing");
+                //Debug.Log("slot " + i + " is empty, enqueueing");
                 //Slots is empty, store it temp
                 tempClearSlots.Enqueue(i);
             } else if(slot.item.Name == itemToAdd.Name)
             {
-                Debug.Log("slot has " + slot.item.Name + ", but is full");
+                //Debug.Log("slot has " + slot.item.Name + ", but is full");
             }
         }
 
@@ -157,10 +155,10 @@ public class Inventory : MonoBehaviour
                 {
                     debugStr += i + ", ";
                 }
-                Debug.Log(debugStr);
+                //Debug.Log(debugStr);
 
                 int itemSlotNumber = tempClearSlots.Dequeue();
-                Debug.Log("trying empty slot " + itemSlotNumber);
+                //Debug.Log("trying empty slot " + itemSlotNumber);
                 InventorySlot theSlot = inventorySlots[itemSlotNumber].GetComponent<InventorySlot>();
                 if (itemToAdd.MaxAmount >= amountToAddTemp)
                 {
@@ -196,7 +194,7 @@ public class Inventory : MonoBehaviour
         newSlot.GetComponent<ItemSlot>().UpdateSlotVisuals();
         */
 
-    
+
     }
 
     /// <summary>
@@ -212,7 +210,7 @@ public class Inventory : MonoBehaviour
             Debug.LogWarning("Nothing in inventory, nothing to delete!");
             return false;
         }
-        Item itemToRemove = _itemDatabase.FindItem(itemName);
+        Item itemToRemove = ItemDatabase.instance.FindItem(itemName);
         for (int i = this.Size - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
             InventorySlot slot = inventorySlots[i].GetComponent<InventorySlot>();
@@ -221,7 +219,7 @@ public class Inventory : MonoBehaviour
                 if (this[i].Amount <= amount)
                 {
                     int newAmount = amount - this[i].Amount;
-                    slot.item = _itemDatabase.FindItem("null");
+                    slot.item = ItemDatabase.instance.FindItem("null");
                     slot.UpdateSlotVisuals();
                     RemoveItem(itemName, newAmount); //Recursive
                 }
@@ -300,4 +298,19 @@ public class Inventory : MonoBehaviour
         return itemList;
     }
 
+    private void LogInventory()
+    {
+        for(int i = 0; i < Size; i++)
+        {
+            Debug.Log(this[i].Name + " - " + this[i].Amount);
+        }
+    }
+
+    private void UpdateInventoryVisuals()
+    {
+        for(int i = 0; i < Size; i++)
+        {
+            inventorySlots[i].GetComponent<InventorySlot>().UpdateSlotVisuals();
+        }
+    }
 }
