@@ -6,7 +6,12 @@ public class ChickenFish : Physics
 {
     private const float SEPERATION_DISTANCE = 3.0f;
     private const float COHESION_DISTANCE = 5.0f;
-    private const float MIN_Y = -1.3f;
+    private float _minY = -1.3f;
+
+    public float MinY
+    {
+        set { _minY = value; }
+    }
 
     private Vector3 _gravity;
     private Animator _animator;
@@ -42,7 +47,7 @@ public class ChickenFish : Physics
     /// </summary>
     public void MoveUpAndDown()
     {
-        if(transform.position.y < MIN_Y)
+        if(transform.position.y < _minY)
         {
             ApplyArcForce(Vector3.up, 0, 3.5f, 1.5f);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum PandateeAnim { Situp = 2, Dive = 3};
+public enum PandateePassiveState { Eat = 1, Underwater = 3 };
 
 public partial class Pandatee : Enemy
 {

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 686222013300795742}
   - component: {fileID: 8583738020664976924}
   m_Layer: 4
-  m_Name: china_island2
+  m_Name: china_koi
   m_TagString: enemyChunk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,6 +89,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 545190446774179470}
+  - component: {fileID: 1704963920704198253}
   m_Layer: 0
   m_Name: koi
   m_TagString: Untagged
@@ -110,6 +111,20 @@ Transform:
   m_Father: {fileID: 4239768588607854247}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1704963920704198253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3293850339785053053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9326f8c7fbdd84c4888b677c87cf20c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemyPrefab: {fileID: 6999395955324292061, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
+    type: 3}
 --- !u!1001 &65696299631455916
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public enum ClamOpenState { Dragon = 0, Bird = 1, WaterSpout = 2}; 
 public enum ClamAnim { Open = 2, Close = 3, SpeedScale = 4};
+public enum ClamAttackState { Opened = 1, TentacleBurst = 2, TentacleTripleBurst = 3, OpenAttack = 4, TentacleCircle = 5, TentacleTrack = 6, TentacleLine = 7 }
 
 public partial class ClamBoss : Enemy
 {
@@ -152,7 +153,7 @@ public partial class ClamBoss : Enemy
         if(player.tag == "Player")
         {
             //Deal 2 damage per second for 5 seconds
-            player.GetComponent<StatusEffects>().AddStatus("poison", 5.0f, 4.0f);
+            player.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, 5.0f, 4.0f);
         }
     }
 

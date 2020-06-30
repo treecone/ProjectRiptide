@@ -235,6 +235,10 @@ public partial class KoiBoss : Enemy
         if (time == 0)
         {
             StopMotion();
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, (_lengthMult + 15f) / transform.localScale.z), new Vector3(_widthMult, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+            }
         }
 
         if (time <= MAX_TIME - STALL_TIME)
@@ -271,6 +275,11 @@ public partial class KoiBoss : Enemy
             _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
             ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
+            if(DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         if (!_inKnockback)
@@ -378,6 +387,10 @@ public partial class KoiBoss : Enemy
             if (time == 0)
             {
                 StopMotion();
+                if(DoTelegraphs())
+                {
+                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30f) / transform.localScale.z), new Vector3(22.0f, 1, 62.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Cone, true);
+                }
             }
 
             //Look towards player
@@ -385,6 +398,7 @@ public partial class KoiBoss : Enemy
             Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
             SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
             //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+            ApplyFriction(0.99f);
         }
 
         if (time >= MAX_TIME)
@@ -404,14 +418,19 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastAttack(ref float time)
     {
+        if(DoTelegraphs())
+        {
+            _telegraphs[0].transform.parent = null;
+            ClearTelegraphs();
+        }
         //Spawn projectiles
-        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
 
         return false;
     }
@@ -424,6 +443,8 @@ public partial class KoiBoss : Enemy
     protected bool KoiBubbleAttack(ref float time)
     {
         SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(1.0f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
+        ClearTelegraphs();
 
         return false;
     }
@@ -442,6 +463,11 @@ public partial class KoiBoss : Enemy
         {
             _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
             _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         if (!_inKnockback)
@@ -603,6 +629,15 @@ public partial class KoiBoss : Enemy
         const float MAX_TIME = 4.5f;
         const float STALL_TIME = 0.5f;
 
+        if (time == 0)
+        {
+            _maxSpeed += 5.0f;
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, TelegraphType.Circle, true);
+            }
+        }
+
         if (time < MAX_TIME - STALL_TIME)
         {
             Vector3 destination = Vector3.zero;
@@ -636,6 +671,7 @@ public partial class KoiBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            _maxSpeed -= 5.0f;
             StopMotion();
             return false;
         }
@@ -661,6 +697,11 @@ public partial class KoiBoss : Enemy
             _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
             _gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
             _animator.SetTrigger(_animParm[(int)CarpAnim.UAttack]);
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         if (time <= 0.95f)
@@ -693,7 +734,10 @@ public partial class KoiBoss : Enemy
         //At the end of the attack, stop motion and remove hitbox
         if (time > 0.95f && _hitboxes.Count > 0)
         {
-            _position = new Vector3(_position.x, _startPos.y, _position.z);
+            if (!_inKnockback)
+            {
+                _position = new Vector3(_position.x, _startPos.y, _position.z);
+            }
             PlaySplash();
             StopMotion();
             Destroy(_hitboxes[_hitboxes.Count - 1]);
@@ -739,7 +783,7 @@ public partial class RockCrab : Enemy
             //Set up telegraph
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), true);
+                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -840,6 +884,10 @@ public partial class FlowerFrog : Enemy
             if (time == 0)
             {
                 StopMotion();
+                if(DoTelegraphs())
+                {
+                    CreateTelegraph(new Vector3(0, 0, 10 / transform.localScale.z), new Vector3(_widthMult, 1, 20), Quaternion.identity, TelegraphType.Square, true);
+                }
             }
 
             //Look towards player
@@ -871,11 +919,16 @@ public partial class FlowerFrog : Enemy
         const float WINDUP_TIME = 0.2f;
         const float MAX_TIME = SHOOT_TIME + WINDUP_TIME;
 
-        if(time == 0)
+        if (time == 0)
         {
             _animator.SetTrigger(_animParm[(int)FrogAnim.Attack]);
             _hitboxes.Add(CreateHitbox(_tounge.transform.localPosition, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
             _hitboxes[_hitboxes.Count - 1].transform.parent = _tounge.transform;
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         if (time > WINDUP_TIME)
@@ -992,10 +1045,16 @@ public partial class ClamBoss : Enemy
                     .GetComponent<ClamTentacle>()
                     .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, 5.0f, 2.0f, 1.0f, 2.0f, _speedScale, 1);
             }
+
+            /*if(DoTelegraphs())
+            {
+                CreateTelegraph(Vector3.zero, new Vector3(CIRCLE_RADIUS + 2.0f, 1, CIRCLE_RADIUS + 2.0f), Quaternion.identity, true);
+            }*/
         }
 
         if(time >= MAX_TIME)
         {
+            ClearTelegraphs();
             return false;
         }
         else
@@ -1054,6 +1113,11 @@ public partial class ClamBoss : Enemy
                 .GetComponent<ClamTentacle>()
                 .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1.5f);
             _lineOffset += 5.0f;
+            if(DoTelegraphs() && _lineOffset == 10.0f)
+            {
+                CreateTelegraph(transform.InverseTransformVector(_lineForward.normalized) * 20, new Vector3(1.2f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(_lineForward), TelegraphType.Square, true);
+                ClearTelegraphs();
+            }
         }
 
         if (time >= MAX_TIME)
@@ -1113,7 +1177,8 @@ public partial class ClamBoss : Enemy
         {
             _animator.Play(_animParm[(int)ClamAnim.Open]);
             //Choose a random open state
-            _openState = (ClamOpenState)Random.Range(0, 3);
+            //_openState = (ClamOpenState)Random.Range(0, 3);
+            _openState = ClamOpenState.Dragon;
         }
 
         if(time >= MAX_TIME)
@@ -1215,7 +1280,7 @@ public partial class ClamBoss : Enemy
         if (time == 0)
         {
             //Create hitbox and water spout
-            _waterSpoutDown = Instantiate(_waterSpoutDownPrefab, new Vector3(_position.x, _position.y + 42f, _position.z), _waterSpoutDownPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
+            _waterSpoutDown = Instantiate(_waterSpoutDownPrefab, new Vector3(_position.x, _position.y + 26f, _position.z), _waterSpoutDownPrefab.transform.rotation, transform).GetComponent<ParticleSystem>();
             shape = _waterSpoutDown.shape;
             shape.scale = new Vector3(0, 0, -1);
             ParticleSystem.MainModule main = _waterSpoutDown.main;
@@ -1223,6 +1288,10 @@ public partial class ClamBoss : Enemy
             main.startLifetimeMultiplier *= _speedScale;
             _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0,2,0), HitboxType.EnemyHitbox, 0));
             _hitboxes[_hitboxes.Count - 1].GetComponent<Hitbox>().OnStay += DealWaterSpoutDamage;
+            if(DoTelegraphs())
+            {
+                CreateTelegraph(Vector3.zero, new Vector3(13, 1, 13), Quaternion.identity, TelegraphType.Circle, true);
+            }
         }
 
         if (time < MAX_TIME - STALL_TIME)
@@ -1238,6 +1307,7 @@ public partial class ClamBoss : Enemy
             if (_waterSpoutUp.isEmitting)
             {
                 ClearHitboxes();
+                ClearTelegraphs();
                 //Don't stop particles instantly, let them trickel off
                 _waterSpoutUp.Stop(true, ParticleSystemStopBehavior.StopEmitting);
                 _waterSpoutDown.Stop(true, ParticleSystemStopBehavior.StopEmitting);
@@ -1289,6 +1359,11 @@ public partial class ClamBoss : Enemy
                 projectile = Instantiate(_stickPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
             }
             projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 5, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), TelegraphType.Square, true);
+                ClearTelegraphs();
+            }
 
             //Randomly rotate projectile
             Quaternion randomRotation = Random.rotation;
@@ -1323,7 +1398,8 @@ public partial class ClamBoss : Enemy
             {
                 Vector3 smokePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.up * 2.0f;
                 Vector3 smokeDistanceVec = smokePosition - transform.position;
-                Quaternion smokeRotation = Quaternion.LookRotation(new Vector3(smokeDistanceVec.x, 0, smokeDistanceVec.z));
+                Vector3 smokeDirection = new Vector3(smokeDistanceVec.x, 0, smokeDistanceVec.z);
+                Quaternion smokeRotation = Quaternion.LookRotation(smokeDirection);
                 _dragonSmokeParticles.Add(Instantiate(_dragonSmokePrefab, smokePosition + Vector3.up * -2, smokeRotation).GetComponent<ParticleSystem>());
                 _dragonSmokeParticles[i].transform.localScale = Vector3.zero;
                 GameObject hitbox = Instantiate(_hitbox, _dragonSmokeParticles[i].transform);
@@ -1331,6 +1407,11 @@ public partial class ClamBoss : Enemy
 
                 //Add poison damage when player enters hitbox
                 hitbox.GetComponent<Hitbox>().OnTrigger += DealDragonPoison;
+
+                if(DoTelegraphs())
+                {
+                    CreateTelegraph(transform.InverseTransformVector(smokeDirection.normalized) * 23, new Vector3(1.5f, 1, 46 / transform.localScale.z), Quaternion.LookRotation(smokeDirection), TelegraphType.Square, true);
+                }
             }
         }
 
@@ -1341,6 +1422,7 @@ public partial class ClamBoss : Enemy
 
         if (time > MAX_TIME)
         {
+            ClearTelegraphs();
             return false;
         }
         else
@@ -1368,7 +1450,7 @@ public partial class ClamBoss : Enemy
         {
             for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
             {
-                Destroy(_dragonSmokeParticles[i].gameObject);
+                _dragonSmokeParticles[i].Stop();
             }
             _dragonSmokeParticles.Clear();
             return false;
@@ -1442,6 +1524,17 @@ public partial class ChickenFishFlock : Enemy
             GameObject hitbox = Instantiate(_hitbox, _chickenFlock[_attackingChickenID].transform);
             hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 0.11f), new Vector3(2.2f, 2.2f, 2.2f), HitboxType.EnemyHitbox, 10);
             hitbox.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+
+            //Set up telegraph
+            if (DoTelegraphs())
+            {
+                GameObject temp = Instantiate(_telegraphPrefab[(int)TelegraphType.Square], _chickenFlock[_attackingChickenID].transform.position, _chickenFlock[_attackingChickenID].transform.rotation, _chickenFlock[_attackingChickenID].transform);
+                temp.transform.localPosition = new Vector3(0,0, 7.5f / _chickenFlock[_attackingChickenID].transform.localScale.z);
+                temp.transform.localScale = new Vector3(1, 1, 15f);
+                _telegraphs.Add(temp);
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
         }
 
         //While not in knockback
@@ -1450,7 +1543,6 @@ public partial class ChickenFishFlock : Enemy
             //If monster hits player or obstical do knockback
             if (_playerCollision || _obsticalCollision)
             {
-                Debug.Log(_playerCollision);
                 _inKnockback = true;
                 _chickenFlock[_attackingChickenID].StopHorizontalMotion();
                 _chickenFlock[_attackingChickenID].ApplyMoveForce(-_chickenFlock[_attackingChickenID].transform.forward, 2.0f, 0.3f);

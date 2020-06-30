@@ -11,6 +11,8 @@ public class ClamTentacle : Physics
     [SerializeField]
     protected GameObject _hitboxPrefab;
     [SerializeField]
+    protected GameObject _telegraphPrefab;
+    [SerializeField]
     protected GameObject _particles;
 
     protected const float HEIGHT = 10.0f;
@@ -26,6 +28,7 @@ public class ClamTentacle : Physics
     protected Animator _animator;
     protected int[] _animParm;
     protected GameObject _hitbox;
+    protected GameObject _telegraph;
     protected float _damage;
     protected float _speedScale;
 
@@ -39,6 +42,10 @@ public class ClamTentacle : Physics
     protected override void Update()
     {
         _particles.transform.position = _particlePosition;
+        if(_telegraph != null)
+        {
+            _telegraph.transform.position = new Vector3(_telegraph.transform.position.x, _particles.transform.position.y, _telegraph.transform.position.z);
+        }
 
         switch(_mode)
         {
@@ -138,12 +145,21 @@ public class ClamTentacle : Physics
                 }
                 break;
             case TentacleState.Tracking:
+                if (_time == 0)
+                {
+                    if (DoTelegraphs())
+                    {
+                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 5 / transform.localScale.z), new Vector3(3.0f, 1.0f, 10.0f));
+
+                    }
+                }
                 //For tracking, just stall for time
                 _time += Time.deltaTime;
 
                 if (_time > _trackingTime)
                 {
                     _time = 0;
+                    ClearTelegraph();
                     _state = TentacleState.Attacking;
                 }
                 break;
@@ -224,6 +240,14 @@ public class ClamTentacle : Physics
                 break;
             case TentacleState.Tracking:
                 //Track player
+                if(_time == 0)
+                {
+                    if (DoTelegraphs())
+                    {
+                        CreateTelegraph(new Vector3(0, _particles.transform.localPosition.y, 5 / transform.localScale.z), new Vector3(3.0f, 1.0f, 10.0f));
+                    }
+                }
+
                 if (_time < _trackingTime)
                 {
                     _time += Time.deltaTime;
@@ -233,6 +257,7 @@ public class ClamTentacle : Physics
                 }
                 else
                 {
+                    ClearTelegraph();
                     _time = 0;
                     _state = TentacleState.Attacking;
                 }
@@ -343,5 +368,32 @@ public class ClamTentacle : Physics
                 }
                 break;
         }
+    }
+
+    /// <summary>
+    /// Creates a telegraph and adds it to the telegraph
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Local scale</param>
+    protected void CreateTelegraph(Vector3 position, Vector3 scale)
+    {
+        GameObject temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation, transform);
+        temp.transform.localPosition = position;
+        temp.transform.localScale = scale;
+
+        _telegraph = temp;
+    }
+
+    /// <summary>
+    /// Clears current telegraph
+    /// </summary>
+    protected void ClearTelegraph()
+    {
+        _telegraph.GetComponentInChildren<ParticleSystem>().Stop();
+    }
+
+    protected bool DoTelegraphs()
+    {
+        return true;
     }
 }

@@ -13,8 +13,9 @@ public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
-    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9}
+    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10}
 public enum Anim { Die = 0, Velocity = 1};
+public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 
 
 public partial class Enemy : Physics
@@ -27,9 +28,13 @@ public partial class Enemy : Physics
     [SerializeField]
     protected GameObject _hitbox;
     [SerializeField]
-    protected GameObject _telegraphPrefab;
+    protected List<GameObject> _telegraphPrefab;
     [SerializeField]
     protected GameObject _splashParticle;
+    [SerializeField]
+    protected GameObject _lootboxPrefab;
+    [SerializeField]
+    protected string _lootType;
     protected Camera _camera;
 
     //Health fields
@@ -108,9 +113,19 @@ public partial class Enemy : Physics
 
     protected float _rotationalVeloctiy = 0.5f;
 
+    protected Renderer _renderer;
+    protected bool _isVisible;
+    protected GameObject _offScreenIndicator;
+    public GameObject OffScreenIndicator
+    {
+        get { return _offScreenIndicator; }
+        set { _offScreenIndicator = value; }
+    }
+
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
     public bool IsDying => _dying;
+    public bool IsVisible => _isVisible;
 
     protected Vector2 _enemyStartingChunk;
     public Vector2 EnemyStartingChunk
@@ -119,8 +134,8 @@ public partial class Enemy : Physics
         set { _enemyStartingChunk = value; }
     }
 
-    protected Vector2 _enemyStartingPosition;
-    public Vector2 EnemyStartingPosition
+    protected Vector3 _enemyStartingPosition;
+    public Vector3 EnemyStartingPosition
     {
         get { return _enemyStartingPosition; }
         set { _enemyStartingPosition = value; }
@@ -155,6 +170,7 @@ public partial class Enemy : Physics
         _canvas.transform.GetChild(0).gameObject.SetActive(false);
         _hitboxes = new List<GameObject>();
         _actionQueue = new Queue<MonsterAction>();
+        _telegraphs = new List<GameObject>();
         ShipMovement movement = player.GetComponent<ShipMovement>();
         PlayerPosition = movement.GetPosition;
         PlayerVelocity = movement.GetVelocity;
@@ -162,6 +178,7 @@ public partial class Enemy : Physics
         SendFriction = movement.ApplyFriction;
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
+        _renderer = GetComponentInChildren<Renderer>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
         _detectPosition = transform.GetChild(transform.childCount - 1);
@@ -220,6 +237,15 @@ public partial class Enemy : Physics
 
             _playerCollision = false;
             _obsticalCollision = false;
+
+            if(!_isVisible && _renderer.isVisible)
+            {
+                _isVisible = true;
+            }
+            else if(_isVisible && !_renderer.isVisible)
+            {
+                _isVisible = false;
+            }
 
             base.Update();
         }
@@ -287,6 +313,7 @@ public partial class Enemy : Physics
         _inKnockback = false;
         _actionQueue.Clear();
         ClearHitboxes();
+        ClearTelegraphs();
         _currTime = 0;
     }
 
@@ -399,19 +426,27 @@ public partial class Enemy : Physics
         _hitboxes.Clear();
     }
 
-    protected void CreateTelegraph(Vector3 position, Vector3 scale, bool parented)
+    /// <summary>
+    /// Creates a telegraph and adds it to the telegraph list
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Local scale</param>
+    /// <param name="rotation">Global rotation, if identity rotation doesn't change</param>
+    /// <param name="parented">If the telegraph is parented to the enemy or not</param>
+    protected void CreateTelegraph(Vector3 position, Vector3 scale, Quaternion rotation, TelegraphType telegraphType, bool parented)
     {
         GameObject temp;
-        if(parented)
+        temp = Instantiate(_telegraphPrefab[(int)telegraphType], transform.position, transform.rotation, transform);
+        temp.transform.localPosition = position;
+        temp.transform.localScale = scale;
+        if (rotation != Quaternion.identity)
         {
-            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation, transform);
+            temp.transform.rotation = rotation;
         }
-        else
+        if(!parented)
         {
-            temp = Instantiate(_telegraphPrefab, transform.position, transform.rotation);
+            temp.transform.parent = null;
         }
-        temp.transform.localPosition = new Vector3(0, 0, 7.5f);
-        temp.transform.localScale = new Vector3(2, 1, 15f);
 
         _telegraphs.Add(temp);
     }
@@ -425,7 +460,7 @@ public partial class Enemy : Physics
         {
             _telegraphs[i].GetComponentInChildren<ParticleSystem>().Stop();
         }
-        _hitboxes.Clear();
+        _telegraphs.Clear();
     }
 
     /// <summary>
@@ -549,7 +584,7 @@ public partial class Enemy : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 200.0f;
+            backForce *= 200.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
         else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
@@ -560,7 +595,7 @@ public partial class Enemy : Physics
                 Vector3 backForce = transform.position - obstical.transform.position;
                 backForce = new Vector3(backForce.x, 0, backForce.z);
                 backForce.Normalize();
-                backForce *= 5.0f * _pushMult;
+                backForce *= 5.0f * _pushMult * (60 * Time.deltaTime);
                 ApplyForce(backForce);
             }
         }
@@ -569,7 +604,7 @@ public partial class Enemy : Physics
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 5.0f * _pushMult;
+            backForce *= 5.0f * _pushMult * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
     }
@@ -682,9 +717,19 @@ public partial class Enemy : Physics
         {
             _animator.SetTrigger(_animParm[(int)Anim.Die]);
         }
+        ClearTelegraphs();
         _dying = true;
         _isInvincible = true;
         _deathTimer = 0;
+        if(_lootType != "")
+        {
+            GameObject lootboxClone = Instantiate(_lootboxPrefab);
+            lootboxClone.transform.position = transform.position;
+            lootboxClone.transform.position = new Vector3(lootboxClone.transform.position.x, -0.3f, lootboxClone.transform.position.z);
+            Lootbox lootbox = lootboxClone.GetComponent<Lootbox>();
+            lootbox.dropType = _lootType;
+            lootbox.GenerateItems();
+        }
     }
 
     /// <summary>

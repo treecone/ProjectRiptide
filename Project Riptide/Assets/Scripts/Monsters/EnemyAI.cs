@@ -5,11 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
 public enum AttackState { Active = 0, FormChanged = 1, FormChangeInProgress = 2 }
-public enum FlowerFrogAttackState { Latched = 1 }
-public enum ClamAttackState { Opened = 1, TentacleBurst = 2, TentacleTripleBurst = 3, OpenAttack = 4, TentacleCircle = 5, TentacleTrack = 6, TentacleLine = 7 }
-public enum PandateePassiveState { Eat = 1, Underwater = 3};
 
 //AI available to all enemys
 public partial class Enemy : Physics
@@ -76,6 +72,7 @@ public partial class Enemy : Physics
     public void PassiveDoNothing()
     {
         //Do nothing
+        ApplyFriction(0.99f);
     }
     
     /// <summary>
@@ -314,6 +311,7 @@ public partial class KoiBoss : Enemy
                     _inKnockback = false;
                     _actionQueue.Clear();
                     ClearHitboxes();
+                    ClearTelegraphs();
                     _currTime = 0;
                     StopMotion();
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;
@@ -447,6 +445,7 @@ public partial class RockCrab : Enemy
         if (_position.y == _startPos.y)
         {
             //Do nothing
+            ApplyFriction(0.99f);
             return;
         }
 
@@ -1096,5 +1095,89 @@ public partial class ChickenFishFlock : Enemy
                 _activeStates[(int)AttackState.Active] = false;
             }
         }
+    }
+}
+
+public partial class Stingray : Enemy
+{
+    protected void HostileStingray()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If the Koi is not in any special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                if (_playerDistance > 6.0f)
+                {
+                    FollowPlayer();
+                }
+                else
+                {
+                    FleePlayer(1.0f);
+                }
+
+                //Decrement overall special cooldown, no special can be used while this is in cooldown.
+                if (_specialCooldown[(int)AttackState.Active] > 0)
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+
+                //Check to see if monster can use bolt attack
+                if (_playerDistance < 16.0f)
+                {
+                    _specialCooldown[(int)StingrayAttackState.BoltAttack] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.BoltAttack] < 0.0f && Random.Range(1, 4) == 1)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _specialCooldown[(int)AttackState.Active] = 5.0f;
+                        _specialCooldown[(int)StingrayAttackState.BoltAttack] = 6.0f;
+                        _currTime = 0;
+                        //Set up triple dash attack
+                        /*_actionQueue.Enqueue(StingrayBoltCharge);
+                        _actionQueue.Enqueue(StingrayBoltAttack);
+                        _actionQueue.Enqueue(KoiDashAttack);
+                        _actionQueue.Enqueue(KoiDashCharge);
+                        _actionQueue.Enqueue(KoiDashAttack);
+                        _actionQueue.Enqueue(KoiDashCharge);
+                        _actionQueue.Enqueue(KoiDashAttack);*/
+                    }
+                }
+
+                //Check to see if player can use charge projectile special attack
+                if (_playerDistance < 20.0f)
+                {
+                    _specialCooldown[(int)KoiAttackState.BubbleBlast] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _specialCooldown[(int)AttackState.Active] = 6.0f;
+                        _specialCooldown[(int)KoiAttackState.BubbleBlast] = 8.0f;
+                        _initalPos = transform.position.y;
+                        _currTime = 0;
+                        //Set up bubble blast attack
+                        /*_actionQueue.Enqueue(KoiStopTransition);
+                        _actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
+                        _actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
+                        _actionQueue.Enqueue(KoiBubbleBlastCharge);
+                        _actionQueue.Enqueue(KoiBubbleBlastAttack);*/
+                    }
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[0] = false;
+                }
+            }
+        }
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 }

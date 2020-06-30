@@ -13,7 +13,7 @@ public class Vault : Inventory
     {
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
-        Item itemToAdd = _itemDatabase.FindItem(itemName);
+        Item itemToAdd = ItemDatabase.instance.FindItem(itemName);
         Debug.Log("Adding item " + itemToAdd.Name);
         for (int i = 0; i < inventorySlots.Count; i++) //Checking to see if it can add the item to a existing slot
         {
