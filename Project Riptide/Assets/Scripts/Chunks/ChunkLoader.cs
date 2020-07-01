@@ -373,9 +373,9 @@ public class ChunkLoader : MonoBehaviour
                     if (close && !inVisibleChunks)
                     {
                         // Set the chunk as active and add it to the list of active chunks.
-                        chunks[x, z].chunk.SetActive(true);
-                        visibleChunks.Add(chunks[x, z]);
-                        if (chunks[x, z].hasEnemies)
+                        _chunks[x, z].chunk.SetActive(true);
+                        _visibleChunks.Add(_chunks[x, z]);
+                        if (_chunks[x, z].hasEnemies)
                         {
                             CheckLoadEnemies(_chunks[x, z]);
                         }
