@@ -4,11 +4,14 @@ using UnityEngine;
 
 public enum HitboxType { PlayerHitbox, EnemyHitbox, PlayerHurtbox, EnemyHurtbox};
 public delegate void HitboxEnter(GameObject hit);
+public delegate void HitboxDestroy();
 
 public class Hitbox : MonoBehaviour
 {
     public event HitboxEnter OnTrigger;
     public event HitboxEnter OnStay;
+    public event HitboxEnter OnExit;
+    public event HitboxDestroy OnDestruction;
 
     [SerializeField]
     private HitboxType _type;
@@ -123,6 +126,23 @@ public class Hitbox : MonoBehaviour
     {
         //Trigger any events associated with staying collided with another gameobject
         OnStay?.Invoke(other.gameObject);
+    }
+
+    /// <summary>
+    /// Called when collider exits hitbox
+    /// </summary>
+    /// <param name="other">Other collider</param>
+    private void OnTriggerExit(Collider other)
+    {
+        OnExit?.Invoke(other.gameObject);
+    }
+
+    /// <summary>
+    /// Called when hitbox is destroyed
+    /// </summary>
+    private void OnDestroy()
+    {
+        OnDestruction?.Invoke();
     }
 
     /// <summary>

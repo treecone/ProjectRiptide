@@ -39,12 +39,12 @@ public partial class Enemy : Physics
         ApplyForce(netForce);
     }
 
-    //General method for making the moster follow the player
+    //General method for making the moster flee a point
     //Usually should be used for enemy AI when not in an action
-    protected void FleePlayer(float speed)
+    protected void FleePoint(Vector3 point, float speed)
     {
         Vector3 destination = Vector3.zero;
-        Vector3 avoidDirection = (transform.position - PlayerPosition()) + transform.position;
+        Vector3 avoidDirection = (transform.position - point) + transform.position;
         //Check for obstacle
         if (CheckObstacle(new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z)))
         {
@@ -1177,8 +1177,7 @@ public partial class ClamBoss : Enemy
         {
             _animator.Play(_animParm[(int)ClamAnim.Open]);
             //Choose a random open state
-            //_openState = (ClamOpenState)Random.Range(0, 3);
-            _openState = ClamOpenState.Dragon;
+            _openState = (ClamOpenState)Random.Range(0, 3);
         }
 
         if(time >= MAX_TIME)
@@ -1578,6 +1577,156 @@ public partial class ChickenFishFlock : Enemy
             Destroy(_chickenFlock[_attackingChickenID].transform.GetChild(_chickenFlock[_attackingChickenID].transform.childCount - 1).gameObject);
             //Reset attacking chicken ID
             _attackingChickenID = -1;
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
+
+public partial class Stingray : Enemy
+{
+    /// <summary>
+    /// Charges an electric bolt to shoot towards player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool StingrayBoltCharge(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+        const float STALL_TIME = 0.5f;
+
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Stop motion at start
+            if (time == 0)
+            {
+                StopMotion();
+                _electricChargeParticles.Play();
+                if (DoTelegraphs())
+                {
+                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 15f) / transform.localScale.z), new Vector3(5.0f, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                }
+            }
+
+            //Look towards player
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+            ApplyFriction(0.99f);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Shoots electric bolt towards player
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool StingrayBoltAttack(ref float time)
+    {
+        const float MAX_TIME = 0.5f;
+
+        if (time == 0)
+        {
+            //Set up bolt particles
+            _electricBoltParticles = Instantiate(_electricBoltParticlesPrefab, transform.position, transform.rotation, transform);
+            _electricBoltParticles.transform.localPosition = new Vector3(0, 0, (_lengthMult + 13f) / transform.localScale.z);
+            _electricBoltParticles.transform.localScale = new Vector3(5.0f, 1, 15.0f / transform.localScale.z);
+            _electricBoltParticles.transform.parent = null;
+            _electricChargeParticles.Stop();
+
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
+
+            //Set up hitbox
+            _hitboxes.Add(CreateHitbox(new Vector3(0, 0.6f, 17), new Vector3(3.5f, 2.0f, 30.0f), HitboxType.EnemyHitbox, 15, Vector2.zero, 100));
+            _hitboxes[0].transform.parent = null;
+            _hitboxes[0].GetComponent<Hitbox>().OnTrigger += AddElectricEffect;
+            _hitboxes[0].GetComponent<Hitbox>().OnExit += RemoveElectricEffectOnExit;
+            _hitboxes[0].GetComponent<Hitbox>().OnDestruction += RemoveElectricEffect;
+        }
+
+        if(time >= MAX_TIME)
+        {
+            _electricBoltParticles.GetComponentInChildren<ParticleSystem>().Stop();
+            ClearHitboxes();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Sets up stingrays for using cross zap attack
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool StingrayCrossZapSetup(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            StopMotion();
+            _electricChargeParticles.Play();
+            if (_crossZapParent)
+            {
+                //Create telegraph
+                if (DoTelegraphs())
+                {
+                    float dist = Vector3.Distance(transform.position, _zapBuddy.transform.position);
+                    Vector3 diffVec = _zapBuddy.transform.position - transform.position;
+                    diffVec = new Vector3(diffVec.x, 0, diffVec.z).normalized;
+                    CreateTelegraph(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(5.0f, 1, dist / 2f / transform.localScale.z), Quaternion.LookRotation(diffVec), TelegraphType.Square, true);
+                }
+            }
+        }
+
+        ApplyFriction(0.99f);
+
+        if(time >= MAX_TIME)
+        {
+            if (_crossZapParent)
+            {
+                if (DoTelegraphs())
+                {
+                    _telegraphs[0].transform.parent = null;
+                    ClearTelegraphs();
+                }
+                //Set up bolt particles
+                _electricBoltParticles = Instantiate(_electricBoltParticlesPrefab, transform.position, transform.rotation, transform);
+                float dist = Vector3.Distance(transform.position, _zapBuddy.transform.position);
+                Vector3 diffVec = _zapBuddy.transform.position - transform.position;
+                diffVec = new Vector3(diffVec.x, 0, diffVec.z).normalized;
+                _electricBoltParticles.transform.localPosition = transform.InverseTransformVector(diffVec) * (dist / 2f);
+                _electricBoltParticles.transform.localScale = new Vector3(5.0f, 1, dist / 2f / transform.localScale.z);
+                _electricBoltParticles.transform.rotation = Quaternion.LookRotation(diffVec);
+
+                //Setup hitbox
+                _hitboxes.Add(CreateHitbox(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(4.0f, 2f, dist / transform.localScale.z), HitboxType.EnemyHitbox, 0));
+                _hitboxes[0].transform.rotation = Quaternion.LookRotation(diffVec);
+                _hitboxes[0].GetComponent<Hitbox>().OnTrigger += AddElectricEffect;
+                _hitboxes[0].GetComponent<Hitbox>().OnStay += DealElectricDamage;
+                _hitboxes[0].GetComponent<Hitbox>().OnDestruction += RemoveElectricEffect;
+                _hitboxes[0].GetComponent<Hitbox>().OnExit += RemoveElectricEffectOnExit;
+            }
             return false;
         }
         else

@@ -104,7 +104,7 @@ public class ChickenFish : Physics
             backForce *= 200.0f;
             ApplyForce(backForce);
         }
-        else if (obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
+        else if (obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
             if (attached != transform.parent.gameObject)
@@ -116,7 +116,7 @@ public class ChickenFish : Physics
                 ApplyForce(backForce);
             }
         }
-        else if (obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
+        else if (obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Player")
         {
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);

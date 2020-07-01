@@ -43,6 +43,7 @@ public partial class Enemy : Physics
     protected float _maxHealth;
 
     protected EnemyType _enemyType;
+    public EnemyType EnemyType =>_enemyType;
     protected EnemyState _state;
     public EnemyState State => _state;
 
@@ -468,7 +469,6 @@ public partial class Enemy : Physics
     /// </summary>
     protected void ReturnToInitalPosition()
     {
-
         _position = new Vector3(transform.position.x, _initalPos, transform.position.z);
     }
 
@@ -587,7 +587,7 @@ public partial class Enemy : Physics
             backForce *= 200.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
-        else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy")
+        else if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy")
         {
             GameObject attached = obstical.GetComponent<Hitbox>().AttachedObject;
             if(attached != gameObject)
@@ -599,7 +599,7 @@ public partial class Enemy : Physics
                 ApplyForce(backForce);
             }
         }
-        else if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Player")
+        else if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Player")
         {
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
