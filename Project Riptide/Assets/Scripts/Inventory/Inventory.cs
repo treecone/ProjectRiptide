@@ -9,6 +9,9 @@ public class Inventory : MonoBehaviour
     //need to refactor
     #region Fields
     public List<GameObject> inventorySlots;
+    [SerializeField]
+    private GameObject goldText;
+    private TextMeshProUGUI goldTextMesh;
     public Upgrades shipUpgradeScript;
     private int _inventoryIndex = 0;
     private int _totalGold = 0;
@@ -23,11 +26,17 @@ public class Inventory : MonoBehaviour
         set
         {
             _totalGold = value;
+            if(goldTextMesh == null)
+            {
+                goldTextMesh = goldText.GetComponent<TextMeshProUGUI>();
+            }
+            goldTextMesh.text = "" + TotalGold;
         }
     }
-
+    
     void Start()
     {
+        
     }
 
 
@@ -107,6 +116,15 @@ public class Inventory : MonoBehaviour
     /// <param name="amountToAdd">The amount of that item to be added</param>
     public void AddItem(string itemName, int amountToAdd)
     {
+        if (itemName == "gold" || itemName == "Gold")
+        {
+            TotalGold += amountToAdd;
+            return;
+        }
+        if(itemName == "null" || itemName == "Null")
+        {
+            return;
+        }
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = ItemDatabase.instance.FindItem(itemName);
