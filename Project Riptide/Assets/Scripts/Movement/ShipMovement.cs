@@ -208,7 +208,7 @@ public class ShipMovement : Physics
             backForce *= 20.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
         }
-        if(obstical.tag == "Hitbox" && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
+        if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
         {
             //Create a force away from enemy
             Vector3 backForce = transform.position - obstical.transform.position;

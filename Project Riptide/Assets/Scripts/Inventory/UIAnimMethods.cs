@@ -12,41 +12,90 @@ public class UIAnimMethods : MonoBehaviour
     //Fast Transition
     public void SlideLeftF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .55f).SetUpdate(true);
     }
     public void SlideRightF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .55f).SetUpdate(true);
     }
 
     //Normal Transition
     public void SlideLeft(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .6f).SetUpdate(true);
     }
     public void SlideRight(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .6f).SetUpdate(true);
     }
 
     //Slow Transition   
     public void SlideLeftS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .75f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .65f).SetUpdate(true);
     }
     public void SlideRightS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .75f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .65f).SetUpdate(true);
     }
 
     //Slowest Transition
     public void SlideLeftVS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .8f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .7f).SetUpdate(true);
     }
     public void SlideRightVS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .8f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .7f).SetUpdate(true);
+    }
+
+
+    //IENUMERATORS
+    IEnumerator DisablePanel(GameObject gObj)
+    {
+        gObj.GetComponent<Image>().DOFade(0, .65f).SetUpdate(true);
+        yield return new WaitForSecondsRealtime(.65f);
+        gObj.SetActive(false);
+    }
+
+    IEnumerator EnableNormalUI(GameObject gObj)
+    {
+        yield return new WaitForSecondsRealtime(.05f);
+        gObj.SetActive(true);
+    }
+
+    /// <summary>
+    /// disables panel after fading and waiting .5 seconds
+    /// </summary>
+    /// <param name="gObj"></param>
+    public void DisablePanelAnim(GameObject gObj)
+    {
+        Debug.Log("Yo");
+        StartCoroutine(DisablePanel(gObj));
+    }
+    /// <summary>
+    /// enables normal UI panel after .5 seconds
+    /// </summary>
+    /// <param name="gObj"></param>
+    public void EnableNormalUIAnim(GameObject gObj)
+    {
+        Debug.Log("WhyNoWork");
+        StartCoroutine(EnableNormalUI(gObj));
+    }
+
+    public void FadePanel(Image gObj)
+    {
+        gObj.DOFade(0f, .5f).SetUpdate(true);
+    }
+
+    public void EnableInventoryPanel(Image gObj)
+    {    
+        gObj.DOFade(.5f, .5f).SetUpdate(true);
+    }
+
+    public void EnableMarketPanel(Image gObj)
+    {
+        gObj.DOFade(1f, .5f).SetUpdate(true);
     }
 
 }

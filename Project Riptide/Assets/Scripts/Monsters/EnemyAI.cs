@@ -183,7 +183,7 @@ public partial class Enemy : Physics
             _passiveCooldown = 5.0f;
         }
 
-        FleePlayer(1.5f);
+        FleePoint(PlayerPosition(), 1.5f);
     }
 }
 
@@ -226,7 +226,7 @@ public partial class KoiBoss : Enemy
                     }
                     else
                     {
-                        FleePlayer(1.0f);
+                        FleePoint(PlayerPosition(), 1.0f);
                     }
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
@@ -351,7 +351,7 @@ public partial class KoiBoss : Enemy
                     }
                     else
                     {
-                        FleePlayer(1.0f);
+                        FleePoint(PlayerPosition(), 1.0f);
                     }
 
                     //Decrement overall special cooldown, no special can be used while this is in cooldown.
@@ -969,7 +969,7 @@ public partial class Pandatee : Enemy
             _passiveCooldown = 5.0f;
         }
 
-        FleePlayer(1.5f);
+        FleePoint(PlayerPosition(), 1.5f);
 
         //If pandatee is underwater, check to see if it should come up
         if (_activeStates[(int)PandateePassiveState.Underwater])
@@ -1103,7 +1103,7 @@ public partial class Stingray : Enemy
     protected void HostileStingray()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0)
         {
             _state = EnemyState.Passive;
             ResetHostile();
@@ -1112,60 +1112,117 @@ public partial class Stingray : Enemy
         }
         else
         {
-            //If the Koi is not in any special
+            //If the Stingray is not in any special
             if (!_activeStates[(int)AttackState.Active])
             {
-                if (_playerDistance > 6.0f)
+                if(_crossZapping)
                 {
-                    FollowPlayer();
+                    if(!_crossZapSetup)
+                    {
+                        _maxSpeed *= 1.5f;
+                        _activeStates[(int)AttackState.Active] = true;
+                        _actionQueue.Enqueue(StingrayCrossZapSetup);
+                        _crossZapSetup = true;
+                        _hostileCooldown = MAX_CROSS_ZAP_TIME + 1.0f;
+                    }
+                    else
+                    {
+                        float dist = Vector3.Distance(transform.position, _zapBuddy.transform.position);
+                        //Rotate zap particles/hitbox towards other stingray
+                        if (_crossZapParent)
+                        {
+                            Vector3 diffVec = _zapBuddy.transform.position - transform.position;
+                            diffVec = new Vector3(diffVec.x, 0, diffVec.z).normalized;
+                            _electricBoltParticles.transform.localPosition = transform.InverseTransformVector(diffVec) * (dist / 2f);
+                            _electricBoltParticles.transform.localScale = new Vector3(5.0f, 1, dist / 2f / transform.localScale.z);
+                            _electricBoltParticles.transform.rotation = Quaternion.LookRotation(diffVec);
+
+                            _hitboxes[0].transform.localPosition = transform.InverseTransformVector(diffVec) * (dist / 2f);
+                            _hitboxes[0].transform.localScale = new Vector3(4.0f, 2, dist / transform.localScale.z);
+                            _hitboxes[0].transform.rotation = Quaternion.LookRotation(diffVec);
+                        }
+
+                        //Move towards player
+                        FollowPlayer();
+
+                        //Keep rays away from each other
+                        if(dist < 20.0f)
+                        {
+                            FleePoint(_zapBuddy.transform.position, 1.0f);
+                        }
+
+                        //Increase time
+                        _crossZapTime += Time.deltaTime;
+
+                        //Stop cross zapping if buddy is dead or distance is too great
+                        if(_zapBuddy.IsDying || dist >= 35.0f)
+                        {
+                            _crossZapTime = MAX_CROSS_ZAP_TIME;
+                        }
+
+                        if(_crossZapTime >= MAX_CROSS_ZAP_TIME)
+                        {
+                            //Remove electric particles
+                            if (_crossZapParent)
+                            {
+                                ClearHitboxes();
+                                _electricBoltParticles.transform.parent = null;
+                                _electricBoltParticles.GetComponentInChildren<ParticleSystem>().Stop();
+                            }
+                            _electricChargeParticles.Stop();
+
+                            //Reset values
+                            _maxSpeed /= 1.5f;
+                            _zapBuddy = null;
+                            _crossZapping = false;
+                            _crossZapSetup = false;
+                            _crossZapParent = false;
+                            _crossZapTime = 0.0f;
+                            _specialCooldown[(int)StingrayAttackState.CrossZap] = 8.0f;
+                        }
+                    }
                 }
                 else
                 {
-                    FleePlayer(1.0f);
-                }
-
-                //Decrement overall special cooldown, no special can be used while this is in cooldown.
-                if (_specialCooldown[(int)AttackState.Active] > 0)
-                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
-
-                //Check to see if monster can use bolt attack
-                if (_playerDistance < 16.0f)
-                {
-                    _specialCooldown[(int)StingrayAttackState.BoltAttack] -= Time.deltaTime;
-                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.BoltAttack] < 0.0f && Random.Range(1, 4) == 1)
+                    if (_playerDistance > 6.0f)
                     {
-                        _activeStates[(int)AttackState.Active] = true;
-                        _specialCooldown[(int)AttackState.Active] = 5.0f;
-                        _specialCooldown[(int)StingrayAttackState.BoltAttack] = 6.0f;
-                        _currTime = 0;
-                        //Set up triple dash attack
-                        /*_actionQueue.Enqueue(StingrayBoltCharge);
-                        _actionQueue.Enqueue(StingrayBoltAttack);
-                        _actionQueue.Enqueue(KoiDashAttack);
-                        _actionQueue.Enqueue(KoiDashCharge);
-                        _actionQueue.Enqueue(KoiDashAttack);
-                        _actionQueue.Enqueue(KoiDashCharge);
-                        _actionQueue.Enqueue(KoiDashAttack);*/
+                        FollowPlayer();
                     }
-                }
-
-                //Check to see if player can use charge projectile special attack
-                if (_playerDistance < 20.0f)
-                {
-                    _specialCooldown[(int)KoiAttackState.BubbleBlast] -= Time.deltaTime;
-                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
+                    else
                     {
-                        _activeStates[(int)AttackState.Active] = true;
-                        _specialCooldown[(int)AttackState.Active] = 6.0f;
-                        _specialCooldown[(int)KoiAttackState.BubbleBlast] = 8.0f;
-                        _initalPos = transform.position.y;
-                        _currTime = 0;
-                        //Set up bubble blast attack
-                        /*_actionQueue.Enqueue(KoiStopTransition);
-                        _actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
-                        _actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
-                        _actionQueue.Enqueue(KoiBubbleBlastCharge);
-                        _actionQueue.Enqueue(KoiBubbleBlastAttack);*/
+                        FleePoint(PlayerPosition(), 1.0f);
+                    }
+
+                    //Decrement overall special cooldown, no special can be used while this is in cooldown.
+                    if (_specialCooldown[(int)AttackState.Active] > 0)
+                        _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+
+                    //Check to see if monster can use bolt attack
+                    if (_playerDistance < 16.0f)
+                    {
+                        _specialCooldown[(int)StingrayAttackState.BoltAttack] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.BoltAttack] < 0.0f && Random.Range(1, 4) == 1)
+                        {
+                            _activeStates[(int)AttackState.Active] = true;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)StingrayAttackState.BoltAttack] = 6.0f;
+                            _currTime = 0;
+                            //Set up bolt attack
+                            _actionQueue.Enqueue(StingrayBoltCharge);
+                            _actionQueue.Enqueue(StingrayBoltAttack);
+                        }
+                    }
+
+                    //Check to see if stingray can use cross zap attack
+                    if (_playerDistance < 20.0f)
+                    {
+                        _specialCooldown[(int)StingrayAttackState.CrossZap] -= Time.deltaTime;
+                        if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.CrossZap] < 0.0f && Random.Range(1, 4) == 1)
+                        {
+                            _specialCooldown[(int)AttackState.Active] = 1.0f;
+                            _specialCooldown[(int)StingrayAttackState.CrossZap] = 2.0f;
+                            CheckForZapPartner(25.0f);
+                        }
                     }
                 }
             }
@@ -1178,6 +1235,7 @@ public partial class Stingray : Enemy
                 }
             }
         }
-        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        if(_animator != null)
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 }
