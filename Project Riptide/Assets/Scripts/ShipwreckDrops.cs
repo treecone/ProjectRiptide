@@ -13,6 +13,8 @@ public class ShipwreckDrops : MonoBehaviour
     [SerializeField]
     private int _count;
 
+    [SerializeField]
+    private Inventory _inventory;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,6 +25,7 @@ public class ShipwreckDrops : MonoBehaviour
             GameObject drop = Instantiate(_lootboxPrefab, offset, Random.rotation, transform);
             Lootbox lootbox = drop.GetComponent<Lootbox>();
             lootbox.dropType = "shipwreck";
+            lootbox._inventory = _inventory;
             lootbox.GenerateItems();
         }
     }
