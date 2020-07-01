@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     void Start()
     {
+        Screen.orientation = ScreenOrientation.Landscape;
         DontDestroyOnLoad(gameObject);
         Application.targetFrameRate = 60;
     }

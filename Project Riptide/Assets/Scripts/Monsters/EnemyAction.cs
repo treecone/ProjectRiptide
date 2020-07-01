@@ -1297,7 +1297,7 @@ public partial class ClamBoss : Enemy
         {
             //Make water spout and hitbox grow over time
             shape = _waterSpoutDown.shape;
-            shape.scale = new Vector3(shape.scale.x + 40 * Time.deltaTime / (MAX_TIME - STALL_TIME), shape.scale.y + 40 * Time.deltaTime / (MAX_TIME - STALL_TIME), -1);
+            shape.scale = new Vector3(shape.scale.x + 35 * Time.deltaTime / (MAX_TIME - STALL_TIME), shape.scale.y + 35 * Time.deltaTime / (MAX_TIME - STALL_TIME), -1);
             _hitboxes[_hitboxes.Count - 1].transform.localScale = new Vector3(_hitboxes[_hitboxes.Count - 1].transform.localScale.x + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME), _hitboxes[_hitboxes.Count - 1].transform.localScale.y, _hitboxes[_hitboxes.Count - 1].transform.localScale.z + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME));
         }
         else
@@ -1517,7 +1517,7 @@ public partial class ChickenFishFlock : Enemy
             //Apply force to move chicken towards player
             _gravity = _chickenFlock[_attackingChickenID].ApplyArcForce(new Vector3(attackDirection.x, 0, attackDirection.z).normalized, 15.0f, 5.0f, 1.0f);
             //Play animation
-            _chickenFlock[_attackingChickenID].ChickenAnimator.Play(_animParm[(int)ChickenFishAnim.Fly]);
+            _chickenFlock[_attackingChickenID].FlockerAnimator.Play(_animParm[(int)ChickenFishAnim.Fly]);
 
             //Set up hitbox
             GameObject hitbox = Instantiate(_hitbox, _chickenFlock[_attackingChickenID].transform);
@@ -1564,7 +1564,7 @@ public partial class ChickenFishFlock : Enemy
         {
             _inKnockback = false;
             //Return to swimming
-            _chickenFlock[_attackingChickenID].ChickenAnimator.SetTrigger(_animParm[(int)ChickenFishAnim.Swim]);
+            _chickenFlock[_attackingChickenID].FlockerAnimator.SetTrigger(_animParm[(int)ChickenFishAnim.Swim]);
 
             //Reset motion and position of chicken
             _chickenFlock[_attackingChickenID].StopMotion();
@@ -1694,7 +1694,7 @@ public partial class Stingray : Enemy
                     float dist = Vector3.Distance(transform.position, _zapBuddy.transform.position);
                     Vector3 diffVec = _zapBuddy.transform.position - transform.position;
                     diffVec = new Vector3(diffVec.x, 0, diffVec.z).normalized;
-                    CreateTelegraph(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(5.0f, 1, dist / 2f / transform.localScale.z), Quaternion.LookRotation(diffVec), TelegraphType.Square, true);
+                    CreateTelegraph(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(4.0f, 1, dist / transform.localScale.z), Quaternion.LookRotation(diffVec), TelegraphType.Square, true);
                 }
             }
         }

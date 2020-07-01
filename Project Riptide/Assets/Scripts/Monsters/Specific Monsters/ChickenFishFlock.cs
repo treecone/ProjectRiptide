@@ -102,7 +102,7 @@ public partial class ChickenFishFlock : Enemy
             _chickenFlock[i].Cohesion(transform.position);
             _chickenFlock[i].Seperation(closest);
             _chickenFlock[i].MoveUpAndDown();
-            _chickenFlock[i].ChickenAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
+            _chickenFlock[i].FlockerAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
         }
     }
 
@@ -115,7 +115,7 @@ public partial class ChickenFishFlock : Enemy
         for (int i = 0; i < _chickenFlock.Count; i++)
         {
             _chickenFlock[i].StopMotion();
-            _chickenFlock[i].ChickenAnimator.SetTrigger(_animParm[(int)Anim.Die]);
+            _chickenFlock[i].FlockerAnimator.SetTrigger(_animParm[(int)Anim.Die]);
         }
         base.OnDeath();
     }

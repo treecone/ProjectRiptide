@@ -54,7 +54,7 @@ public class CameraController : MonoBehaviour
 
     public void UpdateCamera()
     {
-        if (allTargets.Count > 0)
+        /*if (allTargets.Count > 0)
         {
             DynamicZoom();
             _movePosition = Vector3.zero;
@@ -80,12 +80,12 @@ public class CameraController : MonoBehaviour
             SetOffScreenIndicators();
         }
         else
-        {
+        {*/
             //Not in combat
             _farthestTarget = null;
             _offset = Vector3.Lerp(_offset, _minZoom, 0.01f);
             _movePosition = _player.position + _offset;
-        }
+        //}
         transform.position = Vector3.SmoothDamp(transform.position, _movePosition, ref _moveVelocity, _smoothTime);
         //transform.LookAt(_movePosition-_offset);
 

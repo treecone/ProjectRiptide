@@ -199,7 +199,7 @@ public class ShipMovement : Physics
         if(obstical.tag == "Obstical")
         {
             //Stop motion
-            //StopMotion();
+            StopMotion();
 
             //Create a force away from obstacle
             Vector3 backForce = transform.position - obstical.transform.position;

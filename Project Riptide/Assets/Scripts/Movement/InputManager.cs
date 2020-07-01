@@ -29,7 +29,7 @@ public class InputManager : MonoBehaviour
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 300.0f;
-    private const float MAX_ICON_RECLICK_DIST = MAX_ICON_DIST + 100.0f;
+    private const float MAX_ICON_RECLICK_DIST = MAX_ICON_DIST + 200.0f;
     private const float MAX_ARROW_LENGTH = 6 * (MAX_ICON_DIST / 500.0f);
 
 
