@@ -46,6 +46,7 @@ public class InventoryMethods : MonoBehaviour
     public void Start()
     {
         _soundSlider.onValueChanged.AddListener(delegate { ChangeSoundImage(); });
+        _volumeSlider.onValueChanged.AddListener(delegate { ChangeVolumeImage(); });
     }
 
     /// <summary>
@@ -105,7 +106,6 @@ public class InventoryMethods : MonoBehaviour
     {
         Time.timeScale = 1f;
         Invoke("Unpause", .5f);
-        Debug.Log("WHY");
     }
     //for invoking
     public void Unpause()
@@ -213,7 +213,6 @@ public class InventoryMethods : MonoBehaviour
 
     public void ChangeSoundImage()
     {
-        Debug.Log(_soundSlider.value);
         if (_soundSlider.value == 0)
         {
             _soundImage.sprite = _soundSprites[0];
@@ -234,22 +233,21 @@ public class InventoryMethods : MonoBehaviour
 
     public void ChangeVolumeImage()
     {
-        Debug.Log(_volumeSlider.value);
         if (_volumeSlider.value == 0)
         {
-            _volumeImage.sprite = _soundSprites[0];
+            _volumeImage.sprite = _volumeSprites[0];
         }
         else if (_volumeSlider.value <= .33f)
         {
-            _volumeImage.GetComponent<Image>().sprite = _soundSprites[1];
+            _volumeImage.GetComponent<Image>().sprite = _volumeSprites[1];
         }
         else if (_volumeSlider.value <= .66f)
         {
-            _volumeImage.GetComponent<Image>().sprite = _soundSprites[2];
+            _volumeImage.GetComponent<Image>().sprite = _volumeSprites[2];
         }
         else
         {
-            _volumeImage.GetComponent<Image>().sprite = _soundSprites[3];
+            _volumeImage.GetComponent<Image>().sprite = _volumeSprites[3];
         }
     }
 
