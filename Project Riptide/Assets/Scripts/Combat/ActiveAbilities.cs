@@ -6,11 +6,11 @@ using TMPro;
 
 public delegate bool Skill(Enemy enemy);
 public delegate void CallbackIndex(int i);
-public enum SkillType { Dash = 0, BurstFire = 1 }
+public enum SkillType { Dash = 0, BurstFire = 1, SpeedBoost = 2 }
 
 public class ActiveAbilities : MonoBehaviour
 {
-    private const int SKILL_AMOUNT = 2;
+    private const int SKILL_AMOUNT = 3;
 
     private ShipMovement _movementScript;
     private CannonFire _cannonFireScript;
@@ -28,13 +28,16 @@ public class ActiveAbilities : MonoBehaviour
 
     private bool _rightEnemy;
 
+    private StatusEffects _playerStatusEffects;
+
     // Start is called before the first frame update
     void Start()
     {
         _movementScript = GetComponent<ShipMovement>();
         _cannonFireScript = GetComponent<CannonFire>();
+        _playerStatusEffects = GetComponent<StatusEffects>();
         //Set up skill based on inital values
-        for(int i = 0; i < SKILL_AMOUNT; i++)
+        for (int i = 0; i < SKILL_AMOUNT; i++)
         {
             SetActiveSkill(i, _skillType[i]);
             _sliders[i] = _buttons[i].GetComponentInChildren<Slider>();
@@ -161,6 +164,8 @@ public class ActiveAbilities : MonoBehaviour
                 return new ActiveSkill("Dash", Dash, 5.0f, false, index);
             case SkillType.BurstFire:
                 return new ActiveSkill("Burst Fire", BurstFire, 10.0f, true, index);
+            case SkillType.SpeedBoost:
+                return new ActiveSkill("Speed Boost", SpeedBoost, 15.0f, false, index);
         }
         return null;
     }
@@ -177,6 +182,18 @@ public class ActiveAbilities : MonoBehaviour
         Vector3 netForce = _movementScript.GetVelocity().normalized;
         netForce *= 200f * 60 * Time.deltaTime;
         _movementScript.ApplyForce(netForce);
+        return true;
+    }
+
+    /// <summary>
+    /// Gives player a speed boost for 5 seconds
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool SpeedBoost(Enemy enemy)
+    {
+        //Applies speed effect to player
+        _playerStatusEffects.AddStatus(StatusType.ShipSpeed, 5.0f, 2.0f);
         return true;
     }
 

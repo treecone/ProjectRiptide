@@ -40,6 +40,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 3309949368118975556}
     m_Modifications:
     - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
+      propertyPath: _skillType.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
+      propertyPath: _buttons.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
       propertyPath: _inputManager
       value: 
       objectReference: {fileID: 8221399516595852345}
@@ -51,6 +59,14 @@ PrefabInstance:
       propertyPath: _buttons.Array.data[1]
       value: 
       objectReference: {fileID: 1524436600235225770}
+    - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
+      propertyPath: _skillType.Array.data[2]
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
+      propertyPath: _buttons.Array.data[2]
+      value: 
+      objectReference: {fileID: 6282575647757355772}
     - target: {fileID: 1055299687, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
@@ -195,15 +211,20 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5978038398991019004, guid: 08023d8f5d737d546916f57cf3805d62,
+    - target: {fileID: 2677519784594243663, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 8221399516595852345}
-    - target: {fileID: 5978038398991019004, guid: 08023d8f5d737d546916f57cf3805d62,
+      objectReference: {fileID: 7090702146027055853}
+    - target: {fileID: 2831806197157601388, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PressFireButton
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2831806197157601388, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7439845772395624473, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
@@ -404,6 +425,18 @@ MonoBehaviour:
 --- !u!114 &1524436600235225770 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7439845772395624473, guid: 08023d8f5d737d546916f57cf3805d62,
+    type: 3}
+  m_PrefabInstance: {fileID: 8221399515950402227}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6282575647757355772 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2677519784594243663, guid: 08023d8f5d737d546916f57cf3805d62,
     type: 3}
   m_PrefabInstance: {fileID: 8221399515950402227}
   m_PrefabAsset: {fileID: 0}
