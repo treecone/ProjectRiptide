@@ -17,6 +17,8 @@ public class InputManager : MonoBehaviour
     private GameObject _shotIndicator;
     [SerializeField]
     private LineRenderer _lineIndicator;
+    [SerializeField]
+    private bool _fixedJoystick;
 
 	//-----References-----
 	private GameObject _ship;
@@ -26,7 +28,7 @@ public class InputManager : MonoBehaviour
 	private RectTransform _iconPoint;
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
-    private const float MAX_ICON_DIST = 500.0f;
+    private const float MAX_ICON_DIST = 300.0f;
     private const float MAX_ICON_RECLICK_DIST = MAX_ICON_DIST + 100.0f;
     private const float MAX_ARROW_LENGTH = 6 * (MAX_ICON_DIST / 500.0f);
 
@@ -61,6 +63,11 @@ public class InputManager : MonoBehaviour
     public List<Enemy> TargetEnemies => _targetEnemies;
     public float MaxCombatRange => MAX_COMBAT_RANGE;
 
+    [SerializeField]
+    private Button _fireButton;
+    private Slider _fireSlider;
+    private bool _fireButtonPressed;
+
     void Awake()
 	{
 		_camera = Camera.main;
@@ -74,9 +81,17 @@ public class InputManager : MonoBehaviour
 	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
         EnemyCompare = ClosestHostileEnemy;
+        _currFireTime = _fireRate;
 	}
 
-	void Update()
+    private void Start()
+    {
+        _fireSlider = _fireButton.GetComponentInChildren<Slider>();
+        _fireButton.gameObject.SetActive(false);
+        _fireSlider.gameObject.SetActive(false);
+    }
+
+    void Update()
 	{
         //Quit if pressing escape
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -89,6 +104,7 @@ public class InputManager : MonoBehaviour
         {
             //ACTIVATE COMBAT MODE
             _combatMode = true;
+            _fireButton.gameObject.SetActive(true);
             _cameraController.ToggleCombatView(true);
             _lineIndicator.enabled = true;
         }
@@ -97,13 +113,29 @@ public class InputManager : MonoBehaviour
         {
             //DEACTIVATE COMBAT MODE
             _combatMode = false;
+            _fireButton.gameObject.SetActive(false);
+            _fireSlider.gameObject.SetActive(false);
             _cameraController.ToggleCombatView(false);
             _lineIndicator.enabled = false;
         }
         
         if(_combatMode)
         {
-            _currFireTime += Time.deltaTime;
+            if (_currFireTime < _fireRate)
+            {
+                _currFireTime += Time.deltaTime;
+                if (_currFireTime >= _fireRate)
+                {
+                    //Reactivate fire button
+                    ColorBlock colors = _fireButton.colors;
+                    colors.normalColor = new Color32(255, 255, 255, 255);
+                    colors.highlightedColor = new Color32(255, 255, 255, 255);
+                    _fireButton.colors = colors;
+                    _fireSlider.gameObject.SetActive(false);
+                    _currFireTime = _fireRate;
+                }
+                _fireSlider.value = _currFireTime / _fireRate;
+            }
 
             _lineIndicator.SetPosition(0, Vector3.zero);
             _lineIndicator.transform.rotation = Quaternion.identity;
@@ -131,11 +163,11 @@ public class InputManager : MonoBehaviour
             //If an enemy is found, fire towards that enemy
             if (_currEnemy != null)
             {
-                if (_isRightEnemy && AutoFire(_currEnemy, 15.0f))
+                if (_isRightEnemy && _fireButtonPressed && AutoFire(_currEnemy, 15.0f))
                 {
                     fired = true;
                 }
-                else if (AutoFire(_currEnemy, -15.0f))
+                else if (_fireButtonPressed && AutoFire(_currEnemy, -15.0f))
                 {
                     fired = true;
                 }
@@ -151,7 +183,16 @@ public class InputManager : MonoBehaviour
             if (fired)
             {
                 _currFireTime = 0;
+                //Change button to darken
+                ColorBlock colors = _fireButton.colors;
+                colors.normalColor = new Color32(150, 150, 150, 255);
+                colors.highlightedColor = new Color32(150, 150, 150, 255);
+                _fireButton.colors = colors;
+                _fireSlider.gameObject.SetActive(true);
+                _fireSlider.value = 0;
             }
+
+            _fireButtonPressed = false;
 
             //CHECK IF A TARGET ENEMY IS OUT OF RANGE OR DEAD
             for(int i = 0; i < _targetEnemies.Count; i++)
@@ -169,6 +210,7 @@ public class InputManager : MonoBehaviour
             }
         }
 
+
 		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
 			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
 	}
@@ -181,55 +223,64 @@ public class InputManager : MonoBehaviour
         //Mouse initally pressed
         if (Input.GetMouseButtonDown(0)) //mouse down
         {
-            //Set start position of click
-            _clickStartPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
+            /*//Set start position of click
+            _clickStartPosition = (Input.mousePosition /*- _screenCorrect) * _screenScale;
             _clickCurrentPosition = _clickStartPosition;
 
             //If click is close enough to base, don't move base when move starts
-            if(Vector3.SqrMagnitude(_iconBase.anchoredPosition - _clickStartPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            if(Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickStartPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _startedMove = true;
-            }
+            }*/
 
+            _clickStartPosition = new Vector2(_iconBase.position.x, _iconBase.position.y);
             _clickDuration = 0;
         }
         //Mouse is being held
         else if (Input.GetMouseButton(0)) //mouse held
         {
-            _clickDuration += Time.deltaTime;
-            _clickCurrentPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
-            Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
-            //If click has moved enough and enough time has passed, stop checking for double click
-            if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
-                _clickDuration = 0.9f;
-
-            //If click is not a double click, handle it as movement
-            if (_clickDuration > 0.8f)
+            _clickCurrentPosition = (Input.mousePosition /*- _screenCorrect*/) * _screenScale;
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
-                //If movement just started
-                if (!_startedMove)
+                _clickDuration += Time.deltaTime;
+                Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
+                //If click has moved enough and enough time has passed, stop checking for double click
+                if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
+                    _clickDuration = 0.9f;
+
+                //If click is not a double click, handle it as movement
+                if (_clickDuration > 0.8f)
                 {
-                    //Set position of icon base
-                    _clickStartPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
-                    if (_iconBase != null)
+                    //If movement just started
+                    if (!_startedMove)
                     {
-                        _iconBase.anchoredPosition = _clickStartPosition;
+                        //Set position of icon base
+                        if (_iconBase != null && !_fixedJoystick)
+                        {
+                            _clickStartPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
+                            _iconBase.position = _clickStartPosition;
+                        }
+                        else
+                        {
+                            _clickStartPosition = _iconBase.position;
+                        }
+                        _startedMove = true;
                     }
-                    _startedMove = true;
-                }
-                _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
-                _clickCurrentPosition = (Input.mousePosition - _screenCorrect) * _screenScale;
 
-                //Pet position of movement icon
-                if (_iconPoint != null)
-                {
-                    //SetPointIcon(_clickCurrentPosition);
-                    SetArrowIcon(_clickCurrentPosition);
-                }
+                    _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
+                    _clickCurrentPosition = (Input.mousePosition /*- _screenCorrect*/) * _screenScale;
 
-                //Get direction of movement for player
-                Vector3 pos = GetTarget(_clickCurrentPosition);
-                _movementScript.TargetDirection = pos - _ship.transform.position;
+                    //Pet position of movement icon
+                    if (_iconPoint != null)
+                    {
+                        //SetPointIcon(_clickCurrentPosition);
+                        SetArrowIcon(_clickCurrentPosition);
+                    }
+
+                    //Get direction of movement for player
+                    Vector3 pos = GetTarget(_clickCurrentPosition);
+                    _movementScript.TargetDirection = pos - _ship.transform.position;
+                }
             }
         }
         //If mouse is released
@@ -242,7 +293,8 @@ public class InputManager : MonoBehaviour
                 {
                      _combatMode = true;
                      _cameraController.ToggleCombatView(true);
-                     _movementScript.IndicatorActive = false;
+                    _fireButton.gameObject.SetActive(true);
+                    _movementScript.IndicatorActive = false;
                      _lineIndicator.enabled = true;
                 }
 
@@ -259,7 +311,7 @@ public class InputManager : MonoBehaviour
 	Vector3 GetTarget(Vector2 input)
 	{
         //Find direction of input from click start pos
-        Vector2 distVec = input - _iconBase.anchoredPosition;
+        Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y);
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
@@ -284,7 +336,7 @@ public class InputManager : MonoBehaviour
     Vector3 GetFireTarget(Vector2 input)
     {
         //Find direction of input from click start pos
-        Vector2 distVec = input - _iconBase.anchoredPosition;
+        Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y);
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
@@ -301,8 +353,11 @@ public class InputManager : MonoBehaviour
     /// </summary>
     public void ResetMovement()
     {
-        _iconBase.anchoredPosition = new Vector2(0, 100000);
-        SetArrowIcon(_iconBase.anchoredPosition);
+        if (!_fixedJoystick)
+        {
+            _iconBase.position = new Vector2(0, 100000);
+        }
+        SetArrowIcon(_iconBase.position);
         _movementScript.TargetDirection = Vector3.zero;
         _movementScript.SpeedScale = 0;
         _movementScript.StopMotion();
@@ -315,7 +370,7 @@ public class InputManager : MonoBehaviour
     void SetArrowIcon(Vector2 pos)
     {
         //Find distance of click from starting click
-        float dist = Vector2.Distance(pos, _iconBase.anchoredPosition);
+        float dist = Vector2.Distance(pos, _iconBase.position);
         //If distance is less than max icon distance, set icon to pos
         if (dist > MAX_ICON_DIST)
         {
@@ -323,10 +378,10 @@ public class InputManager : MonoBehaviour
         }
 
         //Set position of arrow
-        _iconPoint.anchoredPosition = _iconBase.anchoredPosition;
+        _iconPoint.position = _iconBase.position;
 
         //Find rotation for arrow
-        Vector3 diff = pos - _iconBase.anchoredPosition;
+        Vector3 diff = pos - new Vector2(_iconBase.position.x, _iconBase.position.y);
         float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
         _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
 
@@ -493,6 +548,11 @@ public class InputManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void PressFireButton()
+    {
+        _fireButtonPressed = true;
     }
 }
 
