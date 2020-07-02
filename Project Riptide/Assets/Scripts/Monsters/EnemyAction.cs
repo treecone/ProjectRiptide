@@ -195,6 +195,17 @@ public partial class Enemy : Physics
             return true;
         }
     }
+
+    /// <summary>
+    /// Clears telegraphs from enemy as an action
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool ClearTelegraphsAction(ref float time)
+    {
+        ClearTelegraphs();
+        return false;
+    }
 }
 
 //Actions available to the koi boss
@@ -237,7 +248,7 @@ public partial class KoiBoss : Enemy
             StopMotion();
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, (_lengthMult + 15f) / transform.localScale.z), new Vector3(_widthMult, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, (_lengthMult + 20f) / transform.localScale.z), new Vector3(_widthMult, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -272,7 +283,7 @@ public partial class KoiBoss : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 500));
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
             ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
             if(DoTelegraphs())
@@ -280,6 +291,7 @@ public partial class KoiBoss : Enemy
                 _telegraphs[0].transform.parent = null;
                 ClearTelegraphs();
             }
+            _dashParticles.Play();
         }
 
         if (!_inKnockback)
@@ -300,6 +312,8 @@ public partial class KoiBoss : Enemy
             //Do nothing
         }
 
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+
         if (time >= MAX_TIME)
         {
             GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
@@ -307,6 +321,7 @@ public partial class KoiBoss : Enemy
             _inKnockback = false;
             StopMotion();
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 1.0f);
+            _dashParticles.Stop();
             return false;
         }
         else
@@ -329,6 +344,8 @@ public partial class KoiBoss : Enemy
             StopMotion();
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             PlaySplash();
+            SpawnBubbleBroth();
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
@@ -355,6 +372,7 @@ public partial class KoiBoss : Enemy
         if (time == 0)
         {
             StopMotion();
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
             _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
@@ -389,7 +407,7 @@ public partial class KoiBoss : Enemy
                 StopMotion();
                 if(DoTelegraphs())
                 {
-                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30f) / transform.localScale.z), new Vector3(22.0f, 1, 62.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Cone, true);
+                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30f) / transform.localScale.z), new Vector3(2.0f, 1, 62.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
                 }
             }
 
@@ -424,15 +442,48 @@ public partial class KoiBoss : Enemy
             ClearTelegraphs();
         }
         //Spawn projectiles
-        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
 
         return false;
+    }
+
+    protected bool KoiBubbleBlastBig(ref float time)
+    {
+        //Spawn projectiles
+        SpawnProjectile(new Vector3(0, 0, _lengthMult / 3f), new Vector3(4, 4, 4), 0.4f, 10, 1.2f, MovementPattern.Forward, Vector2.zero, 2000);
+
+        return false;
+    }
+
+    protected bool KoiBubbleBlastBigCharge(ref float time)
+    {
+        const float MAX_TIME = 0.5f;
+        const float STALL_TIME = 0.1f;
+
+        if (time < MAX_TIME - STALL_TIME)
+        {
+            //Look towards player
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+            SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 3.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+            ApplyFriction(0.99f);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     /// <summary>
@@ -442,8 +493,8 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleAttack(ref float time)
     {
-        SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
-        CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(1.0f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
+        SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), new Vector3(1,1,1), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(0.5f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
         ClearTelegraphs();
 
         return false;
@@ -461,13 +512,14 @@ public partial class KoiBoss : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f, new Vector3(1, 1, 1) * (transform.localScale.x / 2.0f), HitboxType.EnemyHitbox, _ramingDamage));
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
             _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
             if (DoTelegraphs())
             {
                 _telegraphs[0].transform.parent = null;
                 ClearTelegraphs();
             }
+            _dashParticles.Play();
         }
 
         if (!_inKnockback)
@@ -494,6 +546,8 @@ public partial class KoiBoss : Enemy
             }
         }
 
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+
         if (time >= MAX_TIME)
         {
             StopMotion();
@@ -501,6 +555,7 @@ public partial class KoiBoss : Enemy
             _hitboxes.RemoveAt(_hitboxes.Count - 1);
             ReturnToInitalPosition();
             _inKnockback = false;
+            _dashParticles.Stop();
             return false;
         }
         else
@@ -534,6 +589,7 @@ public partial class KoiBoss : Enemy
         {
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             PlaySplash();
+            SpawnBubbleBroth();
             time = MAX_TIME + 0.5f;
         }
         //Move fish back underwater
@@ -601,6 +657,7 @@ public partial class KoiBoss : Enemy
         {
             _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
             PlaySplash();
+            SpawnBubbleBroth();
             time = MAX_TIME;
         }
         else if (transform.position.y > _initalPos)
@@ -634,7 +691,7 @@ public partial class KoiBoss : Enemy
             _maxSpeed += 5.0f;
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.5f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, TelegraphType.Circle, true);
+                CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.1f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, TelegraphType.Circle, true);
             }
         }
 
@@ -669,6 +726,8 @@ public partial class KoiBoss : Enemy
             }
         }
 
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+
         if (time >= MAX_TIME)
         {
             _maxSpeed -= 5.0f;
@@ -694,7 +753,7 @@ public partial class KoiBoss : Enemy
 
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(0.66f, 1.66f, 4) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.5f, 1.5f, 5.25f), HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 3000));
             _gravity = ApplyArcForce(Vector3.up, 0.0f, 15.0f, 1.0f);
             _animator.SetTrigger(_animParm[(int)CarpAnim.UAttack]);
             if (DoTelegraphs())
@@ -1297,7 +1356,7 @@ public partial class ClamBoss : Enemy
         {
             //Make water spout and hitbox grow over time
             shape = _waterSpoutDown.shape;
-            shape.scale = new Vector3(shape.scale.x + 35 * Time.deltaTime / (MAX_TIME - STALL_TIME), shape.scale.y + 35 * Time.deltaTime / (MAX_TIME - STALL_TIME), -1);
+            shape.scale = new Vector3(shape.scale.x + 33 * Time.deltaTime / (MAX_TIME - STALL_TIME), shape.scale.y + 30 * Time.deltaTime / (MAX_TIME - STALL_TIME), -1);
             _hitboxes[_hitboxes.Count - 1].transform.localScale = new Vector3(_hitboxes[_hitboxes.Count - 1].transform.localScale.x + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME), _hitboxes[_hitboxes.Count - 1].transform.localScale.y, _hitboxes[_hitboxes.Count - 1].transform.localScale.z + 11 * Time.deltaTime / (MAX_TIME - STALL_TIME));
         }
         else
@@ -1357,7 +1416,7 @@ public partial class ClamBoss : Enemy
             {
                 projectile = Instantiate(_stickPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
             }
-            projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 5, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
+            projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 1, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
             if (DoTelegraphs())
             {
                 CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), TelegraphType.Square, true);

@@ -32,7 +32,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         if(_hitboxSize == Vector3.zero)
         {
-            _hitboxSize = new Vector3(transform.localScale.x, transform.localScale.y, transform.localScale.z);
+            _hitboxSize = new Vector3(1, 1, 1);
         }
         _projHitbox = Instantiate(_hitbox, transform);
         _projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, Vector3.zero, _hitboxSize, HitboxType.EnemyHitbox, _damage, _launchAngle, _launchStrength);

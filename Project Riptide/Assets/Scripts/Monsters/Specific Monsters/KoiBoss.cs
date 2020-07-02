@@ -7,6 +7,13 @@ public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack =
 
 public partial class KoiBoss : Enemy
 {
+    [SerializeField]
+    private ParticleSystem _dashParticles;
+    [SerializeField]
+    private GameObject _bubbleBrothPrefab;
+    [SerializeField]
+    private float _waterLevel;
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -40,6 +47,8 @@ public partial class KoiBoss : Enemy
         _HostileAI = HostileKoiBoss;
         _PassiveAI = PassiveWanderRadius;
 
+        _dashParticles.Stop();
+
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
@@ -60,5 +69,13 @@ public partial class KoiBoss : Enemy
             TakeDamage(10);
         }
         base.Update();
+    }
+
+    /// <summary>
+    /// Spawns bubble broth at detect position of koi boss
+    /// </summary>
+    protected void SpawnBubbleBroth()
+    {
+        Instantiate(_bubbleBrothPrefab, new Vector3(_detectPosition.position.x, _waterLevel, _detectPosition.position.z), transform.rotation);
     }
 }

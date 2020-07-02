@@ -281,13 +281,24 @@ public partial class KoiBoss : Enemy
                             _initalPos = transform.position.y;
                             _currTime = 0;
                             //Set up bubble blast attack
+                            /*_actionQueue.Enqueue(KoiStopTransition);
+                            _actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
+                            _actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
+                            _actionQueue.Enqueue(KoiBubbleBlastCharge);
+                            _actionQueue.Enqueue(KoiBubbleBlastAttack);*/
                             _actionQueue.Enqueue(KoiStopTransition);
                             _actionQueue.Enqueue(KoiBubbleBlastTransitionDown);
                             _actionQueue.Enqueue(KoiBubbleBlastTransitionUp);
                             _actionQueue.Enqueue(KoiBubbleBlastCharge);
-                            _actionQueue.Enqueue(KoiBubbleBlastAttack);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(KoiBubbleBlastBigCharge);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(KoiBubbleBlastBigCharge);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(ClearTelegraphsAction);
                         }
                     }
+                    _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                 }
                 else
                 {
@@ -317,22 +328,23 @@ public partial class KoiBoss : Enemy
                     _activeStates[(int)AttackState.FormChangeInProgress] = true;
                     _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
                     PlaySplash();
+                    SpawnBubbleBroth();
                     _initalPos = transform.position.y;
                 }
 
 
                 if (_currTime < 1.0f)
                 {
-                    ApplyConstantMoveForce(Vector3.down, 1.0f * transform.localScale.y, 1.0f);
+                    ApplyConstantMoveForce(Vector3.down, 0.9f * transform.localScale.y, 1.0f);
                     _currTime += Time.deltaTime;
                 }
                 else
                 {
+                    _initalPos = _initalPos - 0.9f * transform.localScale.y;
+                    ReturnToInitalPosition();
                     //Change obstical detection position
                     Transform detect = transform.GetChild(transform.childCount - 1);
-                    detect.position = new Vector3(detect.position.x, detect.position.y + 4.0f, detect.position.z);
-                    _initalPos = _initalPos - 1.0f * transform.localScale.y;
-                    ReturnToInitalPosition();
+                    detect.position = new Vector3(detect.position.x, detect.position.y + 0.9f * transform.localScale.y, detect.position.z);
 
                     StopMotion();
                     _currTime = 0;
@@ -411,10 +423,16 @@ public partial class KoiBoss : Enemy
                             //Set up Underwater bubble blast
                             _actionQueue.Enqueue(KoiBubbleBlastUnderwaterCharge);
                             _actionQueue.Enqueue(KoiBubbleBlastCharge);
-                            _actionQueue.Enqueue(KoiBubbleBlastAttack);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(KoiBubbleBlastBigCharge);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(KoiBubbleBlastBigCharge);
+                            _actionQueue.Enqueue(KoiBubbleBlastBig);
+                            _actionQueue.Enqueue(ClearTelegraphsAction);
                             _actionQueue.Enqueue(KoiBubbleBlastReturn);
                         }
                     }
+                    _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                 }
                 else
                 {
@@ -427,7 +445,6 @@ public partial class KoiBoss : Enemy
                 }
             }
         }
-        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
     }
 }
 

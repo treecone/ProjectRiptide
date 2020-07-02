@@ -377,17 +377,19 @@ public partial class Enemy : Physics
     /// <param name="damage">Damage projectile inflicts</param>
     /// <param name="maxLifeSpan">Max life span of projectile</param>
     /// <param name="movementPattern">Movement pattern of projectile</param>
-    protected void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
+    protected void SpawnProjectile(Vector3 position, Vector3 size, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
     {
-        GameObject.Instantiate(_projectile,
+        GameObject temp = Instantiate(_projectile,
             transform.position + transform.TransformVector(position),
-            new Quaternion())
-            .GetComponent<EnemyProjectile>().LoadProjectile(
+            new Quaternion());
+        temp.GetComponent<EnemyProjectile>().LoadProjectile(
             transform.TransformVector(position),
             0.75f,
             damage,
             maxLifeSpan,
             movementPattern);
+        temp.transform.localScale = size;
+
     }
 
     /// <summary>
@@ -400,12 +402,12 @@ public partial class Enemy : Physics
     /// <param name="movementPattern">Movement pattern of projectile</param>
     /// <param name="launchAngle">Angle that hitbox will launch player</param>
     /// <param name="launchStrength">Strength at which player will be launched</param>
-    protected void SpawnProjectile(Vector3 position, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    protected void SpawnProjectile(Vector3 position, Vector3 size, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
     {
-        GameObject.Instantiate(_projectile,
+        GameObject temp = Instantiate(_projectile,
             transform.position + transform.TransformVector(position),
-            new Quaternion())
-            .GetComponent<EnemyProjectile>().LoadProjectile(
+            new Quaternion());
+        temp.GetComponent<EnemyProjectile>().LoadProjectile(
             transform.TransformVector(position),
             0.75f,
             damage,
@@ -413,6 +415,7 @@ public partial class Enemy : Physics
             movementPattern,
             launchAngle,
             launchStrength);
+        temp.transform.localScale = size;
     }
 
     /// <summary>
