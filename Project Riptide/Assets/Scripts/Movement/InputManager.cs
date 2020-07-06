@@ -246,15 +246,14 @@ public class InputManager : MonoBehaviour
                 _startedMove = true;
             }*/
 
-            _clickStartPosition = new Vector2(_iconBase.position.x, _iconBase.position.y);
+            _clickStartPosition = new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale;
             _clickDuration = 0;
         }
         //Mouse is being held
         else if (Input.GetMouseButton(0)) //mouse held
         {
-            Debug.Log(Input.mousePosition * _screenScale);
             _clickCurrentPosition = (Input.mousePosition /*- _screenCorrect*/) * _screenScale;
-            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _clickDuration += Time.deltaTime;
                 Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
@@ -276,7 +275,7 @@ public class InputManager : MonoBehaviour
                         }
                         else
                         {
-                            _clickStartPosition = _iconBase.position;
+                            _clickStartPosition = _iconBase.position * _screenScale;
                         }
                         _startedMove = true;
                     }
@@ -349,7 +348,6 @@ public class InputManager : MonoBehaviour
         {
             TouchData t = _currentTouches[i];
             t.Update(Input.touches);
-            Debug.Log(t.Position);
 
             //if the touch has just ended, remove it from the list and perform whatever behavior is appropriate for that touch
             if (t.phase == TouchPhase.Ended)
@@ -366,7 +364,7 @@ public class InputManager : MonoBehaviour
             }
 
             _clickCurrentPosition = (t.Position + (Vector2)_screenCorrect) * _screenScale;
-            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _clickDuration += Time.deltaTime;
                 Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
@@ -388,7 +386,7 @@ public class InputManager : MonoBehaviour
                         }
                         else
                         {
-                            _clickStartPosition = _iconBase.position;
+                            _clickStartPosition = _iconBase.position * _screenScale;
                         }
                         _startedMove = true;
                     }
@@ -508,7 +506,7 @@ public class InputManager : MonoBehaviour
     Vector3 GetTarget(Vector2 input)
     {
         //Find direction of input from click start pos
-        Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y);
+        Vector2 distVec = input - (new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale);
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
@@ -533,7 +531,7 @@ public class InputManager : MonoBehaviour
     Vector3 GetFireTarget(Vector2 input)
     {
         //Find direction of input from click start pos
-        Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y);
+        Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale;
         //Get distance
         float dist = distVec.magnitude;
         distVec.Normalize();
@@ -554,7 +552,7 @@ public class InputManager : MonoBehaviour
         {
             _iconBase.position = new Vector2(0, 100000);
         }
-        SetArrowIcon(_iconBase.position);
+        SetArrowIcon(_iconBase.position * _screenScale);
         _movementScript.TargetDirection = Vector3.zero;
         _movementScript.SpeedScale = 0;
         _movementScript.StopMotion();
@@ -567,7 +565,7 @@ public class InputManager : MonoBehaviour
     void SetArrowIcon(Vector2 pos)
     {
         //Find distance of click from starting click
-        float dist = Vector2.Distance(pos, _iconBase.position);
+        float dist = Vector2.Distance(pos, _iconBase.position * _screenScale);
         //If distance is less than max icon distance, set icon to pos
         if (dist > MAX_ICON_DIST)
         {
@@ -578,7 +576,7 @@ public class InputManager : MonoBehaviour
         _iconPoint.position = _iconBase.position;
 
         //Find rotation for arrow
-        Vector3 diff = pos - new Vector2(_iconBase.position.x, _iconBase.position.y);
+        Vector3 diff = pos - new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale;
         float angle = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg - 90;
         _iconPoint.localRotation = Quaternion.Euler(0, 0, angle);
 
