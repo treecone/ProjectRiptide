@@ -332,11 +332,6 @@ public class InputManager : MonoBehaviour
 
             CheckEnemyTap();
         }
-        else
-        {
-            _startedMove = false;
-            _clickDuration = 0;
-        }
     }
 
     void TakeMobileInput()
