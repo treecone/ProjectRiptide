@@ -8,7 +8,7 @@ public delegate bool EnemySort(Enemy re, Enemy le);
 
 public class InputManager : MonoBehaviour
 {
-	private Camera _camera;
+    private Camera _camera;
 
     private bool _startedMove = false;
     //REFACTORED VARIABLES ONLY BELOW HERE
@@ -20,24 +20,26 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private bool _fixedJoystick;
 
-	//-----References-----
-	private GameObject _ship;
-	private ShipMovement _movementScript;
-	private CannonFire _cannonFireScript;
+    //-----References-----
+    private GameObject _ship;
+    private ShipMovement _movementScript;
+    private CannonFire _cannonFireScript;
     private CameraController _cameraController;
-	private RectTransform _iconPoint;
+    private RectTransform _iconPoint;
     private RectTransform _iconBase;
     private RectTransform _canvasRect;
     private const float MAX_ICON_DIST = 300.0f;
     private const float MAX_ICON_RECLICK_DIST = MAX_ICON_DIST + 200.0f;
     private const float MAX_ARROW_LENGTH = 6 * (MAX_ICON_DIST / 500.0f);
 
+    private List<TouchData> _currentTouches;
 
-	//-----Multiple touches-----
 
-	//-----Config values-----
+    //-----Multiple touches-----
 
-	private Vector3 _screenCorrect;
+    //-----Config values-----
+
+    private Vector3 _screenCorrect;
     public Vector3 ScreenCorrect => _screenCorrect;
     private Vector2 _screenScale;
 
@@ -68,21 +70,25 @@ public class InputManager : MonoBehaviour
     private Slider _fireSlider;
     private bool _fireButtonPressed;
 
+    [SerializeField]
+    private bool _forceMobile = false;
+
     void Awake()
-	{
-		_camera = Camera.main;
+    {
+        _camera = Camera.main;
         _cameraController = _camera.GetComponent<CameraController>();
         _screenCorrect = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
         _canvasRect = GameObject.Find("Canvas").GetComponent<RectTransform>();
         _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
-		_ship = GameObject.FindWithTag("Player");
-		_movementScript = _ship.GetComponent<ShipMovement>();
-		_cannonFireScript = _ship.GetComponent<CannonFire>();
-	    _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
+        _ship = GameObject.FindWithTag("Player");
+        _movementScript = _ship.GetComponent<ShipMovement>();
+        _cannonFireScript = _ship.GetComponent<CannonFire>();
+        _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
         EnemyCompare = ClosestHostileEnemy;
         _currFireTime = _fireRate;
-	}
+        _currentTouches = new List<TouchData>();
+    }
 
     private void Start()
     {
@@ -92,15 +98,23 @@ public class InputManager : MonoBehaviour
     }
 
     void Update()
-	{
+    {
         //Quit if pressing escape
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
 
-	    TakeKeyboardInput();
+        //TakeKeyboardInput();
+        if (Application.platform == RuntimePlatform.WindowsEditor && !_forceMobile)
+        {
+            TakeKeyboardInput();
+        }
+        else
+        {
+            TakeMobileInput();
+        }
 
         //If there are enemies to target
-        if(_targetEnemies.Count > 0 && !_combatMode)
+        if (_targetEnemies.Count > 0 && !_combatMode)
         {
             //ACTIVATE COMBAT MODE
             _combatMode = true;
@@ -109,7 +123,7 @@ public class InputManager : MonoBehaviour
             _lineIndicator.enabled = true;
         }
 
-        if(_targetEnemies.Count == 0 && _combatMode)
+        if (_targetEnemies.Count == 0 && _combatMode)
         {
             //DEACTIVATE COMBAT MODE
             _combatMode = false;
@@ -118,8 +132,8 @@ public class InputManager : MonoBehaviour
             _cameraController.ToggleCombatView(false);
             _lineIndicator.enabled = false;
         }
-        
-        if(_combatMode)
+
+        if (_combatMode)
         {
             if (_currFireTime < _fireRate)
             {
@@ -195,9 +209,9 @@ public class InputManager : MonoBehaviour
             _fireButtonPressed = false;
 
             //CHECK IF A TARGET ENEMY IS OUT OF RANGE OR DEAD
-            for(int i = 0; i < _targetEnemies.Count; i++)
+            for (int i = 0; i < _targetEnemies.Count; i++)
             {
-                if(_targetEnemies[i].IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemies[i].Position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
+                if (_targetEnemies[i].IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemies[i].Position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
                 {
                     _targetEnemies[i].SetTargetIndicator(false);
                     if (_targetEnemies[i].OffScreenIndicator != null)
@@ -210,10 +224,9 @@ public class InputManager : MonoBehaviour
             }
         }
 
-
-		if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
-			GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
-	}
+        if (Input.GetKeyDown(KeyCode.I)) //This is temp and also bad, remove later
+            GameObject.Find("Canvas").transform.Find("Inventory").gameObject.SetActive(!GameObject.Find("Canvas").transform.Find("Inventory").gameObject.activeSelf);
+    }
 
     /// <summary>
     /// Takes keyboard input from player
@@ -239,6 +252,7 @@ public class InputManager : MonoBehaviour
         //Mouse is being held
         else if (Input.GetMouseButton(0)) //mouse held
         {
+            Debug.Log(Input.mousePosition * _screenScale);
             _clickCurrentPosition = (Input.mousePosition /*- _screenCorrect*/) * _screenScale;
             if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
@@ -291,15 +305,203 @@ public class InputManager : MonoBehaviour
             {
                 if (!_combatMode && _movementScript.IndicatorActive)
                 {
-                     _combatMode = true;
-                     _cameraController.ToggleCombatView(true);
+                    _combatMode = true;
+                    _cameraController.ToggleCombatView(true);
                     _fireButton.gameObject.SetActive(true);
                     _movementScript.IndicatorActive = false;
-                     _lineIndicator.enabled = true;
+                    _lineIndicator.enabled = true;
                 }
 
                 CheckEnemyTap();
             }
+        }
+    }
+
+    void HandleTouch(TouchData t)
+    {
+        if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
+        {
+            if (!_combatMode && _movementScript.IndicatorActive)
+            {
+                _combatMode = true;
+                _cameraController.ToggleCombatView(true);
+                _fireButton.gameObject.SetActive(true);
+                _movementScript.IndicatorActive = false;
+                _lineIndicator.enabled = true;
+            }
+
+            CheckEnemyTap();
+        }
+        else
+        {
+            _startedMove = false;
+            _clickDuration = 0;
+        }
+    }
+
+    void TakeMobileInput()
+    {
+        //Add any new touches to the touch list
+        foreach (Touch t in Input.touches)
+        {
+            if (t.phase == TouchPhase.Began)
+            {
+                _currentTouches.Add(new TouchData(t));
+            }
+        }
+        //Update all touches that are currently down
+        for (int i = 0; i < _currentTouches.Count; i++)
+        {
+            TouchData t = _currentTouches[i];
+            t.Update(Input.touches);
+            Debug.Log(t.Position);
+
+            //if the touch has just ended, remove it from the list and perform whatever behavior is appropriate for that touch
+            if (t.phase == TouchPhase.Ended)
+            {
+                _currentTouches.Remove(t);
+                i--;
+                HandleTouch(t);
+                if(_currentTouches.Count == 0)
+                {
+                    _startedMove = false;
+                    _clickDuration = 0;
+                }
+                continue;
+            }
+
+            _clickCurrentPosition = (t.Position + (Vector2)_screenCorrect) * _screenScale;
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            {
+                _clickDuration += Time.deltaTime;
+                Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
+                //If click has moved enough and enough time has passed, stop checking for double click
+                if (clickDisplacement.magnitude > 50f && _clickDuration > 0.15f)
+                    _clickDuration = 0.9f;
+
+                //If click is not a double click, handle it as movement
+                if (_clickDuration > 0.8f)
+                {
+                    //If movement just started
+                    if (!_startedMove)
+                    {
+                        //Set position of icon base
+                        if (_iconBase != null && !_fixedJoystick)
+                        {
+                            _clickStartPosition = (t.Position + (Vector2)_screenCorrect) * _screenScale;
+                            _iconBase.position = _clickStartPosition;
+                        }
+                        else
+                        {
+                            _clickStartPosition = _iconBase.position;
+                        }
+                        _startedMove = true;
+                    }
+
+                    _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
+                    _clickCurrentPosition = (t.Position + (Vector2)_screenCorrect) * _screenScale;
+
+                    //Pet position of movement icon
+                    if (_iconPoint != null)
+                    {
+                        //SetPointIcon(_clickCurrentPosition);
+                        SetArrowIcon(_clickCurrentPosition);
+                    }
+
+                    //Get direction of movement for player
+                    Vector3 pos = GetTarget(_clickCurrentPosition);
+                    _movementScript.TargetDirection = pos - _ship.transform.position;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles information related to mobile touches
+    /// </summary>
+    private class TouchData
+    {
+        private Touch touch;
+        private int index;
+        private float duration;
+        private Vector2 startPosition;
+
+        public TouchPhase phase;
+        public bool startedMove;
+        public float time = 0.0f;
+
+        /// <summary>
+        /// Displacement from starting touch
+        /// </summary>
+        public Vector2 Displacement
+        {
+            get
+            {
+                return Position - startPosition;
+            }
+        }
+
+        /// <summary>
+        /// Velocity of touch movement
+        /// </summary>
+        public Vector2 Velocity
+        {
+            get
+            {
+                return Displacement / duration;
+            }
+        }
+
+        /// <summary>
+        /// Position of the touch on the screen
+        /// </summary>
+        public Vector2 Position
+        {
+            get
+            {
+                return touch.position - new Vector2(Screen.width / 2, Screen.height / 2);
+            }
+        }
+
+        /// <summary>
+        /// Length of time touch is active
+        /// </summary>
+        public float Duration
+        {
+            get
+            {
+                return duration;
+            }
+        }
+
+        /// <summary>
+        /// Creates touch data from a touch
+        /// </summary>
+        /// <param name="touch">Touch input</param>
+        public TouchData(Touch touch)
+        {
+            this.touch = touch;
+            index = touch.fingerId;
+            duration = 0;
+            print(Position);
+            startPosition = Position;
+        }
+
+        /// <summary>
+        /// Update touch data
+        /// </summary>
+        /// <param name="touches"></param>
+        public void Update(Touch[] touches)
+        {
+            foreach (Touch t in touches)
+            {
+                if (t.fingerId == index)
+                {
+                    touch = t;
+                }
+            }
+            duration += touch.deltaTime;
+            phase = touch.phase;
         }
     }
 
@@ -308,8 +510,8 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="input">Position of click on screen</param>
     /// <returns>Direction to move player towards</returns>
-	Vector3 GetTarget(Vector2 input)
-	{
+    Vector3 GetTarget(Vector2 input)
+    {
         //Find direction of input from click start pos
         Vector2 distVec = input - new Vector2(_iconBase.position.x, _iconBase.position.y);
         //Get distance
@@ -326,7 +528,7 @@ public class InputManager : MonoBehaviour
         else
             _movementScript.SpeedScale = dist / MAX_ICON_DIST;
         return targetPos;
-	}
+    }
 
     /// <summary>
     /// Finds direction to shoot towards based on click
@@ -502,15 +704,15 @@ public class InputManager : MonoBehaviour
     private bool ClosestHostileEnemy(Enemy re, Enemy le)
     {
         //If one enemy is passive and the other is hostile, the hostile enemy is taken
-        if(re.State == EnemyState.Hostile && le.State == EnemyState.Passive)
+        if (re.State == EnemyState.Hostile && le.State == EnemyState.Passive)
         {
             return true;
         }
-        else if(le.State == EnemyState.Hostile && re.State == EnemyState.Passive)
+        else if (le.State == EnemyState.Hostile && re.State == EnemyState.Passive)
         {
             return false;
         }
-        
+
         //If states are the same, take closest enemy
         return Vector3.SqrMagnitude(re.Position - _ship.transform.position) < Vector3.SqrMagnitude(le.Position - _ship.transform.position);
     }
@@ -526,7 +728,7 @@ public class InputManager : MonoBehaviour
             if (hit.collider.gameObject.tag == "Hitbox")
             {
                 Enemy enemy = hit.collider.gameObject.GetComponent<Hitbox>().AttachedObject.GetComponent<Enemy>();
-                if(enemy != null && !_targetEnemies.Contains(enemy))
+                if (enemy != null && !_targetEnemies.Contains(enemy))
                 {
                     //Check if enemy is close enough to target
                     if (Vector3.SqrMagnitude(enemy.Position - _ship.transform.position) < MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
@@ -536,7 +738,7 @@ public class InputManager : MonoBehaviour
                         enemy.SetTargetIndicator(true);
                     }
                 }
-                else if(enemy != null)
+                else if (enemy != null)
                 {
                     //Untarget enemy
                     if (enemy.OffScreenIndicator != null)
