@@ -13,8 +13,6 @@ public class Crafting : MonoBehaviour
 
     
     [SerializeField]
-    private ItemDatabase _itemDatabase;
-    [SerializeField]
     private List<Recipe> _recipes;
 
     void Awake()
@@ -72,7 +70,7 @@ public class Crafting : MonoBehaviour
             {
                 PlayerInventory.Instance.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
             }
-            Item result = _itemDatabase.FindItem(recipe.result);
+            Item result = ItemDB.Instance.FindItem(recipe.result);
             result.Amount = recipe.resultAmount;
             foreach(Upgrade u in recipe.upgrades)
             {

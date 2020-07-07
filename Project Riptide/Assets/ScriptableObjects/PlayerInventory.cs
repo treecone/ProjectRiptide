@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[CreateAssetMenu(menuName = "Custom Assets/Singletons/PlayerInventory")]
 public class PlayerInventory : ScriptableObject
 {
     private static PlayerInventory _instance;
@@ -17,7 +18,7 @@ public class PlayerInventory : ScriptableObject
     private void OnEnable()
     {
         _instance = this;
-        
+        InitializeInventory();
     }
     public int numItems;
     public List<Item> items;
@@ -26,6 +27,7 @@ public class PlayerInventory : ScriptableObject
 
     public void InitializeInventory()
     {
+        totalGold = 0;
         items = new List<Item>();
         equipment = new List<Item>();
         for(int i = 0; i < numItems; i++)
@@ -52,18 +54,18 @@ public class PlayerInventory : ScriptableObject
         }
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
-        Item itemToAdd = ItemDatabase.instance.FindItem(itemName);
+        Item itemToAdd = ItemDB.Instance.FindItem(itemName);
         if (itemToAdd.Category != ItemCategory.Material)
         {
             AddEquipment(itemToAdd);
             return;
         }
-        //Debug.Log("Adding item " + itemToAdd.Name);
+        //Debug.Log("Adding item " + itemName + " as " + itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
             
             Item item = items[i];
-            //Debug.Log("trying to add in slot " + i + ". slot currently has " + slot.item.Amount + " " + slot.item.Name + " out of a max of " + slot.item.MaxAmount);
+            //Debug.Log("trying to add in slot " + i + ". slot currently has " + item.Amount + " " + item.Name + " out of a max of " + item.MaxAmount);
             if (item.Name == itemToAdd.Name && item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
             {
                 //Debug.Log("slot " + i + " has same item and has room.");
@@ -81,7 +83,7 @@ public class PlayerInventory : ScriptableObject
                     //Debug.Log("to " + amountToAddTemp);
                 }
             }
-            else if (item.Id == 0)
+            else if (item.Slug == "null")
             {
                 //Debug.Log("slot " + i + " is empty, enqueueing");
                 //Slots is empty, store it temp
@@ -89,7 +91,7 @@ public class PlayerInventory : ScriptableObject
             }
             else if (item.Name == itemToAdd.Name)
             {
-                //Debug.Log("slot has " + slot.item.Name + ", but is full");
+                //Debug.Log("slot has " + item.Name + ", but is full");
             }
         }
 
@@ -103,21 +105,23 @@ public class PlayerInventory : ScriptableObject
                 Item item = items[itemSlotNumber];
                 if (itemToAdd.MaxAmount >= amountToAddTemp)
                 {
+                    //Debug.Log("everything fits in slot " + itemSlotNumber);
                     //Everything fits
-                    item = itemToAdd;
-                    item.Amount = amountToAddTemp;
+                    items[itemSlotNumber] = itemToAdd;
+                    items[itemSlotNumber].Amount = amountToAddTemp;
                     amountToAddTemp = 0;
                 }
                 else
                 {
-                    item = itemToAdd;
-                    item.Amount = item.MaxAmount;
+                    //Debug.Log("slot " + itemSlotNumber + " is open, not everything fits");
+                    items[itemSlotNumber] = new Item(itemToAdd);
+                    items[itemSlotNumber].Amount = item.MaxAmount;
                     amountToAddTemp -= (item.MaxAmount - item.Amount);
                 }
             }
             else
             {
-                Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
+                //Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
                 return;
             }
         }
@@ -138,7 +142,7 @@ public class PlayerInventory : ScriptableObject
             Debug.LogWarning("Nothing in inventory, nothing to delete!");
             return false;
         }
-        Item itemToRemove = ItemDatabase.instance.FindItem(itemName);
+        Item itemToRemove = ItemDB.Instance.FindItem(itemName);
         for (int i = items.Count - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
             Item item = items[i];

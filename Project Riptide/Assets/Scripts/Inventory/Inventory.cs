@@ -25,56 +25,23 @@ public class Inventory : MonoBehaviour
 
     public void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.C))
+        if(Input.GetKeyDown(KeyCode.Tilde))
         {
-            PlayerInventory.Instance.AddItem("carpscale", 8);
-        }
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            PlayerInventory.Instance.AddItem("wood", 4);
-        }
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            PlayerInventory.Instance.AddItem("nails", 8);
-        }
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            PlayerInventory.Instance.RemoveItem("nails", 3);
-        }
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            PlayerInventory.Instance.AddItem("woodencannon", 1);
-        }
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            PlayerInventory.Instance.AddItem("scalemailhull", 1);
-        }
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            PlayerInventory.Instance.AddItem("silksails", 1);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            PlayerInventory.Instance.AddItem("grapeshot", 1);
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            PlayerInventory.Instance.AddItem("healthyhull", 1);
+            UpdateInventoryVisuals();
         }
     }
 
-    private void UpdateInventoryVisuals(List<Item> items, int totalGold)
+    private void UpdateInventoryVisuals()
     {
         for (int i = 0; i < inventorySlots.Count; i++)
         {
-            inventorySlots[i].GetComponent<InventorySlot>().item = items[i];
+            inventorySlots[i].GetComponent<InventorySlot>().item = PlayerInventory.Instance.items[i];
             inventorySlots[i].GetComponent<InventorySlot>().UpdateSlotVisuals();
         }
         if (goldTextMesh == null)
         {
             goldTextMesh = goldText.GetComponent<TextMeshProUGUI>();
         }
-        goldTextMesh.text = "" + totalGold;
+        goldTextMesh.text = "" + PlayerInventory.Instance.totalGold;
     }
 }

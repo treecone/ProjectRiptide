@@ -12,7 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c9c2ebe518e27e4dbe9733787421005, type: 3}
   m_Name: ItemDB
   m_EditorClassIdentifier: 
-  _items: []
+  _nullItemData:
+    name: Null
+    slug: null
+    description: A very null item
+    rarity: 1
+    value: 0
+    icon: {fileID: 21300000, guid: 23e164a41ceab684898703cb0ea39fae, type: 3}
+    maxAmount: 64
+    upgrades: []
+  _items:
+  - id: 0
+    name: Test Material
+    amount: 1
+  - id: 1
+    name: Gold
+    amount: 1
+  - id: 100
+    name: Test Ship
+    amount: 1
+  - id: 200
+    name: Test Sail
+    amount: 1
+  - id: 300
+    name: Test Hull
+    amount: 1
+  - id: 400
+    name: Test Cannon
+    amount: 1
+  - id: 500
+    name: Test Trinket
+    amount: 1
   _ships:
   - name: Test Ship
     slug: testship
@@ -65,5 +95,13 @@ MonoBehaviour:
     rarity: 2
     value: 145
     icon: {fileID: 0}
-    maxAmount: 1
+    maxAmount: 64
+    upgrades: []
+  - name: Gold
+    slug: gold
+    description: You shouldn't have this.
+    rarity: 1
+    value: 1
+    icon: {fileID: 0}
+    maxAmount: 64
     upgrades: []

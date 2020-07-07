@@ -58,7 +58,7 @@ public class Lootbox : MonoBehaviour
     }
     public void GenerateItems()
     {
-        items = DropData.instance.GetDrops(dropType);
+        items = DropManager.Instance.GetDrops(dropType);
         SetRarity();
     }
 
