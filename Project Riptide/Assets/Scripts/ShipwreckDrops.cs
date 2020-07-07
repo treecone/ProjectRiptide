@@ -25,7 +25,6 @@ public class ShipwreckDrops : MonoBehaviour
             GameObject drop = Instantiate(_lootboxPrefab, offset, Random.rotation, transform);
             Lootbox lootbox = drop.GetComponent<Lootbox>();
             lootbox.dropType = "shipwreck";
-            lootbox._inventory = _inventory;
             lootbox.GenerateItems();
         }
     }

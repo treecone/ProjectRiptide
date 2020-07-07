@@ -47,13 +47,19 @@ public class ItemDatabase : MonoBehaviour
                 upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
             }
 
+            //Parse the item's category
+            bool success = Enum.TryParse(_itemData[i]["category"].ToString(), true, out ItemCategory category);
+            if(!success)
+            {
+                category = ItemCategory.Material;
+            }
 
             //Checks to see if the item has a sprite in the Resouces folder, and if not uses the nullItem Sprite
             if(!Resources.Load<Sprite>("Inventory/ItemSprites/" + slugTempString + "Sprite"))
             {
                 database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
                     (int)_itemData[i]["value"], slugTempString, Resources.Load<Sprite>("Inventory/ItemSprites/nullitemSprite"),
-                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades, category));
                 Debug.LogWarning("[Inventory] " + nameTempString + "Sprite was not found in resources!");
                 //This usually means that we have yet to put the sprite for the item in the game
 
@@ -63,7 +69,7 @@ public class ItemDatabase : MonoBehaviour
                 //found the item!
                 database.Add(new Item((int)_itemData[i]["id"], nameTempString, _itemData[i]["description"].ToString(), (int)_itemData[i]["rarity"],
                     (int)_itemData[i]["value"], slugTempString, Resources.Load<Sprite>("Inventory/ItemSprites/" + slugTempString + "Sprite"),
-                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades));
+                    (int)_itemData[i]["amount"], (int)_itemData[i]["maxAmount"], upgrades, category));
             }
         }
     }

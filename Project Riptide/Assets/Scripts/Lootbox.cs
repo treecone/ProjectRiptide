@@ -8,8 +8,6 @@ public class Lootbox : MonoBehaviour
     private List<Mesh> _meshes;
     [SerializeField]
     private List<Material> _rarityMaterials;
-    [SerializeField]
-    public Inventory _inventory;
 
     public string dropType;
 
@@ -70,7 +68,7 @@ public class Lootbox : MonoBehaviour
         {
             for (int i = 0; i < items.Count; i++)
             {
-                _inventory.AddItem(items[i].Name, items[i].Amount);
+                PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
             }
             Destroy(gameObject);
         }

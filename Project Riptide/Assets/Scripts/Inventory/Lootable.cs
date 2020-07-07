@@ -49,7 +49,7 @@ public class Lootable : MonoBehaviour
 
         if (Vector3.Distance(this.transform.position, _player.transform.position) < 2.0f)
         {
-            GameObject.Find("Canvas").transform.Find("InventoryWindows").GetComponent<Inventory>().AddItem(itemStored.Name, 8);
+            PlayerInventory.Instance.AddItem(itemStored.Name, 8);
             Destroy(gameObject);
         }
     }

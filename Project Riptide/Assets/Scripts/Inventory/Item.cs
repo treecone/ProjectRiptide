@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ItemCategory { Ship, Sails, Hull, Cannon, Trinket, Material}
 [System.Serializable]
 public class Item
 {
@@ -20,6 +21,7 @@ public class Item
     private int maxAmount;              //max amount of items
     private List<Upgrade> upgrades;
     private bool equipped;
+    private ItemCategory category;
     #endregion
 
     #region Properties
@@ -117,9 +119,17 @@ public class Item
             equipped = value;
         }
     }
+
+    public ItemCategory Category
+    {
+        get
+        {
+            return category;
+        }
+    }
     #endregion
 
-    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades)
+    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category)
     {
         this.id = id;
         this.name = itemName;
@@ -132,6 +142,7 @@ public class Item
         this.maxAmount = maxAmount;
         this.upgrades = upgrades;
         this.equipped = true;
+        this.category = category;
     }
 
     public Item(Item other)
@@ -151,6 +162,7 @@ public class Item
             this.upgrades.Add(u);
         }
         this.equipped = other.equipped;
+        this.category = other.category;
     }
 }
 

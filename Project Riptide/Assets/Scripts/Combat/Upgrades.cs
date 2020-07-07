@@ -21,10 +21,10 @@ public class Upgrades : MonoBehaviour
     /// upgrade every frame.
     /// </summary>
     /// 
-
-    public Inventory inventory;
     private StatusEffects _statusEffects;
 
+    [SerializeField]
+    private bool _isPlayer;
     public List<Upgrade> upgrades;
     public MasterUpgrade masterUpgrade;
     // Start is called before the first frame update
@@ -85,11 +85,11 @@ public class Upgrades : MonoBehaviour
     {
         List<Upgrade> equippedUpgrades = new List<Upgrade>();
 
-        if(inventory != null)
+        if(_isPlayer)
         {
-            for (int i = 0; i < inventory.Size; i++)
+            for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
             {
-                Item item = inventory[i];
+                Item item = PlayerInventory.Instance.equipment[i];
                 if (item.Id != 0 && item.Equipped == true)
                 {
                     foreach (Upgrade u in item.Upgrades)
