@@ -77,6 +77,8 @@ public partial class ClamBoss : Enemy
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
 
+        _darknessParticles.Stop();
+
         //Set up hitboxes
         foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
         {

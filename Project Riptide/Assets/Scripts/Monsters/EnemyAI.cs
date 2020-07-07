@@ -329,7 +329,7 @@ public partial class KoiBoss : Enemy
                     _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
                     PlaySplash();
                     SpawnBubbleBroth();
-                    _initalPos = transform.position.y;
+                    _initalPos = _startPos.y;
                 }
 
 

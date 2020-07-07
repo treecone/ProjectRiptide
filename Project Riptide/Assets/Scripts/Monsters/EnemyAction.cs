@@ -620,6 +620,7 @@ public partial class KoiBoss : Enemy
         if (time == 0)
         {
             StopMotion();
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
             _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
