@@ -7,7 +7,17 @@ using TMPro;
 public delegate bool Skill(Enemy enemy);
 public delegate bool OvertimeSkill(Enemy enemy, ref float time);
 public delegate void CallbackIndex(int i);
-public enum SkillType { Dash = 0, BurstFire = 1, SpeedBoost = 2, TripleShot = 3, RamAttack = 4 }
+public enum SkillType { SmallDash = 0, Dash = 1,
+    SmallManuverabilityBoost = 2, MediumManuverabilityBoost = 3, LargeManuverabilityBoost = 4,
+    BubbleField = 5, StrongBubbleField = 6, StopMovement = 7, StrongStopMovement = 8, SmallSpeedBoost = 9,
+    MediumSpeedBoost = 10, LargeSpeedBoost = 11, SmallRegeneration = 12, MediumRegeneration = 13, LargeRegeneration = 14,
+    SmallDefenseBoost = 15, LargeDefenseBoost = 16, WeakSteelMine = 17, MediumSteelMine = 18, StrongSteelMine = 19,
+    SmallCounter = 20, MediumCounter = 21, LargeCounter = 22, SmallRam = 23, MediumRam = 24, LargeRam = 25, SmallSeaglassSpeed = 26,
+    MediumSeaglassSpeed = 27, LargeSeaglassSpeed = 28, SmallInvulnerability = 29, MediumInvulnerability = 30, LargeInvulnerability = 31,
+    SpreadShot = 32, RapidShotFour = 33, RapidShotEight = 34, WeakBigShot = 35, MediumBigShot = 36, StrongBigShot = 37,
+    SmallFireworkCircle = 38, LargeFireworkCircle = 39, PoisonCloud = 40, StrongPoisonCloud = 41, StunShot = 42, StrongStunShot = 43,
+    WeakFlameThrower = 44, MediumFlameThrower = 45, StrongFlameThrower = 46
+}
 
 public class ActiveAbilities : MonoBehaviour
 {
@@ -171,16 +181,46 @@ public class ActiveAbilities : MonoBehaviour
     {
         switch(type)
         {
+            case SkillType.SmallDash:
+                return new ActiveSkill("Small Dash", SmallDash, 5.0f, false, index);
             case SkillType.Dash:
-                return new ActiveSkill("Dash", SmallDash, 5.0f, false, index);
-            case SkillType.BurstFire:
-                return new ActiveSkill("Burst Fire", BurstFire, 10.0f, true, index);
-            case SkillType.SpeedBoost:
+                return new ActiveSkill("Dash", Dash, 5.0f, false, index);
+            case SkillType.SmallManuverabilityBoost:
+                return new ActiveSkill("Manuverability Boost", SmallManuverabilityBoost, 20.0f, false, index);
+            case SkillType.MediumManuverabilityBoost:
+                return new ActiveSkill("Manuverability Boost", MediumManuverabilityBoost, 20.0f, false, index);
+            case SkillType.LargeManuverabilityBoost:
+                return new ActiveSkill("Manuverability Boost", LargeManuverabilityBoost, 20.0f, false, index);
+            case SkillType.BubbleField:
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 2.0f);
+            case SkillType.StrongBubbleField:
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 3.0f);
+            case SkillType.StopMovement:
+                return new ActiveSkill("Stop Movement", StopMovement, 10.0f, false, index);
+            case SkillType.StrongStopMovement:
+                return new ActiveSkill("Stop Movement", StopMovement, 5.0f, false, index);
+            case SkillType.SmallSpeedBoost:
                 return new ActiveSkill("Speed Boost", SmallSpeedBoost, 15.0f, false, index);
-            case SkillType.TripleShot:
-                return new TripleShotSkill("Triple Shot", this, 15.0f, true, index);
-            case SkillType.RamAttack:
-                return new RamSkill("Ram", this, 10.0f, false, index);
+            case SkillType.MediumSpeedBoost:
+                return new ActiveSkill("Speed Boost", MediumSpeedBoost, 15.0f, false, index);
+            case SkillType.LargeSpeedBoost:
+                return new ActiveSkill("Speed Boost", LargeSpeedBoost, 15.0f, false, index);
+            case SkillType.SmallRegeneration:
+                return new ActiveSkill("Regeneration", SmallRegeneration, 25.0f, false, index);
+            case SkillType.MediumRegeneration:
+                return new ActiveSkill("Regeneration", MediumRegeneration, 25.0f, false, index);
+            case SkillType.LargeRegeneration:
+                return new ActiveSkill("Regeneration", LargeRegeneration, 25.0f, false, index);
+            case SkillType.SmallDefenseBoost:
+                return new ActiveSkill("Defense Boost", SmallDefenseBoost, 20.0f, false, index);
+            case SkillType.LargeDefenseBoost:
+                return new ActiveSkill("Defense Boost", LargeDefenseBoost, 20.0f, false, index);
+            case SkillType.WeakSteelMine:
+                return new SteelMineSkill("Mine", this, 25.0f, false, index, 10.0f);
+            case SkillType.MediumSteelMine:
+                return new SteelMineSkill("Mine", this, 25.0f, false, index, 15.0f);
+            case SkillType.StrongSteelMine:
+                return new SteelMineSkill("Mine", this, 25.0f, false, index, 20.0f);
         }
         return null;
     }
@@ -216,11 +256,27 @@ public class ActiveAbilities : MonoBehaviour
 
     #region Skills
     /// <summary>
-    /// Dash ability, player dashes forward
+    /// Small Dash ability, player dashes forward
     /// </summary>
     /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
     /// <returns>If skill was successful</returns>
     private bool SmallDash(Enemy enemy, ref float time)
+    {
+        //Applies force forward for player
+        _movementScript.ApplyConstantMoveForce(transform.forward, 8.0f, 0.5f);
+        if (time > 0.5f)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Dash ability, player dashes forward
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool Dash(Enemy enemy, ref float time)
     {
         //Applies force in direction of player velocity
 
@@ -230,6 +286,17 @@ public class ActiveAbilities : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    /// <summary>
+    /// Stops player's movement
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool StopMovement(Enemy enemy)
+    {
+        _inputManager.ResetMovement();
+        return true;
     }
 
     /// <summary>
@@ -273,7 +340,7 @@ public class ActiveAbilities : MonoBehaviour
     /// </summary>
     /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
     /// <returns>If skill was successful</returns>
-    private bool SmallRegenertaion(Enemy enemy)
+    private bool SmallRegeneration(Enemy enemy)
     {
         //Applies speed effect to player
         _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
@@ -285,7 +352,7 @@ public class ActiveAbilities : MonoBehaviour
     /// </summary>
     /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
     /// <returns>If skill was successful</returns>
-    private bool MediumRegenertaion(Enemy enemy)
+    private bool MediumRegeneration(Enemy enemy)
     {
         //Applies speed effect to player
         _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 15.0f / 3.0f);
@@ -297,7 +364,7 @@ public class ActiveAbilities : MonoBehaviour
     /// </summary>
     /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
     /// <returns>If skill was successful</returns>
-    private bool LargeRegenertaion(Enemy enemy)
+    private bool LargeRegeneration(Enemy enemy)
     {
         //Applies speed effect to player
         _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 20.0f / 3.0f);
@@ -337,6 +404,36 @@ public class ActiveAbilities : MonoBehaviour
     {
         //Applies speed effect to player
         _playerStatusEffects.AddStatus(StatusType.Maneuverability, 7.0f, 2.2f);
+        return true;
+    }
+
+    /// <summary>
+    /// Boosts player defense for 3 seconds
+    /// Reduce damage taken by 20% for 3 seconds
+    /// Reduce Knockback by 33% for 3 seconds
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool SmallDefenseBoost(Enemy enemy)
+    {
+        //Applies speed effect to player
+        _playerStatusEffects.AddStatus(StatusType.Armor, 3.0f, 25.0f);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, 3.0f, 0.5f);
+        return true;
+    }
+
+    /// <summary>
+    /// Boosts player defense for 3 seconds
+    /// Reduce damage taken by 33% for 3 seconds
+    /// Reduce Knockback by 50% for 3 seconds
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool LargeDefenseBoost(Enemy enemy)
+    {
+        //Applies speed effect to player
+        _playerStatusEffects.AddStatus(StatusType.Armor, 3.0f, 50.0f);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, 3.0f, 1.0f);
         return true;
     }
 
@@ -582,6 +679,7 @@ public class TripleShotSkill : ActiveSkill
 
         if (_shotCount == 3)
         {
+            _shotCount = 0;
             return true;
         }
 
@@ -647,5 +745,86 @@ public class RamSkill : ActiveSkill
             _movementScript.TakeKnockback(_movementScript.transform.forward * -100f);
             GameObject.Destroy(_ramHitbox.gameObject);
         }
+    }
+}
+
+public class BubbleFieldSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private GameObject _bubbleBroth;
+    private float _timeActive;
+    private float _debuffDuration;
+
+    public BubbleFieldSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float timeActive, float debuffDur) : base(name, (Skill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _timeActive = timeActive;
+        _debuffDuration = debuffDur;
+        _bubbleBroth = (GameObject)Resources.Load("ActiveAbilities/PlayerBubbleBroth");
+        _skill = BubbleField;
+    }
+
+    /// <summary>
+    /// Player rams forward to attack enemy
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this attack</param>
+    /// <returns>If attack is finished</returns>
+    public bool BubbleField(Enemy enemy)
+    {
+        GameObject bubbles = GameObject.Instantiate(_bubbleBroth, _movementScript.Position, _movementScript.Rotation);
+        bubbles.GetComponent<PlayerBubbeBroth>().SetBubbleBroth(_timeActive, _debuffDuration);
+        return true;
+    }
+}
+
+public class SteelMineSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private GameObject _steelMine;
+    private int _mineCount;
+    private float _mineDamage;
+    private const float MAX_MINE_DIST = 10.0f;
+    private GameObject _prevMine;
+
+    public SteelMineSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float mineDamage) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _mineDamage = mineDamage;
+        _mineCount = 0;
+        _steelMine = (GameObject)Resources.Load("ActiveAbilities/SteelMine");
+        _timeSkill = SteelMine;
+    }
+
+    /// <summary>
+    /// Place three mines behind the player overtime
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this attack</param>
+    /// <returns>If attack is finished</returns>
+    public bool SteelMine(Enemy enemy, ref float time)
+    {
+        if ((time > 0.5f && _prevMine == null) || (time > 0.5f && Vector3.SqrMagnitude(_prevMine.transform.position - _movementScript.transform.position) > MAX_MINE_DIST * MAX_MINE_DIST))
+        {
+            time = 0;
+        }
+
+        if (time == 0)
+        {
+            GameObject mine = GameObject.Instantiate(_steelMine, _movementScript.Position, _movementScript.Rotation);
+            mine.GetComponent<SteelMine>().SetMine(_mineDamage);
+            _prevMine = mine;
+            _mineCount += 1;
+        }
+
+        if(_mineCount == 3)
+        {
+            _mineCount = 0;
+            return true;
+        }
+
+        return false;
     }
 }
