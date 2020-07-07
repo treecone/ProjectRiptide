@@ -25,8 +25,12 @@ public class Hitbox : MonoBehaviour
     private float _launchStrength;
 
     public GameObject AttachedObject => _attachedObject;
-    public float Damage => _damage;
     public HitboxType Type => _type;
+    public float Damage
+    {
+        get { return _damage; }
+        set { _damage = value; }
+    }
 
     /// <summary>
     /// Set the values of the hitbox
