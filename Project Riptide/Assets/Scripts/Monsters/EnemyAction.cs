@@ -1723,7 +1723,10 @@ public partial class Stingray : Enemy
 
         if(time >= MAX_TIME)
         {
-            _electricBoltParticles.GetComponentInChildren<ParticleSystem>().Stop();
+            foreach(ParticleSystem particle in _electricBoltParticles.GetComponentsInChildren<ParticleSystem>())
+            {
+                particle.Stop();
+            }
             ClearHitboxes();
             return false;
         }

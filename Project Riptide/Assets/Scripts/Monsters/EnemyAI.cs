@@ -1184,7 +1184,10 @@ public partial class Stingray : Enemy
                             {
                                 ClearHitboxes();
                                 _electricBoltParticles.transform.parent = null;
-                                _electricBoltParticles.GetComponentInChildren<ParticleSystem>().Stop();
+                                foreach (ParticleSystem particle in _electricBoltParticles.GetComponentsInChildren<ParticleSystem>())
+                                {
+                                    particle.Stop();
+                                }
                             }
                             _electricChargeParticles.Stop();
 
