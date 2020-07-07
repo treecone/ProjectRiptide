@@ -11,8 +11,6 @@ public class MarketMethods : MonoBehaviour
     private InventoryMethods _inventoryMethods;
     [SerializeField]
     private Inventory _inventoryVault;
-    [SerializeField]
-    private Inventory _inventoryShip;
     //private Inventory _inventoryShop;
     [SerializeField]
     private TextMeshProUGUI _sellBuyField;
@@ -91,12 +89,11 @@ public class MarketMethods : MonoBehaviour
     /// <summary>
     /// Sells item based on amount * value, adds to gold
     /// </summary>
-    /// <param name="inventory"></param>
-    public void SellItem(Inventory inventory)
+    public void SellItem()
     {
         //increase gold
         int amount = System.Convert.ToInt32(_sellBuyField.text);
-        inventory.TotalGold += _activeItem.Value * amount;
+        PlayerInventory.Instance.totalGold += _activeItem.Value * amount;
         UpdateGold();
         //save and delete item
         Item saved = _activeItem;
@@ -104,7 +101,7 @@ public class MarketMethods : MonoBehaviour
         {
             ResetActiveItem();
         }
-        inventory.RemoveItem(saved.Name, amount);
+        PlayerInventory.Instance.RemoveItem(saved.Name, amount);
     }
 
     /// <summary>
@@ -112,9 +109,9 @@ public class MarketMethods : MonoBehaviour
     /// </summary>
     public void UpdateGold()
     {
-        _totalGoldMarket.SetText("{0}", _inventoryShip.TotalGold);
-        Debug.Log(_inventoryShip.TotalGold);
-        _inventoryVault.TotalGold = _inventoryShip.TotalGold;
+        _totalGoldMarket.SetText("{0}", PlayerInventory.Instance.totalGold);
+        Debug.Log(PlayerInventory.Instance.totalGold);
+        //_inventoryVault.TotalGold = _inventoryShip.TotalGold;
     }
 
     /// <summary>

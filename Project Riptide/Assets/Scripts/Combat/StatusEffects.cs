@@ -97,8 +97,36 @@ public class StatusEffects : MonoBehaviour
         {
             _upgrades.Recalculate();
         }
+    }
 
-        
+    public void AddStatus(StatusType type, string tag, float duration, float level)
+    {
+        StatusEffect s = new StatusEffect(type, tag, duration, level);
+        ActiveStatusEffects.Add(s);
+        _statusIcons.RearrangeStatuses(ActiveStatusEffects);
+        if (_upgrades != null)
+        {
+            _upgrades.Recalculate();
+        }
+    }
+
+    public void RemoveStatus(string tag)
+    {
+        for (int i = 0; i < _activeStatusEffects.Count; i++)
+        {
+            StatusEffect status = _activeStatusEffects[i];
+            if (status.Tag == tag)
+            {
+                _activeStatusEffects.RemoveAt(i);
+                if (_upgrades != null)
+                {
+                    _upgrades.Recalculate();
+                }
+
+                _statusIcons.RearrangeStatuses(ActiveStatusEffects);
+                i--;
+            }
+        }
     }
 }
 
@@ -108,7 +136,7 @@ public class StatusEffect
     private StatusType _type;
     private float _duration;
     private float _level;
-    private Color _color;
+    private string _tag;
 
     private float _currentDuration;
 
@@ -142,9 +170,28 @@ public class StatusEffect
             return _currentDuration < _duration;
         }
     }
+
+    public string Tag
+    {
+        get
+        {
+            return _tag;
+        }
+    }
     public StatusEffect(StatusType type, float duration, float level)
     {
         _type = type;
+        _tag = "noTag";
+        _duration = duration;
+        _level = level;
+
+        _currentDuration = 0;
+    }
+
+    public StatusEffect(StatusType type, string tag, float duration, float level)
+    {
+        _type = type;
+        _tag = tag;
         _duration = duration;
         _level = level;
 

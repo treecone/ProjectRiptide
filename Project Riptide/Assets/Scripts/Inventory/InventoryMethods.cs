@@ -147,8 +147,7 @@ public class InventoryMethods : MonoBehaviour
     /// <summary>
     /// trashes the item in inventory, checks number amounts
     /// </summary>
-    /// <param name="inventory"></param>
-    public void TrashItem(Inventory inventory)
+    public void TrashItem()
     {
         //checks if null item
         if (_activeItem.Id != 0)
@@ -162,7 +161,7 @@ public class InventoryMethods : MonoBehaviour
                 ResetActiveItem();
             }
 
-            inventory.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
 
         }
     }
@@ -254,7 +253,7 @@ public class InventoryMethods : MonoBehaviour
 
     public void UpdateGold()
     {
-        _totalGoldInventory.SetText("{0}", _inventory.TotalGold);
+        _totalGoldInventory.SetText("{0}", PlayerInventory.Instance.totalGold);
     }
 
 }

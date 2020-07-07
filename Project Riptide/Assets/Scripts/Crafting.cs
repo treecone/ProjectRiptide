@@ -11,11 +11,7 @@ public class Crafting : MonoBehaviour
     private string _jsonString;
     private JsonData _recipeData;
 
-
-    [SerializeField]
-    private Inventory _inventory;
-    [SerializeField]
-    private ItemDatabase _itemDatabase;
+    
     [SerializeField]
     private List<Recipe> _recipes;
 
@@ -72,9 +68,9 @@ public class Crafting : MonoBehaviour
         {
             for (int i = 0; i < recipe.ingredients.Count; i++)
             {
-                _inventory.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
+                PlayerInventory.Instance.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
             }
-            Item result = _itemDatabase.FindItem(recipe.result);
+            Item result = ItemDB.Instance.FindItem(recipe.result);
             result.Amount = recipe.resultAmount;
             foreach(Upgrade u in recipe.upgrades)
             {
@@ -95,7 +91,7 @@ public class Crafting : MonoBehaviour
     {
         for(int i = 0; i < recipe.ingredients.Count; i++)
         {
-            if(_inventory.CountOf(recipe.ingredients[i]) < recipe.ingredientAmounts[i])
+            if(PlayerInventory.Instance.CountOf(recipe.ingredients[i]) < recipe.ingredientAmounts[i])
             {
                 return false;
             }
