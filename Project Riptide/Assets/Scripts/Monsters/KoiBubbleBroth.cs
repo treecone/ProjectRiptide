@@ -8,18 +8,42 @@ public class KoiBubbleBroth : MonoBehaviour
 
     private float _lifeSpan = 0.0f;
     private bool _destroying = false;
+    private bool _maxSize = false;
+    private Vector3 _hitboxSize;
+    private Vector3 _telegraphSize;
+    private GameObject _telegraph;
+    private GameObject _hitbox;
 
     // Start is called before the first frame update
     void Start()
     {
-        GetComponentInChildren<Hitbox>().OnTrigger += SlowPlayer;
-        GetComponentInChildren<Hitbox>().OnExit += RemoveSlowExit;
-        GetComponentInChildren<Hitbox>().OnDestruction += RemoveSlow;
+        _hitbox = GetComponentInChildren<Hitbox>().gameObject;
+        _hitbox.GetComponent<Hitbox>().OnTrigger += SlowPlayer;
+        _hitbox.GetComponent<Hitbox>().OnExit += RemoveSlowExit;
+        _hitbox.GetComponent<Hitbox>().OnDestruction += RemoveSlow;
+        _hitboxSize = _hitbox.transform.localScale;
+        _hitbox.transform.localScale = Vector3.zero;
+
+        _telegraph = transform.Find("Bubble Field").Find("BubbleFieldTelegraph").gameObject;
+        _telegraphSize = _telegraph.transform.localScale;
+        _telegraph.transform.localScale = Vector3.zero;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(_lifeSpan < 2.0f)
+        {
+            _hitbox.transform.localScale = _hitboxSize * (_lifeSpan / 2.0f);
+            _telegraph.transform.localScale = _telegraphSize * (_lifeSpan / 2.0f);
+        }
+        else if(!_maxSize)
+        {
+            _maxSize = true;
+            _hitbox.transform.localScale = _hitboxSize;
+            _telegraph.transform.localScale = _telegraphSize;
+        }
+
         _lifeSpan += Time.deltaTime;
         if(_lifeSpan >= MAX_LIFESPAN && !_destroying)
         {
