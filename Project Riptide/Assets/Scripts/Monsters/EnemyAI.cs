@@ -648,9 +648,9 @@ public partial class FlowerFrog : Enemy
                         _activeStates[(int)FlowerFrogAttackState.Latched] = false;
                         _activeStates[(int)AttackState.Active] = true;
                         _currTime = 0;
+                        OnToungeDetach();
                         _actionQueue.Enqueue(ToungeReturn);
                     }
-                    SendFriction(0.4f);
                 }
             }
             else

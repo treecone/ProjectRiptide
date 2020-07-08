@@ -58,8 +58,8 @@ public partial class Stingray : Enemy
         //Set parameters
         _enemyType = EnemyType.Stingray;
         _speed = 1.0f;
-        _health = 100;
-        _maxHealth = 100;
+        _health = 50;
+        _maxHealth = 50;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;

@@ -984,6 +984,7 @@ public partial class FlowerFrog : Enemy
             _animator.SetTrigger(_animParm[(int)FrogAnim.Attack]);
             _hitboxes.Add(CreateHitbox(_tounge.transform.localPosition, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, 0));
             _hitboxes[_hitboxes.Count - 1].transform.parent = _tounge.transform;
+            _hitboxes[_hitboxes.Count - 1].GetComponent<Hitbox>().OnTrigger += OnToungeLatch;
             if (DoTelegraphs())
             {
                 _telegraphs[0].transform.parent = null;

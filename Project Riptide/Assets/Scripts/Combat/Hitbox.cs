@@ -96,6 +96,7 @@ public class Hitbox : MonoBehaviour
                     }
                     //Trigger any events assosiated with collision
                     OnTrigger?.Invoke(hitbox.AttachedObject);
+                    hitbox.OnTrigger?.Invoke(AttachedObject);
                 }
             }
             //If the collision was with an enemy hurtbox
