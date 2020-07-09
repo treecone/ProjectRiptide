@@ -72,8 +72,7 @@ public class PlayerBubbeBroth : MonoBehaviour
         if (other.tag == "Enemy")
         {
             //Slow enemy
-            //other.GetComponent<StatusEffects>().AddStatus(StatusType.ShipSpeed, _debuffDuration, -0.75f);
-            Debug.Log("Enemy would be slowed for " + _debuffDuration + " seconds.");
+            other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, _debuffDuration, -0.8f);
         }
     }
 }

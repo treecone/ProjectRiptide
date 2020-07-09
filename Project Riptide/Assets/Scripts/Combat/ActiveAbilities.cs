@@ -200,9 +200,9 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeManuverabilityBoost:
                 return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 7.0f, 2.0f);
             case SkillType.BubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 2.0f);
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 5.0f);
             case SkillType.StrongBubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 3.0f);
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 8.0f);
             case SkillType.StopMovement:
                 return new ActiveSkill("Stop Movement", StopMovement, 10.0f, false, index);
             case SkillType.StrongStopMovement:
@@ -1004,12 +1004,15 @@ public class PoisonCloudSkill : ActiveSkill
         return false;
     }
 
+    /// <summary>
+    /// Apply poison effect to enemy
+    /// </summary>
+    /// <param name="other"></param>
     private void ApplyPoison(GameObject other)
     {
         if(other.tag == "Enemy")
         {
-            //APPLY POISON EFFECT TO ENEMY
-            Debug.Log("Enemy would be poisoned");
+            other.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, _poisonDuration, _damagePerSecond);
         }
     }
 }
@@ -1070,12 +1073,15 @@ public class StunShotSkill : ActiveSkill
         return true;
     }
 
+    /// <summary>
+    /// Stun enemy
+    /// </summary>
+    /// <param name="other"></param>
     private void StunEnemy(GameObject other)
     {
         if (other.tag == "Enemy")
         {
-            //APPLY STUN EFFECT TO ENEMY
-            Debug.Log("Enemy would be stunned");
+            other.GetComponent<StatusEffects>().AddStatus(StatusType.Stun, _stunTime, 1.0f);
         }
     }
 }
