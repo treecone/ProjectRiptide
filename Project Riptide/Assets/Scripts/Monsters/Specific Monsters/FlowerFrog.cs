@@ -79,7 +79,7 @@ public partial class FlowerFrog : Enemy
         if(other.tag == "Player")
         {
             _playerStatusEffects = other.GetComponent<StatusEffects>();
-            _playerStatusEffects.AddStatus(StatusType.ShipSpeed, "ToungeLatch", 999999.0f, -0.40f);
+            _playerStatusEffects.AddStatus(StatusType.MovementSpeed, "ToungeLatch", 999999.0f, -0.40f);
         }
     }
 

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
-public enum StatusType {Armor, Hardiness, MaxHealth, Regeneration, DropQuality, DropRate, Maneuverability, ShipSpeed, Count, Damage, FireSpeed, ShotSize, SpreadAngle, VerticalRatio, Fire, Poison}
+public enum StatusType {Armor, Hardiness, MaxHealth, Regeneration, DropQuality, DropRate, Maneuverability, MovementSpeed, Count, Damage, FireSpeed, ShotSize, SpreadAngle, VerticalRatio, Fire, Poison, Stun}
 public class Upgrades : MonoBehaviour
 {
     /// <summary>

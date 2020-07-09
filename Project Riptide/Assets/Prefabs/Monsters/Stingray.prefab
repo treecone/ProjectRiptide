@@ -19,6 +19,95 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &2493228497847966832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5992043061955548588}
+  - component: {fileID: 401492734123890461}
+  - component: {fileID: 2808734955028056521}
+  m_Layer: 2
+  m_Name: StatusEffectIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5992043061955548588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493228497847966832}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.06, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_Children: []
+  m_Father: {fileID: 2526334523281212879}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &401492734123890461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493228497847966832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc7496c4cac77c4ba6a10884b4e3d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 0}
+--- !u!114 &2808734955028056521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2493228497847966832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f50368c7f686a145ba2347e43fde3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - name: 0
+    sprite: {fileID: 21300000, guid: 77e351fbe685ed7488046e120b74a923, type: 3}
+  - name: 8
+    sprite: {fileID: 21300000, guid: 7e9c4c958e778c04db1b52eb4109bb86, type: 3}
+  - name: 4
+    sprite: {fileID: 21300000, guid: 854737a01d9c15a4fb27b548b1cbbacc, type: 3}
+  - name: 5
+    sprite: {fileID: 21300000, guid: 66f0849083c56114e87ddf57982bfccb, type: 3}
+  - name: 14
+    sprite: {fileID: 21300000, guid: 05277f867c4b3bd47aaded3009da01fc, type: 3}
+  - name: 1
+    sprite: {fileID: 21300000, guid: 17d9c31b8fd987140801a5a4723a1aaa, type: 3}
+  - name: 6
+    sprite: {fileID: 21300000, guid: 01f5379fdcba8a945b4c64eca544b550, type: 3}
+  - name: 2
+    sprite: {fileID: 21300000, guid: 553e699502dab7e46b665d61f6363560, type: 3}
+  - name: 15
+    sprite: {fileID: 21300000, guid: 10c86dcc047ecc24f8c0fa5ce17b9577, type: 3}
+  - name: 9
+    sprite: {fileID: 21300000, guid: 493c64a149e504f4aab0b87d56de8b16, type: 3}
+  - name: 3
+    sprite: {fileID: 21300000, guid: 1a74661c494ee754e8b521e5c04d2891, type: 3}
+  - name: 11
+    sprite: {fileID: 21300000, guid: aca48221efb27f340809fd83b9c9ab0b, type: 3}
+  - name: 7
+    sprite: {fileID: 21300000, guid: c021aa74c10372c4d98cd252ea72b42c, type: 3}
+  iconPrefab: {fileID: 1682248118311170207, guid: d454677c94cf9ce4da490f459276a01f,
+    type: 3}
+  _maxRowSize: 5
+  _spriteWidth: 5
+  _spriteHeight: 5
 --- !u!1 &6692637672442224423
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,6 +119,8 @@ GameObject:
   - component: {fileID: 2526334523281212879}
   - component: {fileID: 5452334341317371729}
   - component: {fileID: 2778542242916987788}
+  - component: {fileID: 2338437809769551242}
+  - component: {fileID: 662316891832758069}
   m_Layer: 0
   m_Name: Stingray
   m_TagString: Enemy
@@ -52,6 +143,7 @@ Transform:
   - {fileID: 1673806900287986449}
   - {fileID: 2267769913152201822}
   - {fileID: 7704192623991693936}
+  - {fileID: 5992043061955548588}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -104,6 +196,39 @@ MonoBehaviour:
   currentHealth: 0
   slider: {fileID: 1673806898999313012}
   _sliderText: {fileID: 0}
+--- !u!114 &2338437809769551242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6692637672442224423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlayer: 0
+  upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: 0
+    upgradeValue: 0
+    _componentUpgrades: []
+--- !u!114 &662316891832758069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6692637672442224423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d04a01da1cdd6b4896658f5aed7da54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeStatusEffects: []
+  isPlayer: 0
 --- !u!1001 &4885665494962684934
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -25,8 +25,8 @@ public partial class Enemy : Physics
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         }
         //Seek destination
-        Vector3 netForce = Seek(destination);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -57,8 +57,8 @@ public partial class Enemy : Physics
             destination = new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z);
         }
         //Seek destination
-        Vector3 netForce = Seek(destination);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -707,8 +707,8 @@ public partial class KoiBoss : Enemy
             {
                 destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             }
-            Vector3 netForce = Seek(destination);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f;
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -1784,7 +1784,7 @@ public partial class Stingray : Enemy
                 _electricBoltParticles.transform.rotation = Quaternion.LookRotation(diffVec);
 
                 //Setup hitbox
-                _hitboxes.Add(CreateHitbox(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(4.0f, 2f, dist / transform.localScale.z), HitboxType.EnemyHitbox, 0));
+                _hitboxes.Add(CreateHitbox(transform.InverseTransformVector(diffVec) * (dist / 2f), new Vector3(2.0f, 2f, dist / transform.localScale.z), HitboxType.EnemyHitbox, 0));
                 _hitboxes[0].transform.rotation = Quaternion.LookRotation(diffVec);
                 _hitboxes[0].GetComponent<Hitbox>().OnTrigger += AddElectricEffect;
                 _hitboxes[0].GetComponent<Hitbox>().OnStay += DealElectricDamage;

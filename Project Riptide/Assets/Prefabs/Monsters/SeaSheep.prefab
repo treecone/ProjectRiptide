@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 3334725380338985692}
   - component: {fileID: 382874330137767645}
   - component: {fileID: 5729214465038502565}
+  - component: {fileID: 1269571432263995582}
+  - component: {fileID: 2377967565859565686}
   m_Layer: 0
   m_Name: SeaSheep
   m_TagString: Enemy
@@ -31,6 +33,7 @@ Transform:
   m_Children:
   - {fileID: 7727587476848333117}
   - {fileID: 2566747214408350981}
+  - {fileID: 3294032854838587390}
   - {fileID: 213640332475839202}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -53,7 +56,10 @@ MonoBehaviour:
     type: 3}
   _canvas: {fileID: 213640332475839203}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
+  _telegraphPrefab: []
   _splashParticle: {fileID: 0}
+  _lootboxPrefab: {fileID: 0}
+  _lootType: 
   _lengthMult: 2
   _widthMult: 1.5
   _heightMult: 2
@@ -73,6 +79,128 @@ MonoBehaviour:
   currentHealth: 0
   slider: {fileID: 213640333196241799}
   _sliderText: {fileID: 0}
+--- !u!114 &1269571432263995582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334725380338985693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlayer: 0
+  upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: 0
+    upgradeValue: 0
+    _componentUpgrades: []
+--- !u!114 &2377967565859565686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3334725380338985693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d04a01da1cdd6b4896658f5aed7da54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeStatusEffects: []
+  isPlayer: 0
+--- !u!1 &3572129288965687979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3294032854838587390}
+  - component: {fileID: 7507123705998651968}
+  - component: {fileID: 8021095767396293457}
+  m_Layer: 2
+  m_Name: StatusEffectIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3294032854838587390
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3572129288965687979}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.34, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_Children: []
+  m_Father: {fileID: 3334725380338985692}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7507123705998651968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3572129288965687979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc7496c4cac77c4ba6a10884b4e3d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 0}
+--- !u!114 &8021095767396293457
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3572129288965687979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f50368c7f686a145ba2347e43fde3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - name: 0
+    sprite: {fileID: 21300000, guid: 77e351fbe685ed7488046e120b74a923, type: 3}
+  - name: 8
+    sprite: {fileID: 21300000, guid: 7e9c4c958e778c04db1b52eb4109bb86, type: 3}
+  - name: 4
+    sprite: {fileID: 21300000, guid: 854737a01d9c15a4fb27b548b1cbbacc, type: 3}
+  - name: 5
+    sprite: {fileID: 21300000, guid: 66f0849083c56114e87ddf57982bfccb, type: 3}
+  - name: 14
+    sprite: {fileID: 21300000, guid: 05277f867c4b3bd47aaded3009da01fc, type: 3}
+  - name: 1
+    sprite: {fileID: 21300000, guid: 17d9c31b8fd987140801a5a4723a1aaa, type: 3}
+  - name: 6
+    sprite: {fileID: 21300000, guid: 01f5379fdcba8a945b4c64eca544b550, type: 3}
+  - name: 2
+    sprite: {fileID: 21300000, guid: 553e699502dab7e46b665d61f6363560, type: 3}
+  - name: 15
+    sprite: {fileID: 21300000, guid: 10c86dcc047ecc24f8c0fa5ce17b9577, type: 3}
+  - name: 9
+    sprite: {fileID: 21300000, guid: 493c64a149e504f4aab0b87d56de8b16, type: 3}
+  - name: 3
+    sprite: {fileID: 21300000, guid: 1a74661c494ee754e8b521e5c04d2891, type: 3}
+  - name: 11
+    sprite: {fileID: 21300000, guid: aca48221efb27f340809fd83b9c9ab0b, type: 3}
+  - name: 7
+    sprite: {fileID: 21300000, guid: c021aa74c10372c4d98cd252ea72b42c, type: 3}
+  iconPrefab: {fileID: 1682248118311170207, guid: d454677c94cf9ce4da490f459276a01f,
+    type: 3}
+  _maxRowSize: 5
+  _spriteWidth: 5
+  _spriteHeight: 5
 --- !u!1001 &3334725379990813223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -343,7 +471,7 @@ PrefabInstance:
     - target: {fileID: 6964567925209924808, guid: cebad9541f2b62844b2e43ff52cb0611,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6964567925209924808, guid: cebad9541f2b62844b2e43ff52cb0611,
         type: 3}

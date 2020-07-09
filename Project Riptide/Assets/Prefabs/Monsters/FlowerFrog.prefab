@@ -1,5 +1,94 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &60224739886802914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2605260681348945303}
+  - component: {fileID: 8958412509331558249}
+  - component: {fileID: 3735662314439062229}
+  m_Layer: 2
+  m_Name: StatusEffectIcons
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2605260681348945303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60224739886802914}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 3.71, z: 0}
+  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_Children: []
+  m_Father: {fileID: 5879840267591718076}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8958412509331558249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60224739886802914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cc7496c4cac77c4ba6a10884b4e3d05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 0}
+--- !u!114 &3735662314439062229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 60224739886802914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f50368c7f686a145ba2347e43fde3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprites:
+  - name: 0
+    sprite: {fileID: 21300000, guid: 77e351fbe685ed7488046e120b74a923, type: 3}
+  - name: 8
+    sprite: {fileID: 21300000, guid: 7e9c4c958e778c04db1b52eb4109bb86, type: 3}
+  - name: 4
+    sprite: {fileID: 21300000, guid: 854737a01d9c15a4fb27b548b1cbbacc, type: 3}
+  - name: 5
+    sprite: {fileID: 21300000, guid: 66f0849083c56114e87ddf57982bfccb, type: 3}
+  - name: 14
+    sprite: {fileID: 21300000, guid: 05277f867c4b3bd47aaded3009da01fc, type: 3}
+  - name: 1
+    sprite: {fileID: 21300000, guid: 17d9c31b8fd987140801a5a4723a1aaa, type: 3}
+  - name: 6
+    sprite: {fileID: 21300000, guid: 01f5379fdcba8a945b4c64eca544b550, type: 3}
+  - name: 2
+    sprite: {fileID: 21300000, guid: 553e699502dab7e46b665d61f6363560, type: 3}
+  - name: 15
+    sprite: {fileID: 21300000, guid: 10c86dcc047ecc24f8c0fa5ce17b9577, type: 3}
+  - name: 9
+    sprite: {fileID: 21300000, guid: 493c64a149e504f4aab0b87d56de8b16, type: 3}
+  - name: 3
+    sprite: {fileID: 21300000, guid: 1a74661c494ee754e8b521e5c04d2891, type: 3}
+  - name: 11
+    sprite: {fileID: 21300000, guid: aca48221efb27f340809fd83b9c9ab0b, type: 3}
+  - name: 7
+    sprite: {fileID: 21300000, guid: c021aa74c10372c4d98cd252ea72b42c, type: 3}
+  iconPrefab: {fileID: 1682248118311170207, guid: d454677c94cf9ce4da490f459276a01f,
+    type: 3}
+  _maxRowSize: 5
+  _spriteWidth: 5
+  _spriteHeight: 5
 --- !u!1 &1188694926853693735
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +246,8 @@ GameObject:
   - component: {fileID: 5879840267591718076}
   - component: {fileID: 1846908208038424904}
   - component: {fileID: 8704840371582493604}
+  - component: {fileID: 8522711954595860376}
+  - component: {fileID: 1833012876535456883}
   m_Layer: 0
   m_Name: FlowerFrog
   m_TagString: Enemy
@@ -179,6 +270,7 @@ Transform:
   - {fileID: 8443625744649130588}
   - {fileID: 3245334075839005093}
   - {fileID: 3359273447796382697}
+  - {fileID: 2605260681348945303}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -205,6 +297,8 @@ MonoBehaviour:
   - {fileID: 2356386736741349648, guid: e205ffd71e077474e9105714b7233d5c, type: 3}
   _splashParticle: {fileID: 2356386736741349648, guid: a28ad58532a5f1e4294dd2cf1c578e4b,
     type: 3}
+  _lootboxPrefab: {fileID: 0}
+  _lootType: 
   _lengthMult: 3
   _widthMult: 1.5
   _heightMult: 1.5
@@ -225,6 +319,39 @@ MonoBehaviour:
   currentHealth: 0
   slider: {fileID: 3245334076527892672}
   _sliderText: {fileID: 0}
+--- !u!114 &8522711954595860376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357992965091392217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlayer: 0
+  upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: 0
+    upgradeValue: 0
+    _componentUpgrades: []
+--- !u!114 &1833012876535456883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357992965091392217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d04a01da1cdd6b4896658f5aed7da54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeStatusEffects: []
+  isPlayer: 0
 --- !u!95 &4669579713481151198
 Animator:
   serializedVersion: 3

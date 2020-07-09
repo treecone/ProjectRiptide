@@ -67,6 +67,7 @@ public partial class KoiBoss : Enemy
         if(Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(10);
+            GetComponent<StatusEffects>().AddStatus(StatusType.Stun, 4.0f, 1.0f);
         }
         base.Update();
     }
