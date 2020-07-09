@@ -86,7 +86,10 @@ public class KoiBubbleBroth : MonoBehaviour
     /// </summary>
     private void RemoveSlow()
     {
-        _playerStatus.RemoveStatus("BubbleBroth");
-        _playerStatus.AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+        if (_playerStatus != null)
+        {
+            _playerStatus.RemoveStatus("BubbleBroth");
+            _playerStatus.AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+        }
     }
 }
