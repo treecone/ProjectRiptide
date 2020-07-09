@@ -74,10 +74,10 @@ public class KoiBubbleBroth : MonoBehaviour
     /// <param name="other"></param>
     private void RemoveSlowExit(GameObject other)
     {
-        if(other.tag == "Player")
+        if(other.tag == "Hitbox" && other.transform.parent.tag == "Player")
         {
-            other.GetComponent<StatusEffects>().RemoveStatus("BubbleBroth");
-            other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("BubbleBroth");
+            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
         }
     }
 
