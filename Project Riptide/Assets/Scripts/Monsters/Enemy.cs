@@ -209,6 +209,7 @@ public partial class Enemy : Physics
                 if (!_frozen)
                 {
                     _frozen = true;
+                    OnFreeze();
                 }
             }
             else
@@ -216,6 +217,7 @@ public partial class Enemy : Physics
                 if(_frozen)
                 {
                     _frozen = false;
+                    OnUnfreeze();
                 }
                 //checks for states
                 switch (_state)
@@ -750,6 +752,15 @@ public partial class Enemy : Physics
             lootbox.dropType = _lootType;
             lootbox.GenerateItems();
         }
+    }
+
+    protected virtual void OnFreeze()
+    {
+    }
+
+    protected virtual void OnUnfreeze()
+    {
+        _acceleration = Vector3.zero;
     }
 
     /// <summary>

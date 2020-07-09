@@ -34,6 +34,12 @@ public class Physics : MonoBehaviour
         set { _rotation = value; transform.rotation = _rotation; }
     }
 
+    public bool Frozen
+    {
+        get { return _frozen; }
+        set { _frozen = value; }
+    }
+
     // Start is called before the first frame update
     protected virtual void Start()
     {

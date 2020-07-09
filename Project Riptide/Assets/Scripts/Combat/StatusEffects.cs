@@ -128,6 +128,24 @@ public class StatusEffects : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Checks to see if a certain status is active
+    /// </summary>
+    /// <param name="tag">Tag of status to check</param>
+    /// <returns>If status was found</returns>
+    public bool CheckStatus(string tag)
+    {
+        for (int i = 0; i < _activeStatusEffects.Count; i++)
+        {
+            StatusEffect status = _activeStatusEffects[i];
+            if (status.Tag == tag)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 [System.Serializable]

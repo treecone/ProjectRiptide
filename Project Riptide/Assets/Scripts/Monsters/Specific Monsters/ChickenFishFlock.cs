@@ -61,7 +61,7 @@ public partial class ChickenFishFlock : Enemy
     // Update is called once per frame
     protected override void Update()
     {
-        if (!_dying)
+        if (!_dying && !_frozen)
         {
             MoveFlock();
         }
@@ -118,5 +118,29 @@ public partial class ChickenFishFlock : Enemy
             _chickenFlock[i].FlockerAnimator.SetTrigger(_animParm[(int)Anim.Die]);
         }
         base.OnDeath();
+    }
+
+    /// <summary>
+    /// On Freeze, freeze all the children chickens
+    /// </summary>
+    protected override void OnFreeze()
+    {
+        for (int i = 0; i < _chickenFlock.Count; i++)
+        {
+            _chickenFlock[i].Frozen = true;
+        }
+        base.OnFreeze();
+    }
+
+    /// <summary>
+    /// On unfreeze, unfreeze all the children chickens
+    /// </summary>
+    protected override void OnUnfreeze()
+    {
+        for (int i = 0; i < _chickenFlock.Count; i++)
+        {
+            _chickenFlock[i].Frozen = false;
+        }
+        base.OnUnfreeze();
     }
 }

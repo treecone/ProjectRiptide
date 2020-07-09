@@ -112,6 +112,10 @@ public partial class Stingray : Enemy
         {
             _electricBoltParticles.GetComponent<ParticleSystem>().Stop();
         }
+        if(_frozen && _zapBuddy != null)
+        {
+            _zapBuddy.GetComponent<StatusEffects>().RemoveStatus("BuddyStun");
+        }
     }
 
     /// <summary>
@@ -204,5 +208,23 @@ public partial class Stingray : Enemy
         {
             _electricShockParticles.GetComponentInChildren<ParticleSystem>().Stop();
         }
+    }
+
+    protected override void OnFreeze()
+    {
+        if(_zapBuddy != null && !_zapBuddy._frozen)
+        {
+            _zapBuddy.GetComponent<StatusEffects>().AddStatus(StatusType.Stun, "BuddyStun", 9999.0f, 1.0f);
+        }
+        base.OnFreeze();
+    }
+
+    protected override void OnUnfreeze()
+    {
+        if(_zapBuddy != null)
+        {
+            _zapBuddy.GetComponent<StatusEffects>().RemoveStatus("BuddyStun");
+        }
+        base.OnUnfreeze();
     }
 }

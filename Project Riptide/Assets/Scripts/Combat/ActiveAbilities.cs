@@ -1010,9 +1010,12 @@ public class PoisonCloudSkill : ActiveSkill
     /// <param name="other"></param>
     private void ApplyPoison(GameObject other)
     {
-        if(other.tag == "Enemy")
+        if (other.tag == "Enemy")
         {
-            other.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, _poisonDuration, _damagePerSecond);
+            if (!other.GetComponent<StatusEffects>().CheckStatus("PoisonCloud"))
+            {
+                other.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, "PoisonCloud", _poisonDuration, _damagePerSecond);
+            }
         }
     }
 }
