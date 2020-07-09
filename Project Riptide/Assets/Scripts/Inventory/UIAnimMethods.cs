@@ -12,41 +12,41 @@ public class UIAnimMethods : MonoBehaviour
     //Fast Transition
     public void SlideLeftF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .55f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2400f, .55f).SetUpdate(true);
     }
     public void SlideRightF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .55f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2400f, .55f).SetUpdate(true);
     }
 
     //Normal Transition
     public void SlideLeft(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .6f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2700f, .6f).SetUpdate(true);
     }
     public void SlideRight(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .6f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2700f, .6f).SetUpdate(true);
     }
 
     //Slow Transition   
     public void SlideLeftS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2700f, .65f).SetUpdate(true);
     }
     public void SlideRightS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .65f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2700f, .65f).SetUpdate(true);
     }
 
     //Slowest Transition
     public void SlideLeftVS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 1505f, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2700f, .7f).SetUpdate(true);
     }
     public void SlideRightVS(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 1505f, .7f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2700f, .7f).SetUpdate(true);
     }
 
 
