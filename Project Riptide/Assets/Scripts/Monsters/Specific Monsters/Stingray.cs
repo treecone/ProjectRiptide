@@ -110,7 +110,7 @@ public partial class Stingray : Enemy
         }
         if(_electricBoltParticles != null)
         {
-            _electricBoltParticles.GetComponent<ParticleSystem>().Stop();
+            _electricBoltParticles.GetComponentInChildren<ParticleSystem>().Stop();
         }
         if(_frozen && _zapBuddy != null)
         {

@@ -1799,3 +1799,102 @@ public partial class Stingray : Enemy
         }
     }
 }
+
+public partial class Mox : Enemy
+{
+    /// <summary>
+    /// Mox charges dash for 1 secondish
+    /// </summary>
+    /// <param name="time">Current time</param>
+    /// <returns></returns>
+    protected bool MoxDashCharge(ref float time)
+    {
+        const float MAX_TIME = 1.5f;
+        const float STALL_TIME = 0.2f;
+
+        //Stop motion at begining of charge
+        if (time == 0)
+        {
+            StopMotion();
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 10f) / transform.localScale.z), new Vector3(_widthMult, 1, 17.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+            }
+        }
+
+        if (time <= MAX_TIME - STALL_TIME)
+        {
+            //Look towards player
+            _destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
+            Quaternion desiredRotation = Quaternion.LookRotation(_destination - transform.position);
+            SetSmoothRotation(desiredRotation, 1.5f, 1.0f, 4.0f);
+            //rotation = Quaternion.RotateTowards(rotation, Quaternion.LookRotation(destination - transform.position), 1.0f);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Dashes at player for 1 second
+    /// </summary>
+    /// <param name="time">Current Time</param>
+    /// <returns></returns>
+    protected bool MoxDashAttack(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        //Add hitbox and start dash
+        if (time == 0.0f)
+        {
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(4, 4, 4), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
+            ApplyMoveForce(transform.forward, 20.0f * _speed, 1.0f);
+            _animator.SetFloat(_animParm[(int)MoxAnim.SwimSpeed], 2.0f);
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
+        }
+
+        if (!_inKnockback)
+        {
+            if (_playerCollision || _obsticalCollision)
+            {
+                //Go into knockback
+                StopMotion();
+                _inKnockback = true;
+                time = 0.7f;
+                ApplyMoveForce(-transform.forward, 2.0f * _speed, 0.3f);
+            }
+            //ApplyFriction(0.25f);
+        }
+        //Do knockback if there was a hit
+        else
+        {
+            //Do nothing
+        }
+
+        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+
+        if (time >= MAX_TIME)
+        {
+            GameObject.Destroy(_hitboxes[_hitboxes.Count - 1]);
+            _hitboxes.RemoveAt(_hitboxes.Count - 1);
+            _inKnockback = false;
+            StopMotion();
+            _animator.SetFloat(_animParm[(int)MoxAnim.SwimSpeed], 1.0f);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
