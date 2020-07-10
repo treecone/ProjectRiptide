@@ -12,11 +12,11 @@ public class UIAnimMethods : MonoBehaviour
     //Fast Transition
     public void SlideLeftF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2400f, .55f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x - 2700f, .55f).SetUpdate(true);
     }
     public void SlideRightF(GameObject gObj)
     {
-        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2400f, .55f).SetUpdate(true);
+        gObj.transform.DOLocalMoveX(gObj.transform.localPosition.x + 2700f, .55f).SetUpdate(true);
     }
 
     //Normal Transition
@@ -53,7 +53,7 @@ public class UIAnimMethods : MonoBehaviour
     //IENUMERATORS
     IEnumerator DisablePanel(GameObject gObj)
     {
-        gObj.GetComponent<Image>().DOFade(0, .65f).SetUpdate(true);
+        gObj.GetComponent<Image>().DOFade(0, .7f).SetUpdate(true);
         yield return new WaitForSecondsRealtime(.65f);
         gObj.SetActive(false);
     }
@@ -70,7 +70,6 @@ public class UIAnimMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void DisablePanelAnim(GameObject gObj)
     {
-        Debug.Log("Yo");
         StartCoroutine(DisablePanel(gObj));
     }
     /// <summary>
@@ -79,7 +78,6 @@ public class UIAnimMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void EnableNormalUIAnim(GameObject gObj)
     {
-        Debug.Log("WhyNoWork");
         StartCoroutine(EnableNormalUI(gObj));
     }
 
