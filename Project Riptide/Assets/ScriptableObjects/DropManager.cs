@@ -13,6 +13,8 @@ public class DropManager : ScriptableObject
     {
         get
         {
+            if (!_instance)
+                _instance = Resources.LoadAll<DropManager>("ScriptableObjectInstances")[0];
             return _instance;
         }
     }
@@ -22,7 +24,7 @@ public class DropManager : ScriptableObject
 
     private Dictionary<string, DropData> _dropDict;
 
-    private void OnEnable()
+    void OnEnable()
     {
         _instance = this;
         _dropDict = new Dictionary<string, DropData>();

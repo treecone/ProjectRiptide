@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -592,6 +592,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 979366317455745885, guid: 901ef00b5e468704c8abeda7f656ec71,
+        type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 979366317455745885, guid: 901ef00b5e468704c8abeda7f656ec71,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1059986159687385915, guid: 901ef00b5e468704c8abeda7f656ec71,
         type: 3}
@@ -2048,6 +2058,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8516230389540628687}
   - component: {fileID: 4748958054574019128}
+  - component: {fileID: 4748958054574019127}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -2055,6 +2066,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &4748958054574019127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4748958054574019126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9bccf5255af8c479361f6a382fb98e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - {fileID: 11400000, guid: 20d299343fea4db45b27115c3f578dd7, type: 2}
+  - {fileID: 11400000, guid: aa1eac53ad10b9f4fa5c72259ca468e8, type: 2}
+  - {fileID: 11400000, guid: a489a4aa80b36bc43ad6352e6658473f, type: 2}
+  - {fileID: 11400000, guid: f513816d077fb5d45aa57322ab1bbe50, type: 2}
+  - {fileID: 11400000, guid: 0d5fde7f946407d45a3c60efe7f0ca87, type: 2}
 --- !u!114 &4748958054574019128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2067,21 +2096,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11870ce891fe4d04bbc7bc16be585f2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sounds:
-  - name: cannon
-    audioClip: {fileID: 8300000, guid: 828006060b0e7ec48b211efb27a4efac, type: 3}
-    volume: 0.28
-    pitch: 0.8
-    volumeVariance: 0.1
-    pitchVariance: 0.1
-    audioSource: {fileID: 0}
-  - name: tripleShot
-    audioClip: {fileID: 8300000, guid: 7ceeafd92c3ce6e47990e40fd890f8ff, type: 3}
-    volume: 0.28
-    pitch: 0.8
-    volumeVariance: 0.1
-    pitchVariance: 0.1
-    audioSource: {fileID: 0}
 --- !u!1 &6297818320338219832
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,8 @@ public class PlayerInventory : ScriptableObject
     {
         get
         {
+            if (!_instance)
+                _instance = Resources.LoadAll<PlayerInventory>("ScriptableObjectInstances")[0];
             return _instance;
         }
     }

@@ -22,7 +22,7 @@ public class Lootbox : MonoBehaviour
         _meshFilter = GetComponent<MeshFilter>();
         _meshRenderer = GetComponent<MeshRenderer>();
         _hitbox = GetComponentInChildren<Hitbox>();
-        
+
     }
     // Start is called before the first frame update
     void Start()
@@ -45,9 +45,9 @@ public class Lootbox : MonoBehaviour
     private void SetRarity()
     {
         int maxRarity = 0;
-        foreach(Item i in items)
+        foreach (Item i in items)
         {
-            if(i.Rarity > maxRarity)
+            if (i.Rarity > maxRarity)
             {
                 maxRarity = i.Rarity;
             }
@@ -68,10 +68,20 @@ public class Lootbox : MonoBehaviour
         {
             for (int i = 0; i < items.Count; i++)
             {
-                PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
+                Upgrades upgrades = obj.GetComponent<Upgrades>();
+                if (items[i].Name == "gold" || items[i].Name == "Gold")
+                {
+                    PlayerInventory.Instance.AddItem(items[i].Name, (int)(items[i].Amount * upgrades.masterUpgrade[StatusType.BonusGold]));
+
+                }
+                else
+                {
+                    PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
+                }
+
             }
             Destroy(gameObject);
         }
-        
+
     }
 }

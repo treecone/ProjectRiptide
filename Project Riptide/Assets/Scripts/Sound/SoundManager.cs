@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
@@ -10,12 +9,12 @@ public class SoundManager : MonoBehaviour
     private Sound[] sounds;
 
     private Dictionary<string, Sound> soundDict;
-    
+
     private void Awake()
     {
-        
+
         soundDict = new Dictionary<string, Sound>();
-        for(int i = 0; i < sounds.Length; i++)
+        for (int i = 0; i < sounds.Length; i++)
         {
             AudioSource source = gameObject.AddComponent<AudioSource>();
 
@@ -29,24 +28,6 @@ public class SoundManager : MonoBehaviour
         }
 
         instance = this;
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            PlaySound("cannon");
-        }
-        if(Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            PlaySound("tripleShot");
-        }
     }
 
     public void PlaySound(string name)

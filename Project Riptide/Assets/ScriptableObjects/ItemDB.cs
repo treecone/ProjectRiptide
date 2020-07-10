@@ -11,11 +11,13 @@ public class ItemDB : ScriptableObject
     {
         get
         {
+            if (!_instance)
+                _instance = Resources.LoadAll<ItemDB>("ScriptableObjectInstances")[0];
             return _instance;
         }
     }
 
-    public void OnEnable()
+    void OnEnable()
     {
         _instance = this;
         Setup();
