@@ -13,7 +13,7 @@ public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
-    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10}
+    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11}
 public enum Anim { Die = 0, Velocity = 1};
 public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 
@@ -123,6 +123,8 @@ public partial class Enemy : Physics
         set { _offScreenIndicator = value; }
     }
 
+    protected Upgrades _enemyUpgrades;
+
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
     public bool IsDying => _dying;
@@ -180,6 +182,7 @@ public partial class Enemy : Physics
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
         _renderer = GetComponentInChildren<Renderer>();
+        _enemyUpgrades = GetComponent<Upgrades>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
         _detectPosition = transform.GetChild(transform.childCount - 1);
@@ -201,28 +204,44 @@ public partial class Enemy : Physics
             _playerDistance = Vector3.Distance(transform.position, PlayerPosition());
             _enemyDistance = Vector3.Distance(_startPos, transform.position);
 
-            //checks for states
-            switch (_state)
+            if (_enemyUpgrades.masterUpgrade[StatusType.Stun] > 0)
             {
-                case EnemyState.Passive:
-                    _PassiveAI();
-                    //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
-                    //also make sure enemy is not in a passive cooldown
-                    if (_playerDistance < _hostileRadius && _passiveCooldown <= 0)
-                    {
-                        OnHostile();
-                        _state = EnemyState.Hostile;
-                    }
-                    break;
-                case EnemyState.Hostile:
-                    _HostileAI();
-                    //check for passive behavior trigger, if you get far enough away
-                    if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0)
-                    {
-                        OnPassive();
-                        _state = EnemyState.Passive;
-                    }
-                    break;
+                if (!_frozen)
+                {
+                    _frozen = true;
+                    OnFreeze();
+                }
+            }
+            else
+            {
+                if(_frozen)
+                {
+                    _frozen = false;
+                    OnUnfreeze();
+                }
+                //checks for states
+                switch (_state)
+                {
+                    case EnemyState.Passive:
+                        _PassiveAI();
+                        //check for hostile behavior trigger event stuff -> if you get close enough, or shoot it
+                        //also make sure enemy is not in a passive cooldown
+                        if (_playerDistance < _hostileRadius && _passiveCooldown <= 0)
+                        {
+                            OnHostile();
+                            _state = EnemyState.Hostile;
+                        }
+                        break;
+                    case EnemyState.Hostile:
+                        _HostileAI();
+                        //check for passive behavior trigger, if you get far enough away
+                        if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0)
+                        {
+                            OnPassive();
+                            _state = EnemyState.Passive;
+                        }
+                        break;
+                }
             }
 
             //Make health bar face player
@@ -733,6 +752,15 @@ public partial class Enemy : Physics
             lootbox.dropType = _lootType;
             lootbox.GenerateItems();
         }
+    }
+
+    protected virtual void OnFreeze()
+    {
+    }
+
+    protected virtual void OnUnfreeze()
+    {
+        _acceleration = Vector3.zero;
     }
 
     /// <summary>

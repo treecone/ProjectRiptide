@@ -30,6 +30,8 @@ GameObject:
   - component: {fileID: 2526334523281212879}
   - component: {fileID: 5452334341317371729}
   - component: {fileID: 2778542242916987788}
+  - component: {fileID: 2338437809769551242}
+  - component: {fileID: 662316891832758069}
   m_Layer: 0
   m_Name: Stingray
   m_TagString: Enemy
@@ -52,6 +54,7 @@ Transform:
   - {fileID: 1673806900287986449}
   - {fileID: 2267769913152201822}
   - {fileID: 7704192623991693936}
+  - {fileID: 7004928009624481886}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -104,6 +107,114 @@ MonoBehaviour:
   currentHealth: 0
   slider: {fileID: 1673806898999313012}
   _sliderText: {fileID: 0}
+--- !u!114 &2338437809769551242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6692637672442224423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlayer: 0
+  upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: 0
+    upgradeValue: 0
+    _componentUpgrades: []
+--- !u!114 &662316891832758069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6692637672442224423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d04a01da1cdd6b4896658f5aed7da54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeStatusEffects: []
+  isPlayer: 0
+--- !u!1001 &258843930860147379
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2526334523281212879}
+    m_Modifications:
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8204007017859431763, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_Name
+      value: StatusEffectIcons
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d17e9fc6b8270f844ad212e51571d04b, type: 3}
+--- !u!4 &7004928009624481886 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+    type: 3}
+  m_PrefabInstance: {fileID: 258843930860147379}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4885665494962684934
 PrefabInstance:
   m_ObjectHideFlags: 0

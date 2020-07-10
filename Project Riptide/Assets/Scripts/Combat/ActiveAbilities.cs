@@ -25,6 +25,7 @@ public class ActiveAbilities : MonoBehaviour
 
     private ShipMovement _movementScript;
     private CannonFire _cannonFireScript;
+    public CannonFire CannonFireScript => _cannonFireScript;
     [SerializeField]
     private InputManager _inputManager;
 
@@ -38,12 +39,19 @@ public class ActiveAbilities : MonoBehaviour
     private ActiveSkill[] _skill = new ActiveSkill[SKILL_AMOUNT];
 
     private bool _rightEnemy;
+    public bool RightEnemy
+    {
+        get { return _rightEnemy; }
+        set { _rightEnemy = value; }
+    }
 
     [SerializeField]
     private GameObject _hitbox;
-    private static List<Hitbox> _hitboxes;
+    public GameObject HitboxPrefab => _hitbox;
+    private List<Hitbox> _hitboxes;
 
     private StatusEffects _playerStatusEffects;
+    public StatusEffects PlayerStatusEffects => _playerStatusEffects;
 
     // Start is called before the first frame update
     void Start()
@@ -186,31 +194,31 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.Dash:
                 return new ActiveSkill("Dash", Dash, 5.0f, false, index);
             case SkillType.SmallManuverabilityBoost:
-                return new ActiveSkill("Manuverability Boost", SmallManuverabilityBoost, 20.0f, false, index);
+                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 5.0f, 2.0f);
             case SkillType.MediumManuverabilityBoost:
-                return new ActiveSkill("Manuverability Boost", MediumManuverabilityBoost, 20.0f, false, index);
+                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 6.0f, 2.0f);
             case SkillType.LargeManuverabilityBoost:
-                return new ActiveSkill("Manuverability Boost", LargeManuverabilityBoost, 20.0f, false, index);
+                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 7.0f, 2.0f);
             case SkillType.BubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 2.0f);
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 5.0f);
             case SkillType.StrongBubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 3.0f);
+                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 8.0f);
             case SkillType.StopMovement:
                 return new ActiveSkill("Stop Movement", StopMovement, 10.0f, false, index);
             case SkillType.StrongStopMovement:
                 return new ActiveSkill("Stop Movement", StopMovement, 5.0f, false, index);
             case SkillType.SmallSpeedBoost:
-                return new ActiveSkill("Speed Boost", SmallSpeedBoost, 15.0f, false, index);
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.0f, 1.5f);
             case SkillType.MediumSpeedBoost:
-                return new ActiveSkill("Speed Boost", MediumSpeedBoost, 15.0f, false, index);
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.5f, 1.5f);
             case SkillType.LargeSpeedBoost:
-                return new ActiveSkill("Speed Boost", LargeSpeedBoost, 15.0f, false, index);
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 1.75f);
             case SkillType.SmallRegeneration:
-                return new ActiveSkill("Regeneration", SmallRegeneration, 25.0f, false, index);
+                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
             case SkillType.MediumRegeneration:
-                return new ActiveSkill("Regeneration", MediumRegeneration, 25.0f, false, index);
+                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 15.0f / 3.0f);
             case SkillType.LargeRegeneration:
-                return new ActiveSkill("Regeneration", LargeRegeneration, 25.0f, false, index);
+                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 20.0f / 3.0f);
             case SkillType.SmallDefenseBoost:
                 return new ActiveSkill("Defense Boost", SmallDefenseBoost, 20.0f, false, index);
             case SkillType.LargeDefenseBoost:
@@ -221,6 +229,54 @@ public class ActiveAbilities : MonoBehaviour
                 return new SteelMineSkill("Mine", this, 25.0f, false, index, 15.0f);
             case SkillType.StrongSteelMine:
                 return new SteelMineSkill("Mine", this, 25.0f, false, index, 20.0f);
+            case SkillType.SmallCounter:
+                return new CounterSkill("Counter", this, 15.0f, false, index, 5f);
+            case SkillType.MediumCounter:
+                return new CounterSkill("Counter", this, 15.0f, false, index, 8f);
+            case SkillType.LargeCounter:
+                return new CounterSkill("Counter", this, 15.0f, false, index, 10.0f);
+            case SkillType.SmallRam:
+                return new RamSkill("Ram", this, 20.0f, false, index, 20.0f, 20.0f);
+            case SkillType.MediumRam:
+                return new RamSkill("Ram", this, 20.0f, false, index, 25.0f, 20.0f);
+            case SkillType.LargeRam:
+                return new RamSkill("Ram", this, 20.0f, false, index, 30.0f, 25.0f);
+            case SkillType.SmallSeaglassSpeed:
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 2.0f);
+            case SkillType.MediumSeaglassSpeed:
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 4.0f, 2.0f);
+            case SkillType.LargeSeaglassSpeed:
+                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 5.0f, 2.0f);
+            case SkillType.SmallInvulnerability:
+                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
+            case SkillType.MediumInvulnerability:
+                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.5f, 999999.0f);
+            case SkillType.LargeInvulnerability:
+                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
+            case SkillType.SpreadShot:
+                return new SpecialShotSkill("Spread Shot", this, 15.0f, true, index, 4, 2, 0.2f, 20, 0);
+            case SkillType.RapidShotFour:
+                return new RapidShotSkill("Rapid Shot", this, 20.0f, true, index, 4, 0.3f);
+            case SkillType.RapidShotEight:
+                return new RapidShotSkill("Rapid Shot", this, 20.0f, true, index, 8, 0.15f);
+            case SkillType.WeakBigShot:
+                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 5.0f, 3, 0, 0);
+            case SkillType.MediumBigShot:
+                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 8.0f, 3, 0, 0);
+            case SkillType.StrongBigShot:
+                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 10.0f, 3, 0, 0);
+            case SkillType.SmallFireworkCircle:
+                return new ActiveSkill("Firework Burst", SmallFireworkCircle, 20.0f, false, index);
+            case SkillType.LargeFireworkCircle:
+                return new ActiveSkill("Firework Burst", LargeFireworkCircle, 20.0f, false, index);
+            case SkillType.PoisonCloud:
+                return new PoisonCloudSkill("Poison Cloud", this, 20.0f, true, index, 10.0f, 3.0f);
+            case SkillType.StrongPoisonCloud:
+                return new PoisonCloudSkill("Poison Cloud", this, 20.0f, true, index, 10.0f, 5.0f);
+            case SkillType.StunShot:
+                return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 10, 4.0f);
+            case SkillType.StrongStunShot:
+                return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 14, 6.0f);
         }
         return null;
     }
@@ -299,113 +355,6 @@ public class ActiveAbilities : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Gives player a speed boost for 2 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool SmallSpeedBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.ShipSpeed, 2.0f, 2.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Gives player a speed boost for 2.5 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool MediumSpeedBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.ShipSpeed, 2.5f, 2.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Gives player a speed boost for 2.5 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool LargeSpeedBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.ShipSpeed, 3.0f, 2.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Gives player regen for 10 health over 3 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool SmallRegeneration(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Gives player regen for 15 health over 3 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool MediumRegeneration(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 15.0f / 3.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Gives player regen for 20 health over 3 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool LargeRegeneration(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Regeneration, 3.0f, 20.0f / 3.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Boosts player manuverability for 5 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool SmallManuverabilityBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Maneuverability, 5.0f, 2.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Boosts player manuverability for 5 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool MediumManuverabilityBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Maneuverability, 6.0f, 2.0f);
-        return true;
-    }
-
-    /// <summary>
-    /// Boosts player manuverability for 7 seconds
-    /// </summary>
-    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
-    /// <returns>If skill was successful</returns>
-    private bool LargeManuverabilityBoost(Enemy enemy)
-    {
-        //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Maneuverability, 7.0f, 2.2f);
-        return true;
-    }
 
     /// <summary>
     /// Boosts player defense for 3 seconds
@@ -438,21 +387,46 @@ public class ActiveAbilities : MonoBehaviour
     }
 
     /// <summary>
-    /// Fires a powerful spread shot at the closest enemy
+    /// Fire a 360ish spread shot
     /// </summary>
-    /// <param name="enemy">Enemy to fire at</param>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
     /// <returns>If skill was successful</returns>
-    private bool BurstFire(Enemy enemy)
+    private bool SmallFireworkCircle(Enemy enemy)
     {
-        //Enemy is needed for skill to activate
-        if(enemy == null)
+        Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
         {
-            return false;
-        }
+            {StatusType.Count, 12 },
+            {StatusType.Damage, 8 },
+            {StatusType.ShotSize, 0},
+            {StatusType.SpreadAngle, 130},
+            {StatusType.VerticalRatio, 0 }
+        };
+        MasterUpgrade upgrade = new MasterUpgrade("firework_shot", shotValues);
 
-        //Shoot burst shot
-        SpecialShot(enemy, 2, 3, 0.5f, 0, 0);
+        _cannonFireScript.Fire(transform.right, transform.right, 0, upgrade);
+        _cannonFireScript.Fire(transform.right, -transform.right, 0, upgrade);
+        return true;
+    }
 
+    /// <summary>
+    /// Fire a 360ish spread shot
+    /// </summary>
+    /// <param name="enemy">Targeted enemy, uncessary for this skill</param>
+    /// <returns>If skill was successful</returns>
+    private bool LargeFireworkCircle(Enemy enemy)
+    {
+        Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
+        {
+            {StatusType.Count, 12 },
+            {StatusType.Damage, 12 },
+            {StatusType.ShotSize, 0},
+            {StatusType.SpreadAngle, 130},
+            {StatusType.VerticalRatio, 0 }
+        };
+        MasterUpgrade upgrade = new MasterUpgrade("firework_shot", shotValues);
+
+        _cannonFireScript.Fire(transform.right, transform.right, 0, upgrade);
+        _cannonFireScript.Fire(transform.right, -transform.right, 0, upgrade);
         return true;
     }
 
@@ -466,7 +440,7 @@ public class ActiveAbilities : MonoBehaviour
             {StatusType.SpreadAngle, spreadAngle},
             {StatusType.VerticalRatio, verticleRatio }
         };
-        MasterUpgrade upgrade = new MasterUpgrade("triple_shot", shotValues);
+        MasterUpgrade upgrade = new MasterUpgrade("special_shot", shotValues);
 
         Vector3 diff = (enemy.transform.position - transform.position).normalized;
 
@@ -639,17 +613,21 @@ public class ActiveSkill
     }
 }
 
-public class TripleShotSkill : ActiveSkill
+public class RapidShotSkill : ActiveSkill
 {
     private ShipMovement _movementScript;
     private ActiveAbilities _activeAbilities;
     private int _shotCount;
+    private int _maxShots;
+    private float _shotDelay;
 
-    public TripleShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    public RapidShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, int maxShots, float shotDelay) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
     {
         _activeAbilities = activeAbilities;
         _movementScript = activeAbilities.GetComponent<ShipMovement>();
-        _timeSkill = TripleFire;
+        _maxShots = maxShots;
+        _shotDelay = shotDelay;
+        _timeSkill = RapidShot;
     }
 
     /// <summary>
@@ -658,7 +636,7 @@ public class TripleShotSkill : ActiveSkill
     /// <param name="enemy">Enemy to fire at</param>
     /// <param name="time">Current time</param>
     /// <returns>If skill was successful</returns>
-    private bool TripleFire(Enemy enemy, ref float time)
+    private bool RapidShot(Enemy enemy, ref float time)
     {
         //Enemy is needed for skill to activate
         if (enemy == null)
@@ -666,18 +644,18 @@ public class TripleShotSkill : ActiveSkill
             return true;
         }
 
-        if (time > 0.3f)
+        if (time > _shotDelay)
         {
             time = 0;
         }
 
         if (time == 0)
         {
-            _activeAbilities.SpecialShot(enemy, 0, 2, 0.4f, 0, 0);
+            _activeAbilities.SpecialShot(enemy, 0, 4, 0.2f, 0, 0);
             _shotCount += 1;
         }
 
-        if (_shotCount == 3)
+        if (_shotCount == _maxShots)
         {
             _shotCount = 0;
             return true;
@@ -692,11 +670,15 @@ public class RamSkill : ActiveSkill
     private ShipMovement _movementScript;
     private ActiveAbilities _activeAbilities;
     private Hitbox _ramHitbox;
+    private float _ramDamage;
+    private float _ramDistance;
 
-    public RamSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    public RamSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float ramDamage, float ramDistance) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
     {
         _activeAbilities = activeAbilities;
         _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _ramDamage = ramDamage;
+        _ramDistance = ramDistance;
         _timeSkill = RamAttack;
     }
 
@@ -712,13 +694,13 @@ public class RamSkill : ActiveSkill
         if (time == 0)
         {
             //Create Hitbox for raming
-            _ramHitbox = _activeAbilities.CreateHitbox(new Vector3(0, 0, 2), new Vector3(1, 1, 1), HitboxType.PlayerHitbox, 20, Vector2.zero, 0);
+            _ramHitbox = _activeAbilities.CreateHitbox(new Vector3(0, 0, 2), new Vector3(1, 1, 1), HitboxType.PlayerHitbox, _ramDamage, Vector2.zero, 0);
             _ramHitbox.OnTrigger += RamHit;
         }
 
         if (_ramHitbox != null)
         {
-            _movementScript.ApplyConstantMoveForce(_movementScript.transform.forward, 20.0f, 1.0f);
+            _movementScript.ApplyConstantMoveForce(_movementScript.transform.forward, _ramDistance, 1.0f);
         }
 
         if (time > 1.0f)
@@ -826,5 +808,283 @@ public class SteelMineSkill : ActiveSkill
         }
 
         return false;
+    }
+}
+
+public class CounterSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private float _counterDamage;
+    private Hitbox _counterHitbox;
+    private const float COUNTER_TIME = 1.0f;
+
+    public CounterSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float counterDamage) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _counterDamage = counterDamage;
+        _timeSkill = Counter;
+    }
+
+    /// <summary>
+    /// Counter enemy attacks taken in a short time period
+    /// </summary>
+    /// <param name="enemy">Enemy counter will be </param>
+    /// <returns>If attack is finished</returns>
+    public bool Counter(Enemy enemy, ref float time)
+    {
+        if(time == 0)
+        {
+            _counterHitbox = _activeAbilities.CreateHitbox(new Vector3(0,0.5f,0), new Vector3(3, 2, 7), HitboxType.PlayerHurtbox, 0, Vector2.zero, 0);
+            _counterHitbox.OnTrigger += DealCounter;
+            _activeAbilities.PlayerStatusEffects.AddStatus(StatusType.Armor, "CounterArmor", COUNTER_TIME, 999999.0f);
+        }
+
+        if(time > COUNTER_TIME)
+        {
+            if (_counterHitbox != null)
+            {
+                GameObject.Destroy(_counterHitbox.gameObject);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Deals counter to owner of hitbox
+    /// </summary>
+    /// <param name="other">Hitbox that triggered</param>
+    public void DealCounter(GameObject other)
+    {
+        if(other.tag == "Enemy")
+        {
+            Enemy enemy = other.GetComponent<Enemy>();
+            if(enemy != null)
+            {
+                if(Vector3.Dot(_movementScript.transform.forward, enemy.transform.forward) > 0)
+                {
+                    _activeAbilities.RightEnemy = true;
+                }
+                else
+                {
+                    _activeAbilities.RightEnemy = false;
+                }
+
+                _activeAbilities.SpecialShot(enemy, 0, _counterDamage, 1.5f, 0, 0);
+                _activeAbilities.PlayerStatusEffects.RemoveStatus("CounterArmor");
+                _activeAbilities.PlayerStatusEffects.AddStatus(StatusType.Armor, 0.1f, 999999.0f);
+                GameObject.Destroy(_counterHitbox.gameObject);
+            }
+        }
+    }
+}
+
+public class StatusSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private StatusType _type;
+    private float _duration;
+    private float _level;
+
+    public StatusSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, StatusType type, float duration, float level) : base(name, (Skill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _type = type;
+        _duration = duration;
+        _level = level;
+        _skill = AddStatus;
+    }
+
+    /// <summary>
+    /// Inflicts player with specified status effect
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this skill</param>
+    /// <returns>If attack is finished</returns>
+    public bool AddStatus(Enemy enemy)
+    {
+        _activeAbilities.PlayerStatusEffects.AddStatus(_type, _duration, _level);
+
+        return true;
+    }
+}
+
+public class SpecialShotSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private int _count;
+    private float _damage;
+    private float _size;
+    private float _spreadAngle;
+    private float _verticleRatio;
+
+    public SpecialShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, int count, float damage, float size, float spreadAngle, float verticleRatio) : base(name, (Skill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _count = count;
+        _damage = damage;
+        _size = size;
+        _spreadAngle = spreadAngle;
+        _verticleRatio = verticleRatio;
+        _skill = SpecialShot;
+    }
+
+    /// <summary>
+    /// Inflicts player with specified status effect
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this skill</param>
+    /// <returns>If attack is finished</returns>
+    public bool SpecialShot(Enemy enemy)
+    {
+        //Make sure enemy is not null
+        if(enemy == null)
+        {
+            return false;
+        }
+
+        _activeAbilities.SpecialShot(enemy, _count, _damage, _size, _spreadAngle, _verticleRatio);
+
+        return true;
+    }
+}
+
+public class PoisonCloudSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private GameObject _poisonCloudPrefab;
+    private GameObject _poisonCloud;
+    private Vector3 _movementDirection;
+    private float _damagePerSecond;
+    private float _poisonDuration;
+
+    public PoisonCloudSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float damagePerSecond, float poisonDuration) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _poisonCloudPrefab = (GameObject)Resources.Load("ActiveAbilities/PoisonCloud");
+        _damagePerSecond = damagePerSecond;
+        _poisonDuration = poisonDuration;
+        _timeSkill = PoisonCloud;
+    }
+
+    /// <summary>
+    /// Inflicts player with specified status effect
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this skill</param>
+    /// <returns>If attack is finished</returns>
+    public bool PoisonCloud(Enemy enemy, ref float time)
+    {
+        //Make sure enemy is not null
+        if (time == 0)
+        {
+            _poisonCloud = GameObject.Instantiate(_poisonCloudPrefab, _movementScript.transform.position + _movementScript.transform.right, _movementScript.Rotation);
+            Hitbox hitbox = GameObject.Instantiate(_activeAbilities.HitboxPrefab, _poisonCloud.transform.position, _poisonCloud.transform.rotation, _poisonCloud.transform).GetComponent<Hitbox>();
+            hitbox.SetHitbox(_movementScript.gameObject, Vector3.zero, new Vector3(1, 1, 1), HitboxType.PlayerHitbox, 0);
+            hitbox.OnTrigger += ApplyPoison;
+            _movementDirection = enemy.transform.position - _movementScript.transform.position;
+            _movementDirection = new Vector3(_movementDirection.x, 0, _movementDirection.z);
+            _movementDirection.Normalize();
+        }
+
+        _poisonCloud.transform.position += _movementDirection * 25 * Time.deltaTime;
+
+        if(time > 1.0f)
+        {
+            _poisonCloud.GetComponentInChildren<ParticleSystem>().Stop();
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Apply poison effect to enemy
+    /// </summary>
+    /// <param name="other"></param>
+    private void ApplyPoison(GameObject other)
+    {
+        if (other.tag == "Enemy")
+        {
+            if (!other.GetComponent<StatusEffects>().CheckStatus("PoisonCloud"))
+            {
+                other.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, "PoisonCloud", _poisonDuration, _damagePerSecond);
+            }
+        }
+    }
+}
+
+public class StunShotSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private float _damage;
+    private float _stunTime;
+
+    public StunShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float damage, float stunTime) : base(name, (Skill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _damage = damage;
+        _stunTime = stunTime;
+        _skill = StunShot;
+    }
+
+    /// <summary>
+    /// Inflicts player with specified status effect
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this skill</param>
+    /// <returns>If attack is finished</returns>
+    public bool StunShot(Enemy enemy)
+    {
+        if(enemy == null)
+        {
+            return false;
+        }
+
+        Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
+        {
+            {StatusType.Count, 0 },
+            {StatusType.Damage, _damage },
+            {StatusType.ShotSize, 2.0f},
+            {StatusType.SpreadAngle, 0},
+            {StatusType.VerticalRatio, 0 }
+        };
+        MasterUpgrade upgrade = new MasterUpgrade("special_shot", shotValues);
+
+        Vector3 diff = (enemy.transform.position - _movementScript.transform.position).normalized;
+
+        //Calculate offset for firing
+        float offset = 0;
+        if (_activeAbilities.RightEnemy)
+        {
+            offset = 15.0f;
+        }
+        else
+        {
+            offset = -15.0f;
+        }
+
+        _activeAbilities.CannonFireScript.Fire(_movementScript.transform.right, new Vector3(diff.x, 0, diff.z), offset, upgrade, StunEnemy);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Stun enemy
+    /// </summary>
+    /// <param name="other"></param>
+    private void StunEnemy(GameObject other)
+    {
+        if (other.tag == "Enemy")
+        {
+            other.GetComponent<StatusEffects>().AddStatus(StatusType.Stun, _stunTime, 1.0f);
+        }
     }
 }

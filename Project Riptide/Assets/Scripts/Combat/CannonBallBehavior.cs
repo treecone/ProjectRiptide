@@ -8,6 +8,11 @@ public class CannonBallBehavior : MonoBehaviour
     public GameObject hitbox;
 
     private GameObject projHitbox;
+    private HitboxEnter _onTrigger;
+    public HitboxEnter OnTrigger
+    {
+        set { _onTrigger = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -15,6 +20,7 @@ public class CannonBallBehavior : MonoBehaviour
         projHitbox = Instantiate(hitbox, transform);
         projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, Vector3.zero, new Vector3(1, 1, 1), HitboxType.PlayerHitbox, damageDealt);
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
+        projHitbox.GetComponent<Hitbox>().OnTrigger += _onTrigger;
     }
 
     // Update is called once per frame

@@ -110,6 +110,43 @@ public class CannonFire : MonoBehaviour
         return angle;
     }
 
+    public float Fire(Vector3 direction, Vector3 targetDir, float offset, Upgrade upgrade, HitboxEnter onTrigger)
+    {
+        //Calculate angle to fire shot
+        float angle = Mathf.Acos(Vector3.Dot(targetDir.normalized, transform.forward.normalized));
+        Vector3 cross = Vector3.Cross(targetDir, transform.forward);
+        if (Vector3.Dot(Vector3.up, cross) < 0)
+        { // Or > 0
+            angle = -angle;
+        }
+        angle *= Mathf.Rad2Deg;
+
+        //Clamp shot angle
+        float shotClamp = (180f - _shotAngle) / 2;
+        if (angle > 0 && angle < shotClamp)
+        {
+            angle = shotClamp;
+        }
+        if (angle > 180 - shotClamp)
+        {
+            angle = 180 - shotClamp;
+        }
+        if (angle < 0 && angle > -shotClamp)
+        {
+            angle = -shotClamp;
+        }
+        if (angle < -180 + shotClamp)
+        {
+            angle = -180 + shotClamp;
+        }
+
+        //Camera camera = Camera.main;
+        //camera.transform.Translate(0f, 2.0f, 2.0f);
+        CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade, onTrigger);
+        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        return angle;
+    }
+
     public class CannonShot
     {
         private int _damage;
@@ -120,6 +157,7 @@ public class CannonFire : MonoBehaviour
         private int _count;
         private float _spreadAngle;
         private float _size;
+        private HitboxEnter _onTrigger;
 
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
@@ -129,8 +167,21 @@ public class CannonFire : MonoBehaviour
             this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
             this._fireAngle = fireAngle;
             this._verticalRatio = 0.1f + upgrade[StatusType.VerticalRatio];
-            this._spreadAngle = 20;
+            this._spreadAngle = 20 + upgrade[StatusType.SpreadAngle];
             this._size = 0.5f + upgrade[StatusType.ShotSize];
+        }
+
+        public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade, HitboxEnter onTrigger)
+        {
+            this._count = 1 + (int)upgrade[StatusType.Count];
+            this._damage = 1 + (int)upgrade[StatusType.Damage];
+            this._direction = direction;
+            this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
+            this._fireAngle = fireAngle;
+            this._verticalRatio = 0.1f + upgrade[StatusType.VerticalRatio];
+            this._spreadAngle = 20 + upgrade[StatusType.SpreadAngle];
+            this._size = 0.5f + upgrade[StatusType.ShotSize];
+            _onTrigger = onTrigger;
         }
 
         public void Fire(GameObject cannonBall, GameObject ship, GameObject cannonSmoke)
@@ -159,6 +210,10 @@ public class CannonFire : MonoBehaviour
                 
 				ball.GetComponent<Rigidbody>().velocity = (Vector3.up * _fireSpeed * (_verticalRatio / (_verticalRatio + 1.0f))) + (ball.transform.forward * _fireSpeed * (1.0f / (_verticalRatio + 1.0f))) + (/*ship.GetComponent<ShipMovement>().linearVelocity*/2 * 5 * ship.transform.forward);
                 ball.GetComponent<CannonBallBehavior>().damageDealt = _damage;
+                if (_onTrigger != null)
+                {
+                    ball.GetComponent<CannonBallBehavior>().OnTrigger = _onTrigger;
+                }
 
                 angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
             }

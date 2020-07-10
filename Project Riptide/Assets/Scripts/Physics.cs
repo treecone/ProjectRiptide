@@ -14,6 +14,8 @@ public class Physics : MonoBehaviour
     protected Vector3 _acceleration;
     protected Quaternion _rotation;
 
+    protected bool _frozen;
+
     public Vector3 Position
     {
         get { return _position; }
@@ -32,6 +34,12 @@ public class Physics : MonoBehaviour
         set { _rotation = value; transform.rotation = _rotation; }
     }
 
+    public bool Frozen
+    {
+        get { return _frozen; }
+        set { _frozen = value; }
+    }
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -44,13 +52,16 @@ public class Physics : MonoBehaviour
     // Update is called once per frame
     protected virtual void Update()
     {
-        _velocity += _acceleration * Time.deltaTime;
-        _position += _velocity * Time.deltaTime;
+        if (!_frozen)
+        {
+            _velocity += _acceleration * Time.deltaTime;
+            _position += _velocity * Time.deltaTime;
 
-        transform.position = _position;
-        transform.rotation = _rotation;
+            transform.position = _position;
+            transform.rotation = _rotation;
 
-        _acceleration = Vector3.zero;
+            _acceleration = Vector3.zero;
+        }
     }
 
     /// <summary>

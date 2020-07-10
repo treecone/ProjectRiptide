@@ -48,8 +48,8 @@ public partial class Enemy : Physics
             destination = _destination;
         }
         //Seek destination
-        Vector3 netForce = Seek(destination);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -93,8 +93,8 @@ public partial class Enemy : Physics
                 destination = transform.position + AvoidObstacle(destination);
             }
             //Seek destination
-            Vector3 netForce = Seek(destination);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -478,8 +478,8 @@ public partial class RockCrab : Enemy
                 destination = transform.position + AvoidObstacle(destination);
             }
             //Seek destination
-            Vector3 netForce = Seek(destination);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f;
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -648,9 +648,9 @@ public partial class FlowerFrog : Enemy
                         _activeStates[(int)FlowerFrogAttackState.Latched] = false;
                         _activeStates[(int)AttackState.Active] = true;
                         _currTime = 0;
+                        OnToungeDetach();
                         _actionQueue.Enqueue(ToungeReturn);
                     }
-                    SendFriction(0.4f);
                 }
             }
             else
@@ -1257,5 +1257,57 @@ public partial class Stingray : Enemy
         }
         if(_animator != null)
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+    }
+}
+
+public partial class Mox : Enemy
+{
+    /// <summary>
+    /// Mox follows player and trys to ram them
+    /// </summary>
+    public void HostileMox()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            OnPassive();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If enemy is not in special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                //Follow the player
+                FollowPlayer();
+
+                //Cooldown special while in a 10 units of player
+                if (_playerDistance < 10.0f)
+                {
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                }
+                //If cooldown is finished, switch to special
+                if (_specialCooldown[(int)AttackState.Active] <= 0)
+                {
+                    _activeStates[(int)AttackState.Active] = true;
+                    _currTime = 0;
+                    //Load an attack that charges a dash then attacks
+                    _actionQueue.Enqueue(MoxDashCharge);
+                    _actionQueue.Enqueue(MoxDashAttack);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
+                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                }
+            }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
     }
 }

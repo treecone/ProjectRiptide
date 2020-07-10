@@ -256,4 +256,14 @@ public class InventoryMethods : MonoBehaviour
         _totalGoldInventory.SetText("{0}", PlayerInventory.Instance.totalGold);
     }
 
+    public void Expand(GameObject gObj)
+    {
+        gObj.SetActive(true);
+    }
+
+    public void Contract(GameObject gObj)
+    {
+        gObj.SetActive(false);
+    }
+
 }

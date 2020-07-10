@@ -30,6 +30,8 @@ GameObject:
   - component: {fileID: 6732031505764464872}
   - component: {fileID: 1465933108287207925}
   - component: {fileID: 2634184107046777493}
+  - component: {fileID: 5101335595990685710}
+  - component: {fileID: 4574025717995361137}
   m_Layer: 0
   m_Name: Pandatee
   m_TagString: Enemy
@@ -50,6 +52,7 @@ Transform:
   m_Children:
   - {fileID: 822242203788186138}
   - {fileID: 3517055058733261178}
+  - {fileID: 3820151149176264395}
   - {fileID: 551116438301631815}
   - {fileID: 4963513190307521109}
   m_Father: {fileID: 0}
@@ -72,9 +75,12 @@ MonoBehaviour:
   _projectile: {fileID: 0}
   _canvas: {fileID: 551116438301631814}
   _hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
-  _telegraphPrefab: {fileID: 0}
+  _telegraphPrefab:
+  - {fileID: 0}
   _splashParticle: {fileID: 2356386736741349648, guid: a28ad58532a5f1e4294dd2cf1c578e4b,
     type: 3}
+  _lootboxPrefab: {fileID: 0}
+  _lootType: 
   _lengthMult: 3
   _widthMult: 1.5
   _heightMult: 0
@@ -94,6 +100,39 @@ MonoBehaviour:
   currentHealth: 0
   slider: {fileID: 551116439560944674}
   _sliderText: {fileID: 0}
+--- !u!114 &5101335595990685710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088349654756902322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a13d7db8cad7d8479ec811e504e74ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isPlayer: 0
+  upgrades: []
+  masterUpgrade:
+    name: master upgrade
+    upgradeType: 0
+    upgradeValue: 0
+    _componentUpgrades: []
+--- !u!114 &4574025717995361137
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7088349654756902322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d04a01da1cdd6b4896658f5aed7da54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _activeStatusEffects: []
+  isPlayer: 0
 --- !u!1 &7230813743678088755
 GameObject:
   m_ObjectHideFlags: 0
@@ -122,7 +161,7 @@ Transform:
   m_LocalScale: {x: 0.22777647, y: 0.22777651, z: 0.22777647}
   m_Children: []
   m_Father: {fileID: 6732031505764464872}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &5625985645604813056
 PrefabInstance:
@@ -229,6 +268,81 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: e84e7dcdb65a7c240afffe57d19a1e86,
     type: 3}
   m_PrefabInstance: {fileID: 5625985645604813056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &6314889989419512870
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 6732031505764464872}
+    m_Modifications:
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8204007017859431763, guid: d17e9fc6b8270f844ad212e51571d04b,
+        type: 3}
+      propertyPath: m_Name
+      value: 'StatusEffectIcons '
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d17e9fc6b8270f844ad212e51571d04b, type: 3}
+--- !u!4 &3820151149176264395 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7106990026201146093, guid: d17e9fc6b8270f844ad212e51571d04b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6314889989419512870}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6480794068721317685
 PrefabInstance:
@@ -380,7 +494,7 @@ PrefabInstance:
     - target: {fileID: 6964567925209924808, guid: cebad9541f2b62844b2e43ff52cb0611,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6964567925209924808, guid: cebad9541f2b62844b2e43ff52cb0611,
         type: 3}

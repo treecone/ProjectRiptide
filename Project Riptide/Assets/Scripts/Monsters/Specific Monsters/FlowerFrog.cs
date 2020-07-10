@@ -14,6 +14,7 @@ public partial class FlowerFrog : Enemy
     protected const float MAX_DRAG_DIST = 15.0f;
     protected const float MAX_LATCH_DIST = 25.0f;
     protected float _latchStartHealth = 0;
+    protected StatusEffects _playerStatusEffects;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -63,9 +64,33 @@ public partial class FlowerFrog : Enemy
     {
         _tounge.transform.rotation = Quaternion.identity;
         base.Update();
-        if(IsInvincible)
+        if(IsDying)
         {
             _tounge.SetPosition(1, Vector3.zero);
+        }
+    }
+
+    /// <summary>
+    /// Called when frog latches onto player, apply slow effect
+    /// </summary>
+    /// <param name="other"></param>
+    protected void OnToungeLatch(GameObject other)
+    {
+        if(other.tag == "Player")
+        {
+            _playerStatusEffects = other.GetComponent<StatusEffects>();
+            _playerStatusEffects.AddStatus(StatusType.MovementSpeed, "ToungeLatch", 999999.0f, -0.40f);
+        }
+    }
+
+    /// <summary>
+    /// Removes slow effect when tounge detaches
+    /// </summary>
+    protected void OnToungeDetach()
+    {
+        if(_playerStatusEffects != null)
+        {
+            _playerStatusEffects.RemoveStatus("ToungeLatch");
         }
     }
 
@@ -75,6 +100,19 @@ public partial class FlowerFrog : Enemy
     protected override void OnPassive()
     {
         _tounge.SetPosition(1, Vector3.zero);
+        if(_activeStates[(int)FlowerFrogAttackState.Latched])
+        {
+            OnToungeDetach();
+        }
         base.OnPassive();
+    }
+
+    protected override void OnDeath()
+    {
+        if (_activeStates[(int)FlowerFrogAttackState.Latched])
+        {
+            OnToungeDetach();
+        }
+        base.OnDeath();
     }
 }

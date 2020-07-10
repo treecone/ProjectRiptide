@@ -13,6 +13,7 @@ public class KoiBubbleBroth : MonoBehaviour
     private Vector3 _telegraphSize;
     private GameObject _telegraph;
     private GameObject _hitbox;
+    private StatusEffects _playerStatus;
 
     // Start is called before the first frame update
     void Start()
@@ -62,7 +63,8 @@ public class KoiBubbleBroth : MonoBehaviour
         if (other.tag == "Player")
         {
             //Deal 2 damage per second for 5 seconds
-            other.GetComponent<StatusEffects>().AddStatus(StatusType.ShipSpeed, 5.0f, -0.75f);
+            other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "BubbleBroth", 99.0f, -0.75f);
+            _playerStatus = other.GetComponent<StatusEffects>();
         }
     }
 
@@ -72,7 +74,11 @@ public class KoiBubbleBroth : MonoBehaviour
     /// <param name="other"></param>
     private void RemoveSlowExit(GameObject other)
     {
-
+        if(other.tag == "Hitbox" && other.transform.parent.tag == "Player")
+        {
+            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("BubbleBroth");
+            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+        }
     }
 
     /// <summary>
@@ -80,6 +86,10 @@ public class KoiBubbleBroth : MonoBehaviour
     /// </summary>
     private void RemoveSlow()
     {
-
+        if (_playerStatus != null)
+        {
+            _playerStatus.RemoveStatus("BubbleBroth");
+            _playerStatus.AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+        }
     }
 }
