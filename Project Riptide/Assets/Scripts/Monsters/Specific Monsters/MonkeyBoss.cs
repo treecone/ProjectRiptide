@@ -14,6 +14,12 @@ public partial class MonkeyBoss : Enemy
 
     private Vector3 _leftHandStartPos;
     private Vector3 _rightHandStartPos;
+    private float _rightHandReturnDist;
+    private float _leftHandReturnDist;
+    private bool _moveLeftWithBody;
+    private bool _rotateLeftWithBody;
+    private bool _moveRightWithBody;
+    private bool _rotateRightWithBody;
 
     private const float RISE_HEIGHT = 5.0f;
 
@@ -48,7 +54,7 @@ public partial class MonkeyBoss : Enemy
         _isRaming = false;
         _ramingDamage = 20;
         _pushMult = 0.1f;
-        //_HostileAI = HostileKoiBoss;
+        _HostileAI = HostileMonkeyBoss;
         _PassiveAI = PassiveDoNothing;
 
         //Setup health bar
@@ -64,6 +70,10 @@ public partial class MonkeyBoss : Enemy
 
         _leftHandStartPos = _leftHand.transform.localPosition;
         _rightHandStartPos = _rightHand.transform.localPosition;
+        _moveLeftWithBody = true;
+        _moveRightWithBody = true;
+        _rotateLeftWithBody = true;
+        _rotateRightWithBody = true;
     }
 
     // Update is called once per frame
@@ -73,6 +83,141 @@ public partial class MonkeyBoss : Enemy
         {
             TakeDamage(10);
         }
+        MoveHands();
         base.Update();
+    }
+
+    /// <summary>
+    /// Moves hands with body
+    /// </summary>
+    protected void MoveHands()
+    {
+        if(_moveRightWithBody)
+        {
+            _rightHand.LocalPosition = _rightHandStartPos;
+        }
+
+        if(_rotateRightWithBody)
+        {
+            _rightHand.Rotation = transform.rotation;
+        }
+
+        if(_moveLeftWithBody)
+        {
+            _leftHand.LocalPosition = _leftHandStartPos;
+        }
+
+        if(_rotateLeftWithBody)
+        {
+            _leftHand.Rotation = transform.rotation;
+        }
+    }
+
+    /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <returns></returns>
+    protected GameObject CreateRightHandHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject temp = Instantiate(_hitbox, _rightHand.transform);
+        temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage, launchAngle, launchStrength);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
+    }
+
+    /// <summary>
+    /// Creates a hitbox as a child of the enemy
+    /// </summary>
+    /// <param name="position">Position relative to enemy</param>
+    /// <param name="scale">Size of hitbox</param>
+    /// <param name="type">Type of hitbox</param>
+    /// <param name="damage">Damage dealt by hitbox</param>
+    /// <returns></returns>
+    protected GameObject CreateLeftHandHitbox(Vector3 position, Vector3 scale, HitboxType type, float damage, Vector2 launchAngle, float launchStrength)
+    {
+        GameObject temp = Instantiate(_hitbox, _leftHand.transform);
+        temp.GetComponent<Hitbox>().SetHitbox(gameObject, position, scale, type, damage, launchAngle, launchStrength);
+        temp.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
+        return temp;
+    }
+
+    /// <summary>
+    /// Creates a telegraph attached to the monkey's right hand
+    /// </summary>
+    /// <param name="position">Position relative to hand</param>
+    /// <param name="scale">Scale</param>
+    /// <param name="rotation">Rotation relative to hand</param>
+    /// <param name="telegraphType">Type of telegraph</param>
+    /// <param name="parented">If parented</param>
+    protected void CreateRightHandTelegraph(Vector3 position, Vector3 scale, Quaternion rotation, TelegraphType telegraphType, bool parented)
+    {
+        GameObject temp;
+        temp = Instantiate(_telegraphPrefab[(int)telegraphType], _rightHand.transform.position, _rightHand.transform.rotation, _rightHand.transform);
+        temp.transform.localPosition = position;
+        temp.transform.localScale = scale;
+        if (rotation != Quaternion.identity)
+        {
+            temp.transform.rotation = rotation;
+        }
+        if (!parented)
+        {
+            temp.transform.parent = null;
+        }
+
+        _telegraphs.Add(temp);
+    }
+
+    /// <summary>
+    /// Creates a telegraph attached to the monkey's left hand
+    /// </summary>
+    /// <param name="position">Position relative to hand</param>
+    /// <param name="scale">Scale</param>
+    /// <param name="rotation">Rotation relative to hand</param>
+    /// <param name="telegraphType">Type of telegraph</param>
+    /// <param name="parented">If parented</param>
+    protected void CreateLeftHandTelegraph(Vector3 position, Vector3 scale, Quaternion rotation, TelegraphType telegraphType, bool parented)
+    {
+        GameObject temp;
+        temp = Instantiate(_telegraphPrefab[(int)telegraphType], _leftHand.transform.position, _leftHand.transform.rotation, _leftHand.transform);
+        temp.transform.localPosition = position;
+        temp.transform.localScale = scale;
+        if (rotation != Quaternion.identity)
+        {
+            temp.transform.rotation = rotation;
+        }
+        if (!parented)
+        {
+            temp.transform.parent = null;
+        }
+
+        _telegraphs.Add(temp);
+    }
+
+    /// <summary>
+    /// Resets right hand's position and rotation
+    /// </summary>
+    protected void ResetRightHand()
+    {
+        _rightHand.StopMotion();
+        _rightHand.LocalPosition = _rightHandStartPos;
+        _rightHand.Rotation = transform.rotation;
+        _moveRightWithBody = true;
+        _rotateRightWithBody = true;
+    }
+
+    /// <summary>
+    /// Resets left hand's position and rotation
+    /// </summary>
+    protected void ResetLeftHand()
+    {
+        _leftHand.StopMotion();
+        _leftHand.LocalPosition = _leftHandStartPos;
+        _leftHand.Rotation = transform.rotation;
+        _moveLeftWithBody = true;
+        _rotateLeftWithBody = true;
     }
 }
