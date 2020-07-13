@@ -1898,3 +1898,32 @@ public partial class Mox : Enemy
         }
     }
 }
+
+public partial class MonkeyBoss : Enemy
+{
+    /// <summary>
+    /// Charges monkey's right hand push attack
+    /// </summary>
+    /// <returns></returns>
+    protected bool MonkeyRightHandPushCharge(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if(time == 0)
+        {
+            if (DoTelegraphs())
+            {
+                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 10f) / transform.localScale.z), new Vector3(_widthMult, 1, 17.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+            }
+        }
+
+        if(time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
