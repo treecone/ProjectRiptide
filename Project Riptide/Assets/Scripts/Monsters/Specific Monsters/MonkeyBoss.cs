@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CarpAnim { SwimSpeed = 2, Dive = 3, Shoot = 4, UAttack = 5 };
-public enum KoiAttackState { TripleDash = 2, BubbleBlast = 4, UnderwaterAttack = 3, BubbleAttack = 3 }
+public enum MonkeyAnim { ScreechAttack = 2, ScreechAngry = 3}
+public enum MonkeyAttackState { HandPush = 2, HandSwipe = 3, HandClap = 4, Protect = 5, Screech = 6, PushWave = 7, SlamWave = 8 }
 
-public partial class KoiBoss : Enemy
+public partial class MonkeyBoss : Enemy
 {
     [SerializeField]
-    private ParticleSystem _dashParticles;
+    private Physics _leftHand;
     [SerializeField]
-    private GameObject _bubbleBrothPrefab;
-    [SerializeField]
-    private float _waterLevel;
+    private Physics _rightHand;
+
+    private Vector3 _leftHandStartPos;
+    private Vector3 _rightHandStartPos;
+
+    private const float RISE_HEIGHT = 5.0f;
+
+    private bool _rising;
+    private bool _rose;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -22,8 +28,8 @@ public partial class KoiBoss : Enemy
         //Set parameters
         _enemyType = EnemyType.KoiBoss;
         _speed = 1.0f;
-        _health = 200;
-        _maxHealth = 200;
+        _health = 300;
+        _maxHealth = 300;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
@@ -33,21 +39,17 @@ public partial class KoiBoss : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
-        _animParm = new int[6] {
+        _animParm = new int[4] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
-                    Animator.StringToHash("swimSpeed"),
-                    Animator.StringToHash("dive"),
-                    Animator.StringToHash("shoot"),
-                    Animator.StringToHash("uAttack")};
+                    Animator.StringToHash("screechAttack"),
+                    Animator.StringToHash("screechAngry")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
         _pushMult = 0.1f;
-        _HostileAI = HostileKoiBoss;
-        _PassiveAI = PassiveWanderRadius;
-
-        _dashParticles.Stop();
+        //_HostileAI = HostileKoiBoss;
+        _PassiveAI = PassiveDoNothing;
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
@@ -59,23 +61,18 @@ public partial class KoiBoss : Enemy
             hitbox.OnTrigger += HitboxTriggered;
             hitbox.OnStay += OnObsticalCollision;
         }
+
+        _leftHandStartPos = _leftHand.transform.localPosition;
+        _rightHandStartPos = _rightHand.transform.localPosition;
     }
 
     // Update is called once per frame
     protected override void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             TakeDamage(10);
         }
         base.Update();
-    }
-
-    /// <summary>
-    /// Spawns bubble broth at detect position of koi boss
-    /// </summary>
-    protected void SpawnBubbleBroth()
-    {
-        Instantiate(_bubbleBrothPrefab, new Vector3(_detectPosition.position.x, _waterLevel, _detectPosition.position.z), transform.rotation);
     }
 }
