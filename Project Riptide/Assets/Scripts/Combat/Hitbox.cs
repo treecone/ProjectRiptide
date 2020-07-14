@@ -31,6 +31,11 @@ public class Hitbox : MonoBehaviour
         get { return _damage; }
         set { _damage = value; }
     }
+    public float LaunchStrength
+    {
+        get { return _launchStrength; }
+        set { _launchStrength = value; }
+    }
 
     /// <summary>
     /// Set the values of the hitbox
@@ -105,14 +110,18 @@ public class Hitbox : MonoBehaviour
                 //Make sure this hitbox is a player hitbox
                 if (_type == HitboxType.PlayerHitbox)
                 {
-                    //Add knockback if there is any
-                    if (_launchStrength != 0)
+                    Enemy enemy = hitbox.AttachedObject.GetComponent<Enemy>();
+                    if (enemy != null)
                     {
-                        Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength * (60 * Time.deltaTime);
-                        hitbox.AttachedObject.GetComponent<Enemy>().TakeKnockback(knockback);
+                        //Add knockback if there is any
+                        if (_launchStrength != 0)
+                        {
+                            Vector3 knockback = Quaternion.Euler(0, _launchAngle.x, -_launchAngle.y) * transform.forward * _launchStrength * (60 * Time.deltaTime);
+                            enemy.TakeKnockback(knockback);
+                        }
+                        //Calculate damage for enemies
+                        enemy.TakeDamage(_damage * hitbox._damage);
                     }
-                    //Calculate damage for enemies
-                    hitbox.AttachedObject.GetComponent<Enemy>().TakeDamage(_damage * hitbox._damage);
                     //Trigger any events associated with collision
                     OnTrigger?.Invoke(hitbox.AttachedObject);
                 }

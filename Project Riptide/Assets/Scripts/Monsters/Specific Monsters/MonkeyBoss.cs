@@ -11,6 +11,12 @@ public partial class MonkeyBoss : Enemy
     private Physics _leftHand;
     [SerializeField]
     private Physics _rightHand;
+    [SerializeField]
+    private GameObject _screechParticles;
+    [SerializeField]
+    private GameObject _storm;
+    [SerializeField]
+    private GameObject _forwardWavePrefab;
 
     private Vector3 _leftHandStartPos;
     private Vector3 _rightHandStartPos;
@@ -25,6 +31,8 @@ public partial class MonkeyBoss : Enemy
 
     private bool _rising;
     private bool _rose;
+
+    private Vector3 _screechPos;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -43,7 +51,7 @@ public partial class MonkeyBoss : Enemy
         _hostileRadius = 30.0f;
         _passiveRadius = 120.0f;
         _maxRadius = 240.0f;
-        _specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+        _specialCooldown = new float[9] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
         _animParm = new int[4] {
                     Animator.StringToHash("die"),
@@ -61,12 +69,10 @@ public partial class MonkeyBoss : Enemy
         _healthBar.SetMaxHealth(_maxHealth);
         _healthBar.UpdateHealth(_health);
 
-        //Set up hitboxes
-        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
-        {
-            hitbox.OnTrigger += HitboxTriggered;
-            hitbox.OnStay += OnObsticalCollision;
-        }
+        Hitbox hurtbox = transform.Find("MainHurtbox").GetComponent<Hitbox>();
+        hurtbox.OnTrigger += HitboxTriggered;
+        hurtbox.OnStay += OnObsticalCollision;
+
 
         _leftHandStartPos = _leftHand.transform.localPosition;
         _rightHandStartPos = _rightHand.transform.localPosition;
@@ -74,6 +80,11 @@ public partial class MonkeyBoss : Enemy
         _moveRightWithBody = true;
         _rotateLeftWithBody = true;
         _rotateRightWithBody = true;
+
+        _screechPos = _screechParticles.transform.position;
+        _screechParticles.GetComponentInChildren<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
+        _storm.SetActive(false);
     }
 
     // Update is called once per frame
@@ -110,6 +121,22 @@ public partial class MonkeyBoss : Enemy
         if(_rotateLeftWithBody)
         {
             _leftHand.Rotation = transform.rotation;
+        }
+    }
+
+    /// <summary>
+    /// Toggle screech particles on or off
+    /// </summary>
+    /// <param name="on"></param>
+    protected void ToggleScreechParticles(bool on)
+    {
+        if(on)
+        {
+            _screechParticles.GetComponentInChildren<ParticleSystem>().Play();
+        }
+        else
+        {
+            _screechParticles.GetComponentInChildren<ParticleSystem>().Stop();
         }
     }
 
