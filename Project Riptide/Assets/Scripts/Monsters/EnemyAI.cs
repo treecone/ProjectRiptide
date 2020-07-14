@@ -1329,7 +1329,7 @@ public partial class MonkeyBoss : Enemy
             //Rise out of the water when first activated
             if (!_rose)
             {
-
+                _rose = true;
             }
             else
             {
@@ -1340,13 +1340,14 @@ public partial class MonkeyBoss : Enemy
                     if (!_activeStates[(int)AttackState.Active])
                     {
                         LookAtPlayer();
+                        ApplyFriction(0.99f);
 
                         //Decrement overall special cooldown, no special can be used while this is in cooldown.
                         if (_specialCooldown[(int)AttackState.Active] > 0)
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push attack
-                        if (_playerDistance < 16.0f)
+                        if (_playerDistance < 25.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandPush] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandPush] < 0.0f && Random.Range(1, 4) == 1)
@@ -1356,15 +1357,15 @@ public partial class MonkeyBoss : Enemy
                                 _specialCooldown[(int)MonkeyAttackState.HandPush] = 6.0f;
                                 _currTime = 0;
                                 //Set up hand push
-                                /*_actionQueue.Enqueue(MonkeyRightHandPushCharge);
+                                _actionQueue.Enqueue(MonkeyRightHandPushCharge);
                                 _actionQueue.Enqueue(MonkeyRightHandPush);
                                 _actionQueue.Enqueue(MonkeyLeftHandPush);
-                                _actionQueue.Enqueue(MonkeyLeftHandReturn);*/
+                                _actionQueue.Enqueue(MonkeyLeftHandReturn);
                             }
                         }
 
                         //Check to see if monster can use hand swipe attack
-                        if (_playerDistance < 15.0f)
+                        /*if (_playerDistance < 15.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandSwipe] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandSwipe] < 0.0f && Random.Range(1, 4) == 1)
@@ -1378,13 +1379,13 @@ public partial class MonkeyBoss : Enemy
                                 /*_actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
                                 _actionQueue.Enqueue(MonkeyRightHandSwipe);
                                 _actionQueue.Enqueue(MonkeyLeftHandSwipe);
-                                _actionQueue.Enqueue(MonkeyLeftHandReturn);*/
+                                _actionQueue.Enqueue(MonkeyLeftHandReturn);
 
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use hand clap attack
-                        if (_playerDistance < 20.0f)
+                        /*if (_playerDistance < 20.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandClap] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandClap] < 0.0f && Random.Range(1, 4) == 1)
@@ -1396,12 +1397,12 @@ public partial class MonkeyBoss : Enemy
                                 //Set up clap attack
                                 /*_actionQueue.Enqueue(MonkeyClapCharge);
                                 _actionQueue.Enqueue(MonkeyClap);
-                                _actionQueue.Enqueue(MonkeyClapReturn);*/
+                                _actionQueue.Enqueue(MonkeyClapReturn);
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use hand protect attack
-                        if (_playerDistance < 15.0f)
+                        /*if (_playerDistance < 15.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Protect] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Protect] < 0.0f && Random.Range(1, 4) == 1)
@@ -1414,12 +1415,12 @@ public partial class MonkeyBoss : Enemy
                                 /*_actionQueue.Enqueue(MonkeyProtectCharge);
                                 _actionQueue.Enqueue(MonkeyProtect);
                                 _actionQueue.Enqueue(MonkeyCounter);
-                                _actionQueue.Enqueue(MonkeyCounterReturn);*/
+                                _actionQueue.Enqueue(MonkeyCounterReturn);
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use screech attack
-                        if (_playerDistance < 20.0f)
+                        /*if (_playerDistance < 20.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
@@ -1430,11 +1431,11 @@ public partial class MonkeyBoss : Enemy
                                 _currTime = 0;
                                 //Set up protect attack
                                 /*_actionQueue.Enqueue(MonkeyScreechCharge);
-                                _actionQueue.Enqueue(MonkeyScreechAttack);*/
+                                _actionQueue.Enqueue(MonkeyScreechAttack);
                             }
-                        }
+                        }*/
 
-                        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
                     else
                     {

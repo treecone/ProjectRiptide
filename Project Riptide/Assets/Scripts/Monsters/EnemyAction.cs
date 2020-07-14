@@ -1911,14 +1911,174 @@ public partial class MonkeyBoss : Enemy
 
         if(time == 0)
         {
+            _rotateRightWithBody = false;
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 10f) / transform.localScale.z), new Vector3(_widthMult, 1, 17.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateRightHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 20.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
-        if(time >= MAX_TIME)
+        LookAtPlayer();
+
+        //Look towards player
+        _destination = new Vector3(PlayerPosition().x, _rightHand.transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - _rightHand.transform.position);
+        _rightHand.Rotation = Quaternion.RotateTowards(_rightHand.Rotation, desiredRotation, 3.0f);
+
+        if (time >= MAX_TIME)
         {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Monkey pushes out with his right hand, left hand prepares to be pushed out
+    /// </summary>
+    /// <returns></returns>
+    protected bool MonkeyRightHandPush(ref float time)
+    {
+        const float MAX_TIME = 0.8f;
+
+        if (time == 0)
+        {
+            _rightHand.ApplyMoveForce(_rightHand.transform.forward, 20.0f * _speed, MAX_TIME);
+            _rotateLeftWithBody = false;
+            _moveRightWithBody = false;
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+                CreateLeftHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 20.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+            }
+            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+        }
+
+        LookAtPlayer();
+
+        //Left hand looks towards player
+        _destination = new Vector3(PlayerPosition().x, _leftHand.transform.position.y, PlayerPosition().z);
+        Quaternion desiredRotation = Quaternion.LookRotation(_destination - _leftHand.transform.position);
+        _leftHand.Rotation = Quaternion.RotateTowards(_leftHand.Rotation, desiredRotation, 3.0f);
+
+        //Right hand
+        if (!_inKnockback)
+        {
+            if (_playerCollision || _obsticalCollision)
+            {
+                //Go into knockback
+                _rightHand.StopMotion();
+                _inKnockback = true;
+                //time = MAX_TIME - 0.2f;
+                _rightHand.ApplyMoveForce(-_rightHand.transform.forward, 2.0f * _speed, 0.2f);
+            }
+        }
+        //Do knockback if there was a hit
+        else
+        {
+            //Do nothing
+        }
+
+        if (time >= MAX_TIME)
+        {
+            _inKnockback = false;
+            _rightHand.StopMotion();
+            ClearHitboxes();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Monkey pushes out with his right hand, left hand prepares to be pushed out
+    /// </summary>
+    /// <returns></returns>
+    protected bool MonkeyLeftHandPush(ref float time)
+    {
+        const float MAX_TIME = 0.8f;
+
+        if (time == 0)
+        {
+            _rightHandReturnDist = Vector3.Magnitude(transform.TransformPoint(_rightHandStartPos) - _rightHand.Position);
+            _leftHand.ApplyMoveForce(_leftHand.transform.forward, 20.0f * _speed, MAX_TIME);
+            _moveLeftWithBody = false;
+            if (DoTelegraphs())
+            {
+                _telegraphs[0].transform.parent = null;
+                ClearTelegraphs();
+            }
+            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+        }
+
+        //Right hand move back to original position
+        Vector3 rightHandReturnDir = transform.TransformPoint(_rightHandStartPos) -_rightHand.Position;
+        rightHandReturnDir.Normalize();
+        _rightHand.ApplyConstantMoveForce(rightHandReturnDir, _rightHandReturnDist, MAX_TIME);
+        _rightHand.Rotation = Quaternion.RotateTowards(_rightHand.Rotation, Rotation, 1.0f);
+
+        //Left hand
+        if (!_inKnockback)
+        {
+            if (_playerCollision || _obsticalCollision)
+            {
+                //Go into knockback
+                _leftHand.StopMotion();
+                _inKnockback = true;
+                //time = MAX_TIME - 0.2f;
+                _leftHand.ApplyMoveForce(-_leftHand.transform.forward, 2.0f * _speed, 0.2f);
+            }
+        }
+        //Do knockback if there was a hit
+        else
+        {
+            //Do nothing
+        }
+
+        if (time >= MAX_TIME)
+        {
+            ClearHitboxes();
+            //Set right hand back to normal
+            ResetRightHand();
+            _leftHand.StopMotion();
+            _inKnockback = false;
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Monkey pushes out with his right hand, left hand prepares to be pushed out
+    /// </summary>
+    /// <returns></returns>
+    protected bool MonkeyLeftHandReturn(ref float time)
+    {
+        const float MAX_TIME = 1.0f;
+
+        if (time == 0)
+        {
+            _leftHandReturnDist = Vector3.Magnitude(transform.TransformPoint(_leftHandStartPos) - _leftHand.Position);
+        }
+
+        //Left hand move back to original position
+        Vector3 leftHandReturnDir = transform.TransformPoint(_leftHandStartPos) - _leftHand.Position;
+        leftHandReturnDir.Normalize();
+        _leftHand.ApplyConstantMoveForce(leftHandReturnDir, _leftHandReturnDist, MAX_TIME);
+        _leftHand.Rotation = Quaternion.RotateTowards(_leftHand.Rotation, Rotation, 1.0f);
+
+
+        if (time >= MAX_TIME)
+        {
+            //Set right hand back to normal
+            ResetLeftHand();
             return false;
         }
         else

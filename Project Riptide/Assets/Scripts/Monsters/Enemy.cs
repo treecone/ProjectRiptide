@@ -739,6 +739,7 @@ public partial class Enemy : Physics
         {
             _animator.SetTrigger(_animParm[(int)Anim.Die]);
         }
+        ClearHitboxes();
         ClearTelegraphs();
         _dying = true;
         _isInvincible = true;
