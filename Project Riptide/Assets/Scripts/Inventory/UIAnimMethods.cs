@@ -9,6 +9,9 @@ using UnityEngine.UI;
 /// </summary>
 public class UIAnimMethods : MonoBehaviour
 {
+    [SerializeField]
+    private Sprite exposedThing;
+
     //Fast Transition
     public void SlideLeftF(GameObject gObj)
     {
@@ -87,7 +90,7 @@ public class UIAnimMethods : MonoBehaviour
     }
 
     public void EnableInventoryPanel(Image gObj)
-    {    
+    {
         gObj.DOFade(.5f, .5f).SetUpdate(true);
     }
 
@@ -96,4 +99,27 @@ public class UIAnimMethods : MonoBehaviour
         gObj.DOFade(1f, .5f).SetUpdate(true);
     }
 
+
+    //MAP ANIMATIONS
+    /// <summary>
+    /// used for both exposing the chunk originally and when you leave the chunk
+    /// </summary>
+    /// <param name="gObj"></param>
+    public void ExposeChunk(Image gObj)
+    {
+        gObj.sprite = exposedThing;
+        gObj.DOFade(0f, .5f).SetUpdate(true);
+    }
+    public void InExposedChunk(Image gObj)
+    {
+        gObj.DOColor(new Color(75, 0, 0, 168), .5f).SetUpdate(true);
+    }
+    public void InHiddenChunk(Image gObj)
+    {
+        gObj.DOColor(new Color(75, 0, 0, 255), .5f).SetUpdate(true);
+    }
+    public void LeavingHiddenChunk(Image gObj)
+    {
+        gObj.DOColor(new Color(24, 24, 24, 255), .5f).SetUpdate(true);
+    }
 }

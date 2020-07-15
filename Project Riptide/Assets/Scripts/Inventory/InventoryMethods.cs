@@ -37,6 +37,14 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private Sprite[] _volumeSprites;
 
+    [SerializeField]
+    private Image[] _mapImages; //25th image is the player position marker
+
+    [SerializeField]
+    private UIAnimMethods _uiAnimMethods;
+    [SerializeField]
+    private ChunkLoader _chunkLoader;
+
     private float soundValue = .5f;
     private float volumeValue = .5f;
 
@@ -250,20 +258,55 @@ public class InventoryMethods : MonoBehaviour
         }
     }
 
-
     public void UpdateGold()
     {
         _totalGoldInventory.SetText("{0}", PlayerInventory.Instance.totalGold);
     }
 
-    public void Expand(GameObject gObj)
+    public void UpdateMap()
     {
-        gObj.SetActive(true);
+        //finds chunk of player, remove check later?
+        Image chunk = _mapImages[0];
+        if (_chunkLoader != null)
+        {
+            int chunkNum = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
+            chunk = _mapImages[chunkNum];
+        }
+        else
+        {
+             chunk = _mapImages[13];
+        }
+        //calculate what chunk player is in
+        if (chunk.sprite.name == "SquareTeleBackground")
+        {
+            _mapImages[25].enabled = false;
+            _uiAnimMethods.InHiddenChunk(chunk);
+        }
+        else
+        {
+            _mapImages[25].enabled = true;
+            //calculate where it should be on the map
+            _uiAnimMethods.InExposedChunk(chunk);
+        }
     }
-
-    public void Contract(GameObject gObj)
+    //Exposes map (shipwreck)
+    public void ExposeMap()
     {
-        gObj.SetActive(false);
+        //finds chunk of player, remove check later?
+        Image chunk = _mapImages[0];
+        if (_chunkLoader != null)
+        {
+            int chunkNum = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
+            chunk = _mapImages[chunkNum];
+        }
+        else
+        {
+            chunk = _mapImages[13];
+        }
+
+        _mapImages[25].enabled = true;
+        //calculate where it should be on the map
+        _uiAnimMethods.ExposeChunk(chunk);
     }
 
 }

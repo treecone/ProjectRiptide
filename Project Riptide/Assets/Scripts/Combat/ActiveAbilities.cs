@@ -102,6 +102,22 @@ public class ActiveAbilities : MonoBehaviour
                 _buttons[i].gameObject.SetActive(true);
             }
         }
+
+        if(_inputManager.InCombatMode)
+        {
+            if(Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                _buttons[0].onClick?.Invoke();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                _buttons[1].onClick?.Invoke();
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                _buttons[2].onClick?.Invoke();
+            }
+        }
     }
 
     /// <summary>

@@ -107,6 +107,13 @@ public class InputManager : MonoBehaviour
         if (Application.platform == RuntimePlatform.WindowsEditor && !_forceMobile)
         {
             TakeKeyboardInput();
+            if (_combatMode)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    _fireButton.onClick?.Invoke();
+                }
+            }
         }
         else
         {

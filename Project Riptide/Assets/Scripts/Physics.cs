@@ -22,6 +22,16 @@ public class Physics : MonoBehaviour
         set { _position = value; transform.position = value; }
     }
 
+    public Vector3 LocalPosition
+    {
+        get { return transform.localPosition; }
+        set
+        {
+            transform.localPosition = value;
+            _position = transform.position;
+        }
+    }
+
     public Vector3 Velocity
     {
         get { return _velocity; }
