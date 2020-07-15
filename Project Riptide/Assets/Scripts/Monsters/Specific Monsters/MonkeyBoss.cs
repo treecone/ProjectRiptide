@@ -17,9 +17,12 @@ public partial class MonkeyBoss : Enemy
     private GameObject _storm;
     [SerializeField]
     private GameObject _forwardWavePrefab;
+    [SerializeField]
+    private GameObject _circleWavePrefab;
 
     private Vector3 _leftHandStartPos;
     private Vector3 _rightHandStartPos;
+    private Vector3 _stormStartPos;
     private float _rightHandReturnDist;
     private float _leftHandReturnDist;
     private bool _moveLeftWithBody;
@@ -33,6 +36,8 @@ public partial class MonkeyBoss : Enemy
     private bool _rose;
 
     private Vector3 _screechPos;
+
+    private MonkeyStormCloud _monkeyStormCloud;
 
     // Start is called before the first frame update
     protected override void Start()
@@ -84,6 +89,8 @@ public partial class MonkeyBoss : Enemy
         _screechPos = _screechParticles.transform.position;
         _screechParticles.GetComponentInChildren<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
+        _monkeyStormCloud = _storm.GetComponent<MonkeyStormCloud>();
+        _stormStartPos = _storm.transform.localPosition;
         _storm.SetActive(false);
     }
 
@@ -95,6 +102,12 @@ public partial class MonkeyBoss : Enemy
             TakeDamage(10);
         }
         MoveHands();
+        //Keep storm above monkey
+        if(_storm.activeSelf)
+        {
+            _monkeyStormCloud.LocalPosition = _stormStartPos;
+        }
+
         base.Update();
     }
 

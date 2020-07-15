@@ -1499,12 +1499,14 @@ public partial class MonkeyBoss : Enemy
                     {
                         LookAtPlayer();
 
+                        ApplyFriction(0.99f);
+
                         //Decrement overall special cooldown, no special can be used while this is in cooldown.
                         if (_specialCooldown[(int)AttackState.Active] > 0)
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        if (_playerDistance < 30.0f)
+                        /*if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1524,10 +1526,10 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use slam wave
-                        /*if (_playerDistance < 20.0f)
+                        if (_playerDistance < 20.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.SlamWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.SlamWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1538,15 +1540,15 @@ public partial class MonkeyBoss : Enemy
                                 _specialCooldown[(int)MonkeyAttackState.SlamWave] = 8.0f;
                                 _currTime = 0;
                                 //Set up monkey swipe
-                                /*_actionQueue.Enqueue(MonkeySlamWaveCharge);
-                                _actionQueue.Enqueue(MonkeySlamWave);
-                                _actionQueue.Enqueue(MonkeySlamWaveReturn);
+                                _actionQueue.Enqueue(MonkeyCircleWaveCharge);
+                                _actionQueue.Enqueue(MonkeyCircleWaveAttack);
+                                _actionQueue.Enqueue(MonkeyHandsReturn);
 
                             }
-                        }*/
+                        }
 
                         //If no wave move has selected, try and do a move from phase 1
-                        if(!_activeStates[(int)AttackState.Active])
+                        /*if(!_activeStates[(int)AttackState.Active])
                         {
                             //Check to see if monster can use hand push attack
                             if (_playerDistance < 25.0f)
@@ -1636,7 +1638,7 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyScreech);
                                 }
                             }
-                        }
+                        }*/
                         //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
                     else
