@@ -1353,8 +1353,8 @@ public partial class MonkeyBoss : Enemy
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandPush] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
-                                _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                _specialCooldown[(int)MonkeyAttackState.HandPush] = 6.0f;
+                                _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                _specialCooldown[(int)MonkeyAttackState.HandPush] = 5.0f;
                                 _currTime = 0;
                                 //Set up hand push
                                 _actionQueue.Enqueue(MonkeyRightHandPushCharge);
@@ -1365,75 +1365,75 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use hand swipe attack
-                        /*if (_playerDistance < 15.0f)
+                        if (_playerDistance < 24.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandSwipe] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandSwipe] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 //Set up attack
                                 _activeStates[(int)AttackState.Active] = true;
-                                _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 8.0f;
+                                _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 6.0f;
                                 _currTime = 0;
                                 //Set up monkey swipe
-                                /*_actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
+                                _actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
                                 _actionQueue.Enqueue(MonkeyRightHandSwipe);
                                 _actionQueue.Enqueue(MonkeyLeftHandSwipe);
                                 _actionQueue.Enqueue(MonkeyLeftHandReturn);
 
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use hand clap attack
-                        /*if (_playerDistance < 20.0f)
+                        if (_playerDistance < 20.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandClap] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandClap] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
-                                _specialCooldown[(int)AttackState.Active] = 5.0f;
+                                _specialCooldown[(int)AttackState.Active] = 3.0f;
                                 _specialCooldown[(int)MonkeyAttackState.HandClap] = 10.0f;
                                 _currTime = 0;
                                 //Set up clap attack
-                                /*_actionQueue.Enqueue(MonkeyClapCharge);
+                                _actionQueue.Enqueue(MonkeyClapCharge);
                                 _actionQueue.Enqueue(MonkeyClap);
-                                _actionQueue.Enqueue(MonkeyClapReturn);
+                                _actionQueue.Enqueue(MonkeyHandsReturn);
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use hand protect attack
-                        /*if (_playerDistance < 15.0f)
+                        if (_playerDistance < 25.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Protect] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Protect] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
-                                _specialCooldown[(int)AttackState.Active] = 4.0f;
-                                _specialCooldown[(int)MonkeyAttackState.Protect] = 12.0f;
+                                _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                _specialCooldown[(int)MonkeyAttackState.Protect] = 8.0f;
                                 _currTime = 0;
                                 //Set up protect attack
-                                /*_actionQueue.Enqueue(MonkeyProtectCharge);
+                                _actionQueue.Enqueue(MonkeyProtectCharge);
                                 _actionQueue.Enqueue(MonkeyProtect);
                                 _actionQueue.Enqueue(MonkeyCounter);
-                                _actionQueue.Enqueue(MonkeyCounterReturn);
+                                _actionQueue.Enqueue(MonkeyHandsReturn);
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use screech attack
-                        /*if (_playerDistance < 20.0f)
+                        if (_playerDistance < 15.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
-                                _specialCooldown[(int)AttackState.Active] = 6.0f;
-                                _specialCooldown[(int)MonkeyAttackState.Screech] = 8.0f;
+                                _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                _specialCooldown[(int)MonkeyAttackState.Screech] = 4.0f;
                                 _currTime = 0;
                                 //Set up protect attack
-                                /*_actionQueue.Enqueue(MonkeyScreechCharge);
-                                _actionQueue.Enqueue(MonkeyScreechAttack);
+                                _actionQueue.Enqueue(MonkeyScreechCharge);
+                                _actionQueue.Enqueue(MonkeyScreech);
                             }
-                        }*/
+                        }
 
                         //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
@@ -1451,6 +1451,8 @@ public partial class MonkeyBoss : Enemy
                 {
                     //TRANSITION MONKEY BOSS TO PHASE 2
 
+                    _storm.SetActive(true);
+                    _activeStates[(int)AttackState.FormChanged] = true;
                     //Check to see if form changing is just beginning
                     /*if (!_activeStates[(int)AttackState.FormChangeInProgress])
                     {
@@ -1495,21 +1497,14 @@ public partial class MonkeyBoss : Enemy
                     //If the Koi is not in any special
                     if (!_activeStates[(int)AttackState.Active])
                     {
-                        if (_playerDistance > 10.0f)
-                        {
-                            FollowPlayer();
-                        }
-                        else
-                        {
-                            FleePoint(PlayerPosition(), 1.0f);
-                        }
+                        LookAtPlayer();
 
                         //Decrement overall special cooldown, no special can be used while this is in cooldown.
                         if (_specialCooldown[(int)AttackState.Active] > 0)
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        if (_playerDistance < 16.0f)
+                        if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1519,20 +1514,20 @@ public partial class MonkeyBoss : Enemy
                                 _specialCooldown[(int)MonkeyAttackState.PushWave] = 8.0f;
                                 _currTime = 0;
                                 //Set up hand push wave
-                                /*_actionQueue.Enqueue(MonkeyRightHandWaveCharge);
-                                _actionQueue.Enqueue(MonkeyRightHandWaveAttack);
-                                _actionQueue.Enqueue(MonkeyLeftHandWaveCharge);
-                                _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyRightHandWaveCharge);
                                 _actionQueue.Enqueue(MonkeyRightHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveCharge);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
-                                _actionQueue.Enqueue(MonkeyWaveAttackReturn);*/
+                                _actionQueue.Enqueue(MonkeyRightHandWaveRecharge);
+                                _actionQueue.Enqueue(MonkeyRightHandWaveAttack);
+                                _actionQueue.Enqueue(MonkeyLeftHandWaveCharge);
+                                _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
+                                _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                             }
                         }
 
                         //Check to see if monster can use slam wave
-                        if (_playerDistance < 20.0f)
+                        /*if (_playerDistance < 20.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.SlamWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.SlamWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1545,48 +1540,48 @@ public partial class MonkeyBoss : Enemy
                                 //Set up monkey swipe
                                 /*_actionQueue.Enqueue(MonkeySlamWaveCharge);
                                 _actionQueue.Enqueue(MonkeySlamWave);
-                                _actionQueue.Enqueue(MonkeySlamWaveReturn);*/
+                                _actionQueue.Enqueue(MonkeySlamWaveReturn);
 
                             }
-                        }
+                        }*/
 
                         //If no wave move has selected, try and do a move from phase 1
                         if(!_activeStates[(int)AttackState.Active])
                         {
-                            //Check to see if monster can use hand push attack
-                            if (_playerDistance < 16.0f)
+                            /*//Check to see if monster can use hand push attack
+                            if (_playerDistance < 25.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandPush] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandPush] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
-                                    _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.HandPush] = 6.0f;
+                                    _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.HandPush] = 5.0f;
                                     _currTime = 0;
                                     //Set up hand push
-                                    /*_actionQueue.Enqueue(MonkeyRightHandPushCharge);
+                                    _actionQueue.Enqueue(MonkeyRightHandPushCharge);
                                     _actionQueue.Enqueue(MonkeyRightHandPush);
                                     _actionQueue.Enqueue(MonkeyLeftHandPush);
-                                    _actionQueue.Enqueue(MonkeyLeftHandReturn);*/
+                                    _actionQueue.Enqueue(MonkeyLeftHandReturn);
                                 }
                             }
 
                             //Check to see if monster can use hand swipe attack
-                            if (_playerDistance < 15.0f)
+                            if (_playerDistance < 24.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandSwipe] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandSwipe] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     //Set up attack
                                     _activeStates[(int)AttackState.Active] = true;
-                                    _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 8.0f;
+                                    _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 6.0f;
                                     _currTime = 0;
                                     //Set up monkey swipe
-                                    /*_actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
+                                    _actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
                                     _actionQueue.Enqueue(MonkeyRightHandSwipe);
                                     _actionQueue.Enqueue(MonkeyLeftHandSwipe);
-                                    _actionQueue.Enqueue(MonkeyLeftHandReturn);*/
+                                    _actionQueue.Enqueue(MonkeyLeftHandReturn);
 
                                 }
                             }
@@ -1598,51 +1593,51 @@ public partial class MonkeyBoss : Enemy
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandClap] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
-                                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                                    _specialCooldown[(int)AttackState.Active] = 3.0f;
                                     _specialCooldown[(int)MonkeyAttackState.HandClap] = 10.0f;
                                     _currTime = 0;
                                     //Set up clap attack
-                                    /*_actionQueue.Enqueue(MonkeyClapCharge);
+                                    _actionQueue.Enqueue(MonkeyClapCharge);
                                     _actionQueue.Enqueue(MonkeyClap);
-                                    _actionQueue.Enqueue(MonkeyClapReturn);*/
+                                    _actionQueue.Enqueue(MonkeyHandsReturn);
                                 }
                             }
 
                             //Check to see if monster can use hand protect attack
-                            if (_playerDistance < 15.0f)
+                            if (_playerDistance < 25.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.Protect] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Protect] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
-                                    _specialCooldown[(int)AttackState.Active] = 4.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.Protect] = 12.0f;
+                                    _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.Protect] = 8.0f;
                                     _currTime = 0;
                                     //Set up protect attack
-                                    /*_actionQueue.Enqueue(MonkeyProtectCharge);
+                                    _actionQueue.Enqueue(MonkeyProtectCharge);
                                     _actionQueue.Enqueue(MonkeyProtect);
                                     _actionQueue.Enqueue(MonkeyCounter);
-                                    _actionQueue.Enqueue(MonkeyCounterReturn);*/
+                                    _actionQueue.Enqueue(MonkeyHandsReturn);
                                 }
                             }
 
                             //Check to see if monster can use screech attack
-                            if (_playerDistance < 20.0f)
+                            if (_playerDistance < 15.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
-                                    _specialCooldown[(int)AttackState.Active] = 6.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.Screech] = 8.0f;
+                                    _specialCooldown[(int)AttackState.Active] = 3.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.Screech] = 4.0f;
                                     _currTime = 0;
                                     //Set up protect attack
-                                    /*_actionQueue.Enqueue(MonkeyScreechCharge);
-                                    _actionQueue.Enqueue(MonkeyScreechAttack);*/
+                                    _actionQueue.Enqueue(MonkeyScreechCharge);
+                                    _actionQueue.Enqueue(MonkeyScreech);
                                 }
-                            }
+                            }*/
                         }
-                        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
                     else
                     {

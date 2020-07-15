@@ -70,6 +70,17 @@ public class CannonFire : MonoBehaviour
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
         rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+
+        /*if (offset == 15.0f)
+        {
+            CannonShot rightShot = new CannonShot(direction, 90 + offset, _shipUpgradeScript.masterUpgrade);
+            rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        }
+        else
+        {
+            CannonShot leftShot = new CannonShot(direction, -90 + offset, _shipUpgradeScript.masterUpgrade);
+            leftShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        }*/
         return angle;
     }
 
