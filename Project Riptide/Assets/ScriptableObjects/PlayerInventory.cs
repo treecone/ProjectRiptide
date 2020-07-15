@@ -197,6 +197,31 @@ public class PlayerInventory : ScriptableObject
         return addItems;
     }
 
+    public void SetEquipped(string name)
+    {
+        ItemCategory category = ItemCategory.Material;
+        Item foundEquip = null;
+        for (int i = 0; i < equipment.Count; i++)
+        {
+            if (equipment[i].Slug == name || equipment[i].Name == name)
+            {
+                category = equipment[i].Category;
+            }
+        }
+        for(int i = 0; i < equipment.Count; i++)
+        {
+            if(equipment[i] == foundEquip)
+            {
+                equipment[i].Equipped = true;
+            } else
+            {
+                if(equipment[i].Category == category)
+                {
+                    equipment[i].Equipped = false;
+                }
+            }
+        }
+    }
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>
