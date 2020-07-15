@@ -37,16 +37,7 @@ public class Crafting : MonoBehaviour
 
             string result = _recipeData[i]["result"].ToString();
             int resultAmount = int.Parse(_recipeData[i]["resultAmount"].ToString());
-
-            List<Upgrade> upgrades = new List<Upgrade>();
-            foreach(JsonData upgradeData in _recipeData[i]["upgrades"])
-            {
-                string name = (string)upgradeData["name"];
-                string upgradeType = (string)upgradeData["upgradeType"];
-                float upgradeValue = Convert.ToSingle(upgradeData["upgradeValue"].ToString());
-                upgrades.Add(new Upgrade(name, upgradeType, upgradeValue));
-            }
-            _recipes.Add(new Recipe(ingredients, ingredientAmounts, result, resultAmount, upgrades));
+            _recipes.Add(new Recipe(ingredients, ingredientAmounts, result, resultAmount));
         }
     }
 
@@ -70,13 +61,7 @@ public class Crafting : MonoBehaviour
             {
                 PlayerInventory.Instance.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
             }
-            Item result = ItemDB.Instance.FindItem(recipe.result);
-            result.Amount = recipe.resultAmount;
-            foreach(Upgrade u in recipe.upgrades)
-            {
-                result.Upgrades.Add(u);
-            }
-            return result;
+            PlayerInventory.Instance.AddItem(recipe.result, recipe.resultAmount);
         }
         Debug.LogWarning("Not enough items in inventory to craft " + recipe.result);
         return null;

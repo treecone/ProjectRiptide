@@ -10,14 +10,12 @@ public class Recipe
 
     public string result;
     public int resultAmount;
-
-    public List<Upgrade> upgrades;
-    public Recipe(List<string> ingredients, List<int> ingredientAmounts, string result, int resultAmount, List<Upgrade> upgrades)
+    
+    public Recipe(List<string> ingredients, List<int> ingredientAmounts, string result, int resultAmount)
     {
         this.ingredients = ingredients;
         this.ingredientAmounts = ingredientAmounts;
         this.result = result;
         this.resultAmount = resultAmount;
-        this.upgrades = upgrades;
     }
 }
