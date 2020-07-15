@@ -53,6 +53,9 @@ public class ChunkLoader : MonoBehaviour
     [SerializeField]
     private float _worldScale = 1.0f;
 
+
+    public Vector2 CurrentChunkPosition { get; }
+
     // Start is called before the first frame update
     void Start()
     {
