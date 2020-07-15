@@ -8,19 +8,56 @@ public class Inventory : MonoBehaviour
 {
     //need to refactor
     #region Fields
-    public List<GameObject> inventorySlots;
 
-    private List<Item> equipment;
     [SerializeField]
-    private GameObject goldText;
-    private TextMeshProUGUI goldTextMesh;
-    public Upgrades shipUpgradeScript;
+    private List<GameObject> inventoryParents;
+    [SerializeField]
+    private List<GameObject> vaultParents;
+
+    private List<List<InventorySlot>> inventorySlots;
+    private List<List<InventorySlot>> vaultSlots;
+    [SerializeField]
+    private List<GameObject> goldTexts;
+    private List<TextMeshProUGUI> goldTextMeshes;
     #endregion
     
     
     void Start()
     {
-        
+        inventorySlots = new List<List<InventorySlot>>();
+        foreach(GameObject inventoryParent in inventoryParents)
+        {
+            List<InventorySlot> slots = new List<InventorySlot>();
+            foreach (Transform t in inventoryParent.transform)
+            {
+                if (t.gameObject.GetComponent<InventorySlot>() != null)
+                {
+                    slots.Add(t.gameObject.GetComponent<InventorySlot>());
+                }
+            }
+            inventorySlots.Add(slots);
+        }
+
+        vaultSlots = new List<List<InventorySlot>>();
+        foreach (GameObject vaultParent in vaultParents)
+        {
+            List<InventorySlot> slots = new List<InventorySlot>();
+            foreach (Transform t in vaultParent.transform)
+            {
+                if (t.gameObject.GetComponent<InventorySlot>() != null)
+                {
+                    slots.Add(t.gameObject.GetComponent<InventorySlot>());
+                }
+            }
+            vaultSlots.Add(slots);
+        }
+
+        goldTextMeshes = new List<TextMeshProUGUI>();
+        foreach(GameObject g in goldTexts)
+        {
+            goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
+        }
+
     }
 
     public void Update()
@@ -31,17 +68,27 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private void UpdateInventoryVisuals()
+    public void UpdateInventoryVisuals()
     {
-        for (int i = 0; i < inventorySlots.Count; i++)
+        foreach (List<InventorySlot> inventory in inventorySlots)
         {
-            inventorySlots[i].GetComponent<InventorySlot>().item = PlayerInventory.Instance.items[i];
-            inventorySlots[i].GetComponent<InventorySlot>().UpdateSlotVisuals();
+            for(int i = 0; i < inventory.Count; i++)
+            {
+                inventory[i].item = PlayerInventory.Instance.items[i];
+                inventory[i].UpdateSlotVisuals();
+            }
         }
-        if (goldTextMesh == null)
+        foreach (List<InventorySlot> vault in vaultSlots)
         {
-            goldTextMesh = goldText.GetComponent<TextMeshProUGUI>();
+            for (int i = 0; i < vault.Count; i++)
+            {
+                vault[i].item = PlayerVault.Instance.items[i];
+                vault[i].UpdateSlotVisuals();
+            }
         }
-        goldTextMesh.text = "" + PlayerInventory.Instance.totalGold;
+        foreach(TextMeshProUGUI textMesh in goldTextMeshes)
+        {
+            textMesh.text = "" + PlayerInventory.Instance.totalGold;
+        }
     }
 }

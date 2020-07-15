@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Custom Assets/Singletons/PlayerInventory")]
-public class PlayerInventory : ScriptableObject
+[CreateAssetMenu(menuName = "Custom Assets/Singletons/PlayerVault")]
+public class PlayerVault : ScriptableObject
 {
-    private static PlayerInventory _instance;
+    private static PlayerVault _instance;
 
-    public static PlayerInventory Instance
+    public static PlayerVault Instance
     {
         get
         {
             if (!_instance)
-                _instance = Resources.LoadAll<PlayerInventory>("ScriptableObjectInstances")[0];
+                _instance = Resources.LoadAll<PlayerVault>("ScriptableObjectInstances")[0];
             return _instance;
         }
     }
@@ -20,6 +20,7 @@ public class PlayerInventory : ScriptableObject
     private void OnEnable()
     {
         _instance = this;
+        Debug.Log("wee woo");
         InitializeInventory();
     }
     public int numItems;
@@ -32,7 +33,7 @@ public class PlayerInventory : ScriptableObject
         totalGold = 0;
         items = new List<Item>();
         equipment = new List<Item>();
-        for(int i = 0; i < numItems; i++)
+        for (int i = 0; i < numItems; i++)
         {
             items.Add(ItemDB.Instance.FindItem("null"));
         }
@@ -65,7 +66,7 @@ public class PlayerInventory : ScriptableObject
         //Debug.Log("Adding item " + itemName + " as " + itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
-            
+
             Item item = items[i];
             //Debug.Log("trying to add in slot " + i + ". slot currently has " + item.Amount + " " + item.Name + " out of a max of " + item.MaxAmount);
             if (item.Name == itemToAdd.Name && item.Amount != itemToAdd.MaxAmount) //A similiar item with room has been found, does it have room for all the items being added
@@ -197,31 +198,6 @@ public class PlayerInventory : ScriptableObject
         return addItems;
     }
 
-    public void SetEquipped(string name)
-    {
-        ItemCategory category = ItemCategory.Material;
-        Item foundEquip = null;
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Slug == name || equipment[i].Name == name)
-            {
-                category = equipment[i].Category;
-            }
-        }
-        for(int i = 0; i < equipment.Count; i++)
-        {
-            if(equipment[i] == foundEquip)
-            {
-                equipment[i].Equipped = true;
-            } else
-            {
-                if(equipment[i].Category == category)
-                {
-                    equipment[i].Equipped = false;
-                }
-            }
-        }
-    }
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>
@@ -229,7 +205,7 @@ public class PlayerInventory : ScriptableObject
     /// <returns>The amount of the item in the inventory</returns>
     public int CountOf(string itemName)
     {
-        if(itemName == "gold" || itemName == "Gold")
+        if (itemName == "gold" || itemName == "Gold")
         {
             return totalGold;
         }
