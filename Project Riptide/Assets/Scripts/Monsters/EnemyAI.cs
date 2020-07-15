@@ -1504,7 +1504,7 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        /*if (_playerDistance < 30.0f)
+                        if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1524,7 +1524,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use slam wave
                         /*if (_playerDistance < 20.0f)
@@ -1548,7 +1548,7 @@ public partial class MonkeyBoss : Enemy
                         //If no wave move has selected, try and do a move from phase 1
                         if(!_activeStates[(int)AttackState.Active])
                         {
-                            /*//Check to see if monster can use hand push attack
+                            //Check to see if monster can use hand push attack
                             if (_playerDistance < 25.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandPush] -= Time.deltaTime;
@@ -1635,7 +1635,7 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyScreechCharge);
                                     _actionQueue.Enqueue(MonkeyScreech);
                                 }
-                            }*/
+                            }
                         }
                         //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }

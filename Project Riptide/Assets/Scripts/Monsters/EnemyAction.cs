@@ -2894,7 +2894,7 @@ public partial class MonkeyStormCloud : Enemy
 
                 if (DoTelegraphs())
                 {
-                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 15f, new Vector3(3f, 1, 30f), Quaternion.LookRotation(stormDirection), TelegraphType.Square, true);
+                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 12f, new Vector3(3f, 1, 30f), Quaternion.LookRotation(stormDirection), TelegraphType.Square, true);
                 }
             }
         }
