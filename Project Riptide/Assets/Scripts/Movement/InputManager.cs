@@ -104,7 +104,7 @@ public class InputManager : MonoBehaviour
             Application.Quit();
 
         //TakeKeyboardInput();
-        if (Application.platform == RuntimePlatform.WindowsEditor && !_forceMobile)
+        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer && !_forceMobile)
         {
             TakeKeyboardInput();
             if (_combatMode)

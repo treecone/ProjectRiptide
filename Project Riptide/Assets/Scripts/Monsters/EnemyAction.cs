@@ -2821,6 +2821,90 @@ public partial class MonkeyBoss : Enemy
             return true;
         }
     }
+
+    /// <summary>
+    /// Charges monkey's clap attack
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool MonkeyCircleWaveCharge(ref float time)
+    {
+        const float MAX_TIME = 0.7f;
+
+        if (time == 0)
+        {
+            _moveRightWithBody = false;
+            _moveLeftWithBody = false;
+        }
+
+        LookAtPlayer();
+
+        //Move right hand to side of player
+        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(10, _rightHandStartPos.y, 10)) - _rightHand.Position;
+        rightHandMoveDir.Normalize();
+        _rightHand.ApplyConstantMoveForce(rightHandMoveDir, _playerDistance, MAX_TIME);
+
+        //Move left hand to side of player
+        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-10, _leftHandStartPos.y, 10)) - _leftHand.Position;
+        leftHandMoveDir.Normalize();
+        _leftHand.ApplyConstantMoveForce(leftHandMoveDir, _playerDistance, MAX_TIME);
+
+        if (time > MAX_TIME)
+        {
+            //Stop motion
+            _rightHand.StopMotion();
+            _leftHand.StopMotion();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Monkey pushes out with his right hand and creates a wave
+    /// </summary>
+    /// <returns></returns>
+    protected bool MonkeyCircleWaveAttack(ref float time)
+    {
+        const float MAX_TIME = 0.6f;
+        const float WAIT_TIME = 0.5f;
+
+        if (time == 0)
+        {
+            if (DoTelegraphs())
+            {
+                CreateLeftHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
+                CreateRightHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
+            }
+        }
+
+        if(time >= WAIT_TIME)
+        {
+            if(DoTelegraphs())
+            {
+                if(_telegraphs.Count > 0)
+                {
+                    ClearTelegraphs();
+                }
+            }
+            //PLAY ANIMATION
+        }
+
+        if (time >= MAX_TIME)
+        {
+            CircleWave rightWave = Instantiate(_circleWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<CircleWave>();
+            rightWave.StartWave(4.0f, 2f, 0.8f, 20, 2000);
+            CircleWave leftWave = Instantiate(_circleWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<CircleWave>();
+            leftWave.StartWave(4.0f, 2f, 0.8f, 20, 2000);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }
 
 public partial class MonkeyStormCloud : Enemy
