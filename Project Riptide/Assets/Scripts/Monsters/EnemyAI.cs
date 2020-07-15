@@ -1504,7 +1504,7 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        if (_playerDistance < 30.0f)
+                        /*if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1524,7 +1524,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use slam wave
                         /*if (_playerDistance < 20.0f)
@@ -1648,6 +1648,75 @@ public partial class MonkeyBoss : Enemy
                             _currTime = 0;
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+public partial class MonkeyStormCloud : Enemy
+{
+    protected void HostileMonkeyStorm()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            ResetHostile();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If the Koi is not in any special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                //Decrement overall special cooldown, no special can be used while this is in cooldown.
+                if (_specialCooldown[(int)AttackState.Active] > 0)
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+
+                //Check to see if monster can use tracking storm cloud
+                if (_playerDistance < 25.0f)
+                {
+                    _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] < 0.0f && Random.Range(1, 4) == 1)
+                    {
+                        _activeStates[(int)AttackState.Active] = true;
+                        _specialCooldown[(int)AttackState.Active] = 5.0f;
+                        _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] = 6.0f;
+                        _currTime = 0;
+                        //Set up tracking storm
+                        _actionQueue.Enqueue(MonkeyStormTrackingStorm);
+                        _actionQueue.Enqueue(MonkeyStormTrackingStorm);
+                        _actionQueue.Enqueue(MonkeyStormTrackingStorm);
+                    }
+                }
+
+                //Check to see if monster can use circle storm
+                if (_playerDistance < 24.0f)
+                {
+                    _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] -= Time.deltaTime;
+                    if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] < 0.0f && Random.Range(1, 4) == 1)
+                    {
+                        //Set up attack
+                        _activeStates[(int)AttackState.Active] = true;
+                        _specialCooldown[(int)AttackState.Active] = 5.0f;
+                        _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] = 8.0f;
+                        _currTime = 0;
+                        //Set up circle storm
+                        _actionQueue.Enqueue(MonkeyStormCircleStorm);
+
+                    }
+                }
+
+                //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
                 }
             }
         }

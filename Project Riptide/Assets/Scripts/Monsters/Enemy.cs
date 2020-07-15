@@ -13,7 +13,7 @@ public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
-    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11}
+    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11, MonkeyBoss = 12, MonkeyStorm = 13 }
 public enum Anim { Die = 0, Velocity = 1};
 public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 

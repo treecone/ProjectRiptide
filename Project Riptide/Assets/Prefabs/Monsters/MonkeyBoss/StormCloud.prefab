@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 472003375464445383}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: -1.08}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.10710992, y: 0.10710992, z: 0.10710992}
   m_Children: []
   m_Father: {fileID: 1141006734545775766}
@@ -55,7 +55,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 2
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -4780,7 +4780,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767481180805849582}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.00002097235, z: -1.0800358}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.10710992, y: 0.10710992, z: 0.10710992}
   m_Children: []
   m_Father: {fileID: 1141006734545775766}
@@ -4809,7 +4809,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 2
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -9528,8 +9528,9 @@ GameObject:
   - component: {fileID: 1287787481912342667}
   - component: {fileID: 2595635055292584592}
   - component: {fileID: 5870571712008823550}
+  - component: {fileID: 7751757557480892120}
   m_Layer: 0
-  m_Name: ClamDarkness
+  m_Name: Cloud
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9543,7 +9544,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647035905845238442}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 9.493032, y: 7.1200004, z: -57.871086}
+  m_LocalPosition: {x: 0, y: 7.1200004, z: 0}
   m_LocalScale: {x: 0.60229653, y: 0.60229653, z: 0.033771638}
   m_Children: []
   m_Father: {fileID: 5813058716958989363}
@@ -9632,7 +9633,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 2.5
       minScalar: 0.01
       maxCurve:
         serializedVersion: 2
@@ -9694,7 +9695,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 10
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -9748,7 +9749,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.7075472, g: 0.7075472, b: 0.7075472, a: 0.6392157}
+      maxColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 0.54901963}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -9810,7 +9811,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 12
+      scalar: 8
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -10391,7 +10392,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 5
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -10497,7 +10498,7 @@ ParticleSystem:
     m_BurstCount: 0
     m_Bursts: []
   SizeModule:
-    enabled: 1
+    enabled: 0
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -14296,6 +14297,18 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &7751757557480892120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647035905845238442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88dd1f932dd428740a5bf95bb3e88206, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2413557330618807922
 GameObject:
   m_ObjectHideFlags: 0
@@ -14320,7 +14333,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2413557330618807922}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.493032, y: 7.1200013, z: -48.619812}
+  m_LocalPosition: {x: 0, y: 7.1200013, z: 0}
   m_LocalScale: {x: 1.5944859, y: 0.91111237, z: 1.8783044}
   m_Children:
   - {fileID: 5477027616180637520}
@@ -14339,7 +14352,6 @@ GameObject:
   - component: {fileID: 5477027616180637520}
   - component: {fileID: 6738073901726160742}
   - component: {fileID: 1443711907018113312}
-  - component: {fileID: 5963540195570365586}
   m_Layer: 0
   m_Name: Electric Surface
   m_TagString: Untagged
@@ -14355,8 +14367,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4949262236605175784}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: -4.73}
-  m_LocalScale: {x: 1.4029477, y: 1.4029477, z: 1.4029477}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalScale: {x: 1.237007, y: 1.237007, z: 0.9049077}
   m_Children: []
   m_Father: {fileID: 7124581934858733766}
   m_RootOrder: 0
@@ -19084,18 +19096,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &5963540195570365586
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4949262236605175784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88dd1f932dd428740a5bf95bb3e88206, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5509203663699350050
 GameObject:
   m_ObjectHideFlags: 0
@@ -19120,7 +19120,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5509203663699350050}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.0357296}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 4.2117643, y: 7.370768, z: 3.5753512}
   m_Children:
   - {fileID: 2689383436940177332}
@@ -19138,6 +19138,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5813058716958989363}
+  - component: {fileID: 5041714489235787540}
   m_Layer: 0
   m_Name: StormCloud
   m_TagString: Untagged
@@ -19161,6 +19162,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5041714489235787540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5813058716958989360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 994e2322bb7a99645b9289e236b5b3b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hitboxPrefab: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147,
+    type: 3}
 --- !u!1 &9154933581889447396
 GameObject:
   m_ObjectHideFlags: 0
@@ -19172,7 +19187,6 @@ GameObject:
   - component: {fileID: 2689383436940177332}
   - component: {fileID: 7052224688468387929}
   - component: {fileID: 463127022746750170}
-  - component: {fileID: 6210294844960263250}
   m_Layer: 0
   m_Name: Lightning Particle
   m_TagString: Untagged
@@ -19188,7 +19202,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9154933581889447396}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0, z: -1.08}
+  m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 0.10710992, y: 0.10710992, z: 0.10710992}
   m_Children: []
   m_Father: {fileID: 1141006734545775766}
@@ -19217,7 +19231,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0
+    scalar: 2
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -23916,15 +23930,3 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &6210294844960263250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9154933581889447396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88dd1f932dd428740a5bf95bb3e88206, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

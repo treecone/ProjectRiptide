@@ -64,10 +64,6 @@ public partial class KoiBoss : Enemy
     // Update is called once per frame
     protected override void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(10);
-        }
         base.Update();
     }
 

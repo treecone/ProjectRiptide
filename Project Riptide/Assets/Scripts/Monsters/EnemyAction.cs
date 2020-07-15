@@ -2822,3 +2822,91 @@ public partial class MonkeyBoss : Enemy
         }
     }
 }
+
+public partial class MonkeyStormCloud : Enemy
+{
+    /// <summary>
+    /// Spawns a storm cloud
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool MonkeyStormTrackingStorm(ref float time)
+    {
+        const float MAX_TIME = 1.5f;
+
+        if (time == 0)
+        {
+            //Spawn storm cloud near the player
+            const float CIRCLE_RADIUS = 6.0f;
+            Vector2 randomOnCircle = Random.insideUnitCircle.normalized * CIRCLE_RADIUS;
+            Vector3 stormPosition = PlayerPosition() + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
+            stormPosition += Vector3.up * 3.0f;
+            Quaternion stormRotation = Quaternion.identity;
+
+            GameObject _telegraph = null;
+            if(DoTelegraphs())
+            {
+                _telegraph = Instantiate(_telegraphPrefab[(int)TelegraphType.Circle], stormPosition + Vector3.down * 6, stormRotation);
+                _telegraph.transform.localScale = new Vector3(6, 6, 6);
+            }
+
+            //Spawn in storm cloud
+            Instantiate(_stormCloud, stormPosition, stormRotation)
+                .GetComponent<StormCloud>()
+                .SetStorm(3.0f, 15, 500, Vector3.zero, 0, _telegraph);
+        }
+
+        if (time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Creates monkey storm clouds in a circle and fires them towards the players
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool MonkeyStormCircleStorm(ref float time)
+    {
+        const float MAX_TIME = 2.0f;
+        const float STORM_CLOUDS = 8;
+
+        if (time == 0)
+        {
+            //Spawn storms in cicle around player
+            const float CIRCLE_RADIUS = 6.0f;
+            float stormPerDegree = 360 / STORM_CLOUDS;
+            for (int i = 0; i < STORM_CLOUDS; i++)
+            {
+                Vector3 stormPosition = transform.position + Quaternion.Euler(0, stormPerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.down * 10f;
+                Vector3 stormDistanceVec = stormPosition - transform.position;
+                Vector3 stormDirection = new Vector3(stormDistanceVec.x, 0, stormDistanceVec.z);
+                Quaternion stormRotation = Quaternion.LookRotation(stormDirection);
+                //Spawn in storm cloud
+                Instantiate(_stormCloud, stormPosition, stormRotation)
+                    .GetComponent<StormCloud>()
+                    .SetStorm(3.5f, 15, 500, stormDirection.normalized, 30, null);
+
+                if (DoTelegraphs())
+                {
+                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 15f, new Vector3(3f, 1, 30f), Quaternion.LookRotation(stormDirection), TelegraphType.Square, true);
+                }
+            }
+        }
+
+        if (time > MAX_TIME)
+        {
+            ClearTelegraphs();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}
