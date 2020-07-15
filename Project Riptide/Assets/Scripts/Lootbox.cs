@@ -9,6 +9,8 @@ public class Lootbox : MonoBehaviour
     [SerializeField]
     private List<Material> _rarityMaterials;
 
+    public Inventory inventory;
+
     public string dropType;
 
     public List<Item> items;
@@ -80,6 +82,7 @@ public class Lootbox : MonoBehaviour
                 }
 
             }
+            inventory.UpdateInventoryVisuals();
             Destroy(gameObject);
         }
 

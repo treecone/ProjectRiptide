@@ -139,7 +139,7 @@ public class InventoryMethods : MonoBehaviour
         Debug.Log("Clicked on " + _activeItem.Name);    
         _itemName.SetText(_activeItem.Name);
         _itemDescription.SetText(_activeItem.Description);
-        _itemCost.SetText("{0}", _activeItem.Value);
+        _itemCost.SetText("" + _activeItem.Value);
         //{0} did not work here
         _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
     }
