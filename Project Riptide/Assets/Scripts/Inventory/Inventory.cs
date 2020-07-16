@@ -19,9 +19,10 @@ public class Inventory : MonoBehaviour
     [SerializeField]
     private List<GameObject> goldTexts;
     private List<TextMeshProUGUI> goldTextMeshes;
+
     #endregion
-    
-    
+
+
     void Start()
     {
         inventorySlots = new List<List<InventorySlot>>();
@@ -91,4 +92,8 @@ public class Inventory : MonoBehaviour
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
         }
     }
+
+
+
+
 }
