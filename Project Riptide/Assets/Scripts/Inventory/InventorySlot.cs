@@ -16,7 +16,15 @@ public class InventorySlot : MonoBehaviour
     public void UpdateSlotVisuals() //Updates the image and amount text
     {
         gameObject.transform.Find("Icon").GetComponent<Image>().sprite = item.Icon;
-        gameObject.transform.Find("AmountText").GetComponent<TextMeshProUGUI>().text = item.Amount.ToString();
+        if(item.Slug == "null")
+        {
+            gameObject.transform.Find("AmountText").GetComponent<TextMeshProUGUI>().text = "";
+
+        } else
+        {
+            gameObject.transform.Find("AmountText").GetComponent<TextMeshProUGUI>().text = item.Amount.ToString();
+
+        }
     }
 
     public void Clear()
