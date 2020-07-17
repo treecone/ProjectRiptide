@@ -139,6 +139,18 @@ public class PlayerInventory : ScriptableObject
     /// <returns>true if the given amount of item was succesfully removed, false otherwise</returns>
     public bool RemoveItem(string itemName, int amount)
     {
+        if (itemName == "gold" || itemName == "Gold")
+        {
+            if(amount > totalGold)
+            {
+                return false;
+            } else
+            {
+                totalGold -= amount;
+                return true;
+            }
+        }
+
         if (items.Count == 0)
         {
             Debug.LogWarning("Nothing in inventory, nothing to delete!");

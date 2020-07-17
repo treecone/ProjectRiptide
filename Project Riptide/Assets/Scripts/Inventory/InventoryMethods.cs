@@ -81,6 +81,10 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _vaultDescription;
     [SerializeField]
     private TextMeshProUGUI _vaultCost;
+    [SerializeField]
+    private TextMeshProUGUI _vaultTrash;
+    [SerializeField]
+    private TextMeshProUGUI _repairShip;
     #endregion
     #region Scripts
     [SerializeField]
@@ -276,7 +280,9 @@ public class InventoryMethods : MonoBehaviour
             _soundSlider.value = 0;
         }
     }
-
+    /// <summary>
+    /// Changes sound image based on slider level
+    /// </summary>
     public void ChangeSoundImage()
     {
         if (_soundSlider.value == 0)
@@ -296,7 +302,9 @@ public class InventoryMethods : MonoBehaviour
             _soundImage.GetComponent<Image>().sprite = _soundSprites[3];
         }
     }
-
+    /// <summary>
+    /// Changes volume image based on slider level
+    /// </summary>
     public void ChangeVolumeImage()
     {
         if (_volumeSlider.value == 0)
@@ -409,8 +417,99 @@ public class InventoryMethods : MonoBehaviour
 
     #endregion
 
-    #region Vault Methods
+    #region Equip Methods
+    public void RepairShip(PlayerHealth player)
+    {
+        int goldAmount = System.Convert.ToInt32(_repairShip.text);
+        int totalGold = PlayerInventory.Instance.totalGold;
+        if (totalGold <= goldAmount)
+        {
+            totalGold -= goldAmount;
+            player.AddHealth(player.MaxHealth);
+        }
+        else
+        {
+            float percentage = (player.MaxHealth - player.Health) * (totalGold/goldAmount);
+            totalGold = 0;
 
+            player.AddHealth(percentage);
+        }
+
+        PlayerInventory.Instance.totalGold = totalGold;
+    }
+
+    public void EquipItem(Item equipment)
+    {
+        PlayerInventory.Instance.SetEquipped(equipment.Name);
+    }
+    #endregion
+
+    #region Vault Methods
+    /// <summary>
+    /// Chooses inventory slot
+    /// </summary>
+    /// <param name="inventorySlot"></param>
+    public void ChooseVaultItem()
+    {
+        if (_activeItem != null || _activeItem.Name != "NullItem")
+        {
+            Debug.Log("Clicked on " + _activeItem.Name);
+            //automatically set this to 0
+            _vaultTrash.SetText("0");
+            _vaultName.SetText(_activeItem.Name);
+            _vaultDescription.SetText(_activeItem.Description);
+            _vaultCost.SetText("{0}", _activeItem.Value);
+        }
+    }
+    /// <summary>
+    /// changes trash number in vault
+    /// </summary>
+    /// <param name="num">change number in TextMeshPro</param>
+    public void ChangeVaultNumber(int num)
+    {
+        int amount = System.Convert.ToInt32(_trashField.text);
+
+        //if active item exists
+        if (_activeItem != null || _activeItem.Name != "NullItem")
+        {
+            amount += num;
+            //check for above and below minimum
+            if (amount >= _activeItem.Amount)
+            {
+                amount = _activeItem.Amount;
+            }
+            else if (amount < 0)
+            {
+                amount = 0;
+            }
+            _vaultTrash.SetText("{0}", amount);
+        }
+        else
+        {
+            Debug.Log("No Item");
+        }
+    }
+    /// <summary>
+    /// trashes the item in vault, checks number amounts
+    /// </summary>
+    public void TrashVaultItem()
+    {
+        //checks if null item
+        if (_activeItem != null || _activeItem.Name != "NullItem")
+        {
+            int amount = System.Convert.ToInt32(_vaultTrash.text);
+
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+
+            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+
+        }
+    }
     #endregion
 
 
