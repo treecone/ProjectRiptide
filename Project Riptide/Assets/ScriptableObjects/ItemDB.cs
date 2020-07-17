@@ -102,4 +102,9 @@ public class ItemDB : ScriptableObject
             _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
         }
     }
+
+    public Sprite IconOf(string slug)
+    {
+        return FindItem(slug).Icon;
+    }
 }
