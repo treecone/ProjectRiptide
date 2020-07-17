@@ -2663,8 +2663,8 @@ public partial class MonkeyBoss : Enemy
         {
             _rightHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<ForwardWave>();
-            wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(25.0f, 2.0f, 0.6f, 20, 2000);
+            //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
+            wave.StartWave(25.0f, 0.6f, 20, 2000);
             return false;
         }
         else
@@ -2750,8 +2750,8 @@ public partial class MonkeyBoss : Enemy
         {
             _leftHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<ForwardWave>();
-            wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(25.0f, 2.0f, 0.6f, 20, 2000);
+            //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
+            wave.StartWave(25.0f, 0.6f, 20, 2000);
             return false;
         }
         else
@@ -2918,9 +2918,9 @@ public partial class MonkeyBoss : Enemy
         if (time >= MAX_TIME)
         {
             CircleWave rightWave = Instantiate(_circleWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<CircleWave>();
-            rightWave.StartWave(4.0f, 2f, 0.8f, 20, 2000);
+            rightWave.StartWave(10.0f, 0.8f, 20, 2000);
             CircleWave leftWave = Instantiate(_circleWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<CircleWave>();
-            leftWave.StartWave(4.0f, 2f, 0.8f, 20, 2000);
+            leftWave.StartWave(10.0f, 0.8f, 20, 2000);
             return false;
         }
         else
