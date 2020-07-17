@@ -126,10 +126,10 @@ public partial class Enemy : Physics
     public void HostileFollowAndDash()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
-            ResetHostile();
+            OnPassive();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
         }
@@ -178,7 +178,7 @@ public partial class Enemy : Physics
         if (_enemyDistance > _maxRadius)
         {
             _state = EnemyState.Passive;
-            ResetHostile();
+            OnPassive();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
         }
@@ -205,10 +205,10 @@ public partial class KoiBoss : Enemy
     public void HostileKoiBoss()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
-            ResetHostile();
+            OnPassive();
             //Keep monster passive for 5 seconds at least
             _passiveCooldown = 5.0f;
         }
@@ -520,7 +520,7 @@ public partial class RockCrab : Enemy
     protected void HostileRockCrab()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
@@ -602,7 +602,7 @@ public partial class FlowerFrog : Enemy
     protected void HostileFlowerFrog()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius && !_activeStates[(int)AttackState.Active])
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             //Reset tounge position
@@ -681,7 +681,7 @@ public partial class ClamBoss : Enemy
     public void HostileClamBoss()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
@@ -978,7 +978,7 @@ public partial class Pandatee : Enemy
     protected void HostilePandateeRunAway()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
@@ -1120,7 +1120,7 @@ public partial class Stingray : Enemy
     protected void HostileStingray()
     {
         //If enemy is outside max radius, set to passive
-        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0)
+        if (_enemyDistance > _maxRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
         {
             _state = EnemyState.Passive;
             ResetHostile();
@@ -1314,6 +1314,76 @@ public partial class Mox : Enemy
 
 public partial class MonkeyBoss : Enemy
 {
+    /// <summary>
+    /// Passive AI for Monkey Boss
+    /// Does nothing but hide underwater and wait for player
+    /// When monkey is far away from starting position,
+    /// Run back to starting area
+    /// </summary>
+    public void PassiveMonkeyBoss()
+    {
+        if (_position.y == _startPos.y)
+        {
+            //Do nothing
+            ApplyFriction(0.99f);
+            return;
+        }
+
+        //While crab is too far away from starting pos, move towards starting pos
+        if (_enemyDistance >= _wanderRadius)
+        {
+            Vector3 destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
+            //Check for obstacle
+            if (CheckObstacle(destination))
+            {
+                //Set destination to closest way to player that avoids obstacles
+                destination = transform.position + AvoidObstacle(destination);
+            }
+            //Seek destination
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+
+            //Rotate in towards direction of velocity
+            if (_velocity != Vector3.zero)
+            {
+                Quaternion desiredRotation = Quaternion.LookRotation(_velocity);
+                SetSmoothRotation(desiredRotation, 1.0f, 0.5f, 2.0f);
+            }
+            _timeCurrent += Time.deltaTime;
+
+            ApplyForce(netForce);
+
+            //ApplyFriction(0.25f);
+            if (_animator != null)
+                _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+        //When crab is close enough, move down to hide again
+        else if (transform.position.y > _startPos.y)
+        {
+            //Set passive cooldown so rock crab cannot be triggered during transition
+            _passiveCooldown = 1.0f;
+            //Move down
+            ApplyConstantMoveForce(Vector3.down, 3.0f, 1.0f);
+        }
+        //If crab moves down to far, return to initial y pos
+        else if (transform.position.y < _startPos.y)
+        {
+            StopMotion();
+            _position = new Vector3(_position.x, _startPos.y, _position.z);
+        }
+    }
+
+    /// <summary>
+    /// Hostile AI for monkey boss
+    /// Phase 1:
+    /// Hand attacks (push, slap, clap)
+    /// Protect/Counter
+    /// Screch
+    /// Phase 2:
+    /// Storm activates
+    /// Wave attacks (push, circle)
+    /// Keep attacks from phase 1
+    /// </summary>
     protected void HostileMonkeyBoss()
     {
         //If enemy is outside max radius, set to passive
@@ -1329,7 +1399,21 @@ public partial class MonkeyBoss : Enemy
             //Rise out of the water when first activated
             if (!_rose)
             {
-                _rose = true;
+                if(!_rising)
+                {
+                    _currTime = 0;
+                    _rising = true;
+                }
+
+                Position += Vector3.up * (RISE_HEIGHT / RISE_TIME * Time.deltaTime);
+                _currTime += Time.deltaTime;
+
+                if(_currTime > 2.0f)
+                {
+                    _rose = true;
+                    Position = new Vector3(transform.position.x, _startPos.y + RISE_HEIGHT, transform.position.z);
+                    //PLAY ANGRY SCREECH
+                }
             }
             else
             {
@@ -1339,8 +1423,8 @@ public partial class MonkeyBoss : Enemy
                     //If the Koi is not in any special
                     if (!_activeStates[(int)AttackState.Active])
                     {
-                        LookAtPlayer();
-                        ApplyFriction(0.99f);
+                        FollowPlayer();
+                        //ApplyFriction(0.99f);
 
                         //Decrement overall special cooldown, no special can be used while this is in cooldown.
                         if (_specialCooldown[(int)AttackState.Active] > 0)
@@ -1361,6 +1445,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyRightHandPush);
                                 _actionQueue.Enqueue(MonkeyLeftHandPush);
                                 _actionQueue.Enqueue(MonkeyLeftHandReturn);
+                                StopMotion();
                             }
                         }
 
@@ -1380,7 +1465,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyRightHandSwipe);
                                 _actionQueue.Enqueue(MonkeyLeftHandSwipe);
                                 _actionQueue.Enqueue(MonkeyLeftHandReturn);
-
+                                StopMotion();
                             }
                         }
 
@@ -1398,6 +1483,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyClapCharge);
                                 _actionQueue.Enqueue(MonkeyClap);
                                 _actionQueue.Enqueue(MonkeyHandsReturn);
+                                StopMotion();
                             }
                         }
 
@@ -1416,6 +1502,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyProtect);
                                 _actionQueue.Enqueue(MonkeyCounter);
                                 _actionQueue.Enqueue(MonkeyHandsReturn);
+                                StopMotion();
                             }
                         }
 
@@ -1432,6 +1519,7 @@ public partial class MonkeyBoss : Enemy
                                 //Set up protect attack
                                 _actionQueue.Enqueue(MonkeyScreechCharge);
                                 _actionQueue.Enqueue(MonkeyScreech);
+                                StopMotion();
                             }
                         }
 
@@ -1439,6 +1527,7 @@ public partial class MonkeyBoss : Enemy
                     }
                     else
                     {
+                        _hostileCooldown = 1.0f;
                         //Go through enmeies action queue
                         if (!DoActionQueue())
                         {
@@ -1497,16 +1586,16 @@ public partial class MonkeyBoss : Enemy
                     //If the Koi is not in any special
                     if (!_activeStates[(int)AttackState.Active])
                     {
-                        LookAtPlayer();
+                        FollowPlayer();
 
-                        ApplyFriction(0.99f);
+                        //ApplyFriction(0.99f);
 
                         //Decrement overall special cooldown, no special can be used while this is in cooldown.
                         if (_specialCooldown[(int)AttackState.Active] > 0)
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        /*if (_playerDistance < 30.0f)
+                        if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1525,8 +1614,9 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveCharge);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveAttack);
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
+                                StopMotion();
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use slam wave
                         if (_playerDistance < 20.0f)
@@ -1543,12 +1633,12 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyCircleWaveCharge);
                                 _actionQueue.Enqueue(MonkeyCircleWaveAttack);
                                 _actionQueue.Enqueue(MonkeyHandsReturn);
-
+                                StopMotion();
                             }
                         }
 
                         //If no wave move has selected, try and do a move from phase 1
-                        /*if(!_activeStates[(int)AttackState.Active])
+                        if(!_activeStates[(int)AttackState.Active])
                         {
                             //Check to see if monster can use hand push attack
                             if (_playerDistance < 25.0f)
@@ -1565,6 +1655,7 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyRightHandPush);
                                     _actionQueue.Enqueue(MonkeyLeftHandPush);
                                     _actionQueue.Enqueue(MonkeyLeftHandReturn);
+                                    StopMotion();
                                 }
                             }
 
@@ -1584,7 +1675,7 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyRightHandSwipe);
                                     _actionQueue.Enqueue(MonkeyLeftHandSwipe);
                                     _actionQueue.Enqueue(MonkeyLeftHandReturn);
-
+                                    StopMotion();
                                 }
                             }
 
@@ -1602,6 +1693,7 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyClapCharge);
                                     _actionQueue.Enqueue(MonkeyClap);
                                     _actionQueue.Enqueue(MonkeyHandsReturn);
+                                    StopMotion();
                                 }
                             }
 
@@ -1620,11 +1712,12 @@ public partial class MonkeyBoss : Enemy
                                     _actionQueue.Enqueue(MonkeyProtect);
                                     _actionQueue.Enqueue(MonkeyCounter);
                                     _actionQueue.Enqueue(MonkeyHandsReturn);
+                                    StopMotion();
                                 }
                             }
 
                             //Check to see if monster can use screech attack
-                            if (_playerDistance < 15.0f)
+                            if (_playerDistance < 18.0f)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
@@ -1636,13 +1729,15 @@ public partial class MonkeyBoss : Enemy
                                     //Set up protect attack
                                     _actionQueue.Enqueue(MonkeyScreechCharge);
                                     _actionQueue.Enqueue(MonkeyScreech);
+                                    StopMotion();
                                 }
                             }
-                        }*/
+                        }
                         //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
                     else
                     {
+                        _passiveCooldown = 1.0f;
                         //Go through enmeies action queue
                         if (!DoActionQueue())
                         {
@@ -1715,6 +1810,7 @@ public partial class MonkeyStormCloud : Enemy
             }
             else
             {
+                _passiveCooldown = 1.0f;
                 //Go through enmeies action queue
                 if (!DoActionQueue())
                 {

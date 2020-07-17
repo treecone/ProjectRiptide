@@ -235,7 +235,7 @@ public partial class Enemy : Physics
                     case EnemyState.Hostile:
                         _HostileAI();
                         //check for passive behavior trigger, if you get far enough away
-                        if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0)
+                        if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
                         {
                             OnPassive();
                             _state = EnemyState.Passive;

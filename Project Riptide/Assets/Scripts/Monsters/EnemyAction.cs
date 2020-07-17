@@ -495,9 +495,13 @@ public partial class KoiBoss : Enemy
     {
         SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), new Vector3(1,1,1), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
         CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(0.5f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
-        ClearTelegraphs();
 
-        return false;
+        if(time != 0)
+        {
+            ClearTelegraphs();
+            return false;
+        }
+        return true;
     }
 
     /// <summary>
@@ -1914,7 +1918,7 @@ public partial class MonkeyBoss : Enemy
             _rotateRightWithBody = false;
             if (DoTelegraphs())
             {
-                CreateRightHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 20.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateRightHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 22.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -1952,7 +1956,7 @@ public partial class MonkeyBoss : Enemy
             {
                 _telegraphs[0].transform.parent = null;
                 ClearTelegraphs();
-                CreateLeftHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 20.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateLeftHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 22.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
             _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
         }
@@ -2141,8 +2145,12 @@ public partial class MonkeyBoss : Enemy
                 CreateRightHandTelegraph(Vector3.zero, new Vector3(5.0f, 1, 15.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
                 _telegraphs[0].transform.rotation = Quaternion.LookRotation(playerDirection);
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
-                ClearTelegraphs();
             }
+        }
+
+        if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
+        {
+            ClearTelegraphs();
         }
 
         LookAtPlayer();
@@ -2187,8 +2195,12 @@ public partial class MonkeyBoss : Enemy
                 CreateLeftHandTelegraph(Vector3.zero, new Vector3(5.0f, 1, 15.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
                 _telegraphs[0].transform.rotation = Quaternion.LookRotation(playerDirection);
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
-                ClearTelegraphs();
             }
+        }
+
+        if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
+        {
+            ClearTelegraphs();
         }
 
         //Right hand move back to original position
@@ -2515,7 +2527,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyScreechCharge(ref float time)
     {
-        const float MAX_TIME = 0.5f;
+        const float MAX_TIME = 1f;
 
         if(time == 0)
         {
@@ -2640,7 +2652,7 @@ public partial class MonkeyBoss : Enemy
         {
             _rightHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<ForwardWave>();
-            wave.transform.localScale = new Vector3(5.0f, 4.0f, 2.0f);
+            wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
             wave.StartWave(25.0f, 2.0f, 0.6f, 20, 2000);
             return false;
         }
@@ -2727,7 +2739,7 @@ public partial class MonkeyBoss : Enemy
         {
             _leftHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<ForwardWave>();
-            wave.transform.localScale = new Vector3(5.0f, 4.0f, 2.0f);
+            wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
             wave.StartWave(25.0f, 2.0f, 0.6f, 20, 2000);
             return false;
         }
@@ -2958,27 +2970,31 @@ public partial class MonkeyStormCloud : Enemy
     protected bool MonkeyStormCircleStorm(ref float time)
     {
         const float MAX_TIME = 2.0f;
-        const float STORM_CLOUDS = 8;
 
         if (time == 0)
         {
             //Spawn storms in cicle around player
             const float CIRCLE_RADIUS = 6.0f;
-            float stormPerDegree = 360 / STORM_CLOUDS;
-            for (int i = 0; i < STORM_CLOUDS; i++)
+            float _stormClouds = Random.Range(7,11);
+            float stormPerDegree = 360 / _stormClouds;
+            for (int i = 0; i < _stormClouds; i++)
             {
                 Vector3 stormPosition = transform.position + Quaternion.Euler(0, stormPerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.down * 10f;
                 Vector3 stormDistanceVec = stormPosition - transform.position;
                 Vector3 stormDirection = new Vector3(stormDistanceVec.x, 0, stormDistanceVec.z);
                 Quaternion stormRotation = Quaternion.LookRotation(stormDirection);
                 //Spawn in storm cloud
-                Instantiate(_stormCloud, stormPosition, stormRotation)
+                Instantiate(_stormCloud, stormPosition, stormRotation, transform)
                     .GetComponent<StormCloud>()
                     .SetStorm(3.5f, 15, 500, stormDirection.normalized, 30, null);
 
                 if (DoTelegraphs())
                 {
-                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 12f, new Vector3(3f, 1, 30f), Quaternion.LookRotation(stormDirection), TelegraphType.Square, true);
+                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 12f, new Vector3(3f, 1, 30f), stormRotation, TelegraphType.Square, true);
+                    if(stormRotation == Quaternion.identity)
+                    {
+                        _telegraphs[_telegraphs.Count - 1].transform.rotation = Quaternion.identity;
+                    }
                 }
             }
         }
