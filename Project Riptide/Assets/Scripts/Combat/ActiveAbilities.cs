@@ -293,6 +293,12 @@ public class ActiveAbilities : MonoBehaviour
                 return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 10, 4.0f);
             case SkillType.StrongStunShot:
                 return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 14, 6.0f);
+            case SkillType.WeakFlameThrower:
+                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 10.0f);
+            case SkillType.MediumFlameThrower:
+                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 15.0f);
+            case SkillType.StrongFlameThrower:
+                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 20.0f);
         }
         return null;
     }
@@ -1028,9 +1034,11 @@ public class PoisonCloudSkill : ActiveSkill
     {
         if (other.tag == "Enemy")
         {
-            if (!other.GetComponent<StatusEffects>().CheckStatus("PoisonCloud"))
+            StatusEffects status = other.GetComponent<StatusEffects>();
+
+            if (status != null && status.CheckStatus("PoisonCloud"))
             {
-                other.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, "PoisonCloud", _poisonDuration, _damagePerSecond);
+                status.AddStatus(StatusType.Poison, "PoisonCloud", _poisonDuration, _damagePerSecond);
             }
         }
     }
@@ -1100,7 +1108,126 @@ public class StunShotSkill : ActiveSkill
     {
         if (other.tag == "Enemy")
         {
-            other.GetComponent<StatusEffects>().AddStatus(StatusType.Stun, _stunTime, 1.0f);
+            StatusEffects status = other.GetComponent<StatusEffects>();
+            if (status != null)
+            {
+                other.GetComponent<StatusEffects>().AddStatus(StatusType.Stun, _stunTime, 1.0f);
+            }
+        }
+    }
+}
+
+public class FlamethrowerSkill : ActiveSkill
+{
+    private ShipMovement _movementScript;
+    private ActiveAbilities _activeAbilities;
+    private GameObject _flamethrowerPrefab;
+    private GameObject _rightFlame;
+    private GameObject _leftFlame;
+    private Hitbox _leftHitbox;
+    private Hitbox _rightHitbox;
+    private List<StatusEffects> _enemyStatus;
+    private float _damagePerSecond;
+    private float _poisonDuration;
+
+    public FlamethrowerSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, float damagePerSecond) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    {
+        _activeAbilities = activeAbilities;
+        _movementScript = activeAbilities.GetComponent<ShipMovement>();
+        _flamethrowerPrefab = (GameObject)Resources.Load("ActiveAbilities/Flamethrower");
+        _damagePerSecond = damagePerSecond;
+        _enemyStatus = new List<StatusEffects>();
+        _timeSkill = Flamethrower;
+    }
+
+    /// <summary>
+    /// Inflicts player with specified status effect
+    /// </summary>
+    /// <param name="enemy">Enemy, not needed for this skill</param>
+    /// <returns>If attack is finished</returns>
+    public bool Flamethrower(Enemy enemy, ref float time)
+    {
+        //Make sure enemy is not null
+        if (time == 0)
+        {
+            _rightFlame = GameObject.Instantiate(_flamethrowerPrefab, _movementScript.transform.position + _movementScript.transform.right, Quaternion.LookRotation(_movementScript.transform.right), _movementScript.transform);
+            _leftFlame = GameObject.Instantiate(_flamethrowerPrefab, _movementScript.transform.position - _movementScript.transform.right, Quaternion.LookRotation(-_movementScript.transform.right), _movementScript.transform);
+
+            //Create right hitbox
+            _rightHitbox = GameObject.Instantiate(_activeAbilities.HitboxPrefab, _rightFlame.transform.position, _rightFlame.transform.rotation, _rightFlame.transform).GetComponent<Hitbox>();
+            _rightHitbox.SetHitbox(_movementScript.gameObject, new Vector3(0,0,10), new Vector3(3, 1, 20), HitboxType.PlayerHitbox, 0);
+            _rightHitbox.OnTrigger += ApplyFire;
+            _rightHitbox.OnExit += RemoveFireExit;
+            _rightHitbox.OnDestruction += RemoveFire;
+
+            //Create left hitbox
+            _leftHitbox = GameObject.Instantiate(_activeAbilities.HitboxPrefab, _leftFlame.transform.position, _leftFlame.transform.rotation, _leftFlame.transform).GetComponent<Hitbox>();
+            _leftHitbox.SetHitbox(_movementScript.gameObject, new Vector3(0, 0, 10), new Vector3(3, 1, 20), HitboxType.PlayerHitbox, 0);
+            _leftHitbox.OnTrigger += ApplyFire;
+            _leftHitbox.OnExit += RemoveFireExit;
+            _leftHitbox.OnDestruction += RemoveFire;
+        }
+
+        if (time > 5.0f)
+        {
+            _rightFlame.GetComponentInChildren<ParticleSystem>().Stop();
+            _leftFlame.GetComponentInChildren<ParticleSystem>().Stop();
+            GameObject.Destroy(_leftHitbox.gameObject);
+            GameObject.Destroy(_rightHitbox.gameObject);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Apply fire effect to enemy
+    /// </summary>
+    /// <param name="other"></param>
+    private void ApplyFire(GameObject other)
+    {
+        if (other.tag == "Enemy")
+        {
+            StatusEffects status = other.GetComponent<StatusEffects>();
+            if (status != null && !status.CheckStatus("FlamethrowerFire"))
+            {
+                status.AddStatus(StatusType.Fire, "FlamethrowerFire", 5.0f, _damagePerSecond);
+                _enemyStatus.Add(status);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes fire effect when enemy leaves
+    /// </summary>
+    /// <param name="other"></param>
+    private void RemoveFireExit(GameObject other)
+    {
+        if (other.tag == "Hitbox" && other.transform.parent.tag == "Enemy")
+        {
+            StatusEffects status = other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>();
+            if (status != null)
+            {
+                other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("FlamethrowerFire");
+                _enemyStatus.Remove(status);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes fire effect when fire ends
+    /// </summary>
+    private void RemoveFire()
+    {
+        if (_enemyStatus.Count > 0)
+        {
+            for (int i = 0; i < _enemyStatus.Count; i++)
+            {
+                if (_enemyStatus[i] != null)
+                {
+                    _enemyStatus[i].RemoveStatus("FlamethrowerFire");
+                }
+            }
         }
     }
 }
