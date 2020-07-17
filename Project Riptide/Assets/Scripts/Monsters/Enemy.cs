@@ -13,7 +13,8 @@ public delegate void GiveVector(Vector3 vec);
 public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
-    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11, MonkeyBoss = 12, MonkeyStorm = 13 }
+    FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11, MonkeyBoss = 12, MonkeyStorm = 13,
+    Waterdeer = 14}
 public enum Anim { Die = 0, Velocity = 1};
 public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 
@@ -235,7 +236,7 @@ public partial class Enemy : Physics
                     case EnemyState.Hostile:
                         _HostileAI();
                         //check for passive behavior trigger, if you get far enough away
-                        if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0)
+                        if (_playerDistance >= _passiveRadius && _hostileCooldown <= 0 && !_activeStates[(int)AttackState.Active])
                         {
                             OnPassive();
                             _state = EnemyState.Passive;
@@ -289,10 +290,10 @@ public partial class Enemy : Physics
         {
             _health -= damage;
             _healthBar.UpdateHealth(_health);
-            if (_state == EnemyState.Passive && _passiveCooldown <= 0)
+            if (_state == EnemyState.Passive && _passiveCooldown <= 0 && damage > 0)
             {
-                OnHostile();
                 _state = EnemyState.Hostile;
+                OnHostile();
             }
             if (_health <= 0)
             {
@@ -637,7 +638,7 @@ public partial class Enemy : Physics
     /// <param name="knockback">Knockback force</param>
     public void TakeKnockback(Vector3 knockback)
     {
-        ApplyForce(knockback);
+        ApplyForce(knockback * _pushMult);
     }
 
     /// <summary>
@@ -780,5 +781,14 @@ public partial class Enemy : Physics
     protected bool DoTelegraphs()
     {
         return true;
+    }
+
+    /// <summary>
+    /// Triggers an enemy to become hostile
+    /// </summary>
+    public void TriggerHostile()
+    {
+        _state = EnemyState.Hostile;
+        OnHostile();
     }
 }

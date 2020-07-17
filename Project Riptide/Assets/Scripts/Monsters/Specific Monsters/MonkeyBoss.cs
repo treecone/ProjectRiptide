@@ -30,7 +30,8 @@ public partial class MonkeyBoss : Enemy
     private bool _moveRightWithBody;
     private bool _rotateRightWithBody;
 
-    private const float RISE_HEIGHT = 5.0f;
+    private const float RISE_HEIGHT = 10.0f;
+    private const float RISE_TIME = 2.0f;
 
     private bool _rising;
     private bool _rose;
@@ -52,9 +53,9 @@ public partial class MonkeyBoss : Enemy
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 60.0f;
+        _wanderRadius = 20.0f;
         _hostileRadius = 30.0f;
-        _passiveRadius = 120.0f;
+        _passiveRadius = 90.0f;
         _maxRadius = 240.0f;
         _specialCooldown = new float[9] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
@@ -68,7 +69,7 @@ public partial class MonkeyBoss : Enemy
         _ramingDamage = 20;
         _pushMult = 0.1f;
         _HostileAI = HostileMonkeyBoss;
-        _PassiveAI = PassiveDoNothing;
+        _PassiveAI = PassiveMonkeyBoss;
 
         //Setup health bar
         _healthBar.SetMaxHealth(_maxHealth);
@@ -109,6 +110,20 @@ public partial class MonkeyBoss : Enemy
         }
 
         base.Update();
+    }
+
+    protected override void OnPassive()
+    {
+        _storm.SetActive(false);
+        _rising = false;
+        _rose = false;
+        base.OnPassive();
+    }
+
+    protected override void OnDeath()
+    {
+        _storm.SetActive(false);
+        base.OnDeath();
     }
 
     /// <summary>

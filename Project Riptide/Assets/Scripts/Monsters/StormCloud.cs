@@ -26,6 +26,7 @@ public class StormCloud : MonoBehaviour
         {
             _hitbox = Instantiate(_hitboxPrefab, transform.position, transform.rotation, transform).GetComponent<Hitbox>();
             _hitbox.SetHitbox(gameObject, Vector3.zero, new Vector3(2.5f, 15.0f, 2.5f), HitboxType.EnemyHitbox, _damage, Vector2.zero, _launchStrength);
+            transform.parent = null;
             //Turn off telegraph
             if (_telegraph != null)
             {

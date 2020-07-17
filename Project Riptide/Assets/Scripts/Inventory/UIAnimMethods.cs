@@ -10,7 +10,11 @@ using UnityEngine.UI;
 public class UIAnimMethods : MonoBehaviour
 {
     [SerializeField]
-    private Sprite exposedThing;
+    private Sprite _exposedImage;
+    [SerializeField]
+    private Sprite _highlightedHidden;
+    [SerializeField]
+    private Sprite _hidden;
 
     //Fast Transition
     public void SlideLeftF(GameObject gObj)
@@ -107,19 +111,23 @@ public class UIAnimMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void ExposeChunk(Image gObj)
     {
-        gObj.sprite = exposedThing;
-        gObj.DOFade(0f, .5f).SetUpdate(true);
+        gObj.sprite = _exposedImage;
+        gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
     }
     public void InExposedChunk(Image gObj)
     {
-        gObj.DOColor(new Color(75, 0, 0, 168), .5f).SetUpdate(true);
+        gObj.DOColor(new Color(173, 32, 35, 255), .1f).SetUpdate(true);
+    }
+    public void LeaveExposedChunk(Image gObj)
+    {
+        gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
     }
     public void InHiddenChunk(Image gObj)
     {
-        gObj.DOColor(new Color(75, 0, 0, 255), .5f).SetUpdate(true);
+        gObj.sprite = _highlightedHidden;
     }
-    public void LeavingHiddenChunk(Image gObj)
+    public void LeaveHiddenChunk(Image gObj)
     {
-        gObj.DOColor(new Color(24, 24, 24, 255), .5f).SetUpdate(true);
+        gObj.sprite = _hidden;
     }
 }
