@@ -17,6 +17,9 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private float health;
 
+    public float Health { get; }
+    public float MaxHealth { get; }
+
     // Start is called before the first frame update
     void Start()
     {
