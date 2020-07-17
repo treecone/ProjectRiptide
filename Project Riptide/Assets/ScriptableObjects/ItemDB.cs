@@ -77,6 +77,24 @@ public class ItemDB : ScriptableObject
         return new Item(_nullItem);
     }
 
+    public Item FindItemNoClone(string name)
+    {
+        if (name == "null" || name == "Null")
+        {
+            return _nullItem;
+        }
+        for (int i = 0; i < _items.Count; i++)
+        {
+            if (_items[i].Name == name || _items[i].Slug == name.ToLower())
+            {
+                return _items[i];
+            }
+        }
+        //Returns the null item
+        Debug.LogWarning("[Inventory] Item could not be found in the method FindItem()! Returning Null Item!");
+        return new Item(_nullItem);
+    }
+
     public void Setup()
     {
         _items = new List<Item>();
@@ -101,10 +119,5 @@ public class ItemDB : ScriptableObject
             }
             _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
         }
-    }
-
-    public Sprite IconOf(string slug)
-    {
-        return FindItem(slug).Icon;
     }
 }

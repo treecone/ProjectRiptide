@@ -85,15 +85,46 @@ public class Crafting : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns all recipes that can be crafted
+    /// Returns all recipes that can be crafted, regardless of whether you have the reuslt or not
     /// </summary>
-    /// <returns>All recipes that can be crafted</returns>
     List<Recipe> ValidRecipes()
     {
         List<Recipe> validRecipes = new List<Recipe>();
         foreach(Recipe r in _recipes)
         {
             if(CanCraft(r))
+            {
+                validRecipes.Add(r);
+            }
+        }
+        return validRecipes;
+    }
+
+    /// <summary>
+    /// Returns all recipes that are not already crafted, i.e. equipment that you already have
+    /// </summary>
+    List<Recipe> UncraftedRecipes()
+    {
+        List<Recipe> validRecipes = new List<Recipe>();
+        foreach (Recipe r in _recipes)
+        {
+            if (ItemDB.Instance.FindItemNoClone(r.result).Category == ItemCategory.Material || !PlayerInventory.Instance.HasEquipment(r.result))
+            {
+                validRecipes.Add(r);
+            }
+        }
+        return validRecipes;
+    }
+
+    /// <summary>
+    /// Combines Valid and Uncrafted Recipes, finding recipes that are both not already crafted AND you can craft
+    /// </summary>
+    List<Recipe> ValidUncraftedRecipes()
+    {
+        List<Recipe> validRecipes = new List<Recipe>();
+        foreach (Recipe r in _recipes)
+        {
+            if (!PlayerInventory.Instance.HasEquipment(r.result) && CanCraft(r))
             {
                 validRecipes.Add(r);
             }

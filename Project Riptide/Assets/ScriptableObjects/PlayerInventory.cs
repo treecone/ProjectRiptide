@@ -197,6 +197,18 @@ public class PlayerInventory : ScriptableObject
         return addItems;
     }
 
+    public bool HasEquipment(string name)
+    {
+        for (int i = 0; i < equipment.Count; i++)
+        {
+            if (equipment[i].Slug == name || equipment[i].Name == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void SetEquipped(string name)
     {
         ItemCategory category = ItemCategory.Material;
