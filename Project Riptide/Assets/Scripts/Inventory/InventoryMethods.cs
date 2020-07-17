@@ -29,8 +29,9 @@ public class InventoryMethods : MonoBehaviour
     #region MapUI
     [SerializeField]
     private Image[] _mapImages; //25th image is the player position marker
+    private bool[] _exposed = new bool[25];
     #endregion
-    #region Inventory
+    #region InventoryUI
     [SerializeField]
     private TextMeshProUGUI _trashField;
     [SerializeField]
@@ -73,6 +74,14 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private Sprite[] _upgradeButtonImages; //holds greyed out/maxed
     #endregion
+    #region VaultUI
+    [SerializeField]
+    private TextMeshProUGUI _vaultName;
+    [SerializeField]
+    private TextMeshProUGUI _vaultDescription;
+    [SerializeField]
+    private TextMeshProUGUI _vaultCost;
+    #endregion
     #region Scripts
     [SerializeField]
     private UIAnimMethods _uiAnimMethods;
@@ -84,13 +93,19 @@ public class InventoryMethods : MonoBehaviour
     private InputManager _inputManagerScript;
     #endregion
 
-
     #endregion
 
     public void Start()
     {
         _soundSlider.onValueChanged.AddListener(delegate { ChangeSoundImage(); });
         _volumeSlider.onValueChanged.AddListener(delegate { ChangeVolumeImage(); });
+
+        //set all to false
+        for (int i = 0; i < 25; i++)
+        {
+            _exposed[i] = false;
+        }
+        _exposed[14] = true;
     }
 
     #region Shared Methods
@@ -133,24 +148,38 @@ public class InventoryMethods : MonoBehaviour
         Time.timeScale = 0.0f;
     }
 
+    /// <summary>
+    /// Sets time scale to 0, resets movement
+    /// called when opening Port Menu
+    /// </summary>
+    public void PauseMarketGame()
+    {
+        _inputManagerScript.ResetMovement();
+        _inputManagerScript.enabled = false;
+        Time.timeScale = 0.0f;
+    }
+
     #endregion
 
+    #region Inventory Methods
     /// <summary>
     /// Chooses inventory slot
     /// </summary>
     /// <param name="inventorySlot"></param>
-    public void ChooseInventoryItem(InventorySlot inventorySlot)
+    public void ChooseInventoryItem()
     {
-        //automatically set this to 0
-        _trashField.SetText("0");
-
-        _activeItem = inventorySlot.item;
-        Debug.Log("Clicked on " + _activeItem.Name);    
-        _itemName.SetText(_activeItem.Name);
-        _itemDescription.SetText(_activeItem.Description);
-        _itemCost.SetText("" + _activeItem.Value);
-        //{0} did not work here
-        _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
+        if (_activeItem != null || _activeItem.Name != "NullItem")
+        {
+            Debug.Log("Clicked on " + _activeItem.Name);
+            //automatically set this to 0
+            _trashField.SetText("0");
+            _itemName.SetText(_activeItem.Name);
+            _itemDescription.SetText(_activeItem.Description);
+            _itemCost.SetText("" + _activeItem.Value);
+            //{0} did not work here
+            _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
+        }
+        
     }
     /// <summary>
     /// changes trash number
@@ -186,7 +215,7 @@ public class InventoryMethods : MonoBehaviour
     public void TrashItem()
     {
         //checks if null item
-        if (_activeItem.Name != null)
+        if (_activeItem != null || _activeItem.Name != "NullItem")
         {
             int amount = System.Convert.ToInt32(_trashField.text);
 
@@ -201,6 +230,8 @@ public class InventoryMethods : MonoBehaviour
 
         }
     }
+
+    #endregion
 
     #region SettingsMethods
     /// <summary>
@@ -286,55 +317,70 @@ public class InventoryMethods : MonoBehaviour
         }
     }
     #endregion
+
     #region Map Methods
     public void UpdateMap()
     {
         //finds chunk of player, remove check later?
-        Image chunk = _mapImages[0];
+        int chunk = 0;
         if (_chunkLoader != null)
         {
-            int chunkNum = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
-            chunk = _mapImages[chunkNum];
+            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
         }
         else
         {
-            chunk = _mapImages[13];
+            Debug.Log("[Inventory Methods] Could not find chunk.");
+            chunk = 0;
         }
-        //calculate what chunk player is in
-        if (chunk.sprite.name == "SquareTeleBackground")
+
+        //reset map
+        for (int i = 0; i < 25; i++)
         {
-            _mapImages[25].enabled = false;
-            _uiAnimMethods.InHiddenChunk(chunk);
+            if (_exposed[i] == false)
+            {
+                _uiAnimMethods.LeaveHiddenChunk(_mapImages[i]);
+            }
+            else if (_exposed[i] == true)
+            {
+                _uiAnimMethods.LeaveExposedChunk(_mapImages[i]);
+            }
+        }
+
+        //calculate what chunk player is in
+        if (_exposed[chunk] == false)
+        {
+            _mapImages[25].enabled = false; //disable player
+            _uiAnimMethods.InHiddenChunk(_mapImages[chunk]);
         }
         else
         {
             _mapImages[25].enabled = true;
             //calculate where it should be on the map
-            _uiAnimMethods.InExposedChunk(chunk);
+            _uiAnimMethods.InExposedChunk(_mapImages[chunk]);
         }
     }
     //Exposes map (shipwreck)
     public void ExposeMap()
     {
         //finds chunk of player, remove check later?
-        Image chunk = _mapImages[0];
+        int chunk = 0;
         if (_chunkLoader != null)
         {
-            int chunkNum = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
-            chunk = _mapImages[chunkNum];
+            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
         }
         else
         {
-            chunk = _mapImages[13];
+            Debug.Log("[Inventory Methods] Could not find chunk.");
+            chunk = 0;
         }
-
+        _exposed[chunk] = true;
         _mapImages[25].enabled = true;
         //calculate where it should be on the map
-        _uiAnimMethods.ExposeChunk(chunk);
+        _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
     }
     #endregion
 
-
+    #region Craft Methods
     public void ExpandCraft(bool isCraft)
     {
         if (_activeItem != null || _activeItem.Name != "NullItem")
@@ -355,23 +401,18 @@ public class InventoryMethods : MonoBehaviour
         }
     }
 
-
     //Use this to equip based on selected item
     public void Equip()
     {
         PlayerInventory.Instance.SetEquipped(_activeItem.Name);
     }
 
-    /// <summary>
-    /// Sets time scale to 0, resets movement
-    /// called when opening Port Menu
-    /// </summary>
-    public void PauseMarketGame()
-    {
-        _inputManagerScript.ResetMovement();
-        _inputManagerScript.enabled = false;
-        Time.timeScale = 0.0f;
-    }
+    #endregion
+
+    #region Vault Methods
+
+    #endregion
+
 
 
 }
