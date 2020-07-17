@@ -156,26 +156,28 @@ public class PlayerInventory : ScriptableObject
             Debug.LogWarning("Nothing in inventory, nothing to delete!");
             return false;
         }
-        Item itemToRemove = ItemDB.Instance.FindItem(itemName);
+        int remaining = amount;
         for (int i = items.Count - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
-            Item item = items[i];
-            if (items[i].Name == itemToRemove.Name)
+            if (items[i].Name == itemName)
             {
-                if (items[i].Amount <= amount)
+                if (items[i].Amount <= remaining)
                 {
-                    int newAmount = amount - items[i].Amount;
-                    item = ItemDB.Instance.FindItem("null");
-                    RemoveItem(itemName, newAmount); //Recursive
+                    remaining -= items[i].Amount;
+                    items[i] = ItemDB.Instance.FindItem("null");
+                    if(remaining == 0)
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
-                    items[i].Amount -= amount;
+                    items[i].Amount -= remaining;
+                    return true;
                 }
-                return true;
             }
         }
-        Debug.LogWarning("[Inventory] When removing " + amount + " of " + itemToRemove.Name + ", not enough items of that type were found in the inventory!");
+        Debug.LogWarning("[Inventory] When removing " + amount + " of " + itemName + ", not enough items of that type were found in the inventory!");
         return false;
     }
 
