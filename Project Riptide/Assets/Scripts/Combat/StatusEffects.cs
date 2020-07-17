@@ -70,7 +70,7 @@ public class StatusEffects : MonoBehaviour
             }
         }
 
-        /*if(Input.GetKeyDown(KeyCode.Alpha0))
+        if(Input.GetKeyDown(KeyCode.Alpha0))
         {
             AddStatus(StatusType.Fire, 5, 5);
         }
@@ -85,7 +85,7 @@ public class StatusEffects : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             AddStatus(StatusType.Poison, 5, 5);
-        }*/
+        }
     }
 
     public void AddStatus(StatusType type, float duration, float level)

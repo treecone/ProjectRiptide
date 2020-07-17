@@ -76,10 +76,11 @@ public class PlayerBubbeBroth : MonoBehaviour
     {
         if (other.tag == "Enemy")
         {
-            if (!other.GetComponent<StatusEffects>().CheckStatus("PlayerBubbles"))
+            StatusEffects status = other.GetComponent<StatusEffects>();
+            if (status != null && !status.CheckStatus("PlayerBubbles"))
             {
-                other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "PlayerBubbles", 9999.0f, -0.9f);
-                _enemyStatus.Add(other.GetComponent<StatusEffects>());
+                status.AddStatus(StatusType.MovementSpeed, "PlayerBubbles", 9999.0f, -0.9f);
+                _enemyStatus.Add(status);
             }
         }
     }
@@ -92,7 +93,12 @@ public class PlayerBubbeBroth : MonoBehaviour
     {
         if (other.tag == "Hitbox" && other.transform.parent.tag == "Enemy")
         {
-            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("PlayerBubbles");
+            StatusEffects status = other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>();
+            if (status != null)
+            {
+                other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("PlayerBubbles");
+                _enemyStatus.Remove(status);
+            }
         }
     }
 
@@ -105,7 +111,10 @@ public class PlayerBubbeBroth : MonoBehaviour
         {
             for(int i = 0; i < _enemyStatus.Count; i++)
             {
-                _enemyStatus[i].RemoveStatus("PlayerBubbles");
+                if (_enemyStatus[i] != null)
+                {
+                    _enemyStatus[i].RemoveStatus("PlayerBubbles");
+                }
             }
         }
     }
