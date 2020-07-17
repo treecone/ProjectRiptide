@@ -30,6 +30,7 @@ public partial class Waterdeer : Enemy
                     Animator.StringToHash("velocity"),
                     Animator.StringToHash("swimSpeed")};
         _playerCollision = false;
+        _pushMult = 1.0f;
         _isRaming = false;
         _ramingDamage = 20;
         _HostileAI = HostileWaterdeer;
@@ -62,10 +63,16 @@ public partial class Waterdeer : Enemy
         base.OnHostile();
     }
 
+    protected override void OnDeath()
+    {
+        SpeedupDeersInRadius(40.0f);
+        base.OnDeath();
+    }
+
     /// <summary>
-    /// Checks to see if there is another stingray around to do a combined attack
+    ///Turn deers in radius hostile
     /// </summary>
-    /// <param name="radius">Radius to check for stingray in</param>
+    /// <param name="radius">Radius to check for deer in</param>
     protected void AgitateDeersInRadius(float radius)
     {
         foreach (Collider collider in UnityEngine.Physics.OverlapSphere(transform.position, radius))
@@ -77,6 +84,26 @@ public partial class Waterdeer : Enemy
                 if (foundEnemy != null && foundEnemy.gameObject != gameObject && foundEnemy.State == EnemyState.Passive)
                 {
                     foundEnemy.TriggerHostile();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Give speed boost to deers in a radius
+    /// </summary>
+    /// <param name="radius">Radius to check for deer in</param>
+    protected void SpeedupDeersInRadius(float radius)
+    {
+        foreach (Collider collider in UnityEngine.Physics.OverlapSphere(transform.position, radius))
+        {
+            if (collider.transform.gameObject.tag == "Hitbox")
+            {
+                //Check to see if stingray can do cross zap attack
+                Waterdeer foundEnemy = collider.GetComponent<Hitbox>().AttachedObject.GetComponent<Waterdeer>();
+                if (foundEnemy != null && foundEnemy.gameObject != gameObject)
+                {
+                    foundEnemy.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, 15.0f, 0.5f);
                 }
             }
         }

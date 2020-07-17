@@ -1402,6 +1402,10 @@ public partial class ClamBoss : Enemy
         //Fire a random projectile randomly every couple frames
         if(Random.Range(0, (int)Mathf.Ceil(8 * _speedScale)) == 0)
         {
+            if(DoTelegraphs())
+            {
+                ClearTelegraphs();
+            }
             //Get Spawn in position
             Vector3 spawnPosition = _position + (PlayerPosition() - _position).normalized * 3.0f;
             spawnPosition.y += 1.0f;
@@ -1426,7 +1430,6 @@ public partial class ClamBoss : Enemy
             if (DoTelegraphs())
             {
                 CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), TelegraphType.Square, true);
-                ClearTelegraphs();
             }
 
             //Randomly rotate projectile
@@ -1436,6 +1439,7 @@ public partial class ClamBoss : Enemy
 
         if(time > MAX_TIME)
         {
+            ClearTelegraphs();
             return false;
         }
         else
@@ -1959,6 +1963,7 @@ public partial class MonkeyBoss : Enemy
                 CreateLeftHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 22.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
             _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
         }
 
         LookAtPlayer();
@@ -2018,6 +2023,7 @@ public partial class MonkeyBoss : Enemy
                 ClearTelegraphs();
             }
             _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0f, Vector2.zero, 1000));
         }
 
         //Right hand move back to original position
@@ -2307,6 +2313,9 @@ public partial class MonkeyBoss : Enemy
             {
                 _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
                 _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+                //Add hitboxes to knockback other enemies
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
             }
 
             if(!_inKnockback)
@@ -2481,6 +2490,8 @@ public partial class MonkeyBoss : Enemy
             {
                 _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
                 _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
             }
 
             if (!_inKnockback)
@@ -3029,7 +3040,7 @@ public partial class Waterdeer : Enemy
             StopMotion();
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 10f) / transform.localScale.z), new Vector3(_widthMult, 1, 17.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 20f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]) / 2f) / transform.localScale.z), new Vector3(_widthMult, 1, 17 * (1 +_enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]) / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -3064,8 +3075,8 @@ public partial class Waterdeer : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(4, 4, 4), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            ApplyMoveForce(transform.forward, 20.0f * _speed, MAX_TIME);
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(3, 3, 3), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
+            ApplyMoveForce(transform.forward, 20.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]), MAX_TIME);
             _animator.SetFloat(_animParm[(int)WaterdeerAnim.SwimSpeed], 2.0f);
             if (DoTelegraphs())
             {

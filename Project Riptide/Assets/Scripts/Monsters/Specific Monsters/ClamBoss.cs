@@ -69,7 +69,7 @@ public partial class ClamBoss : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.1f;
+        _pushMult = 0.0f;
         _HostileAI = HostileClamBoss;
         _PassiveAI = PassiveDoNothing;
 
