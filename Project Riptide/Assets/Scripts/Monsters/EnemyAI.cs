@@ -1820,3 +1820,55 @@ public partial class MonkeyStormCloud : Enemy
         }
     }
 }
+
+public partial class Waterdeer : Enemy
+{
+    /// <summary>
+    /// Water follows player and trys to ram them
+    /// </summary>
+    protected void HostileWaterdeer()
+    {
+        //If enemy is outside max radius, set to passive
+        if (_enemyDistance > _maxRadius)
+        {
+            _state = EnemyState.Passive;
+            OnPassive();
+            //Keep monster passive for 5 seconds at least
+            _passiveCooldown = 5.0f;
+        }
+        else
+        {
+            //If enemy is not in special
+            if (!_activeStates[(int)AttackState.Active])
+            {
+                //Follow the player
+                FollowPlayer();
+
+                //Cooldown special while in 14 units of player
+                if (_playerDistance < 14.0f)
+                {
+                    _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
+                }
+                //If cooldown is finished, switch to special
+                if (_specialCooldown[(int)AttackState.Active] <= 0)
+                {
+                    _activeStates[(int)AttackState.Active] = true;
+                    _specialCooldown[(int)AttackState.Active] = 4.0f;
+                    _currTime = 0;
+                    //Load an attack that charges a dash then attacks
+                    _actionQueue.Enqueue(WaterdeerDashCharge);
+                    _actionQueue.Enqueue(WaterdeerDashAttack);
+                }
+            }
+            else
+            {
+                //Go through enmeies action queue
+                if (!DoActionQueue())
+                {
+                    _activeStates[(int)AttackState.Active] = false;
+                }
+            }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+        }
+    }
+}
