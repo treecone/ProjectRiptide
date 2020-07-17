@@ -104,7 +104,7 @@ public class InputManager : MonoBehaviour
             Application.Quit();
 
         //TakeKeyboardInput();
-        if (Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer && !_forceMobile)
+        if ((Application.platform == RuntimePlatform.WindowsEditor || Application.platform == RuntimePlatform.WindowsPlayer) && !_forceMobile)
         {
             TakeKeyboardInput();
             if (_combatMode)
@@ -371,7 +371,7 @@ public class InputManager : MonoBehaviour
             }
 
             _clickCurrentPosition = (t.Position + (Vector2)_screenCorrect) * _screenScale;
-            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - ((t.StartPosition + (Vector2)_screenCorrect) * _screenScale)) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _clickDuration += Time.deltaTime;
                 Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;
@@ -471,6 +471,14 @@ public class InputManager : MonoBehaviour
             get
             {
                 return duration;
+            }
+        }
+
+        public Vector2 StartPosition
+        {
+            get
+            {
+                return startPosition;
             }
         }
 
@@ -722,8 +730,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void CheckEnemyTap()
     {
-        RaycastHit hit;
-        if (UnityEngine.Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+        foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition)))
         {
             if (hit.collider.gameObject.tag == "Hitbox")
             {

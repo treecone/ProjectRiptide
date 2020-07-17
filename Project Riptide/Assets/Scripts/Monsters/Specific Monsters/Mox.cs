@@ -32,6 +32,7 @@ public partial class Mox : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 30;
+        _pushMult = 0.5f;
         _HostileAI = HostileMox;
         _PassiveAI = PassiveWanderRadius;
 

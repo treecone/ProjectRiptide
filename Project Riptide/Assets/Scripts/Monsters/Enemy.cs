@@ -290,7 +290,7 @@ public partial class Enemy : Physics
         {
             _health -= damage;
             _healthBar.UpdateHealth(_health);
-            if (_state == EnemyState.Passive && _passiveCooldown <= 0)
+            if (_state == EnemyState.Passive && _passiveCooldown <= 0 && damage > 0)
             {
                 _state = EnemyState.Hostile;
                 OnHostile();
@@ -638,7 +638,7 @@ public partial class Enemy : Physics
     /// <param name="knockback">Knockback force</param>
     public void TakeKnockback(Vector3 knockback)
     {
-        ApplyForce(knockback);
+        ApplyForce(knockback * _pushMult);
     }
 
     /// <summary>

@@ -62,9 +62,12 @@ public class KoiBubbleBroth : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            //Deal 2 damage per second for 5 seconds
-            other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "BubbleBroth", 99.0f, -0.75f);
-            _playerStatus = other.GetComponent<StatusEffects>();
+            if (!other.GetComponent<StatusEffects>().CheckStatus("BubbleBrothLasting"))
+            {
+                //Deal 2 damage per second for 5 seconds
+                other.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "BubbleBroth", 99.0f, -0.75f);
+                _playerStatus = other.GetComponent<StatusEffects>();
+            }
         }
     }
 
@@ -77,7 +80,10 @@ public class KoiBubbleBroth : MonoBehaviour
         if(other.tag == "Hitbox" && other.transform.parent.tag == "Player")
         {
             other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().RemoveStatus("BubbleBroth");
-            other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+            if (!other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().CheckStatus("BubbleBrothLasting"))
+            {
+                other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "BubbleBrothLasting", 3.0f, -0.75f);
+            }
         }
     }
 
@@ -89,7 +95,7 @@ public class KoiBubbleBroth : MonoBehaviour
         if (_playerStatus != null)
         {
             _playerStatus.RemoveStatus("BubbleBroth");
-            _playerStatus.AddStatus(StatusType.MovementSpeed, 3.0f, -0.75f);
+            _playerStatus.AddStatus(StatusType.MovementSpeed, "BubbleBrothLasting", 3.0f, -0.75f);
         }
     }
 }
