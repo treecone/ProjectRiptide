@@ -124,7 +124,7 @@ public class Crafting : MonoBehaviour
         List<Recipe> validRecipes = new List<Recipe>();
         foreach (Recipe r in _recipes)
         {
-            if (!PlayerInventory.Instance.HasEquipment(r.result) && CanCraft(r))
+            if ((ItemDB.Instance.FindItemNoClone(r.result).Category == ItemCategory.Material || !PlayerInventory.Instance.HasEquipment(r.result)) && CanCraft(r))
             {
                 validRecipes.Add(r);
             }
