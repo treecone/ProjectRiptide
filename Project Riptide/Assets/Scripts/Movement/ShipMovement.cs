@@ -102,7 +102,7 @@ public class ShipMovement : Physics
             }
 
             //Update rotation
-            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, _rotationalVelocity * 60 * Time.deltaTime);
+            _rotation = Quaternion.RotateTowards(_rotation, lookRotation, _rotationalVelocity * (1 + shipUpgradeScript.masterUpgrade[StatusType.Maneuverability]) * 60 * Time.deltaTime);
         }
         //Reset velocity when not rotating
         else
