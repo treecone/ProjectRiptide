@@ -12,15 +12,7 @@ public class RecipeSlot : MonoBehaviour
     public RecipeSlot(Recipe recipe)
     {
         this.recipe = recipe;
-        itemResult = null;
-        for (int i = 0; i < PlayerInventory.Instance.items.Count; i++)
-        {
-            if (PlayerInventory.Instance.items[i].Name == recipe.result)
-            {
-                itemResult = PlayerInventory.Instance.items[i];
-                break;
-            }
-        }
+        itemResult = PlayerInventory.Instance.GetFromName(recipe.result);
     }
 
     public void UpdateSlotVisuals() //Updates the image and amount text
@@ -28,22 +20,22 @@ public class RecipeSlot : MonoBehaviour
         //change rarity thing here
         if (itemResult.Rarity == 1)
         {
-            gameObject.transform.Find("Icon").GetComponent<Image>().color = Color.white;
+            gameObject.transform.GetChild(0).GetComponent<Image>().color = Color.white;
         }
         else if (itemResult.Rarity == 2)
         {
-            gameObject.transform.Find("Icon").GetComponent<Image>().color = new Color(27, 150, 71); //green
+            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
         }
         else if (itemResult.Rarity == 3)
         {
-            gameObject.transform.Find("Icon").GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
         }
         else
         {
-            gameObject.transform.Find("Icon").GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
         }
         //change image
-        gameObject.transform.Find("Icon").GetComponentInChildren<Image>().sprite = itemResult.Icon;
+        gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = itemResult.Icon;
         //change name
         gameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>().SetText(itemResult.Name);
         //change icons based on recipes
