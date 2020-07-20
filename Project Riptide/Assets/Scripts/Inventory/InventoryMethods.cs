@@ -9,6 +9,7 @@ public class InventoryMethods : MonoBehaviour
     #region Fields
 
     private Item _activeItem = null;            //set it automatically to null, closing UI resets to null as well
+    private Recipe _activeRecipe = null;        //set it automatically to null, closing UI resets to null as well
 
     #region SettingsUI
     [SerializeField]
@@ -48,31 +49,21 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _craftingName;
     [SerializeField]
-    private TextMeshProUGUI _stats1;
-    [SerializeField]
-    private TextMeshProUGUI _stats2;
-    [SerializeField]
-    private TextMeshProUGUI _stats3;
-    [SerializeField]
-    private TextMeshProUGUI _stats4;
+    private TextMeshProUGUI[] _stats;
     [SerializeField]
     private TextMeshProUGUI _activeAbility;
     [SerializeField]
     private TextMeshProUGUI _passiveAbility;
     [SerializeField]
-    private GameObject _neededItems1;
-    [SerializeField]
-    private GameObject _neededItems2;
-    [SerializeField]
-    private GameObject _neededItems3;
-    [SerializeField]
-    private GameObject _neededItems4;
+    private GameObject[] _neededItems;
     [SerializeField]
     private Button _craftAndUpgrade;
     [SerializeField]
     private Sprite[] _craftButtonImages; //holds greyed out as well
     [SerializeField]
     private Sprite[] _upgradeButtonImages; //holds greyed out/maxed
+    [SerializeField]
+    private TextMeshProUGUI _repairShip;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -83,8 +74,6 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _vaultCost;
     [SerializeField]
     private TextMeshProUGUI _vaultTrash;
-    [SerializeField]
-    private TextMeshProUGUI _repairShip;
     #endregion
     #region Scripts
     [SerializeField]
@@ -113,10 +102,25 @@ public class InventoryMethods : MonoBehaviour
     }
 
     #region Shared Methods
+    /// <summary>
+    /// Selects active item for inventory/vault/market
+    /// </summary>
+    /// <param name="gObj"></param>
     public void SelectItem(GameObject gObj)
     {
         _activeItem = gObj.GetComponent<InventorySlot>().item;
     }
+
+    /// <summary>
+    /// Selects both recipe and item for crafting
+    /// </summary>
+    /// <param name="gObj">Recipe Slot</param>
+    public void SelectRecipe(GameObject gObj)
+    {
+        _activeRecipe = gObj.GetComponent<RecipeSlot>().recipe;
+        SelectItem(gObj);
+    }
+
     /// <summary>
     /// resets active item when inventory is closed
     /// called during closing inventory only
@@ -129,6 +133,7 @@ public class InventoryMethods : MonoBehaviour
         _itemCost.SetText("");
         _trashField.SetText("0");
     }
+
     /// <summary>
     /// Sets time scale to 1, may add animation here later
     /// </summary>
@@ -137,11 +142,13 @@ public class InventoryMethods : MonoBehaviour
         Time.timeScale = 1f;
         Invoke("Unpause", .5f);
     }
+
     //for invoking
     public void Unpause()
     {
         _inputManagerScript.enabled = true;
     }
+
     /// <summary>
     /// Sets time scale to 0, may add animation here later
     /// called when opening UI
@@ -162,7 +169,6 @@ public class InventoryMethods : MonoBehaviour
         _inputManagerScript.enabled = false;
         Time.timeScale = 0.0f;
     }
-
     #endregion
 
     #region Inventory Methods
@@ -231,7 +237,8 @@ public class InventoryMethods : MonoBehaviour
             }
 
             PlayerInventory.Instance.RemoveItem(saved.Name, amount);
-
+            Debug.Log(saved.Amount);
+            _trashField.SetText("0");
         }
     }
 
@@ -389,22 +396,87 @@ public class InventoryMethods : MonoBehaviour
     #endregion
 
     #region Craft Methods
+    /// <summary>
+    /// expands crafting menu
+    /// </summary>
+    /// <param name="isCraft"></param>
     public void ExpandCraft(bool isCraft)
     {
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeRecipe != null)
         {
+            bool craftable = true;
             _craftingName.SetText(_activeItem.Name);
-            //do stats here, set their colors
+            
+            //do stats here, set their colors if upgradeValue is positive
+            for (int i = 0; i < 4; i++)
+            {
+                //for however many upgrades there are
+                if (_activeItem.Upgrades.Count < i)
+                {
+                    float upgradeVal = _activeItem.Upgrades[i].upgradeValue;
+                    if (upgradeVal < 0)
+                    {
+                        _stats[i].color = Color.red;
+                    }
+                    else
+                    {
+                        _stats[i].color = Color.green;
+                    }
+                    _stats[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
+                }
+                else
+                {
+                    _stats[i].SetText("");
+                }
+            }
+            
+            //abilities
             _activeAbility.SetText("Active: ");
             _passiveAbility.SetText("Passive: ");
+            
+            //ingredients
+            for (int i = 0; i < 4; i++)
+            {
+                if (_activeRecipe.ingredients.Count < i)
+                {
+                    Item ingredient = PlayerInventory.Instance.GetFromName(_activeRecipe.ingredients[i]);
+                    _neededItems[i].SetActive(true);
+                    _neededItems[i].GetComponentInChildren<Image>().sprite = ingredient.Icon;
+                    _neededItems[i].transform.Find("ItemName").GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
+                    _neededItems[i].transform.Find("Amount").GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", ingredient.Amount, _activeRecipe.ingredientAmounts[i]);
+                    if (ingredient.Amount < _activeRecipe.ingredientAmounts[i])
+                    {
+                        craftable = false;
+                    }
+                }
+                else
+                {
+                    _neededItems[i].SetActive(false);
+                }
+            }
+            
             //make method for crafting things
             if (isCraft)
             {
-                _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
+                if (craftable == false)
+                {
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
+                }
+                else
+                {
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[1];
+                }
             }
             else
             {
-                _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
+                if (craftable == false)
+                {
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
+                }
+                else
+                {
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[1];
+                }
             }
         }
     }

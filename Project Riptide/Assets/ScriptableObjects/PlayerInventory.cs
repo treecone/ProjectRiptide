@@ -277,5 +277,23 @@ public class PlayerInventory : ScriptableObject
         return count;
     }
 
+    /// <summary>
+    /// returns item based on name
+    /// </summary>
+    /// <param name="itemName"></param>
+    /// <returns></returns>
+    public Item GetFromName(string itemName)
+    {
+        Item toReturn = null;
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (itemName == items[i].Name)
+            {
+                toReturn = items[i];
+                break;
+            }
+        }
+        return toReturn;
+    }
 
 }
