@@ -35,7 +35,33 @@ public class ItemDB : ScriptableObject
         public int value;
         public Sprite icon;
         public int maxAmount;
-        public List<List<Upgrade>> upgrades;
+        public List<ListWrapper> upgrades;
+
+        [System.Serializable]
+        public class ListWrapper
+        {
+            public List<Upgrade> list;
+
+            public Upgrade this[int key]
+            {
+                get
+                {
+                    return list[key];
+                }
+                set
+                {
+                    list[key] = value;
+                }
+            }
+
+            public int Count
+            {
+                get
+                {
+                    return list.Count;  
+                }
+            }
+        }
     }
 
     [SerializeField]
@@ -91,6 +117,7 @@ public class ItemDB : ScriptableObject
             }
         }
         //Returns the null item
+        ///
         Debug.LogWarning("[Inventory] Item could not be found in the method FindItem()! Returning Null Item!");
         return new Item(_nullItem);
     }
@@ -115,20 +142,20 @@ public class ItemDB : ScriptableObject
             if(category == ItemCategory.Material)
             {
                 List<Upgrade> upgradeList = new List<Upgrade>();
-                foreach (Upgrade u in data[i].upgrades[0])
+                /*for (int j = 0; j < data[i].upgrades[0].Count; j++)
                 {
-                    upgradeList.Add(u);
-                }
+                    upgradeList.Add(data[i].upgrades[0][j]);
+                }*/
                 _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
             }
             else
             {
-                for(int j = 0; j < 4; j++)
+                for(int j = 0; j < data[i].upgrades.Count; j++)
                 {
                     List<Upgrade> upgradeList = new List<Upgrade>();
-                    foreach (Upgrade u in data[i].upgrades[j])
+                    for (int k = 0; k < data[i].upgrades[j].Count; k++)
                     {
-                        upgradeList.Add(u);
+                        upgradeList.Add(data[i].upgrades[j][k]);
                     }
                     _items.Add(new Item(startId + i * 4 + j, data[i].name + " - Tier " + (j + 1), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
                 }

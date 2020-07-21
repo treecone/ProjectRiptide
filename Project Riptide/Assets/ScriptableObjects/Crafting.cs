@@ -5,47 +5,32 @@ using System.IO;
 using LitJson;
 using System;
 
-public class Crafting : MonoBehaviour
+[CreateAssetMenu(menuName = "Custom Assets/Singletons/Crafting")]
+public class Crafting : ScriptableObject
 {
-    private string _defaultPath;
-    private string _jsonString;
-    private JsonData _recipeData;
+    public static Crafting _instance;
 
+    public static Crafting Instance
+    {
+        get
+        {
+            if(_instance)
+            {
+                _instance = Resources.LoadAll<Crafting>("ScriptableObjectInstances")[0];
+            }
+            return _instance;
+
+        }
+    }
+    private void OnEnable()
+    {
+        _instance = this;
+    }
     
     [SerializeField]
     private List<Recipe> _recipes;
 
-    void Awake()
-    {
-        _recipes = new List<Recipe>();
-        _defaultPath = Application.dataPath + "/Resources/Crafting/Recipes.json";
-        _jsonString = File.ReadAllText(_defaultPath);
-        Debug.Log(_jsonString);
-        _recipeData = JsonMapper.ToObject(_jsonString);
-        for(int i = 0; i < _recipeData.Count; i++)
-        {
-            List<string> ingredients = new List<string>();
-            foreach(JsonData j in _recipeData[i]["ingredients"])
-            {
-                ingredients.Add(j.ToString());
-            }
-            List<int> ingredientAmounts = new List<int>();
-            foreach(JsonData j in _recipeData[i]["ingredientAmounts"])
-            {
-                ingredientAmounts.Add(int.Parse(j.ToString()));
-            }
 
-            string result = _recipeData[i]["result"].ToString();
-            int resultAmount = int.Parse(_recipeData[i]["resultAmount"].ToString());
-            _recipes.Add(new Recipe(ingredients, ingredientAmounts, result, resultAmount));
-        }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     /// <summary>
     /// Crafts an item, removing its ingredients from the inventory
@@ -53,7 +38,7 @@ public class Crafting : MonoBehaviour
     /// </summary>
     /// <param name="recipe">The recipe to craft</param>
     /// <returns>The item crafted, or null if the item cannot be crafted</returns>
-    Item Craft(Recipe recipe)
+    public Item Craft(Recipe recipe)
     {
         if(CanCraft(recipe))
         {
@@ -72,7 +57,7 @@ public class Crafting : MonoBehaviour
     /// </summary>
     /// <param name="recipe">The recipe to be crafted</param>
     /// <returns>A boolean indicating whether the item can be crafted</returns>
-    bool CanCraft(Recipe recipe)
+    public bool CanCraft(Recipe recipe)
     {
         for(int i = 0; i < recipe.ingredients.Count; i++)
         {
@@ -84,10 +69,14 @@ public class Crafting : MonoBehaviour
         return true;
     }
 
+    public List<Recipe> Recipes()
+    {
+        return _recipes;
+    }
     /// <summary>
     /// Returns all recipes that can be crafted, regardless of whether you have the reuslt or not
     /// </summary>
-    List<Recipe> ValidRecipes()
+    public List<Recipe> ValidRecipes()
     {
         List<Recipe> validRecipes = new List<Recipe>();
         foreach(Recipe r in _recipes)
@@ -103,7 +92,7 @@ public class Crafting : MonoBehaviour
     /// <summary>
     /// Returns all recipes that are not already crafted, i.e. equipment that you already have
     /// </summary>
-    List<Recipe> UncraftedRecipes()
+    public List<Recipe> UncraftedRecipes()
     {
         List<Recipe> validRecipes = new List<Recipe>();
         foreach (Recipe r in _recipes)
