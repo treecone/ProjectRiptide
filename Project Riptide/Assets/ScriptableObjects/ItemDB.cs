@@ -35,7 +35,7 @@ public class ItemDB : ScriptableObject
         public int value;
         public Sprite icon;
         public int maxAmount;
-        public List<Upgrade> upgrades;
+        public List<List<Upgrade>> upgrades;
     }
 
     [SerializeField]
@@ -112,12 +112,28 @@ public class ItemDB : ScriptableObject
         
         for(int i = 0; i < data.Count; i++)
         {
-            List<Upgrade> upgradeList = new List<Upgrade>();
-            foreach(Upgrade u in data[i].upgrades)
+            if(category == ItemCategory.Material)
             {
-                upgradeList.Add(u);
+                List<Upgrade> upgradeList = new List<Upgrade>();
+                foreach (Upgrade u in data[i].upgrades[0])
+                {
+                    upgradeList.Add(u);
+                }
+                _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
             }
-            _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+            else
+            {
+                for(int j = 0; j < 4; j++)
+                {
+                    List<Upgrade> upgradeList = new List<Upgrade>();
+                    foreach (Upgrade u in data[i].upgrades[j])
+                    {
+                        upgradeList.Add(u);
+                    }
+                    _items.Add(new Item(startId + i * 4 + j, data[i].name + " - Tier " + (j + 1), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                }
+            }
+            
         }
     }
 }
