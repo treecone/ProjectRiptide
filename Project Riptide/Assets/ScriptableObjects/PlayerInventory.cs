@@ -27,6 +27,21 @@ public class PlayerInventory : ScriptableObject
     public List<Item> equipment;
     public int totalGold;
 
+    public int TotalGold
+    {
+        get
+        {
+            return totalGold;
+        }
+        set
+        {
+            totalGold = value;
+            if(totalGold <= 0)
+            {
+                totalGold = 0;
+            }
+        }
+    }
     public void InitializeInventory()
     {
         totalGold = 0;

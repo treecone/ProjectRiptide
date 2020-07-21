@@ -104,10 +104,70 @@ MonoBehaviour:
     name: Monkey Pelt
     amount: 1
   - id: 27
-    name: Monkey Circlet
+    name: Shattered Crown
     amount: 1
   - id: 28
     name: Monkey Claws
+    amount: 1
+  - id: 100
+    name: Junk - Tier 1
+    amount: 1
+  - id: 101
+    name: Junk - Tier 2
+    amount: 1
+  - id: 102
+    name: Junk - Tier 3
+    amount: 1
+  - id: 103
+    name: Junk - Tier 4
+    amount: 1
+  - id: 104
+    name: Sloop - Tier 1
+    amount: 1
+  - id: 105
+    name: Sloop - Tier 2
+    amount: 1
+  - id: 106
+    name: Sloop - Tier 3
+    amount: 1
+  - id: 107
+    name: Sloop - Tier 4
+    amount: 1
+  - id: 108
+    name: Schooner - Tier 1
+    amount: 1
+  - id: 109
+    name: Schooner - Tier 2
+    amount: 1
+  - id: 110
+    name: Schooner - Tier 3
+    amount: 1
+  - id: 111
+    name: Schooner - Tier 4
+    amount: 1
+  - id: 112
+    name: Brigantine - Tier 1
+    amount: 1
+  - id: 113
+    name: Brigantine - Tier 2
+    amount: 1
+  - id: 114
+    name: Brigantine - Tier 3
+    amount: 1
+  - id: 115
+    name: Brigantine - Tier 4
+    amount: 1
+  - id: 116
+    name: Galleon - Tier 1
+    amount: 1
+  - id: 117
+    name: Galleon - Tier 2
+    amount: 1
+  - id: 118
+    name: Galleon - Tier 3
+    amount: 1
+  - id: 119
+    name: Galleon - Tier 4
     amount: 1
   - id: 200
     name: Canvas Sails - Tier 1
@@ -350,22 +410,25 @@ MonoBehaviour:
     name: Flame Cannon - Tier 4
     amount: 1
   - id: 500
-    name: Citation for Poaching Wildlife - Tier 1
-    amount: 1
-  - id: 501
-    name: Citation for Poaching Wildlife - Tier 2
-    amount: 1
-  - id: 502
-    name: Citation for Poaching Wildlife - Tier 3
-    amount: 1
-  - id: 503
-    name: Citation for Poaching Wildlife - Tier 4
-    amount: 1
-  - id: 504
     name: Lemon - Tier 1
     amount: 1
-  - id: 508
+  - id: 504
     name: Lemonade - Tier 1
+    amount: 1
+  - id: 508
+    name: Monkey's Crown - Tier 1
+    amount: 1
+  - id: 512
+    name: Lucky Carp Chimes - Tier 1
+    amount: 1
+  - id: 516
+    name: Fish Feather Fan - Tier 1
+    amount: 1
+  - id: 520
+    name: Lotus Blossom - Tier 1
+    amount: 1
+  - id: 524
+    name: Pearlescent Medicine - Tier 1
     amount: 1
   _ships:
   - name: Junk
@@ -704,19 +767,6 @@ MonoBehaviour:
     - list: []
     - list: []
   _trinkets:
-  - name: Citation for Poaching Wildlife
-    slug: citationforpoachingwildlife
-    description: This must be a mistake, it says something about injuring a Pandatee?
-      Who would do such a thing?
-    rarity: 1
-    value: 1
-    icon: {fileID: 21300000, guid: 57689f53390e47a4d9b00e3537ed8ae4, type: 3}
-    maxAmount: 1
-    upgrades:
-    - list: []
-    - list: []
-    - list: []
-    - list: []
   - name: Lemon
     slug: lemon
     description: A seemingly unremarkable citrus, but it can mean life or death on
@@ -733,6 +783,54 @@ MonoBehaviour:
     rarity: 1
     value: 1
     icon: {fileID: 21300000, guid: 2977b584fd490164396dc4b754eb5f4c, type: 3}
+    maxAmount: 1
+    upgrades:
+    - list: []
+  - name: Monkey's Crown
+    slug: monkeyscrown
+    description: The crown of the sea monkey, it's much too big for anyone to wear,
+      but it does look snazzy!
+    rarity: 1
+    value: 1
+    icon: {fileID: 21300000, guid: 9d96f3f5037f47b4e9e6ba823c33845d, type: 3}
+    maxAmount: 1
+    upgrades:
+    - list: []
+  - name: Lucky Carp Chimes
+    slug: luckycarpchimes
+    description: 'Aren''t you crafty? These windchimes don''t look half bad! '
+    rarity: 1
+    value: 1
+    icon: {fileID: 21300000, guid: 5d4255d61ff1ff249a1cb1ba2a6c0386, type: 3}
+    maxAmount: 1
+    upgrades:
+    - list: []
+  - name: Fish Feather Fan
+    slug: fishfeatherfan
+    description: 'Perfect for when your entertainment career takes off. '
+    rarity: 1
+    value: 1
+    icon: {fileID: 21300000, guid: 403ec163ab1fe2745987bd64b992d807, type: 3}
+    maxAmount: 1
+    upgrades:
+    - list: []
+  - name: Lotus Blossom
+    slug: lotusblossom
+    description: 'This flower is about as big as your head! The scent is really good
+      for lifting morale on deck. '
+    rarity: 1
+    value: 1
+    icon: {fileID: 21300000, guid: 8cdcf3151bdd038429f3b659fb4a4e68, type: 3}
+    maxAmount: 1
+    upgrades:
+    - list: []
+  - name: Pearlescent Medicine
+    slug: pearlescentmedicine
+    description: Legend has it that this medicine is supposed to have great health
+      effects. (It does taste funny though...)
+    rarity: 1
+    value: 1
+    icon: {fileID: 21300000, guid: 83f1d993fc45e3445b715c3b32f08ea8, type: 3}
     maxAmount: 1
     upgrades:
     - list: []
@@ -953,12 +1051,12 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: aa03209e054c5c846adf2eb0e8a54af0, type: 3}
     maxAmount: 64
     upgrades: []
-  - name: Monkey Circlet
-    slug: monkeycirclet
-    description: The crown of the monkey, it holds immense power.
+  - name: Shattered Crown
+    slug: shatteredcrown
+    description: The shattered crown of the monkey, it holds immense power.
     rarity: 1
     value: 1
-    icon: {fileID: 21300000, guid: 9d96f3f5037f47b4e9e6ba823c33845d, type: 3}
+    icon: {fileID: 21300000, guid: 707c030192b352d41b207dba73da1b9c, type: 3}
     maxAmount: 64
     upgrades: []
   - name: Monkey Claws
