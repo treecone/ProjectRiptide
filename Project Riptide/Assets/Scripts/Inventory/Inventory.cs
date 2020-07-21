@@ -82,10 +82,11 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < recipes.Count; i++)
         {
             GameObject newRecipe = Instantiate(recipePrefab, recipeParent.transform);
-            newRecipe.GetComponent<RecipeSlot>().recipe = recipes[i];
-            newRecipe.GetComponent<RecipeSlot>().itemResult = PlayerInventory.Instance.GetFromName(recipes[i].result);
-            newRecipe.GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newRecipe); }) ;
-            newRecipe.GetComponent<Button>().onClick.AddListener(_inventoryMethods.ExpandCraft) ;
+            newRecipe.GetComponent<RecipeSlot>().Recipe = recipes[i];
+            newRecipe.GetComponent<RecipeSlot>().itemResult = ItemDB.Instance.FindItem(recipes[i].result);
+            newRecipe.GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newRecipe); });
+            newRecipe.GetComponent<Button>().onClick.AddListener(_inventoryMethods.ExpandCraft);
+            recipeSlots.Add(newRecipe.GetComponent<RecipeSlot>());
         }
         UpdateRecipeVisuals();
 
@@ -97,6 +98,7 @@ public class Inventory : MonoBehaviour
             //assign item
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+            equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
         UpdateEquipmentVisuals();
     }
@@ -138,12 +140,14 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < recipeParent.transform.childCount; i++)
         {
+            Debug.Log(recipeSlots[i].Recipe.name);
             //destroy the recipe slot if it has been crafted
-            if (!Crafting.Instance.IsUncrafted(recipeSlots[i].recipe))
+            if (!Crafting.Instance.IsUncrafted(recipeSlots[i].Recipe))
             {
                 Destroy(recipeSlots[i]);
                 recipeSlots.RemoveAt(i);
             }
+            recipeSlots[i].UpdateSlotVisuals();
             SortCraftRecipes();
         }
     }
@@ -153,7 +157,7 @@ public class Inventory : MonoBehaviour
         for (int i = 0; i < recipeParent.transform.childCount; i++)
         {
             //if you can craft, it gets moved to top
-            if (Crafting.Instance.CanCraft(recipeSlots[i].recipe))  
+            if (Crafting.Instance.CanCraft(recipeSlots[i].Recipe))  
             {
                 recipeParent.transform.GetChild(i).SetAsFirstSibling();
             }

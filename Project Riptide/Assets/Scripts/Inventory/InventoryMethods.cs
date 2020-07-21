@@ -117,7 +117,7 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="gObj">Recipe Slot</param>
     public void SelectRecipe(GameObject gObj)
     {
-        _activeRecipe = gObj.GetComponent<RecipeSlot>().recipe;
+        _activeRecipe = gObj.GetComponent<RecipeSlot>().Recipe;
         SelectItem(gObj);
     }
 
