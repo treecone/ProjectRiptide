@@ -22,6 +22,9 @@ public class Item
     private List<Upgrade> upgrades;
     private bool equipped;
     private ItemCategory category;
+    private int equipmentRank;
+    private string activeText;
+    private string passiveText;
     #endregion
 
     #region Properties
@@ -125,6 +128,30 @@ public class Item
         get
         {
             return category;
+        }
+    }
+
+    public int EquipmentRank
+    {
+        get
+        {
+            return equipmentRank;
+        }
+    }
+
+    public string PassiveText
+    {
+        get
+        {
+            return passiveText;
+        }
+    }
+
+    public string ActiveText
+    {
+        get
+        {
+            return activeText;
         }
     }
     #endregion
