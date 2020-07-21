@@ -47,14 +47,35 @@ public class ChunkLoader : MonoBehaviour
     [SerializeField]
     private int _zLen;
     [SerializeField]
-    private int _xStartingChunk;
-    [SerializeField]
     private int _yStartingChunk;
+    [SerializeField]
+    private int _xStartingChunk;
     [SerializeField]
     private float _worldScale = 1.0f;
 
+    private Map _map;
+    private Vector2 _topLeftChunkPos;
 
-    public Vector2 CurrentChunkPosition { get; }
+    public Vector2 CurrentChunkPosition
+    {
+        get { return _currentChunkPosition; }
+    }
+
+    public float ChunkLength
+    {
+        get { return _chunkSideLength; }
+    }
+
+    public int XSize
+    {
+        get { return _zLen - 2; }
+    }
+
+    public int YSize
+    {
+        get { return _xLen - 2; }
+    }
+    
 
     // Start is called before the first frame update
     void Start()
@@ -70,14 +91,17 @@ public class ChunkLoader : MonoBehaviour
         _displayedAllChunks = false;
         // Get the textmeshpro object so we can write to it.
         _regionDisplay = GameObject.Find("Canvas").GetComponent<TextMeshProUGUI>();
-        _currentChunkPosition = new Vector2(_xStartingChunk, _yStartingChunk);
+        _currentChunkPosition = new Vector2(_yStartingChunk, _xStartingChunk);
         // Physially move the player to the center of that chunk.
         _ship.transform.position = new Vector3(_chunkSideLength * _currentChunkPosition.x, 1f, _chunkSideLength * _currentChunkPosition.y);
         _enemies = new List<GameObject>();
         LoadWorld();
 
-        _chunks[_xStartingChunk, _yStartingChunk].chunk.SetActive(true);
-        _visibleChunks.Add(_chunks[_xStartingChunk, _yStartingChunk]);
+        _chunks[_yStartingChunk, _xStartingChunk].chunk.SetActive(true);
+        _visibleChunks.Add(_chunks[_yStartingChunk, _xStartingChunk]);
+        _map = GetComponent<Map>();
+        _map.SetUpMap();
+        _topLeftChunkPos = new Vector2(_chunks[1, 1].chunk.transform.position.z - (_chunkSideLength / 2), _chunks[1, 1].chunk.transform.position.x - (_chunkSideLength / 2));
     }
 
     public void LoadWorld()
@@ -396,6 +420,8 @@ public class ChunkLoader : MonoBehaviour
                         // Set current chunk to the chunk the ships in.
                         _currentChunkPosition = new Vector2(x, z);
                         _currentRegion = GetRegionName(_chunks[x, z].region);
+                        _map.UpdateCurrentChunk(z, x);
+
                     }
                 }
             }
@@ -425,6 +451,24 @@ public class ChunkLoader : MonoBehaviour
                 break;
         }
         return name;
+    }
+
+    /// <summary>
+    /// Gets position of player relative to top left chunk
+    /// </summary>
+    /// <returns></returns>
+    public Vector2 GetRelativePlayerPosition()
+    {
+        return new Vector2(_ship.transform.position.z - _topLeftChunkPos.x, _ship.transform.position.x - _topLeftChunkPos.y);
+    }
+
+    /// <summary>
+    /// Gets y euler of player
+    /// </summary>
+    /// <returns></returns>
+    public float GetPlayerYEuler()
+    {
+        return _ship.transform.localEulerAngles.y;
     }
 
     /*public GameObject GetPrefabByName(string s)

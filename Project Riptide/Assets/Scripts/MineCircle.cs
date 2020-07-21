@@ -31,7 +31,7 @@ public class MineCircle : MonoBehaviour
         for(float i = 0; i < Mathf.PI * 2; i += Mathf.PI * 2 / numMines)
         {
             GameObject mine = Instantiate(_minePrefab, new Vector3(Mathf.Sin(i) * radius, transform.position.y, Mathf.Cos(i) * radius), Random.rotation, transform);
-            mine.GetComponent<Mine>().SetData(_player, damage, statusType, statusDuration, statusLevel);
+            mine.GetComponent<Mine>().SetData(damage, statusType, statusDuration, statusLevel);
         }
     }
 

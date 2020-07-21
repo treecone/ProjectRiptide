@@ -26,7 +26,7 @@ public class HealthPackSpreader : MonoBehaviour
         {
             GameObject newObj = Instantiate(_healthPackPrefab, Random.onUnitSphere * Random.Range(_minRadius, _maxRadius), Random.rotation, transform);
             newObj.transform.position -= new Vector3(0, newObj.transform.position.y, 0);
-            newObj.GetComponent<Mine>().SetData(_player, -12.5f, StatusType.Regeneration, 1.25f, 10);
+            newObj.GetComponent<Mine>().SetData(-12.5f, StatusType.Regeneration, 1.25f, 10);
         }
     }
 
