@@ -117,25 +117,7 @@ public class MarketMethods : MonoBehaviour
     /// <summary>
     /// Used to set values of buttons to emphasize ship, vault, or buying
     /// </summary>
-    public void ChooseButton(GameObject button)
-    {
-        button.GetComponent<RectTransform>().sizeDelta = new Vector2(275, 120);
-        button.GetComponent<Image>().color = new Color32(53, 41, 41, 255);
-        button.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(196, 196, 196, 255);
-        button.GetComponent<Button>().interactable = false;
-    }
 
-    /// <summary>
-    /// Used to set values of buttons to reset ship, vault, or buying
-    /// </summary>
-    /// <param name="button"></param>
-    public void ResetButton(GameObject button)
-    {
-        button.GetComponent<Button>().interactable = true;
-        button.GetComponent<RectTransform>().sizeDelta = new Vector2(275, 80);
-        button.GetComponent<Image>().color = new Color32(44, 34, 34, 255);
-        button.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(169, 169, 169, 255);
-    }
 
 
 }

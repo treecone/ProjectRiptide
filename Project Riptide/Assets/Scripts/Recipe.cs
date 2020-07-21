@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Recipe
+[CreateAssetMenu(menuName = "Custom Assets/Recipe")]
+public class Recipe : ScriptableObject
 {
     public List<string> ingredients;
     public List<int> ingredientAmounts;
