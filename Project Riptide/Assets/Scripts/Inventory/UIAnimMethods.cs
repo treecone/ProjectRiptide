@@ -130,4 +130,26 @@ public class UIAnimMethods : MonoBehaviour
     {
         gObj.sprite = _hidden;
     }
+
+    //BUTTON ANIMATIONS
+    public void ChooseButton(GameObject gObj)
+    {
+        gObj.transform.DOMoveX(gObj.transform.position.x - 32f, .25f).SetUpdate(true);
+        gObj.GetComponent<Image>().color = Color.white;
+        gObj.GetComponent<Button>().interactable = false;
+    }
+
+    /// <summary>
+    /// Used to set values of buttons to reset ship, vault, or buying
+    /// </summary>
+    /// <param name="button"></param>
+    public void ResetButton(GameObject gObj)
+    {
+        gObj.GetComponent<Button>().interactable = true;
+        gObj.transform.DOMoveX(gObj.transform.position.x + 32f, .25f).SetUpdate(true);
+        gObj.GetComponent<Image>().color = new Color32(180, 180, 180, 255);
+    }
+
+
+
 }

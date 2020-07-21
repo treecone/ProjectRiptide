@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemCategory { Ship, Sails, Hull, Cannon, Trinket, Material}
+public enum ItemCategory { Ship = 0, Sails = 1, Hull = 2, Cannon = 3, Trinket = 4, Material = 5}
 [System.Serializable]
 public class Item
 {

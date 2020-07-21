@@ -20,11 +20,26 @@ public class Inventory : MonoBehaviour
     private List<GameObject> goldTexts;
     private List<TextMeshProUGUI> goldTextMeshes;
 
+    [SerializeField]
+    private InventoryMethods _inventoryMethods;
+    [SerializeField]
+    private GameObject recipeParent;
+    [SerializeField]
+    private GameObject recipePrefab;
+    private List<RecipeSlot> recipeSlots;
+
+    [SerializeField]
+    private GameObject _equipmentParent;
+    [SerializeField]
+    private GameObject _equipmentPrefab;
+    private List<EquipmentSlot> equipmentSlots;
+
     #endregion
 
 
     void Start()
     {
+        //inventory
         inventorySlots = new List<List<InventorySlot>>();
         foreach(GameObject inventoryParent in inventoryParents)
         {
@@ -38,7 +53,8 @@ public class Inventory : MonoBehaviour
             }
             inventorySlots.Add(slots);
         }
-
+        
+        //vault
         vaultSlots = new List<List<InventorySlot>>();
         foreach (GameObject vaultParent in vaultParents)
         {
@@ -52,13 +68,37 @@ public class Inventory : MonoBehaviour
             }
             vaultSlots.Add(slots);
         }
-
+        
+        //gold meshes
         goldTextMeshes = new List<TextMeshProUGUI>();
         foreach(GameObject g in goldTexts)
         {
             goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
         }
 
+        //recipes
+        recipeSlots = new List<RecipeSlot>();
+        List<Recipe> recipes = Crafting.Instance.Recipes();
+        for (int i = 0; i < recipes.Count; i++)
+        {
+            GameObject newRecipe = Instantiate(recipePrefab, recipeParent.transform);
+            newRecipe.GetComponent<RecipeSlot>().recipe = recipes[i];
+            newRecipe.GetComponent<RecipeSlot>().itemResult = PlayerInventory.Instance.GetFromName(recipes[i].result);
+            newRecipe.GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newRecipe); }) ;
+            newRecipe.GetComponent<Button>().onClick.AddListener(_inventoryMethods.ExpandCraft) ;
+        }
+        UpdateRecipeVisuals();
+
+        //equipping
+        equipmentSlots = new List<EquipmentSlot>();
+        for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
+        {
+            GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
+            //assign item
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+        }
+        UpdateEquipmentVisuals();
     }
 
     public void Update()
@@ -94,7 +134,68 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void UpdateRecipeVisuals()
+    {
+        for (int i = 0; i < recipeParent.transform.childCount; i++)
+        {
+            //destroy the recipe slot if it has been crafted
+            if (!Crafting.Instance.IsUncrafted(recipeSlots[i].recipe))
+            {
+                Destroy(recipeSlots[i]);
+                recipeSlots.RemoveAt(i);
+            }
+            SortCraftRecipes();
+        }
+    }
+
+    public void SortCraftRecipes()
+    {
+        for (int i = 0; i < recipeParent.transform.childCount; i++)
+        {
+            //if you can craft, it gets moved to top
+            if (Crafting.Instance.CanCraft(recipeSlots[i].recipe))  
+            {
+                recipeParent.transform.GetChild(i).SetAsFirstSibling();
+            }
+        }
+    }
+
+    public void SortRecipeByType(int sortNum)
+    {
+        if (sortNum == -1)
+        {
+            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            {
+                recipeSlots[i].enabled = true;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            {
+                //if you can craft, it gets moved to top
+                if (recipeSlots[i].itemResult.Category != (ItemCategory)sortNum)
+                {
+                    recipeSlots[i].enabled = false;
+                }
+            }
+        }
+    }
+
+    public void SortByEquipment() 
+    {
+
+    }
 
 
+
+
+    public void UpdateEquipmentVisuals()
+    {
+        foreach (EquipmentSlot equipment in equipmentSlots)
+        {
+            equipment.UpdateSlotVisuals();
+        }
+    }
 
 }
