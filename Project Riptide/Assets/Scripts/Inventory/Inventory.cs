@@ -84,7 +84,7 @@ public class Inventory : MonoBehaviour
             GameObject newRecipe = Instantiate(recipePrefab, recipeParent.transform);
             newRecipe.GetComponent<RecipeSlot>().Recipe = recipes[i];
             newRecipe.GetComponent<RecipeSlot>().itemResult = ItemDB.Instance.FindItem(recipes[i].result);
-            newRecipe.GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newRecipe); });
+            newRecipe.GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectRecipe(newRecipe); });
             newRecipe.GetComponent<Button>().onClick.AddListener(_inventoryMethods.ExpandCraft);
             recipeSlots.Add(newRecipe.GetComponent<RecipeSlot>());
         }
