@@ -21,7 +21,7 @@ public class ChunkLoader : MonoBehaviour
 
     private Chunk[,] _chunks;  // List of all the chunk prefabs
     private List<Chunk> _visibleChunks; // A dynamic list of all chunks visible to the player.
-    private float _chunkSideLength = 100; // Base length of each chunk.
+    private float _chunkSideLength = 800; // Base length of each chunk.
     [SerializeField]
     private GameObject _ship; // Player
     [SerializeField]

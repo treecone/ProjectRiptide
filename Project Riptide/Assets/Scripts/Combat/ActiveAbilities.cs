@@ -206,7 +206,7 @@ public class ActiveAbilities : MonoBehaviour
         switch(type)
         {
             case SkillType.SmallDash:
-                return new ActiveSkill("Small Dash", SmallDash, 5.0f, false, index);
+                return new ActiveSkill("Short Dash", SmallDash, 5.0f, false, index);
             case SkillType.Dash:
                 return new ActiveSkill("Dash", Dash, 5.0f, false, index);
             case SkillType.SmallManuverabilityBoost:

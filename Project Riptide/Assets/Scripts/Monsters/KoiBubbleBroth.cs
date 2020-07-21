@@ -84,6 +84,7 @@ public class KoiBubbleBroth : MonoBehaviour
             {
                 other.GetComponent<Hitbox>().AttachedObject.GetComponent<StatusEffects>().AddStatus(StatusType.MovementSpeed, "BubbleBrothLasting", 3.0f, -0.75f);
             }
+            _playerStatus = null;
         }
     }
 
@@ -94,6 +95,7 @@ public class KoiBubbleBroth : MonoBehaviour
     {
         if (_playerStatus != null)
         {
+
             _playerStatus.RemoveStatus("BubbleBroth");
             _playerStatus.AddStatus(StatusType.MovementSpeed, "BubbleBrothLasting", 3.0f, -0.75f);
         }

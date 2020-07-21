@@ -88,7 +88,10 @@ public partial class MonkeyBoss : Enemy
         _rotateRightWithBody = true;
 
         _screechPos = _screechParticles.transform.position;
-        _screechParticles.GetComponentInChildren<ParticleSystem>().Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        foreach (ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())
+        {
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
 
         _monkeyStormCloud = _storm.GetComponent<MonkeyStormCloud>();
         _stormStartPos = _storm.transform.localPosition;
@@ -160,11 +163,17 @@ public partial class MonkeyBoss : Enemy
     {
         if(on)
         {
-            _screechParticles.GetComponentInChildren<ParticleSystem>().Play();
+            foreach(ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())
+            {
+                particles.Play();
+            }
         }
         else
         {
-            _screechParticles.GetComponentInChildren<ParticleSystem>().Stop();
+            foreach (ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())
+            {
+                particles.Stop();
+            }
         }
     }
 

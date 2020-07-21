@@ -65,6 +65,7 @@ public class Inventory : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Tilde))
         {
+            Debug.Log("Being Called");
             UpdateInventoryVisuals();
         }
     }
