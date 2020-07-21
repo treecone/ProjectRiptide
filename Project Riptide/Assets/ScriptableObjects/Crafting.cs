@@ -128,7 +128,7 @@ public class Crafting : ScriptableObject
     /// <summary>
     /// Combines Valid and Uncrafted Recipes, finding recipes that are both not already crafted AND you can craft
     /// </summary>
-    List<Recipe> ValidUncraftedRecipes()
+    public List<Recipe> ValidUncraftedRecipes()
     {
         List<Recipe> validRecipes = new List<Recipe>();
         foreach (Recipe r in _recipes)
@@ -140,4 +140,11 @@ public class Crafting : ScriptableObject
         }
         return validRecipes;
     }
+
+    public bool IsUncrafted(Recipe recipe)
+    {
+        return ItemDB.Instance.FindItemNoClone(recipe.result).Category == ItemCategory.Material ||
+            !PlayerInventory.Instance.HasEquipment(recipe.result);
+    }
+
 }

@@ -64,6 +64,8 @@ public class InventoryMethods : MonoBehaviour
     private Sprite[] _upgradeButtonImages; //holds greyed out/maxed
     [SerializeField]
     private TextMeshProUGUI _repairShip;
+    [SerializeField]
+    private GameObject[] _sortButtons;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -80,8 +82,6 @@ public class InventoryMethods : MonoBehaviour
     private UIAnimMethods _uiAnimMethods;
     [SerializeField]
     private ChunkLoader _chunkLoader;
-    [SerializeField]
-    private Inventory _inventory;
     [SerializeField]
     private InputManager _inputManagerScript;
     #endregion
@@ -400,7 +400,7 @@ public class InventoryMethods : MonoBehaviour
     /// expands crafting menu
     /// </summary>
     /// <param name="isCraft"></param>
-    public void ExpandCraft(bool isCraft)
+    public void ExpandCraft()
     {
         if (_activeRecipe != null)
         {
@@ -455,8 +455,7 @@ public class InventoryMethods : MonoBehaviour
                 }
             }
             
-            //make method for crafting things
-            if (isCraft)
+            if (_activeItem.Rarity == 1)   //check if it is an upgradable or not
             {
                 if (craftable == false)
                 {
@@ -487,6 +486,27 @@ public class InventoryMethods : MonoBehaviour
         PlayerInventory.Instance.SetEquipped(_activeItem.Name);
     }
 
+    //use this to craft based on selected item
+    public void Craft()
+    {
+        Crafting.Instance.Craft(_activeRecipe);
+    }
+
+    //choose button sorting
+    public void ChooseButtonSort(int num)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            if (_sortButtons[i].GetComponent<Image>().color == Color.white)
+            {
+                _uiAnimMethods.ResetButton(_sortButtons[i]);
+            }
+            if (i == num)
+            {
+                _uiAnimMethods.ChooseButton(_sortButtons[i]);
+            }
+        }
+    }
     #endregion
 
     #region Equip Methods
@@ -542,7 +562,7 @@ public class InventoryMethods : MonoBehaviour
         int amount = System.Convert.ToInt32(_trashField.text);
 
         //if active item exists
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null)
         {
             amount += num;
             //check for above and below minimum
