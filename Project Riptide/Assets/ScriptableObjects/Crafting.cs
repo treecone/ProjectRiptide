@@ -25,12 +25,26 @@ public class Crafting : ScriptableObject
     private void OnEnable()
     {
         _instance = this;
+        if(_reloadRecipesOnLoad)
+        {
+            LoadRecipes();
+            _reloadRecipesOnLoad = false;
+        }
     }
-    
+
+    [SerializeField]
+    private bool _reloadRecipesOnLoad;
     [SerializeField]
     private List<Recipe> _recipes;
-
-
+    private void LoadRecipes()
+    {
+        _recipes = new List<Recipe>();
+        Recipe[] allRecipes = Resources.LoadAll<Recipe>("ScriptableObjectInstances/Recipes");
+        for (int i = 0; i < allRecipes.Length; i++)
+        {
+            _recipes.Add(allRecipes[i]);
+        }
+    }
 
     /// <summary>
     /// Crafts an item, removing its ingredients from the inventory
@@ -67,6 +81,12 @@ public class Crafting : ScriptableObject
             }
         }
         return true;
+    }
+
+    public bool IsUncrafted(Recipe recipe)
+    {
+        return ItemDB.Instance.FindItemNoClone(recipe.result).Category == ItemCategory.Material || 
+            !PlayerInventory.Instance.HasEquipment(recipe.result);
     }
 
     public List<Recipe> Recipes()
