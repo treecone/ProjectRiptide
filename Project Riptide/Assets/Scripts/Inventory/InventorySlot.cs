@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class InventorySlot : MonoBehaviour
 {
+    [System.NonSerialized]
     public Item item;
 
     public InventorySlot(Item item)

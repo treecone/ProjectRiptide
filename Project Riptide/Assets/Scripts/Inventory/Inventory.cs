@@ -53,7 +53,6 @@ public class Inventory : MonoBehaviour
             }
             inventorySlots.Add(slots);
         }
-        
         //vault
         vaultSlots = new List<List<InventorySlot>>();
         foreach (GameObject vaultParent in vaultParents)
@@ -68,7 +67,6 @@ public class Inventory : MonoBehaviour
             }
             vaultSlots.Add(slots);
         }
-        
         //gold meshes
         goldTextMeshes = new List<TextMeshProUGUI>();
         foreach(GameObject g in goldTexts)
@@ -90,12 +88,23 @@ public class Inventory : MonoBehaviour
         }
         UpdateRecipeVisuals();
 
-        //equipping
+        //generate equipment prefab for currently owned items (base equipment)
         equipmentSlots = new List<EquipmentSlot>();
         for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
         {
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
+            newEquipment.GetComponent<EquipmentSlot>().equipment = PlayerInventory.Instance.equipment[i];
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+            equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
+        }
+        //generates equipment prefab for all items
+        for (int i = 0; i < recipes.Count; i++)
+        {
+            GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
+            //assign item
+            newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
@@ -116,7 +125,7 @@ public class Inventory : MonoBehaviour
     {
         foreach (List<InventorySlot> inventory in inventorySlots)
         {
-            for(int i = 0; i < inventory.Count; i++)
+            for(int i = 0; i < PlayerInventory.Instance.items.Count; i++)
             {
                 inventory[i].item = PlayerInventory.Instance.items[i];
                 inventory[i].UpdateSlotVisuals();
@@ -124,7 +133,7 @@ public class Inventory : MonoBehaviour
         }
         foreach (List<InventorySlot> vault in vaultSlots)
         {
-            for (int i = 0; i < vault.Count; i++)
+            for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
             {
                 vault[i].item = PlayerVault.Instance.items[i];
                 vault[i].UpdateSlotVisuals();
@@ -135,12 +144,12 @@ public class Inventory : MonoBehaviour
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
         }
     }
+    
 
     public void UpdateRecipeVisuals()
     {
         for (int i = 0; i < recipeParent.transform.childCount; i++)
         {
-            Debug.Log(recipeSlots[i].Recipe.name);
             //destroy the recipe slot if it has been crafted
             if (!Crafting.Instance.IsUncrafted(recipeSlots[i].Recipe))
             {
@@ -148,8 +157,8 @@ public class Inventory : MonoBehaviour
                 recipeSlots.RemoveAt(i);
             }
             recipeSlots[i].UpdateSlotVisuals();
-            SortCraftRecipes();
         }
+        SortCraftRecipes();
     }
 
     public void SortCraftRecipes()
@@ -170,7 +179,7 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < recipeParent.transform.childCount; i++)
             {
-                recipeSlots[i].enabled = true;
+                recipeParent.transform.GetChild(i).gameObject.SetActive(true);
             }
         }
         else
@@ -180,24 +189,61 @@ public class Inventory : MonoBehaviour
                 //if you can craft, it gets moved to top
                 if (recipeSlots[i].itemResult.Category != (ItemCategory)sortNum)
                 {
-                    recipeSlots[i].enabled = false;
+                    recipeParent.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                else
+                {
+                    recipeParent.transform.GetChild(i).gameObject.SetActive(true);
                 }
             }
         }
     }
 
-    public void SortByEquipment() 
+    /// <summary>
+    /// Sort all equipment by type, deactivate if it does not fit category
+    /// </summary>
+    /// <param name="sortNum">-1 is all, rest is ItemCategory</param>
+    public void SortByEquipment(int sortNum) 
     {
-
+        if (sortNum == -1)
+        {
+            for (int i = 0; i < _equipmentParent.transform.childCount; i++)
+            {
+                _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            {
+                //if you can craft, it gets moved to top
+                if (equipmentSlots[i].equipment.Category != (ItemCategory)sortNum)
+                {
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                else
+                {
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                }
+            }
+        }
     }
 
-
-
-
+    /// <summary>
+    /// goes through and enables and disables the equipment that is valid
+    /// </summary>
     public void UpdateEquipmentVisuals()
     {
         foreach (EquipmentSlot equipment in equipmentSlots)
         {
+            if (PlayerInventory.Instance.GetFromName(equipment.equipment.Name) == null)
+            {
+                equipment.gameObject.SetActive(false);
+            }
+            else
+            {
+                equipment.gameObject.SetActive(true);
+            }
             equipment.UpdateSlotVisuals();
         }
     }

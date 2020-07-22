@@ -16,6 +16,10 @@ public class PlayerHealth : MonoBehaviour
     private float maxHealth;
     [SerializeField]
     private float health;
+    [SerializeField]
+    private GameObject _deathUI;
+    [SerializeField]
+    private InventoryMethods _inventoryMethods;
 
     public float Health { get; }
     public float MaxHealth { get; }
@@ -88,10 +92,22 @@ public class PlayerHealth : MonoBehaviour
             if (health <= 0)
             {
                 health = 0;
-                //Kill Player
-                //SceneManager.LoadScene("CadenScene");
+                Die();
             }
         }
         
+    }
+
+    public void Die()
+    {
+        _deathUI.SetActive(true);
+
+        _inventoryMethods.PauseGame();
+    }
+
+    public void Respawn()
+    {
+        health = maxHealth;
+        _inventoryMethods.UnpauseGame();
     }
 }
