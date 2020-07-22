@@ -12,15 +12,17 @@ public class PlayerVault : ScriptableObject
         get
         {
             if (!_instance)
+            {
                 _instance = Resources.LoadAll<PlayerVault>("ScriptableObjectInstances")[0];
+                //_instance.InitializeVault();
+            }
             return _instance;
         }
     }
 
-    private void OnEnable()
+    private void Awake()
     {
         _instance = this;
-        Debug.Log("wee woo");
         InitializeVault();
     }
     public int numItems;

@@ -20,6 +20,7 @@ public class PortManager : MonoBehaviour
     [SerializeField]
     private Button _leavePort;
 
+    public static PortManager LastPortVisited;
     public bool InPort { get; set; }
 
     void Awake()
@@ -56,6 +57,7 @@ public class PortManager : MonoBehaviour
 			_portUI.SetActive(true);
             _player.GetComponent<ShipMovement>().StopMotion();
             _inventoryMethods.PauseMarketGame();
+            LastPortVisited = this;
         }
         
     }

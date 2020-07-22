@@ -73,7 +73,6 @@ public class Inventory : MonoBehaviour
         {
             goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
         }
-        UpdateInventoryVisuals();
 
         //recipes
         recipeSlots = new List<RecipeSlot>();
@@ -115,7 +114,7 @@ public class Inventory : MonoBehaviour
     {
         foreach (List<InventorySlot> inventory in inventorySlots)
         {
-            for(int i = 0; i < inventory.Count; i++)
+            for(int i = 0; i < PlayerInventory.Instance.items.Count; i++)
             {
                 inventory[i].item = PlayerInventory.Instance.items[i];
                 inventory[i].UpdateSlotVisuals();
@@ -123,7 +122,7 @@ public class Inventory : MonoBehaviour
         }
         foreach (List<InventorySlot> vault in vaultSlots)
         {
-            for (int i = 0; i < vault.Count; i++)
+            for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
             {
                 vault[i].item = PlayerVault.Instance.items[i];
                 vault[i].UpdateSlotVisuals();
@@ -140,7 +139,6 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < recipeParent.transform.childCount; i++)
         {
-            Debug.Log(recipeSlots[i].Recipe.name);
             //destroy the recipe slot if it has been crafted
             if (!Crafting.Instance.IsUncrafted(recipeSlots[i].Recipe))
             {
