@@ -39,7 +39,7 @@ public class Crafting : ScriptableObject
     private void LoadRecipes()
     {
         _recipes = new List<Recipe>();
-        Recipe[] allRecipes = Resources.LoadAll<Recipe>("ScriptableObjectInstances/Recipes");
+        Recipe[] allRecipes = Resources.LoadAll<Recipe>("ScriptableObjectInstances");
         for (int i = 0; i < allRecipes.Length; i++)
         {
             _recipes.Add(allRecipes[i]);
@@ -81,12 +81,6 @@ public class Crafting : ScriptableObject
             }
         }
         return true;
-    }
-
-    public bool IsUncrafted(Recipe recipe)
-    {
-        return ItemDB.Instance.FindItemNoClone(recipe.result).Category == ItemCategory.Material || 
-            !PlayerInventory.Instance.HasEquipment(recipe.result);
     }
 
     public List<Recipe> Recipes()

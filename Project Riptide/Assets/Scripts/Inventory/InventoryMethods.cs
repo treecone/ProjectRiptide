@@ -109,6 +109,7 @@ public class InventoryMethods : MonoBehaviour
     public void SelectItem(GameObject gObj)
     {
         _activeItem = gObj.GetComponent<InventorySlot>().item;
+        Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
     }
 
     /// <summary>
@@ -117,8 +118,8 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="gObj">Recipe Slot</param>
     public void SelectRecipe(GameObject gObj)
     {
-        _activeRecipe = gObj.GetComponent<RecipeSlot>().recipe;
-        SelectItem(gObj);
+        _activeRecipe = gObj.GetComponent<RecipeSlot>().Recipe;
+        _activeItem = ItemDB.Instance.FindItem(_activeRecipe.result);
     }
 
     /// <summary>
@@ -411,8 +412,9 @@ public class InventoryMethods : MonoBehaviour
             for (int i = 0; i < 4; i++)
             {
                 //for however many upgrades there are
-                if (_activeItem.Upgrades.Count < i)
+                if (_activeItem.Upgrades.Count > i)
                 {
+                    /*
                     float upgradeVal = _activeItem.Upgrades[i].upgradeValue;
                     if (upgradeVal < 0)
                     {
@@ -422,7 +424,8 @@ public class InventoryMethods : MonoBehaviour
                     {
                         _stats[i].color = Color.green;
                     }
-                    _stats[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
+                    */
+                    _stats[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
                 }
                 else
                 {
@@ -437,13 +440,13 @@ public class InventoryMethods : MonoBehaviour
             //ingredients
             for (int i = 0; i < 4; i++)
             {
-                if (_activeRecipe.ingredients.Count < i)
+                if (_activeRecipe.ingredients.Count > i)
                 {
-                    Item ingredient = PlayerInventory.Instance.GetFromName(_activeRecipe.ingredients[i]);
+                    Item ingredient = ItemDB.Instance.FindItem(_activeRecipe.ingredients[i]);
                     _neededItems[i].SetActive(true);
-                    _neededItems[i].GetComponentInChildren<Image>().sprite = ingredient.Icon;
-                    _neededItems[i].transform.Find("ItemName").GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
-                    _neededItems[i].transform.Find("Amount").GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", ingredient.Amount, _activeRecipe.ingredientAmounts[i]);
+                    _neededItems[i].transform.GetChild(0).GetComponent<Image>().sprite = ingredient.Icon;
+                    _neededItems[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
+                    _neededItems[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", PlayerInventory.Instance.CountOf(ingredient.Name), _activeRecipe.ingredientAmounts[i]);
                     if (ingredient.Amount < _activeRecipe.ingredientAmounts[i])
                     {
                         craftable = false;
