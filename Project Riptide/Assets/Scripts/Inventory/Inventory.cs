@@ -120,6 +120,7 @@ public class Inventory : MonoBehaviour
                 inventory[i].UpdateSlotVisuals();
             }
         }
+        /*
         foreach (List<InventorySlot> vault in vaultSlots)
         {
             for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
@@ -128,6 +129,7 @@ public class Inventory : MonoBehaviour
                 vault[i].UpdateSlotVisuals();
             }
         }
+        */
         foreach(TextMeshProUGUI textMesh in goldTextMeshes)
         {
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
@@ -168,7 +170,7 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < recipeParent.transform.childCount; i++)
             {
-                recipeSlots[i].enabled = true;
+                recipeParent.transform.GetChild(i).gameObject.SetActive(true);
             }
         }
         else
@@ -178,19 +180,45 @@ public class Inventory : MonoBehaviour
                 //if you can craft, it gets moved to top
                 if (recipeSlots[i].itemResult.Category != (ItemCategory)sortNum)
                 {
-                    recipeSlots[i].enabled = false;
+                    recipeParent.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                else
+                {
+                    recipeParent.transform.GetChild(i).gameObject.SetActive(true);
                 }
             }
         }
     }
 
-    public void SortByEquipment() 
+    /// <summary>
+    /// Sort all equipment by type, deactivate if it does not fit category
+    /// </summary>
+    /// <param name="sortNum">-1 is all, rest is ItemCategory</param>
+    public void SortByEquipment(int sortNum) 
     {
-
+        if (sortNum == -1)
+        {
+            for (int i = 0; i < _equipmentParent.transform.childCount; i++)
+            {
+                _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            {
+                //if you can craft, it gets moved to top
+                if (equipmentSlots[i].equipment.Category != (ItemCategory)sortNum)
+                {
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(false);
+                }
+                else
+                {
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                }
+            }
+        }
     }
-
-
-
 
     public void UpdateEquipmentVisuals()
     {

@@ -80,6 +80,8 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _repairShip;
     [SerializeField]
     private GameObject[] _sortButtonsCrafting;
+    [SerializeField]
+    private GameObject[] _sortButtonsEquipping;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -259,9 +261,6 @@ public class InventoryMethods : MonoBehaviour
             _trashField.SetText("0");
         }
     }
-
-
-
 
     #endregion
 
@@ -631,7 +630,7 @@ public class InventoryMethods : MonoBehaviour
     //choose button sorting
     public void ChooseButtonSort(int num)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (_sortButtonsCrafting[i].GetComponent<Image>().color == Color.white)
             {
@@ -664,6 +663,22 @@ public class InventoryMethods : MonoBehaviour
         }
 
         PlayerInventory.Instance.totalGold = totalGold;
+    }
+
+    //choose button sorting
+    public void ChooseEquipButtonSort(int num)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (_sortButtonsEquipping[i].GetComponent<Image>().color == Color.white)
+            {
+                _uiAnimMethods.ResetButton(_sortButtonsEquipping[i]);
+            }
+            if (i == num)
+            {
+                _uiAnimMethods.ChooseButton(_sortButtonsEquipping[i]);
+            }
+        }
     }
 
     public void EquipItem(Item equipment)
@@ -720,7 +735,7 @@ public class InventoryMethods : MonoBehaviour
     /// <summary>
     /// trashes the item in vault, checks number amounts
     /// </summary>
-    public void TrashVaultItem()
+    public void TrashInventoryItem()
     {
         //checks if null item
         if (_activeItem != null || _activeItem.Name != "NullItem")
@@ -733,9 +748,56 @@ public class InventoryMethods : MonoBehaviour
             {
                 ResetActiveItem();
             }
-
             PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+        }
+    }
+    public void TrashVaultItem()
+    {
+        //checks if null item
+        if (_activeItem != null || _activeItem.Name != "Null")
+        {
+            int amount = System.Convert.ToInt32(_vaultTrash.text);
 
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+        }
+    }
+    public void AddToShip()
+    {
+        if (_activeItem != null || _activeItem.Name != "Null")
+        {
+            int amount = System.Convert.ToInt32(_vaultTrash.text);
+
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+            PlayerInventory.Instance.AddItem(saved.Name, amount);
+            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+        }
+    }
+
+    public void AddToVault()
+    {
+        if (_activeItem != null || _activeItem.Name != "Null")
+        {
+            int amount = System.Convert.ToInt32(_vaultTrash.text);
+
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+            PlayerVault.Instance.AddItem(saved.Name, amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
         }
     }
     #endregion
