@@ -12,12 +12,16 @@ public class PlayerInventory : ScriptableObject
         get
         {
             if (!_instance)
+            {
                 _instance = Resources.LoadAll<PlayerInventory>("ScriptableObjectInstances")[0];
+                //_instance.InitializeInventory();
+            }
+                
             return _instance;
         }
     }
 
-    private void OnEnable()
+    private void Awake()
     {
         _instance = this;
         Debug.Log("wee woo");

@@ -33,17 +33,7 @@ public class DropManager : ScriptableObject
         {
             _dropDict[_drops[i].name] = _drops[i];
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Debug.Log(_dropDict.Count);
     }
 
     public List<Item> GetDrops(string dropType)
