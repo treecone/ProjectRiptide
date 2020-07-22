@@ -44,18 +44,32 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _itemCost;
     #endregion
+    #region MarketUI
+    [SerializeField]
+    private TextMeshProUGUI _marketTrash;
+    [SerializeField]
+    private TextMeshProUGUI _marketName;
+    [SerializeField]
+    private TextMeshProUGUI _itemDescriptionMarket;
+    [SerializeField]
+    private TextMeshProUGUI _itemCostMarket;
+    [SerializeField]
+    private GameObject[] _sortButtonsMarket;
+    [SerializeField]
+    private TextMeshProUGUI _sellName;
+    #endregion
     #region CraftingUI
     //fields for crafting
     [SerializeField]
     private TextMeshProUGUI _craftingName;
     [SerializeField]
-    private TextMeshProUGUI[] _stats;
+    private TextMeshProUGUI[] _statsCrafting;
     [SerializeField]
-    private TextMeshProUGUI _activeAbility;
+    private TextMeshProUGUI _activeAbilityCrafting;
     [SerializeField]
-    private TextMeshProUGUI _passiveAbility;
+    private TextMeshProUGUI _passiveAbilityCrafting;
     [SerializeField]
-    private GameObject[] _neededItems;
+    private GameObject[] _neededItemsCrafting;
     [SerializeField]
     private Button _craftAndUpgrade;
     [SerializeField]
@@ -65,7 +79,7 @@ public class InventoryMethods : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _repairShip;
     [SerializeField]
-    private GameObject[] _sortButtons;
+    private GameObject[] _sortButtonsCrafting;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -108,8 +122,11 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void SelectItem(GameObject gObj)
     {
-        _activeItem = gObj.GetComponent<InventorySlot>().item;
-        Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
+        if (gObj.GetComponent<InventorySlot>().item != null || gObj.GetComponent<InventorySlot>().item.Name != "Null")
+        {
+            _activeItem = gObj.GetComponent<InventorySlot>().item;
+            Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
+        }
     }
 
     /// <summary>
@@ -179,9 +196,10 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventorySlot"></param>
     public void ChooseInventoryItem()
     {
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        Debug.Log(_activeItem.Name);
+        if (_activeItem != null || _activeItem.Name != "Null")
         {
-            Debug.Log("Clicked on " + _activeItem.Name);
+            Debug.Log("Choosing " + _activeItem.Name);
             //automatically set this to 0
             _trashField.SetText("0");
             _itemName.SetText(_activeItem.Name);
@@ -190,7 +208,6 @@ public class InventoryMethods : MonoBehaviour
             //{0} did not work here
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
         }
-        
     }
     /// <summary>
     /// changes trash number
@@ -226,7 +243,7 @@ public class InventoryMethods : MonoBehaviour
     public void TrashItem()
     {
         //checks if null item
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null)
         {
             int amount = System.Convert.ToInt32(_trashField.text);
 
@@ -242,6 +259,9 @@ public class InventoryMethods : MonoBehaviour
             _trashField.SetText("0");
         }
     }
+
+
+
 
     #endregion
 
@@ -396,6 +416,119 @@ public class InventoryMethods : MonoBehaviour
     }
     #endregion
 
+    #region Market Methods
+    /// <summary>
+    /// Chooses inventory slot
+    /// </summary>
+    /// <param name="inventorySlot"></param>
+    public void ChooseMarketItem()
+    {
+        if (_activeItem != null)
+        {
+            Debug.Log("Clicked on " + _activeItem.Name);
+            //automatically set this to 0
+            _marketTrash.SetText("0");
+            _marketName.SetText(_activeItem.Name);
+            _itemDescriptionMarket.SetText(_activeItem.Description);
+            _itemCostMarket.SetText("" + _activeItem.Value);
+            //{0} did not work here
+            _sellName.SetText("Are you sure you want to sell " + _activeItem.Name + "?");
+        }
+
+    }
+
+    /// <summary>
+    /// Chooses button for market, 3 buttons
+    /// </summary>
+    /// <param name="num"></param>
+    public void ChooseButtonMarket(int num)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (_sortButtonsMarket[i].GetComponent<Image>().color == Color.white)
+            {
+                _uiAnimMethods.ResetButton(_sortButtonsMarket[i]);
+            }
+            if (i == num)
+            {
+                _uiAnimMethods.ChooseButton(_sortButtonsMarket[i]);
+            }
+        }
+    }
+
+    /// <summary>
+    /// changes trash number
+    /// </summary>
+    /// <param name="num">change number in TextMeshPro</param>
+    public void ChangeNumberMarket(int num)
+    {
+        int amount = System.Convert.ToInt32(_marketTrash.text);
+
+        //if active item exists
+        if (_activeItem != null)
+        {
+            amount += num;
+            //check for above and below minimum
+            if (amount >= _activeItem.Amount)
+            {
+                amount = _activeItem.Amount;
+            }
+            else if (amount < 0)
+            {
+                amount = 0;
+            }
+            _marketTrash.SetText("{0}", amount);
+        }
+        else
+        {
+            Debug.Log("No Item");
+        }
+    }
+
+    /// <summary>
+    /// Sells item or buys depending on bool
+    /// </summary>
+    /// <param name="sell">sell for true, buy for false</param>
+    public void SellItem(bool sell)
+    {
+        if (_activeItem != null)
+        {
+            int amount = System.Convert.ToInt32(_marketTrash.text);
+
+            Item saved = _activeItem;
+
+            if (amount >= _activeItem.Amount)
+            {
+                ResetActiveItem();
+            }
+
+            if (sell)
+            {
+                PlayerInventory.Instance.TotalGold += saved.Value * amount;
+                PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            }
+            else
+            {
+                //checks if total gold is not enough
+                if (PlayerInventory.Instance.TotalGold < saved.Value * amount)
+                {
+                    for (int i = 1; i <= amount; i++)
+                    {
+                        if (saved.Value * i > PlayerInventory.Instance.TotalGold)
+                        {
+                            amount = i - 1;
+                            break;
+                        } 
+                    }
+                }
+                PlayerInventory.Instance.TotalGold -= saved.Value * amount;
+                PlayerInventory.Instance.AddItem(saved.Name, amount);
+            }
+            _marketTrash.SetText("0");
+        }
+    }
+    #endregion
+
     #region Craft Methods
     /// <summary>
     /// expands crafting menu
@@ -425,17 +558,17 @@ public class InventoryMethods : MonoBehaviour
                         _stats[i].color = Color.green;
                     }
                     */
-                    _stats[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
+                    _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
                 }
                 else
                 {
-                    _stats[i].SetText("");
+                    _statsCrafting[i].SetText("");
                 }
             }
-            
+
             //abilities
-            _activeAbility.SetText("Active: ");
-            _passiveAbility.SetText("Passive: ");
+            _activeAbilityCrafting.SetText("Active: ");
+            _passiveAbilityCrafting.SetText("Passive: ");
             
             //ingredients
             for (int i = 0; i < 4; i++)
@@ -443,10 +576,10 @@ public class InventoryMethods : MonoBehaviour
                 if (_activeRecipe.ingredients.Count > i)
                 {
                     Item ingredient = ItemDB.Instance.FindItem(_activeRecipe.ingredients[i]);
-                    _neededItems[i].SetActive(true);
-                    _neededItems[i].transform.GetChild(0).GetComponent<Image>().sprite = ingredient.Icon;
-                    _neededItems[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
-                    _neededItems[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", PlayerInventory.Instance.CountOf(ingredient.Name), _activeRecipe.ingredientAmounts[i]);
+                    _neededItemsCrafting[i].SetActive(true);
+                    _neededItemsCrafting[i].transform.GetChild(0).GetComponent<Image>().sprite = ingredient.Icon;
+                    _neededItemsCrafting[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
+                    _neededItemsCrafting[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", PlayerInventory.Instance.CountOf(ingredient.Name), _activeRecipe.ingredientAmounts[i]);
                     if (ingredient.Amount < _activeRecipe.ingredientAmounts[i])
                     {
                         craftable = false;
@@ -454,7 +587,7 @@ public class InventoryMethods : MonoBehaviour
                 }
                 else
                 {
-                    _neededItems[i].SetActive(false);
+                    _neededItemsCrafting[i].SetActive(false);
                 }
             }
             
@@ -500,13 +633,13 @@ public class InventoryMethods : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            if (_sortButtons[i].GetComponent<Image>().color == Color.white)
+            if (_sortButtonsCrafting[i].GetComponent<Image>().color == Color.white)
             {
-                _uiAnimMethods.ResetButton(_sortButtons[i]);
+                _uiAnimMethods.ResetButton(_sortButtonsCrafting[i]);
             }
             if (i == num)
             {
-                _uiAnimMethods.ChooseButton(_sortButtons[i]);
+                _uiAnimMethods.ChooseButton(_sortButtonsCrafting[i]);
             }
         }
     }

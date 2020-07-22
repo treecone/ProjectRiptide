@@ -53,7 +53,6 @@ public class Inventory : MonoBehaviour
             }
             inventorySlots.Add(slots);
         }
-        
         //vault
         vaultSlots = new List<List<InventorySlot>>();
         foreach (GameObject vaultParent in vaultParents)
@@ -68,13 +67,13 @@ public class Inventory : MonoBehaviour
             }
             vaultSlots.Add(slots);
         }
-        
         //gold meshes
         goldTextMeshes = new List<TextMeshProUGUI>();
         foreach(GameObject g in goldTexts)
         {
             goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
         }
+        UpdateInventoryVisuals();
 
         //recipes
         recipeSlots = new List<RecipeSlot>();
@@ -135,6 +134,7 @@ public class Inventory : MonoBehaviour
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
         }
     }
+    
 
     public void UpdateRecipeVisuals()
     {

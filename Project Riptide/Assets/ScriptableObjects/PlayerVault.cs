@@ -21,18 +21,14 @@ public class PlayerVault : ScriptableObject
     {
         _instance = this;
         Debug.Log("wee woo");
-        InitializeInventory();
+        InitializeVault();
     }
     public int numItems;
     public List<Item> items;
-    public List<Item> equipment;
-    public int totalGold;
 
-    public void InitializeInventory()
+    public void InitializeVault()
     {
-        totalGold = 0;
         items = new List<Item>();
-        equipment = new List<Item>();
         for (int i = 0; i < numItems; i++)
         {
             items.Add(ItemDB.Instance.FindItem("null"));
@@ -46,11 +42,6 @@ public class PlayerVault : ScriptableObject
     /// <param name="amountToAdd">The amount of that item to be added</param>
     public void AddItem(string itemName, int amountToAdd)
     {
-        if (itemName == "gold" || itemName == "Gold")
-        {
-            totalGold += amountToAdd;
-            return;
-        }
         if (itemName == "null" || itemName == "Null")
         {
             return;
@@ -58,11 +49,6 @@ public class PlayerVault : ScriptableObject
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = ItemDB.Instance.FindItem(itemName);
-        if (itemToAdd.Category != ItemCategory.Material)
-        {
-            AddEquipment(itemToAdd);
-            return;
-        }
         //Debug.Log("Adding item " + itemName + " as " + itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
         {
@@ -142,7 +128,7 @@ public class PlayerVault : ScriptableObject
     {
         if (items.Count == 0)
         {
-            Debug.LogWarning("Nothing in inventory, nothing to delete!");
+            Debug.LogWarning("Nothing in vault, nothing to delete!");
             return false;
         }
         Item itemToRemove = ItemDB.Instance.FindItem(itemName);
@@ -164,38 +150,8 @@ public class PlayerVault : ScriptableObject
                 return true;
             }
         }
-        Debug.LogWarning("[Inventory] When removing " + amount + " of " + itemToRemove.Name + ", not enough items of that type were found in the inventory!");
+        Debug.LogWarning("[Vault] When removing " + amount + " of " + itemToRemove.Name + ", not enough items of that type were found in the inventory!");
         return false;
-    }
-
-    public List<Item> GetEquipmentOfCategory(ItemCategory category)
-    {
-        List<Item> equipmentInCategory = new List<Item>();
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Category == category)
-            {
-                equipmentInCategory.Add(equipment[i]);
-            }
-        }
-        return equipmentInCategory;
-    }
-
-    public bool AddEquipment(Item equipmentItem)
-    {
-        bool addItems = true;
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Slug == equipmentItem.Slug)
-            {
-                addItems = false;
-            }
-        }
-        if (addItems)
-        {
-            equipment.Add(equipmentItem);
-        }
-        return addItems;
     }
 
     /// <summary>
@@ -205,23 +161,12 @@ public class PlayerVault : ScriptableObject
     /// <returns>The amount of the item in the inventory</returns>
     public int CountOf(string itemName)
     {
-        if (itemName == "gold" || itemName == "Gold")
-        {
-            return totalGold;
-        }
         int count = 0;
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i].Name == itemName)
             {
                 count += items[i].Amount;
-            }
-        }
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Name == itemName)
-            {
-                count += equipment[i].Amount;
             }
         }
         return count;
