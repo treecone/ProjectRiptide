@@ -5,6 +5,7 @@ using System.IO;
 using LitJson;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/DropManager")]
+[UnityEditor.InitializeOnLoad]
 public class DropManager : ScriptableObject
 {
     public static DropManager _instance;
@@ -18,24 +19,25 @@ public class DropManager : ScriptableObject
             return _instance;
         }
     }
-
-    [SerializeField]
-    private List<DropData> _drops;
+    
 
     private Dictionary<string, DropData> _dropDict;
 
     void OnEnable()
     {
         _instance = this;
+        LoadDrops();
+    }//
+
+    private void LoadDrops()
+    {
         _dropDict = new Dictionary<string, DropData>();
-
-        for(int i = 0; i < _drops.Count; i++)
+        DropData[] drops = Resources.LoadAll<DropData>("ScriptableObjectInstances");
+        for(int i = 0; i < drops.Length; i++)
         {
-            _dropDict[_drops[i].name] = _drops[i];
+            _dropDict[drops[i].name] = drops[i];
         }
-        Debug.Log(_dropDict.Count);
     }
-
     public List<Item> GetDrops(string dropType)
     {
         List<Item> items = new List<Item>();

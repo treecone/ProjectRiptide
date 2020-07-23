@@ -12,9 +12,7 @@ public class ShipwreckDrops : MonoBehaviour
 
     [SerializeField]
     private int _count;
-
-    [SerializeField]
-    private Inventory _inventory;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +22,7 @@ public class ShipwreckDrops : MonoBehaviour
             offset = new Vector3(offset.x, 0, offset.z);
             GameObject drop = Instantiate(_lootboxPrefab, offset, Random.rotation, transform);
             Lootbox lootbox = drop.GetComponent<Lootbox>();
-            lootbox.inventory = _inventory;
+            lootbox.inventory = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Inventory>();
             lootbox.dropType = "shipwreck";
             lootbox.GenerateItems();
         }
