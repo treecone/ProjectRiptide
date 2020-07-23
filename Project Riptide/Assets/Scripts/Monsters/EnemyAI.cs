@@ -1405,15 +1405,33 @@ public partial class MonkeyBoss : Enemy
                     _rising = true;
                 }
 
-                Position += Vector3.up * (RISE_HEIGHT / RISE_TIME * Time.deltaTime);
-                _currTime += Time.deltaTime;
-
-                if (_currTime > 2.0f)
+                if (_currTime <= 2.0f)
                 {
-                    _rose = true;
+                    Position += Vector3.up * (RISE_HEIGHT / RISE_TIME * Time.deltaTime);
+                }
+
+                if (_currTime > 2.0f && !_playedScreechAnim)
+                {
                     Position = new Vector3(transform.position.x, _startPos.y + RISE_HEIGHT, transform.position.z);
                     _animator.Play(_animParm[(int)MonkeyAnim.ScreechAngry]);
+                    _playedScreechAnim = true;
                 }
+
+                if(_currTime > 3.0f && !_playedScreechParticles)
+                {
+                    ToggleAngryScreechParticles(true);
+                    _playedScreechParticles = true;
+                }
+
+                if(_currTime > 3.5f)
+                {
+                    _playedScreechParticles = false;
+                    _playedScreechAnim = false;
+                    ToggleAngryScreechParticles(false);
+                    _rose = true;
+                }
+
+                _currTime += Time.deltaTime;
             }
             else
             {
@@ -1544,7 +1562,7 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        if (_playerDistance < 30.0f)
+                        /*if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1565,10 +1583,10 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                                 StopMotion();
                             }
-                        }
+                        }*/
 
                         //Check to see if monster can use slam wave
-                        if (_playerDistance < 20.0f)
+                        if (_playerDistance < 25.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.SlamWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.SlamWave] < 0.0f && Random.Range(1, 4) == 1)
