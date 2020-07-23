@@ -22,7 +22,7 @@ public class DropManager : ScriptableObject
 
     private Dictionary<string, DropData> _dropDict;
 
-    void OnEnable()
+    void Awake()
     {
         _instance = this;
         LoadDrops();
