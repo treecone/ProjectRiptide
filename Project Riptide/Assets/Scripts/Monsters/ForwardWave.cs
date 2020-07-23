@@ -27,6 +27,7 @@ public class ForwardWave : MonoBehaviour
         {
             Destroy(GetComponentInChildren<Hitbox>().gameObject);
             GetComponentInChildren<ParticleSystem>().Stop();
+            _dying = true;
         }
     }
 

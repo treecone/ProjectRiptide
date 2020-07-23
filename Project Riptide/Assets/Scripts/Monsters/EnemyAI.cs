@@ -1399,7 +1399,7 @@ public partial class MonkeyBoss : Enemy
             //Rise out of the water when first activated
             if (!_rose)
             {
-                if(!_rising)
+                if (!_rising)
                 {
                     _currTime = 0;
                     _rising = true;
@@ -1408,20 +1408,19 @@ public partial class MonkeyBoss : Enemy
                 Position += Vector3.up * (RISE_HEIGHT / RISE_TIME * Time.deltaTime);
                 _currTime += Time.deltaTime;
 
-                if(_currTime > 2.0f)
+                if (_currTime > 2.0f)
                 {
                     _rose = true;
                     Position = new Vector3(transform.position.x, _startPos.y + RISE_HEIGHT, transform.position.z);
-                    //PLAY ANGRY SCREECH
+                    _animator.Play(_animParm[(int)MonkeyAnim.ScreechAngry]);
                 }
             }
             else
             {
-                //Phase 1: greater than 50% health
-                if (_health > _maxHealth / 2)
+                if (!_activeStates[(int)AttackState.Active])
                 {
-                    //If the Koi is not in any special
-                    if (!_activeStates[(int)AttackState.Active])
+                    //Phase 1: greater than 50% health
+                    if (_health > _maxHealth / 2)
                     {
                         FollowPlayer();
                         //ApplyFriction(0.99f);
@@ -1522,69 +1521,19 @@ public partial class MonkeyBoss : Enemy
                                 StopMotion();
                             }
                         }
-
-                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);                      
                     }
-                    else
+                    //Switch to phase 2
+                    else if (!_activeStates[(int)AttackState.FormChanged])
                     {
-                        _hostileCooldown = 1.0f;
-                        //Go through enmeies action queue
-                        if (!DoActionQueue())
-                        {
-                            _activeStates[(int)AttackState.Active] = false;
-                        }
-                    }
-                }
-                //Switch to phase 2
-                else if (!_activeStates[(int)AttackState.FormChanged])
-                {
-                    //TRANSITION MONKEY BOSS TO PHASE 2
+                        //TRANSITION MONKEY BOSS TO PHASE 2
 
-                    _storm.SetActive(true);
-                    _activeStates[(int)AttackState.FormChanged] = true;
-                    //Check to see if form changing is just beginning
-                    /*if (!_activeStates[(int)AttackState.FormChangeInProgress])
-                    {
-                        //Reset any specials the Koi may be in
-                        _activeStates[(int)AttackState.Active] = false;
-                        _specialCooldown[(int)AttackState.Active] = 5.0f;
-                        _isRaming = false;
-                        _inKnockback = false;
-                        _actionQueue.Clear();
-                        ClearHitboxes();
-                        ClearTelegraphs();
-                        _currTime = 0;
-                        StopMotion();
-                        _activeStates[(int)AttackState.FormChangeInProgress] = true;
-                        _animator.SetTrigger(_animParm[(int)CarpAnim.Dive]);
-                        PlaySplash();
-                        _initalPos = _startPos.y;
-                    }
-
-
-                    if (_currTime < 1.0f)
-                    {
-                        ApplyConstantMoveForce(Vector3.down, 0.9f * transform.localScale.y, 1.0f);
-                        _currTime += Time.deltaTime;
-                    }
-                    else
-                    {
-                        _initalPos = _initalPos - 0.9f * transform.localScale.y;
-                        ReturnToInitalPosition();
-                        //Change obstical detection position
-                        Transform detect = transform.GetChild(transform.childCount - 1);
-                        detect.position = new Vector3(detect.position.x, detect.position.y + 0.9f * transform.localScale.y, detect.position.z);
-
-                        StopMotion();
-                        _currTime = 0;
+                        _storm.SetActive(true);
+                        _animator.Play(_animParm[(int)MonkeyAnim.ScreechAngry]);
                         _activeStates[(int)AttackState.FormChanged] = true;
-                    }*/
-                }
-                //Phase 2 AI
-                else
-                {
-                    //If the Koi is not in any special
-                    if (!_activeStates[(int)AttackState.Active])
+                    }
+                    //Phase 2 AI
+                    else
                     {
                         FollowPlayer();
 
@@ -1638,7 +1587,7 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //If no wave move has selected, try and do a move from phase 1
-                        if(!_activeStates[(int)AttackState.Active])
+                        if (!_activeStates[(int)AttackState.Active])
                         {
                             //Check to see if monster can use hand push attack
                             if (_playerDistance < 25.0f)
@@ -1735,15 +1684,14 @@ public partial class MonkeyBoss : Enemy
                         }
                         //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
-                    else
+                }
+                else
+                {
+                    _hostileCooldown = 1.0f;
+                    //Go through enmeies action queue
+                    if (!DoActionQueue())
                     {
-                        _passiveCooldown = 1.0f;
-                        //Go through enmeies action queue
-                        if (!DoActionQueue())
-                        {
-                            _activeStates[(int)AttackState.Active] = false;
-                            _currTime = 0;
-                        }
+                        _activeStates[(int)AttackState.Active] = false;
                     }
                 }
             }
