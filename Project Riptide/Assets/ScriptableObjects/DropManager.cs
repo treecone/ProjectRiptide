@@ -5,6 +5,7 @@ using System.IO;
 using LitJson;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/DropManager")]
+[UnityEditor.InitializeOnLoad]
 public class DropManager : ScriptableObject
 {
     public static DropManager _instance;
@@ -22,11 +23,11 @@ public class DropManager : ScriptableObject
 
     private Dictionary<string, DropData> _dropDict;
 
-    void Awake()
+    void OnEnable()
     {
         _instance = this;
         LoadDrops();
-    }
+    }//
 
     private void LoadDrops()
     {
