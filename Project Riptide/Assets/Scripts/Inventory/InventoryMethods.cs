@@ -566,9 +566,22 @@ public class InventoryMethods : MonoBehaviour
             }
 
             //abilities
-            _activeAbilityCrafting.SetText("Active: ");
-            _passiveAbilityCrafting.SetText("Passive: ");
-            
+            if (_activeItem.PassiveText != "")
+            {
+                _activeAbilityCrafting.SetText("Active: " + _activeItem.ActiveText);
+                _passiveAbilityCrafting.SetText("Passive: " + _activeItem.PassiveText);
+            }
+            else if (_activeItem.ActiveText != "")
+            {
+                _activeAbilityCrafting.SetText("Active: " + _activeItem.ActiveText);
+                _passiveAbilityCrafting.SetText("");
+            }
+            else
+            {
+                _activeAbilityCrafting.SetText("");
+                _passiveAbilityCrafting.SetText("");
+            }
+
             //ingredients
             for (int i = 0; i < 4; i++)
             {
@@ -710,7 +723,7 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeVaultNumber(int num)
     {
-        int amount = System.Convert.ToInt32(_trashField.text);
+        int amount = System.Convert.ToInt32(_vaultTrash.text);
 
         //if active item exists
         if (_activeItem != null)
