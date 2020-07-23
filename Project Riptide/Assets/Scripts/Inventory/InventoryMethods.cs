@@ -371,7 +371,7 @@ public class InventoryMethods : MonoBehaviour
         int chunk = 0;
         if (_chunkLoader != null)
         {
-            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
+            chunk = (int)((_chunkLoader.CurrentChunkPosition.y - 1) + (_chunkLoader.CurrentChunkPosition.x - 1) * 5);
         }
         else
         {
@@ -412,7 +412,7 @@ public class InventoryMethods : MonoBehaviour
         int chunk = 0;
         if (_chunkLoader != null)
         {
-            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
+            chunk = (int)((_chunkLoader.CurrentChunkPosition.y - 1) + (_chunkLoader.CurrentChunkPosition.x - 1) * 5);
         }
         else
         {
