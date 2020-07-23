@@ -77,7 +77,7 @@ public class Inventory : MonoBehaviour
         //recipes
         recipeSlots = new List<RecipeSlot>();
         List<Recipe> recipes = Crafting.Instance.Recipes();
-        for (int i = 0; i < recipes.Count; i++)
+        for (int i = 0; i < Mathf.Min(recipes.Count, recipeSlots.Count); i++)
         {
             GameObject newRecipe = Instantiate(recipePrefab, recipeParent.transform);
             newRecipe.GetComponent<RecipeSlot>().Recipe = recipes[i];
@@ -90,7 +90,7 @@ public class Inventory : MonoBehaviour
 
         //equipping
         equipmentSlots = new List<EquipmentSlot>();
-        for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
+        for (int i = 0; i < Mathf.Min(equipmentSlots.Count,PlayerInventory.Instance.equipment.Count); i++)
         {
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item

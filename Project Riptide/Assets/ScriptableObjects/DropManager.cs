@@ -18,24 +18,25 @@ public class DropManager : ScriptableObject
             return _instance;
         }
     }
-
-    [SerializeField]
-    private List<DropData> _drops;
+    
 
     private Dictionary<string, DropData> _dropDict;
 
     void OnEnable()
     {
         _instance = this;
-        _dropDict = new Dictionary<string, DropData>();
-
-        for(int i = 0; i < _drops.Count; i++)
-        {
-            _dropDict[_drops[i].name] = _drops[i];
-        }
-        Debug.Log(_dropDict.Count);
+        LoadDrops();
     }
 
+    private void LoadDrops()
+    {
+        _dropDict = new Dictionary<string, DropData>();
+        DropData[] drops = Resources.LoadAll<DropData>("ScriptableObjectInstances");
+        for(int i = 0; i < drops.Length; i++)
+        {
+            _dropDict[drops[i].name] = drops[i];
+        }
+    }
     public List<Item> GetDrops(string dropType)
     {
         List<Item> items = new List<Item>();

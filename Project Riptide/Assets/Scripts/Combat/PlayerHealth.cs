@@ -101,7 +101,9 @@ public class PlayerHealth : MonoBehaviour
     public void Die()
     {
         _deathUI.SetActive(true);
+        //remove all status effects
 
+        int buybackCost = (int)(maxHealth * 2);
         _inventoryMethods.PauseGame();
     }
 
