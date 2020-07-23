@@ -27,7 +27,6 @@ public class RecipeSlot : MonoBehaviour
 
     public void UpdateSlotVisuals() //Updates the image and amount text
     {
-        //if it has not been crafted yet
         //change rarity thing here
         if (itemResult.Rarity == 1)
         {

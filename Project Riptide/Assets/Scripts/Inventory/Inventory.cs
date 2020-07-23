@@ -73,6 +73,7 @@ public class Inventory : MonoBehaviour
         {
             goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
         }
+        UpdateInventoryVisuals();
 
         //recipes
         recipeSlots = new List<RecipeSlot>();
