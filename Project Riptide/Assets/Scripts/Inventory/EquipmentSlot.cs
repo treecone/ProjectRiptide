@@ -75,13 +75,13 @@ public class EquipmentSlot : MonoBehaviour
         {
             //active
             gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText("" + equipment.ActiveText);
-            gameObject.transform.GetChild(8).GetComponent<GameObject>().SetActive(false);
+            gameObject.transform.GetChild(8).gameObject.SetActive(false);
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 276.8971f);
         }
         else
         {
-            gameObject.transform.GetChild(7).GetComponent<GameObject>().SetActive(false);
-            gameObject.transform.GetChild(8).GetComponent<GameObject>().SetActive(false);
+            gameObject.transform.GetChild(7).gameObject.SetActive(false);
+            gameObject.transform.GetChild(8).gameObject.SetActive(false);
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 225.4819f);
         }
     }

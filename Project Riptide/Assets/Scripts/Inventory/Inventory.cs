@@ -78,7 +78,7 @@ public class Inventory : MonoBehaviour
         //recipes
         recipeSlots = new List<RecipeSlot>();
         List<Recipe> recipes = Crafting.Instance.Recipes();
-        for (int i = 0; i < Mathf.Min(recipes.Count, recipeSlots.Count); i++)
+        for (int i = 0; i < recipes.Count; i++)
         {
             GameObject newRecipe = Instantiate(recipePrefab, recipeParent.transform);
             newRecipe.GetComponent<RecipeSlot>().Recipe = recipes[i];
@@ -91,7 +91,7 @@ public class Inventory : MonoBehaviour
 
         //generate equipment prefab for currently owned items (base equipment)
         equipmentSlots = new List<EquipmentSlot>();
-        for (int i = 0; i < Mathf.Min(equipmentSlots.Count,PlayerInventory.Instance.equipment.Count); i++)
+        for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
         {
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
@@ -149,7 +149,7 @@ public class Inventory : MonoBehaviour
 
     public void UpdateRecipeVisuals()
     {
-        for (int i = 0; i < recipeParent.transform.childCount; i++)
+        for (int i = 0; i < recipeSlots.Count; i++)
         {
             //destroy the recipe slot if it has been crafted
             if (!Crafting.Instance.IsUncrafted(recipeSlots[i].Recipe))
@@ -164,12 +164,12 @@ public class Inventory : MonoBehaviour
 
     public void SortCraftRecipes()
     {
-        for (int i = 0; i < recipeParent.transform.childCount; i++)
+        for (int i = 0; i < recipeSlots.Count; i++)
         {
             //if you can craft, it gets moved to top
             if (Crafting.Instance.CanCraft(recipeSlots[i].Recipe))  
             {
-                recipeParent.transform.GetChild(i).SetAsFirstSibling();
+                recipeSlots[i].gameObject.transform.SetAsFirstSibling();
             }
         }
     }
@@ -178,23 +178,23 @@ public class Inventory : MonoBehaviour
     {
         if (sortNum == -1)
         {
-            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            for (int i = 0; i < recipeSlots.Count; i++)
             {
-                recipeParent.transform.GetChild(i).gameObject.SetActive(true);
+                recipeSlots[i].gameObject.SetActive(true);
             }
         }
         else
         {
-            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            for (int i = 0; i < recipeSlots.Count; i++)
             {
                 //if you can craft, it gets moved to top
                 if (recipeSlots[i].itemResult.Category != (ItemCategory)sortNum)
                 {
-                    recipeParent.transform.GetChild(i).gameObject.SetActive(false);
+                    recipeSlots[i].gameObject.SetActive(false);
                 }
                 else
                 {
-                    recipeParent.transform.GetChild(i).gameObject.SetActive(true);
+                    recipeSlots[i].gameObject.SetActive(true);
                 }
             }
         }
@@ -237,13 +237,13 @@ public class Inventory : MonoBehaviour
     {
         foreach (EquipmentSlot equipment in equipmentSlots)
         {
-            if (PlayerInventory.Instance.GetFromName(equipment.equipment.Name) == null)
+            if (PlayerInventory.Instance.CountOf(equipment.equipment.Name) > 0)
             {
-                equipment.gameObject.SetActive(false);
+                equipment.gameObject.SetActive(true);
             }
             else
             {
-                equipment.gameObject.SetActive(true);
+                equipment.gameObject.SetActive(false);
             }
             equipment.UpdateSlotVisuals();
         }
