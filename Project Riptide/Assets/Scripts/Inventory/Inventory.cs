@@ -96,7 +96,7 @@ public class Inventory : MonoBehaviour
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
             newEquipment.GetComponent<EquipmentSlot>().equipment = PlayerInventory.Instance.equipment[i];
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
@@ -106,7 +106,7 @@ public class Inventory : MonoBehaviour
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
             newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
@@ -210,7 +210,10 @@ public class Inventory : MonoBehaviour
         {
             for (int i = 0; i < equipmentSlots.Count; i++)
             {
-                _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                if (PlayerInventory.Instance.CountOf(equipmentSlots[i].equipment.Name) > 0)
+                {
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                }
             }
         }
         else
@@ -224,7 +227,10 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                    if (PlayerInventory.Instance.CountOf(equipmentSlots[i].equipment.Name) > 0)
+                    {
+                        _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
+                    }
                 }
             }
         }

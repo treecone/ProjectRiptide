@@ -253,6 +253,7 @@ public class PlayerInventory : ScriptableObject
             if (equipment[i].Slug == name || equipment[i].Name == name)
             {
                 category = equipment[i].Category;
+                foundEquip = equipment[i];
             }
         }
         for(int i = 0; i < equipment.Count; i++)
@@ -260,7 +261,8 @@ public class PlayerInventory : ScriptableObject
             if(equipment[i] == foundEquip)
             {
                 equipment[i].Equipped = true;
-            } else
+            }
+            else
             {
                 if(equipment[i].Category == category)
                 {
