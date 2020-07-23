@@ -271,6 +271,7 @@ public class PlayerInventory : ScriptableObject
             }
         }
     }
+
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>
