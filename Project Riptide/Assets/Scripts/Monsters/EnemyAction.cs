@@ -1965,7 +1965,7 @@ public partial class MonkeyBoss : Enemy
             _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
             _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
 
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
 
         LookAtPlayer();
@@ -1995,7 +1995,7 @@ public partial class MonkeyBoss : Enemy
 
         if (time >= MAX_TIME)
         {
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             _inKnockback = false;
             _rightHand.StopMotion();
             ClearHitboxes();
@@ -2028,7 +2028,7 @@ public partial class MonkeyBoss : Enemy
             _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
             _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0f, Vector2.zero, 1000));
 
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
 
         //Right hand move back to original position
@@ -2057,7 +2057,7 @@ public partial class MonkeyBoss : Enemy
 
         if (time >= MAX_TIME)
         {
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             ClearHitboxes();
             //Set right hand back to normal
             ResetRightHand();
@@ -2114,6 +2114,7 @@ public partial class MonkeyBoss : Enemy
         if(time == 0)
         {
             _moveRightWithBody = false;
+            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
         }
 
         LookAtPlayer();
@@ -2154,12 +2155,13 @@ public partial class MonkeyBoss : Enemy
 
             if(DoTelegraphs())
             {
-                CreateRightHandTelegraph(Vector3.zero, new Vector3(5.0f, 1, 15.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
+                CreateRightHandTelegraph(Vector3.forward * 4.0f, new Vector3(5.0f, 1, 15.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
                 _telegraphs[0].transform.rotation = Quaternion.LookRotation(playerDirection);
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
+            CreateRightHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500);
 
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
+            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
         }
 
         if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
@@ -2176,6 +2178,7 @@ public partial class MonkeyBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            ClearHitboxes();
             _rightHand.StopMotion();
             _leftHand.StopMotion();
             return false;
@@ -2211,7 +2214,7 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
 
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
+            CreateLeftHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500);
         }
 
         if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
@@ -2227,6 +2230,7 @@ public partial class MonkeyBoss : Enemy
 
         if (time >= MAX_TIME)
         {
+            ClearHitboxes();
             ResetRightHand();
             _leftHand.StopMotion();
             return false;
@@ -2308,8 +2312,8 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 12.0f + Vector3.down;
             }
 
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
 
         //Move hands after waiting a couple frames
@@ -2360,8 +2364,8 @@ public partial class MonkeyBoss : Enemy
             ClearHitboxes();
             _leftHand.StopMotion();
             _rightHand.StopMotion();
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
         else
@@ -2508,8 +2512,8 @@ public partial class MonkeyBoss : Enemy
                 _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
                 _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
 
-                _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
-                _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+                _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
+                _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
             }
 
             if (!_inKnockback)
@@ -2541,8 +2545,8 @@ public partial class MonkeyBoss : Enemy
             ClearHitboxes();
             _leftHand.StopMotion();
             _rightHand.StopMotion();
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
         else
@@ -2570,9 +2574,15 @@ public partial class MonkeyBoss : Enemy
 
         LookAtPlayer();
 
-        if(time >= MAX_TIME)
+        if(time >= 0.25f && !_inKnockback)
         {
             _animator.Play(_animParm[(int)MonkeyAnim.ScreechAttack]);
+            _inKnockback = true;
+        }
+
+        if(time >= MAX_TIME)
+        {
+            _inKnockback = false;
             return false;
         }
         else
@@ -2632,7 +2642,7 @@ public partial class MonkeyBoss : Enemy
             {
                 CreateRightHandTelegraph(new Vector3(0, -1f, 15.0f / transform.localScale.z), new Vector3(5.0f, 1, 30.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
 
             _initalPos = _telegraphs[0].transform.position.y;
         }
@@ -2688,7 +2698,7 @@ public partial class MonkeyBoss : Enemy
             ForwardWave wave = Instantiate(_forwardWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
             wave.StartWave(25.0f, 0.6f, 20, 2000);
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
         else
@@ -2717,7 +2727,7 @@ public partial class MonkeyBoss : Enemy
             _rightHandReturnDist = Vector3.Magnitude(transform.TransformPoint(_rightHandStartPos) - _rightHand.Position);
             _initalPos = _telegraphs[0].transform.position.y;
 
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
 
         LookAtPlayer();
@@ -2778,7 +2788,7 @@ public partial class MonkeyBoss : Enemy
             ForwardWave wave = Instantiate(_forwardWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
             wave.StartWave(25.0f, 0.6f, 20, 2000);
-            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Idle]);
+            _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
         else
@@ -2807,7 +2817,7 @@ public partial class MonkeyBoss : Enemy
             _leftHandReturnDist = Vector3.Magnitude(transform.TransformPoint(_leftHandStartPos) - _leftHand.Position);
             _initalPos = _telegraphs[0].transform.position.y;
 
-            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Still]);
+            _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
 
         LookAtPlayer();
@@ -2930,6 +2940,8 @@ public partial class MonkeyBoss : Enemy
                 CreateLeftHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
                 CreateRightHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
             }
+            _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
+            _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
         }
 
         if(time >= WAIT_TIME)
@@ -2941,12 +2953,6 @@ public partial class MonkeyBoss : Enemy
                     ClearTelegraphs();
                 }
             }
-           if(!_inKnockback)
-            {
-                _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
-                _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
-                _inKnockback = true;
-            }
         }
 
         if (time >= MAX_TIME)
@@ -2955,7 +2961,6 @@ public partial class MonkeyBoss : Enemy
             rightWave.StartWave(10.0f, 0.8f, 20, 2000);
             CircleWave leftWave = Instantiate(_circleWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<CircleWave>();
             leftWave.StartWave(10.0f, 0.8f, 20, 2000);
-            _inKnockback = false;
             return false;
         }
         else

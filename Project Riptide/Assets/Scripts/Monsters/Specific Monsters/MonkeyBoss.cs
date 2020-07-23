@@ -14,6 +14,8 @@ public partial class MonkeyBoss : Enemy
     [SerializeField]
     private GameObject _screechParticles;
     [SerializeField]
+    private GameObject _angryScreechParticles;
+    [SerializeField]
     private GameObject _storm;
     [SerializeField]
     private GameObject _forwardWavePrefab;
@@ -37,6 +39,8 @@ public partial class MonkeyBoss : Enemy
 
     private bool _rising;
     private bool _rose;
+    private bool _playedScreechAnim;
+    private bool _playedScreechParticles;
 
     private Vector3 _screechPos;
 
@@ -96,8 +100,13 @@ public partial class MonkeyBoss : Enemy
         _leftHandAnimator = _leftHand.GetComponentInChildren<Animator>();
         _rightHandAnimator = _rightHand.GetComponentInChildren<Animator>();
 
+        //Clear particles
         _screechPos = _screechParticles.transform.position;
         foreach (ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())
+        {
+            particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+        foreach (ParticleSystem particles in _angryScreechParticles.GetComponentsInChildren<ParticleSystem>())
         {
             particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
@@ -135,6 +144,12 @@ public partial class MonkeyBoss : Enemy
     protected override void OnDeath()
     {
         _storm.SetActive(false);
+        _leftHand.StopMotion();
+        _rightHand.StopMotion();
+        _moveLeftWithBody = false;
+        _moveRightWithBody = false;
+        _leftHand.ApplyForce(Vector3.down * 50);
+        _rightHand.ApplyForce(Vector3.down * 50);
         base.OnDeath();
     }
 
@@ -180,6 +195,28 @@ public partial class MonkeyBoss : Enemy
         else
         {
             foreach (ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())
+            {
+                particles.Stop();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Toggle screech particles on or off
+    /// </summary>
+    /// <param name="on"></param>
+    protected void ToggleAngryScreechParticles(bool on)
+    {
+        if (on)
+        {
+            foreach (ParticleSystem particles in _angryScreechParticles.GetComponentsInChildren<ParticleSystem>())
+            {
+                particles.Play();
+            }
+        }
+        else
+        {
+            foreach (ParticleSystem particles in _angryScreechParticles.GetComponentsInChildren<ParticleSystem>())
             {
                 particles.Stop();
             }

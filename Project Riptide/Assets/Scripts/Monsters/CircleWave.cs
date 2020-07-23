@@ -23,13 +23,17 @@ public class CircleWave : MonoBehaviour
     {
         if (_currLife < _lifeTime)
         {
+            particles.Stop();
+            particles.Clear();
             ParticleSystem.ShapeModule shape = particles.shape;
             shape.radius += _dist / _lifeTime * Time.deltaTime;
             ParticleSystem.EmissionModule emission = particles.emission;
             emission.rateOverTime = 30 * shape.radius;
+            particles.Play();
 
             _hitbox.transform.localScale = new Vector3(shape.radius * 2, 10, shape.radius * 2);
             _currLife += Time.deltaTime;
+
         }
 
         if (_currLife >= _lifeTime && !_dying)
