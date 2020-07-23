@@ -288,6 +288,13 @@ public class PlayerInventory : ScriptableObject
                 count += items[i].Amount;
             }
         }
+        for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
+        {
+            if (PlayerVault.Instance.items[i].Name == itemName)
+            {
+                count += PlayerVault.Instance.items[i].Amount;
+            }
+        }
         for (int i = 0; i < equipment.Count; i++)
         {
             if (equipment[i].Name == itemName)

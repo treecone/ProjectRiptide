@@ -84,6 +84,8 @@ public class InventoryMethods : MonoBehaviour
     private GameObject[] _sortButtonsEquipping;
     [SerializeField]
     private Image[] _equippedImages;
+    [SerializeField]
+    private GameObject _didCraft;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -594,7 +596,7 @@ public class InventoryMethods : MonoBehaviour
             }
 
             //ingredients
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 5; i++)
             {
                 if (_activeRecipe.ingredients.Count > i)
                 {
@@ -648,7 +650,15 @@ public class InventoryMethods : MonoBehaviour
     //use this to craft based on selected item
     public void Craft()
     {
-        Crafting.Instance.Craft(_activeRecipe);
+        if (Crafting.Instance.CanCraft(_activeRecipe))
+        {
+            Crafting.Instance.Craft(_activeRecipe);
+            _didCraft.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("Cannot Craft");
+        }
     }
 
     //choose button sorting

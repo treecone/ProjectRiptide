@@ -208,14 +208,14 @@ public class Inventory : MonoBehaviour
     {
         if (sortNum == -1)
         {
-            for (int i = 0; i < _equipmentParent.transform.childCount; i++)
+            for (int i = 0; i < equipmentSlots.Count; i++)
             {
                 _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
             }
         }
         else
         {
-            for (int i = 0; i < recipeParent.transform.childCount; i++)
+            for (int i = 0; i < equipmentSlots.Count; i++)
             {
                 //if you can craft, it gets moved to top
                 if (equipmentSlots[i].equipment.Category != (ItemCategory)sortNum)
