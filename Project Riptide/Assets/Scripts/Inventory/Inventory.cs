@@ -73,6 +73,7 @@ public class Inventory : MonoBehaviour
         {
             goldTextMeshes.Add(g.GetComponent<TextMeshProUGUI>());
         }
+        UpdateInventoryVisuals();
 
         //recipes
         recipeSlots = new List<RecipeSlot>();
@@ -88,12 +89,23 @@ public class Inventory : MonoBehaviour
         }
         UpdateRecipeVisuals();
 
-        //equipping
+        //generate equipment prefab for currently owned items (base equipment)
         equipmentSlots = new List<EquipmentSlot>();
         for (int i = 0; i < Mathf.Min(equipmentSlots.Count,PlayerInventory.Instance.equipment.Count); i++)
         {
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
+            newEquipment.GetComponent<EquipmentSlot>().equipment = PlayerInventory.Instance.equipment[i];
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+            equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
+        }
+        //generates equipment prefab for all items
+        for (int i = 0; i < recipes.Count; i++)
+        {
+            GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
+            //assign item
+            newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
@@ -120,7 +132,6 @@ public class Inventory : MonoBehaviour
                 inventory[i].UpdateSlotVisuals();
             }
         }
-        /*
         foreach (List<InventorySlot> vault in vaultSlots)
         {
             for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
@@ -129,7 +140,6 @@ public class Inventory : MonoBehaviour
                 vault[i].UpdateSlotVisuals();
             }
         }
-        */
         foreach(TextMeshProUGUI textMesh in goldTextMeshes)
         {
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
@@ -148,8 +158,8 @@ public class Inventory : MonoBehaviour
                 recipeSlots.RemoveAt(i);
             }
             recipeSlots[i].UpdateSlotVisuals();
-            SortCraftRecipes();
         }
+        SortCraftRecipes();
     }
 
     public void SortCraftRecipes()
@@ -220,10 +230,21 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// goes through and enables and disables the equipment that is valid
+    /// </summary>
     public void UpdateEquipmentVisuals()
     {
         foreach (EquipmentSlot equipment in equipmentSlots)
         {
+            if (PlayerInventory.Instance.GetFromName(equipment.equipment.Name) == null)
+            {
+                equipment.gameObject.SetActive(false);
+            }
+            else
+            {
+                equipment.gameObject.SetActive(true);
+            }
             equipment.UpdateSlotVisuals();
         }
     }

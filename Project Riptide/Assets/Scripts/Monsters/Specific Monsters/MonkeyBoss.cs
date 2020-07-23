@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MonkeyAnim { ScreechAttack = 2, ScreechAngry = 3}
+public enum MonkeyAnim { ScreechAttack = 2, ScreechAngry = 3, Return = 4, Idle = 5, Swipe = 6, Still = 7, Slam = 8}
 public enum MonkeyAttackState { HandPush = 2, HandSwipe = 3, HandClap = 4, Protect = 5, Screech = 6, PushWave = 7, SlamWave = 8 }
 
 public partial class MonkeyBoss : Enemy
@@ -29,6 +29,8 @@ public partial class MonkeyBoss : Enemy
     private bool _rotateLeftWithBody;
     private bool _moveRightWithBody;
     private bool _rotateRightWithBody;
+    private Animator _leftHandAnimator;
+    private Animator _rightHandAnimator;
 
     private const float RISE_HEIGHT = 10.0f;
     private const float RISE_TIME = 2.0f;
@@ -59,11 +61,16 @@ public partial class MonkeyBoss : Enemy
         _maxRadius = 240.0f;
         _specialCooldown = new float[9] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
-        _animParm = new int[4] {
+        _animParm = new int[9] {
                     Animator.StringToHash("die"),
                     Animator.StringToHash("velocity"),
                     Animator.StringToHash("screechAttack"),
-                    Animator.StringToHash("screechAngry")};
+                    Animator.StringToHash("screechAngry"),
+                    Animator.StringToHash("return"),
+                    Animator.StringToHash("idle"),
+                    Animator.StringToHash("swipe"),
+                    Animator.StringToHash("still"),
+                    Animator.StringToHash("slam")};
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
@@ -86,6 +93,8 @@ public partial class MonkeyBoss : Enemy
         _moveRightWithBody = true;
         _rotateLeftWithBody = true;
         _rotateRightWithBody = true;
+        _leftHandAnimator = _leftHand.GetComponentInChildren<Animator>();
+        _rightHandAnimator = _rightHand.GetComponentInChildren<Animator>();
 
         _screechPos = _screechParticles.transform.position;
         foreach (ParticleSystem particles in _screechParticles.GetComponentsInChildren<ParticleSystem>())

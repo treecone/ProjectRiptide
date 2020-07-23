@@ -24,6 +24,7 @@ public class PlayerInventory : ScriptableObject
     private void Awake()
     {
         _instance = this;
+        Debug.Log("wee woo");
         InitializeInventory();
     }
     public int numItems;

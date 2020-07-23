@@ -35,6 +35,7 @@ public class EquipmentSlot : MonoBehaviour
 
         //change item icon
         gameObject.transform.GetChild(0).GetChild(1).GetComponent<Image>().sprite = equipment.Icon;
+        
         //change item name
         gameObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText(equipment.Name);
         //change stats
@@ -61,19 +62,19 @@ public class EquipmentSlot : MonoBehaviour
         }
 
         //check for passive
-        if (true)
+        if (equipment.PassiveText != "")
         {
             //active
-            gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText(equipment.Name);
+            gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText("" + equipment.ActiveText);
             //active and passive
-            gameObject.transform.GetChild(8).GetComponent<TextMeshProUGUI>().SetText(equipment.Name);
+            gameObject.transform.GetChild(8).GetComponent<TextMeshProUGUI>().SetText("" + equipment.PassiveText);
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 384.9744f);
         }
         //check for active
-        else if (true)
+        else if (equipment.ActiveText != "") 
         {
             //active
-            gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText(equipment.Name);
+            gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText("" + equipment.ActiveText);
             gameObject.transform.GetChild(8).GetComponent<GameObject>().SetActive(false);
             gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 276.8971f);
         }

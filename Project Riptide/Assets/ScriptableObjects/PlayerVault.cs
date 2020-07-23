@@ -38,7 +38,7 @@ public class PlayerVault : ScriptableObject
     }
 
     /// <summary>
-    /// Adds items to the inventory
+    /// Adds items to the vault
     /// </summary>
     /// <param name="itemName">The name of the item to be added</param>
     /// <param name="amountToAdd">The amount of that item to be added</param>
@@ -64,7 +64,7 @@ public class PlayerVault : ScriptableObject
                 {
                     //Debug.Log("can fit rest of items in this slot, finishing");
                     item.Amount += amountToAddTemp;
-                    return; //Item is completely in the inventory now, end
+                    return; //Item is completely in the vault now, end
                 }
                 else //amount to add is too much, split it up
                 {
@@ -112,7 +112,7 @@ public class PlayerVault : ScriptableObject
             }
             else
             {
-                //Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
+                //Debug.LogWarning("[Vault] There is no space left for the rest of the items!");
                 return;
             }
         }
@@ -121,7 +121,7 @@ public class PlayerVault : ScriptableObject
     }
 
     /// <summary>
-    /// Removes items from the inventory
+    /// Removes items from the vault
     /// </summary>
     /// <param name="itemName">The name of the item to be removed</param>
     /// <param name="amount">The amount of the item to be removed</param>
@@ -152,15 +152,15 @@ public class PlayerVault : ScriptableObject
                 return true;
             }
         }
-        Debug.LogWarning("[Vault] When removing " + amount + " of " + itemToRemove.Name + ", not enough items of that type were found in the inventory!");
+        Debug.LogWarning("[Vault] When removing " + amount + " of " + itemToRemove.Name + ", not enough items of that type were found in the vault!");
         return false;
     }
 
     /// <summary>
-    /// Gets the total amount of an item in the inventory, regardless of how it is stacked
+    /// Gets the total amount of an item in the vault, regardless of how it is stacked
     /// </summary>
     /// <param name="itemName">The name of the item you want to count</param>
-    /// <returns>The amount of the item in the inventory</returns>
+    /// <returns>The amount of the item in the vault</returns>
     public int CountOf(string itemName)
     {
         int count = 0;
