@@ -82,6 +82,8 @@ public class InventoryMethods : MonoBehaviour
     private GameObject[] _sortButtonsCrafting;
     [SerializeField]
     private GameObject[] _sortButtonsEquipping;
+    [SerializeField]
+    private Image[] _equippedImages;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -128,6 +130,15 @@ public class InventoryMethods : MonoBehaviour
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
             Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
+        }
+    }
+
+    public void SelectEquipment(GameObject gObj)
+    {
+        if (gObj.GetComponent<EquipmentSlot>().equipment != null || gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
+        {
+            _activeItem = gObj.GetComponent<EquipmentSlot>().equipment;
+            Debug.Log("Selected " + gObj.GetComponent<EquipmentSlot>().equipment.Name);
         }
     }
 
