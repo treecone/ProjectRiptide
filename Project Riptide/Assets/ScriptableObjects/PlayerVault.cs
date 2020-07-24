@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/PlayerVault")]
-[UnityEditor.InitializeOnLoad]
 public class PlayerVault : ScriptableObject
 {
     private static PlayerVault _instance;
