@@ -33,13 +33,13 @@ public class CircleWave : MonoBehaviour
 
             _hitbox.transform.localScale = new Vector3(shape.radius * 2, 10, shape.radius * 2);
             _currLife += Time.deltaTime;
-
         }
 
         if (_currLife >= _lifeTime && !_dying)
         {
             GetComponentInChildren<ParticleSystem>().Stop();
-            Destroy(_hitbox);
+            Destroy(_hitbox.gameObject);
+            _dying = true;
         }
     }
 
