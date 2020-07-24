@@ -156,7 +156,7 @@ public class Inventory : MonoBehaviour
             //destroy the recipe slot if it has been crafted
             if (!Crafting.Instance.IsUncrafted(recipeSlots[i].Recipe))
             {
-                Destroy(recipeSlots[i]);
+                Destroy(recipeSlots[i].gameObject);
                 recipeSlots.RemoveAt(i);
             }
             recipeSlots[i].UpdateSlotVisuals();

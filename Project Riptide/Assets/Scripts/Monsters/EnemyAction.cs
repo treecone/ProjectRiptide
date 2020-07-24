@@ -1924,6 +1924,7 @@ public partial class MonkeyBoss : Enemy
             {
                 CreateRightHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 22.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
@@ -2115,6 +2116,7 @@ public partial class MonkeyBoss : Enemy
         {
             _moveRightWithBody = false;
             _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
@@ -2159,7 +2161,7 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.rotation = Quaternion.LookRotation(playerDirection);
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
-            CreateRightHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500);
+            _hitboxes.Add(CreateRightHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500));
 
             _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
         }
@@ -2214,7 +2216,7 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
 
-            CreateLeftHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500);
+            _hitboxes.Add(CreateLeftHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500));
         }
 
         if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
@@ -2256,6 +2258,7 @@ public partial class MonkeyBoss : Enemy
             _rotateRightWithBody = false;
             _moveLeftWithBody = false;
             _rotateLeftWithBody = false;
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
@@ -2427,6 +2430,7 @@ public partial class MonkeyBoss : Enemy
         {
             _moveLeftWithBody = false;
             _moveRightWithBody = false;
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
@@ -2570,6 +2574,7 @@ public partial class MonkeyBoss : Enemy
             {
                 CreateTelegraph(new Vector3(0, -2f, 20f), new Vector3(40f, 0, 40.0f), Quaternion.identity, TelegraphType.Cone, true);
             }
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
 
         LookAtPlayer();
@@ -2645,6 +2650,8 @@ public partial class MonkeyBoss : Enemy
             _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
 
             _initalPos = _telegraphs[0].transform.position.y;
+
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
@@ -2897,6 +2904,7 @@ public partial class MonkeyBoss : Enemy
         {
             _moveRightWithBody = false;
             _moveLeftWithBody = false;
+            _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
         LookAtPlayer();
