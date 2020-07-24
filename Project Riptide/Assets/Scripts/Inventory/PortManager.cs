@@ -64,7 +64,7 @@ public class PortManager : MonoBehaviour
 
     public void LeavePort()
     {
-        _player.GetComponent<ShipMovement>().Position += new Vector3(5, 0, 5);
+        _player.GetComponent<ShipMovement>().Position += new Vector3(15, 0, 15);
         _inPort = false;
         _portUI.SetActive(false);
         _inventoryMethods.UnpauseGame();
