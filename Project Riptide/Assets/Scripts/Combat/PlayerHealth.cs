@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -19,7 +20,16 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private GameObject _deathUI;
     [SerializeField]
+    private GameObject buybackText;
+    [SerializeField]
+    private GameObject buybackButton;
+    [SerializeField]
     private InventoryMethods _inventoryMethods;
+    [SerializeField]
+    private InputManager _inputManager;
+    private bool dead;
+    private bool canBuyback;
+    private int buybackCost;
 
     public float Health { get; }
     public float MaxHealth { get; }
@@ -33,6 +43,7 @@ public class PlayerHealth : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
         healthBar.UpdateHealth(health);
         camera = Camera.main;
+        dead = false;
     }
 
     private void Update()
@@ -89,7 +100,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
             healthBar.UpdateHealth(health);
-            if (health <= 0)
+            if (health <= 0 && !dead)
             {
                 health = 0;
                 Die();
@@ -101,15 +112,50 @@ public class PlayerHealth : MonoBehaviour
     public void Die()
     {
         _deathUI.SetActive(true);
-        //remove all status effects
+        dead = true;
+        gameObject.GetComponent<StatusEffects>().ClearStatuses();
 
-        int buybackCost = (int)(maxHealth * 2);
+        buybackCost = (int)(maxHealth * 2);
+        buybackText.GetComponent<TMPro.TextMeshProUGUI>().text = "" + buybackCost;
+        if (buybackCost > PlayerInventory.Instance.TotalGold)
+        {
+            buybackButton.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+            canBuyback = false;
+        } else
+        {
+            buybackButton.GetComponent<Image>().color = new Color(1,1,1,1);
+            canBuyback = true;
+        }
         _inventoryMethods.PauseGame();
     }
 
-    public void Respawn()
+    public void Respawn(bool inPlace)
     {
-        health = maxHealth;
-        _inventoryMethods.UnpauseGame();
+        if(inPlace)
+        {
+            if(!canBuyback)
+            {
+                //not enough money to buyback
+                return;
+            }
+        }
+        if(dead)
+        {
+            health = maxHealth;
+            _inputManager.ResetMovement();
+            if(PortManager.LastPortVisited && !inPlace)
+            {
+                transform.position = PortManager.LastPortVisited.transform.position + new Vector3(5, 0, 5);
+                transform.LookAt(PortManager.LastPortVisited.transform);
+                transform.rotation.SetEulerAngles(0, transform.rotation.eulerAngles.y, 0);
+                transform.Rotate(0, 180, 0);
+            }
+            _deathUI.SetActive(false);
+            if(inPlace)
+            {
+                PlayerInventory.Instance.TotalGold -= buybackCost;
+            }
+            _inventoryMethods.UnpauseGame();
+        }
     }
 }
