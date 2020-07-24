@@ -28,6 +28,7 @@ public class CannonBallBehavior : MonoBehaviour
     {
         if(transform.position.y < -2)
         {
+            SoundManager.instance.PlaySound("Splash");
             Destroy(this.gameObject);
         }
     }

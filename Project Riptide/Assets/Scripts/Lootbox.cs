@@ -19,6 +19,8 @@ public class Lootbox : MonoBehaviour
     private MeshRenderer _meshRenderer;
     private Hitbox _hitbox;
 
+    private int rarity;
+
     private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
@@ -56,6 +58,7 @@ public class Lootbox : MonoBehaviour
         }
 
         _meshRenderer.material = _rarityMaterials[maxRarity - 1];
+        rarity = maxRarity;
 
     }
     public void GenerateItems()
@@ -83,6 +86,22 @@ public class Lootbox : MonoBehaviour
 
             }
             inventory.UpdateInventoryVisuals();
+            switch (rarity)
+            {
+                case 1:
+                    SoundManager.instance.PlaySound("ItemCommon");
+                    break;
+                case 2:
+                    SoundManager.instance.PlaySound("ItemUncommon");
+                    break;
+                case 3:
+                    SoundManager.instance.PlaySound("ItemRare");
+                    break;
+                case 4:
+                    SoundManager.instance.PlaySound("ItemLegendary");
+                    break;
+            }
+
             Destroy(gameObject);
         }
 
