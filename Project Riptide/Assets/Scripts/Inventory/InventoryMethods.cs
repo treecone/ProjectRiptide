@@ -84,8 +84,6 @@ public class InventoryMethods : MonoBehaviour
     private GameObject[] _sortButtonsEquipping;
     [SerializeField]
     private Image[] _equippedImages;
-    [SerializeField]
-    private GameObject _didCraft;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -118,6 +116,7 @@ public class InventoryMethods : MonoBehaviour
         {
             _exposed[i] = false;
         }
+        _exposed[14] = true;
     }
 
     #region Shared Methods
@@ -372,7 +371,7 @@ public class InventoryMethods : MonoBehaviour
         int chunk = 0;
         if (_chunkLoader != null)
         {
-            chunk = (int)((_chunkLoader.CurrentChunkPosition.y - 1) + (_chunkLoader.CurrentChunkPosition.x - 1) * 5);
+            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
         }
         else
         {
@@ -413,7 +412,7 @@ public class InventoryMethods : MonoBehaviour
         int chunk = 0;
         if (_chunkLoader != null)
         {
-            chunk = (int)((_chunkLoader.CurrentChunkPosition.y - 1) + (_chunkLoader.CurrentChunkPosition.x - 1) * 5);
+            chunk = (int)(_chunkLoader.CurrentChunkPosition.x * 5 + _chunkLoader.CurrentChunkPosition.y);
         }
         else
         {
@@ -600,7 +599,7 @@ public class InventoryMethods : MonoBehaviour
             }
 
             //ingredients
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (_activeRecipe.ingredients.Count > i)
                 {
@@ -654,15 +653,7 @@ public class InventoryMethods : MonoBehaviour
     //use this to craft based on selected item
     public void Craft()
     {
-        if (Crafting.Instance.CanCraft(_activeRecipe))
-        {
-            Crafting.Instance.Craft(_activeRecipe);
-            _didCraft.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Cannot Craft");
-        }
+        Crafting.Instance.Craft(_activeRecipe);
     }
 
     //choose button sorting
