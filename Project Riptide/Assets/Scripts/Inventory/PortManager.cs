@@ -35,14 +35,15 @@ public class PortManager : MonoBehaviour
         }
         if (_portUI == null)
         {
-            _portUI = _canvas.transform.GetChild(6).gameObject;
+            _portUI = _canvas.transform.GetChild(8).gameObject;
         }
         
         if (_leavePort == null)
         {
-            _leavePort = _portUI.transform.GetChild(4).gameObject.GetComponent<Button>();
+            _leavePort = _portUI.transform.GetChild(0).GetChild(4).gameObject.GetComponent<Button>();
         }
         _leavePort.onClick.AddListener(LeavePort);
+        _inventoryMethods = _canvas.GetComponent<InventoryMethods>();
 
         _inPort = false;
 	}
@@ -51,7 +52,7 @@ public class PortManager : MonoBehaviour
     void Update()
     {
 		//If the escape timer is zero and the player is near the port, then disable player movement
-		if (!_inPort && Vector3.Distance(_player.transform.position, transform.position) < 10)
+		if (!_inPort && Vector3.SqrMagnitude(_player.transform.position - transform.position) < 100)
 		{
             _inPort = true;
 			_portUI.SetActive(true);
