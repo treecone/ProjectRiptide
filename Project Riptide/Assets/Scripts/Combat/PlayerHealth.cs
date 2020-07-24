@@ -19,9 +19,13 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField]
     private GameObject _deathUI;
     [SerializeField]
+    private GameObject _buybackPriceText;
+    [SerializeField]
     private InventoryMethods _inventoryMethods;
     [SerializeField]
     private InputManager _inputManager;
+    [SerializeField]
+
     private bool dead;
 
     public float Health { get; }
@@ -45,10 +49,6 @@ public class PlayerHealth : MonoBehaviour
         //Make health bar face player
         //healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
         UpdateHealth();
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Respawn();
-        }
     }
 
     /// <summary>
@@ -109,27 +109,29 @@ public class PlayerHealth : MonoBehaviour
 
     public void Die()
     {
+        Debug.Log("die");
         dead = true;
-        //_deathUI.SetActive(true);
+        _deathUI.SetActive(true);
         gameObject.GetComponent<StatusEffects>().ClearAllStatuses();
         _inputManager.ResetMovement();
         int buybackCost = (int)(maxHealth * 2);
+        _buybackPriceText.GetComponent<TMPro.TextMeshProUGUI>().text = "" + buybackCost;
         _inventoryMethods.PauseGame();
     }
 
-    public void Respawn()
+    public void Respawn(bool inPlace)
     {
-        if (dead)
+        Debug.Log("respawn");
+        if(dead)
         {
             health = maxHealth;
-            if(PortManager.LastPortVisited)
+            if (!inPlace && PortManager.LastPortVisited)
             {
                 transform.position = PortManager.LastPortVisited.transform.position + new Vector3(5, 0, 5);
                 transform.LookAt(PortManager.LastPortVisited.transform);
                 transform.Rotate(0, 180, 0);
             }
-            dead = false;
-            //_deathUI.SetActive(false);
+            _deathUI.SetActive(false);
             _inventoryMethods.UnpauseGame();
         }
     }
