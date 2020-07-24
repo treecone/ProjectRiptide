@@ -283,14 +283,14 @@ public class PlayerInventory : ScriptableObject
         int count = 0;
         for (int i = 0; i < items.Count; i++)
         {
-            if (items[i].Name == itemName || items[i].Slug == itemName)
+            if (items[i].Name == itemName)
             {
                 count += items[i].Amount;
             }
         }
         for (int i = 0; i < equipment.Count; i++)
         {
-            if (equipment[i].Name == itemName || equipment[i].Slug == itemName)
+            if (equipment[i].Name == itemName)
             {
                 count += equipment[i].Amount;
             }
