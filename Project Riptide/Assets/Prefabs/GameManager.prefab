@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6847726073716374343}
   - component: {fileID: 6847726073716374345}
   - component: {fileID: 5105691598381198447}
+  - component: {fileID: 3325853544599996540}
+  - component: {fileID: 1480690519635610825}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -62,15 +64,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a023ad00236b4f47b45bc47c614d7c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  koiPrefab: {fileID: 0}
-  rockCrabPrefab: {fileID: 0}
-  seaSheepPrefab: {fileID: 0}
-  ship: {fileID: 0}
-  currentChunkPosition: {x: 0, y: 0}
-  showAllChunks: 0
-  currentRegion: 0
+  _ship: {fileID: 0}
+  _currentChunkPosition: {x: 0, y: 0}
+  _showAllChunks: 0
+  _currentRegion: 
+  _outOfBoundsUI: {fileID: 0}
   _xLen: 0
   _zLen: 0
+  _yStartingChunk: 0
+  _xStartingChunk: 0
+  _worldScale: 1
 --- !u!114 &5105691598381198447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,3 +86,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2095e9f49035f7445b1de0b63dd6978b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3325853544599996540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847726073716374341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11870ce891fe4d04bbc7bc16be585f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1480690519635610825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847726073716374341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9bccf5255af8c479361f6a382fb98e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - {fileID: 11400000, guid: f513816d077fb5d45aa57322ab1bbe50, type: 2}
+  - {fileID: 11400000, guid: 0d5fde7f946407d45a3c60efe7f0ca87, type: 2}
+  - {fileID: 11400000, guid: 20d299343fea4db45b27115c3f578dd7, type: 2}
+  - {fileID: 11400000, guid: 3a7e8eafcfb25c940913d80db6734dd8, type: 2}
+  - {fileID: 11400000, guid: fa87ae5b5e50cda46994f895ef7bcf85, type: 2}
+  - {fileID: 11400000, guid: f697109f8a15e1d458239ba244d61daf, type: 2}
+  - {fileID: 11400000, guid: 8d566db72ecf4874f88fdf079db58812, type: 2}
+  - {fileID: 11400000, guid: a489a4aa80b36bc43ad6352e6658473f, type: 2}
+  - {fileID: 11400000, guid: aa1eac53ad10b9f4fa5c72259ca468e8, type: 2}
