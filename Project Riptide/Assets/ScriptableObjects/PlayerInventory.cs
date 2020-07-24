@@ -286,21 +286,21 @@ public class PlayerInventory : ScriptableObject
         int count = 0;
         for (int i = 0; i < items.Count; i++)
         {
-            if (items[i].Name == itemName)
+            if (items[i].Name == itemName || items[i].Slug == itemName)
             {
                 count += items[i].Amount;
             }
         }
         for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
         {
-            if (PlayerVault.Instance.items[i].Name == itemName)
+            if (PlayerVault.Instance.items[i].Name == itemName || PlayerVault.Instance.items[i].Slug == itemName)
             {
                 count += PlayerVault.Instance.items[i].Amount;
             }
         }
         for (int i = 0; i < equipment.Count; i++)
         {
-            if (equipment[i].Name == itemName)
+            if (equipment[i].Name == itemName || equipment[i].Slug == itemName)
             {
                 count += equipment[i].Amount;
             }
