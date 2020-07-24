@@ -25,14 +25,14 @@ public class Map : MonoBehaviour
     {
         _chunkLoader = GetComponent<ChunkLoader>();
 
-        _mapBackground.transform.parent.gameObject.SetActive(true);
+        //_mapBackground.transform.parent.gameObject.SetActive(true);
 
         //Calculate stuff for setting cursor position later
         RectTransform topLeft = _mapBackground.transform.GetChild(0).GetComponent<RectTransform>();
         _mapPartLength = topLeft.rect.width;
         _mapTopLeftCorner = new Vector2(topLeft.anchoredPosition.x - (_mapPartLength / 2), topLeft.anchoredPosition.y + (_mapPartLength / 2));
 
-        _mapBackground.transform.parent.gameObject.SetActive(false);
+        //_mapBackground.transform.parent.gameObject.SetActive(false);
 
         _invMethods.UpdateMap();
     }
