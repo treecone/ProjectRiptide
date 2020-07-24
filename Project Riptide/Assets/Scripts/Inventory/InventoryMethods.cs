@@ -653,6 +653,8 @@ public class InventoryMethods : MonoBehaviour
         {
             Crafting.Instance.Craft(_activeRecipe);
             _didCraft.SetActive(true);
+            _activeRecipe = null;
+            ExpandCraft();
         }
         else
         {

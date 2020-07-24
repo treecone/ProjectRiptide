@@ -55,14 +55,14 @@ public class Crafting : ScriptableObject
     /// <returns>The item crafted, or null if the item cannot be crafted</returns>
     public Item Craft(Recipe recipe)
     {
-        if(CanCraft(recipe))
+        Debug.Log(PlayerInventory.Instance.totalGold + " AT START");
+        if (CanCraft(recipe))
         {
             for (int i = 0; i < recipe.ingredients.Count; i++)
             {
                 PlayerInventory.Instance.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
             }
             PlayerInventory.Instance.AddItem(recipe.result, recipe.resultAmount);
-            Debug.Log("MADE ITEM");
         }
         return null;
     }
@@ -78,7 +78,6 @@ public class Crafting : ScriptableObject
         {
             if(PlayerInventory.Instance.CountOf(recipe.ingredients[i]) < recipe.ingredientAmounts[i])
             {
-                Debug.Log(PlayerInventory.Instance.CountOf(recipe.ingredients[i]) + " / " + recipe.ingredientAmounts[i]);
                 return false;
             }
         }

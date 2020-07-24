@@ -50,7 +50,7 @@ public class PlayerInventory : ScriptableObject
     }
     public void InitializeInventory()
     {
-        totalGold = 0;
+        totalGold = 3000;
         items = new List<Item>();
         equipment = new List<Item>();
         for(int i = 0; i < numItems; i++)
