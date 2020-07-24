@@ -118,7 +118,6 @@ public class InventoryMethods : MonoBehaviour
         {
             _exposed[i] = false;
         }
-        _exposed[14] = true;
     }
 
     #region Shared Methods
