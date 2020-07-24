@@ -1539,7 +1539,7 @@ public partial class MonkeyBoss : Enemy
                                 StopMotion();
                             }
                         }
-                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);                      
+                        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);                      
                     }
                     //Switch to phase 2
                     else if (!_activeStates[(int)AttackState.FormChanged])
@@ -1700,7 +1700,7 @@ public partial class MonkeyBoss : Enemy
                                 }
                             }
                         }
-                        //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
+                        _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
                     }
                 }
                 else
