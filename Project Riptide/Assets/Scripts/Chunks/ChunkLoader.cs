@@ -99,6 +99,10 @@ public class ChunkLoader : MonoBehaviour
 
         _chunks[_yStartingChunk, _xStartingChunk].chunk.SetActive(true);
         _visibleChunks.Add(_chunks[_yStartingChunk, _xStartingChunk]);
+        if (_chunks[_yStartingChunk, _xStartingChunk].hasEnemies)
+        {
+            CheckLoadEnemies(_chunks[_yStartingChunk, _xStartingChunk]);
+        }
         _map = GetComponent<Map>();
         _map.SetUpMap();
         _topLeftChunkPos = new Vector2(_chunks[1, 1].chunk.transform.position.z - (_chunkSideLength / 2), _chunks[1, 1].chunk.transform.position.x - (_chunkSideLength / 2));
