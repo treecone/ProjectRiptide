@@ -129,6 +129,16 @@ public class StatusEffects : MonoBehaviour
         }
     }
 
+    public void ClearAllStatuses()
+    {
+        _activeStatusEffects.Clear();
+        if (_upgrades != null)
+        {
+            _upgrades.Recalculate();
+        }
+
+        _statusIcons.RearrangeStatuses(ActiveStatusEffects);
+    }
     /// <summary>
     /// Checks to see if a certain status is active
     /// </summary>
