@@ -228,7 +228,7 @@ public class CannonFire : MonoBehaviour
 
                 angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
             }
-            
+            SoundManager.instance.PlaySound("CannonFire");
         }
     }
 }

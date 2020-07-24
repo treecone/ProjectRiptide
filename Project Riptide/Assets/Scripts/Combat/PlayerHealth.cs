@@ -100,7 +100,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
             healthBar.UpdateHealth(health);
-            if (health <= 0 && !dead)
+            if (health < 0.5f && !dead)
             {
                 health = 0;
                 Die();
@@ -155,6 +155,7 @@ public class PlayerHealth : MonoBehaviour
             {
                 PlayerInventory.Instance.TotalGold -= buybackCost;
             }
+            dead = false;
             _inventoryMethods.UnpauseGame();
         }
     }
