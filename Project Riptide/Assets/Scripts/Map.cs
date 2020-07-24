@@ -55,6 +55,14 @@ public class Map : MonoBehaviour
     /// </summary>
     public void SetMapCursor()
     {
+        //Calculate stuff for setting cursor position later
+        RectTransform topLeft = _mapBackground.transform.GetChild(0).GetComponent<RectTransform>();
+        _mapPartLength = topLeft.rect.width;
+        _mapTopLeftCorner = new Vector2(topLeft.anchoredPosition.x - (_mapPartLength / 2), topLeft.anchoredPosition.y + (_mapPartLength / 2));
+
+        Debug.Log(topLeft.anchoredPosition);
+        Debug.Log(_mapBackground.transform.GetChild(0).localPosition);
+
         Vector2 relativePlayerPos = _chunkLoader.GetRelativePlayerPosition();
         Vector2 cursorPos = new Vector2(relativePlayerPos.x * (250 / _chunkLoader.ChunkLength), relativePlayerPos.y * (250 / _chunkLoader.ChunkLength));
         _mapCursor.anchoredPosition = _mapTopLeftCorner + new Vector2(cursorPos.x, -cursorPos.y);

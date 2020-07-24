@@ -13,7 +13,8 @@ public class IslandGenerator : MonoBehaviour
         public bool rotatesToGround;
         public float radius;
         public float verticalOffset;
-        public float scale;
+        public float minScale;
+        public float maxScale;
         public int weight;
         
         public DecoObject(DecoObject other)
@@ -22,7 +23,8 @@ public class IslandGenerator : MonoBehaviour
             this.rotatesToGround = other.rotatesToGround;
             this.radius = other.radius;
             this.verticalOffset = other.verticalOffset;
-            this.scale = other.scale;
+            this.minScale = other.minScale;
+            this.maxScale = other.maxScale;
             this.weight = other.weight;
         }
         public bool CollidesWith(DecoObject other)
@@ -197,7 +199,8 @@ public class IslandGenerator : MonoBehaviour
         //}
         GameObject clone = Instantiate(obj.gameObject);
         clone.transform.position = result;
-        clone.transform.localScale = Vector3.one * obj.scale;
+        float scale = Random.Range(obj.minScale, obj.maxScale);
+        clone.transform.localScale = Vector3.one * scale;
         clone.transform.up = normal;
         clone.transform.position += normal * obj.verticalOffset;
         clone.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
