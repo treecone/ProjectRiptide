@@ -112,15 +112,18 @@ public class UIAnimMethods : MonoBehaviour
     public void ExposeChunk(Image gObj)
     {
         gObj.sprite = _exposedImage;
-        gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
+        //gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
+        gObj.color = new Color32(173, 32, 35, 255);
     }
     public void InExposedChunk(Image gObj)
     {
-        gObj.DOColor(new Color(173, 32, 35, 255), .1f).SetUpdate(true);
+        //gObj.DOColor(new Color(173, 32, 35, 255), .1f).SetUpdate(true);
+        gObj.color = new Color32(173, 32, 35, 255);
     }
     public void LeaveExposedChunk(Image gObj)
     {
-        gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
+        //gObj.DOColor(new Color(114, 88, 54, 255), .1f).SetUpdate(true);
+        gObj.color = new Color32(114, 88, 54, 255);
     }
     public void InHiddenChunk(Image gObj)
     {

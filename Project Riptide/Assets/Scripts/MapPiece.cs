@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class MapPiece : MonoBehaviour
 {
-    [SerializeField]
-    private int x;
-    [SerializeField]
-    private int y;
-
     private Map _map;
 
     // Start is called before the first frame update
@@ -16,11 +11,6 @@ public class MapPiece : MonoBehaviour
     {
         _map = GameObject.FindGameObjectWithTag("GameManager").GetComponent<Map>();
         GetComponentInChildren<Hitbox>().OnTrigger += TakeMapPiece;
-        //Don't spawn map piece if piece has already been collected
-        if(_map.CheckMapExposed(x, y))
-        {
-            Destroy(gameObject);
-        }
     }
 
     // Update is called once per frame
