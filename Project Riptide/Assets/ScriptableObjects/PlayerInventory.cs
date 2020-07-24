@@ -253,6 +253,7 @@ public class PlayerInventory : ScriptableObject
             if (equipment[i].Slug == name || equipment[i].Name == name)
             {
                 category = equipment[i].Category;
+                foundEquip = equipment[i];
             }
         }
         for(int i = 0; i < equipment.Count; i++)
@@ -260,7 +261,8 @@ public class PlayerInventory : ScriptableObject
             if(equipment[i] == foundEquip)
             {
                 equipment[i].Equipped = true;
-            } else
+            }
+            else
             {
                 if(equipment[i].Category == category)
                 {
@@ -269,6 +271,7 @@ public class PlayerInventory : ScriptableObject
             }
         }
     }
+
     /// <summary>
     /// Gets the total amount of an item in the inventory, regardless of how it is stacked
     /// </summary>
@@ -283,14 +286,21 @@ public class PlayerInventory : ScriptableObject
         int count = 0;
         for (int i = 0; i < items.Count; i++)
         {
-            if (items[i].Name == itemName || items[i].Slug == itemName)
+            if (items[i].Name == itemName)
             {
                 count += items[i].Amount;
             }
         }
+        for (int i = 0; i < PlayerVault.Instance.items.Count; i++)
+        {
+            if (PlayerVault.Instance.items[i].Name == itemName)
+            {
+                count += PlayerVault.Instance.items[i].Amount;
+            }
+        }
         for (int i = 0; i < equipment.Count; i++)
         {
-            if (equipment[i].Name == itemName || equipment[i].Slug == itemName)
+            if (equipment[i].Name == itemName)
             {
                 count += equipment[i].Amount;
             }
