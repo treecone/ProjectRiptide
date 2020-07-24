@@ -65,6 +65,17 @@ public class Map : MonoBehaviour
         _mapCursor.anchoredPosition = _mapTopLeftCorner + new Vector2(cursorPos.x, -cursorPos.y);
         _mapCursor.rotation = Quaternion.Euler(0, 0, -_chunkLoader.GetPlayerYEuler() - 90);
     }
+
+    /// <summary>
+    /// Checks if a chunk has been exposed
+    /// </summary>
+    /// <param name="x">x</param>
+    /// <param name="y">y</param>
+    /// <returns></returns>
+    public bool CheckMapExposed(int x, int y)
+    {
+        return _invMethods.CheckMapExposed(x, y);
+    }
 }
 
 public class MapPart

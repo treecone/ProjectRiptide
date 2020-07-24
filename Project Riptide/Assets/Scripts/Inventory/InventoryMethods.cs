@@ -425,6 +425,11 @@ public class InventoryMethods : MonoBehaviour
         //calculate where it should be on the map
         _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
     }
+
+    public bool CheckMapExposed(int x, int y)
+    {
+        return _exposed[((x - 1) + (y - 1) * 5)];
+    }
     #endregion
 
     #region Market Methods
