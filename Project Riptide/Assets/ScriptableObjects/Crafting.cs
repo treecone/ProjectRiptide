@@ -62,8 +62,8 @@ public class Crafting : ScriptableObject
                 PlayerInventory.Instance.RemoveItem(recipe.ingredients[i], recipe.ingredientAmounts[i]);
             }
             PlayerInventory.Instance.AddItem(recipe.result, recipe.resultAmount);
-            Debug.Log("MADE ITEM");
         }
+        Debug.LogWarning("Not enough items in inventory to craft " + recipe.result);
         return null;
     }
 
@@ -78,7 +78,6 @@ public class Crafting : ScriptableObject
         {
             if(PlayerInventory.Instance.CountOf(recipe.ingredients[i]) < recipe.ingredientAmounts[i])
             {
-                Debug.Log(PlayerInventory.Instance.CountOf(recipe.ingredients[i]) + " / " + recipe.ingredientAmounts[i]);
                 return false;
             }
         }
