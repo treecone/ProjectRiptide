@@ -9,8 +9,11 @@ public class Map : MonoBehaviour
     [SerializeField]
     private GameObject _mapBackground;
     [SerializeField]
-    private InventoryMethods _invMethods;
+    private Sprite _hidden;
+    [SerializeField]
+    private Sprite _hiddenIn;
 
+    private MapPart[,] _map;
     private Vector2 _currentChunk;
 
     private Vector2 _mapTopLeftCorner;
@@ -24,17 +27,24 @@ public class Map : MonoBehaviour
     public void SetUpMap()
     {
         _chunkLoader = GetComponent<ChunkLoader>();
-
-        //_mapBackground.transform.parent.gameObject.SetActive(true);
+        _map = new MapPart[_chunkLoader.XSize, _chunkLoader.YSize];
+        for (int i = 0; i < _chunkLoader.XSize; i++)
+        {
+            for (int j = 0; j < _chunkLoader.YSize; j++)
+            {
+                //Set up map part
+                GameObject mapPart = _mapBackground.transform.GetChild(i + (j * 5)).gameObject;
+                _map[i, j] = new MapPart(mapPart.GetComponent<Image>(), _hidden, _hiddenIn, i, j);
+                _map[i, j].SetHidden();
+            }
+        }
+        _currentChunk = new Vector2(_chunkLoader.CurrentChunkPosition.y, _chunkLoader.CurrentChunkPosition.x);
+        _map[(int)_currentChunk.x - 1, (int)_currentChunk.y - 1].SetHiddenIn();
 
         //Calculate stuff for setting cursor position later
         RectTransform topLeft = _mapBackground.transform.GetChild(0).GetComponent<RectTransform>();
         _mapPartLength = topLeft.rect.width;
         _mapTopLeftCorner = new Vector2(topLeft.anchoredPosition.x - (_mapPartLength / 2), topLeft.anchoredPosition.y + (_mapPartLength / 2));
-
-        //_mapBackground.transform.parent.gameObject.SetActive(false);
-
-        _invMethods.UpdateMap();
     }
 
     /// <summary>
@@ -42,17 +52,11 @@ public class Map : MonoBehaviour
     /// </summary>
     /// <param name="x">New x pos</param>
     /// <param name="y">New y pos</param>
-    public void UpdateCurrentChunk()
+    public void UpdateCurrentChunk(int x, int y)
     {
-        _invMethods.UpdateMap();
-    }
-
-    /// <summary>
-    /// Exposes current chunk
-    /// </summary>
-    public void ExposeCurrentChunk()
-    {
-        _invMethods.ExposeMap();
+        _map[(int)_currentChunk.x - 1, (int)_currentChunk.y - 1].SetHidden();
+        _currentChunk = new Vector2(x, y);
+        _map[(int)_currentChunk.x - 1, (int)_currentChunk.y - 1].SetHiddenIn();
     }
 
     /// <summary>

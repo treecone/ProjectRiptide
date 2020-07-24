@@ -20,9 +20,13 @@ public class PlayerHealth : MonoBehaviour
     private GameObject _deathUI;
     [SerializeField]
     private InventoryMethods _inventoryMethods;
+    [SerializeField]
+    private InputManager _inputManager;
+    private bool dead;
 
     public float Health { get; }
     public float MaxHealth { get; }
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +37,7 @@ public class PlayerHealth : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
         healthBar.UpdateHealth(health);
         camera = Camera.main;
+        dead = false;
     }
 
     private void Update()
@@ -89,7 +94,7 @@ public class PlayerHealth : MonoBehaviour
         {
             health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
             healthBar.UpdateHealth(health);
-            if (health <= 0)
+            if (health < 0.5f && !dead)
             {
                 health = 0;
                 Die();
@@ -100,16 +105,28 @@ public class PlayerHealth : MonoBehaviour
 
     public void Die()
     {
+        dead = true;
         _deathUI.SetActive(true);
-        //remove all status effects
-
+        gameObject.GetComponent<StatusEffects>().ClearAllStatuses();
+        _inputManager.ResetMovement();
         int buybackCost = (int)(maxHealth * 2);
         _inventoryMethods.PauseGame();
     }
 
-    public void Respawn()
+    public void Respawn(bool inPlace)
     {
-        health = maxHealth;
-        _inventoryMethods.UnpauseGame();
+        if (dead)
+        {
+            health = maxHealth;
+            if(!inPlace && PortManager.LastPortVisited)
+            {
+                transform.position = PortManager.LastPortVisited.transform.position + new Vector3(5, 0, 5);
+                transform.LookAt(PortManager.LastPortVisited.transform);
+                transform.Rotate(0, 180, 0);
+            }
+            dead = false;
+            _deathUI.SetActive(false);
+            _inventoryMethods.UnpauseGame();
+        }
     }
 }

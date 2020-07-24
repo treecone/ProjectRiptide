@@ -13,8 +13,7 @@ public class IslandGenerator : MonoBehaviour
         public bool rotatesToGround;
         public float radius;
         public float verticalOffset;
-        public float minScale;
-        public float maxScale;
+        public float scale;
         public int weight;
         
         public DecoObject(DecoObject other)
@@ -23,8 +22,7 @@ public class IslandGenerator : MonoBehaviour
             this.rotatesToGround = other.rotatesToGround;
             this.radius = other.radius;
             this.verticalOffset = other.verticalOffset;
-            this.minScale = other.minScale;
-            this.maxScale = other.maxScale;
+            this.scale = other.scale;
             this.weight = other.weight;
         }
         public bool CollidesWith(DecoObject other)
@@ -47,7 +45,16 @@ public class IslandGenerator : MonoBehaviour
     private List<Vector3> _urbanCenters;
 
     [SerializeField]
+    private int _numEnvironmentalCenters;
+    private List<Vector3> _environmentalCenters;
+
+    [SerializeField]
     private int _numDecoObjects;
+
+    [SerializeField]
+    private bool _manualUrbanCenters;
+    [SerializeField]
+    private bool _manualEnviromentalCenters;
 
     [Header("Island generation tools - check box to use")]
     [SerializeField]
@@ -61,16 +68,15 @@ public class IslandGenerator : MonoBehaviour
     private List<GameObject> _clones;
     private int _totalUrbanWeight;
     private int _totalEnviromentalWeight;
-
-    private const float URBAN_CENTER_RADIUS = 15.0f;
-    private const float MAX_HEIGHT = 20.0f;
  
     // Start is called before the first frame update
     void Start()
     {
         _clones = new List<GameObject>();
         _decoObjects = new List<DecoObject>();
-        _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;         
+        _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
+
+          
     }
 
     // Update is called once per frame
@@ -96,13 +102,6 @@ public class IslandGenerator : MonoBehaviour
             }
 
             _mesh = gameObject.GetComponent<MeshFilter>().sharedMesh;
-            /*Vector3[] newVerts = _mesh.vertices;
-            for(int i = 0; i < _mesh.vertices.Length; i++)
-            {
-                newVerts[i] = Matrix4x4.Scale(transform.lossyScale) * Matrix4x4.Rotate(transform.rotation) * newVerts[i];
-            }
-            _mesh.vertices = newVerts;*/
-
             _generate = false;
             for(int i = 0; i < _numDecoObjects; i++)
             {
@@ -121,22 +120,70 @@ public class IslandGenerator : MonoBehaviour
     {
         _waterHeight = 0.9f;
         _urbanCenters = new List<Vector3>();
-
-        //Manually set up urban centers
-        Transform urbanCenters = transform.Find("UrbanCenters");
-        if (urbanCenters != null)
+        _environmentalCenters = new List<Vector3>();
+        if (!_manualUrbanCenters)
         {
-            for (int i = 0; i < urbanCenters.childCount; i++)
+            for (int i = 0; i < _numUrbanCenters; i++)
             {
-                _urbanCenters.Add(urbanCenters.GetChild(i).position);
+                Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+                while (randPoint.y <= _waterHeight)
+                {
+                    randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                    randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                    randPoint += transform.position;
+                }
+
+                _urbanCenters.Add(randPoint);
             }
         }
         else
         {
-            Debug.LogError("Place urban centers under a gameobject named 'UrbanCenters' parented to the island.");
+            //Manually set up urban centers
+            Transform urbanCenters = transform.Find("UrbanCenters");
+            if(urbanCenters != null)
+            {
+                for(int i = 0; i < urbanCenters.childCount; i++)
+                {
+                    _urbanCenters.Add(urbanCenters.GetChild(i).position);
+                }
+            }
+            else
+            {
+                Debug.LogError("Place urban centers under a gameobject named 'UrbanCenters' parented to the island.");
+            }
+        }
+
+        if (!_manualEnviromentalCenters)
+        {
+            for (int i = 0; i < _numEnvironmentalCenters; i++)
+            {
+                Vector3 randPoint = new Vector3(0, _waterHeight - 1, 0);
+                while (randPoint.y <= _waterHeight)
+                {
+                    randPoint = _mesh.vertices[Random.Range(0, _mesh.vertices.Length)];
+                    randPoint = new Vector3(randPoint.x * transform.localScale.x, randPoint.y * transform.localScale.y, randPoint.z * transform.localScale.z);
+                    randPoint += transform.position;
+                }
+                _environmentalCenters.Add(randPoint);
+            }
+        }
+        else
+        {
+            //Manually set up enviromental centers
+            Transform environmentalCenters = transform.Find("EnvironmentalCenters");
+            if (environmentalCenters != null)
+            {
+                for (int i = 0; i < environmentalCenters.childCount; i++)
+                {
+                    _environmentalCenters.Add(environmentalCenters.GetChild(i).position);
+                }
+            }
+            else
+            {
+                Debug.LogError("Place environmental centers under a gameobject named 'EnvironmentalCenters' parented to the island.");
+            }
         }
     }
-
     private void CreateDecoObject()
     {
         bool built = false;
@@ -148,8 +195,9 @@ public class IslandGenerator : MonoBehaviour
             int numTris = _mesh.triangles.Length / 3;
             result = new Vector3(0, _waterHeight - 1, 0);
             normal = Vector3.zero;
-            while (result.y <= _waterHeight || result.y >= MAX_HEIGHT)
-            {               
+            while (result.y <= _waterHeight)
+            {
+                
                 int randIndex = Random.Range(0, numTris);
                 Vector3 v1 = _mesh.vertices[_mesh.triangles[randIndex * 3]];
                 Vector3 v2 = _mesh.vertices[_mesh.triangles[randIndex * 3 + 1]];
@@ -166,15 +214,16 @@ public class IslandGenerator : MonoBehaviour
                     r2 = 1.0f - r2;
                 }
 
-                Debug.Log("Looking for result");
                 result = v1 + r1 * b1 + r2 * b2;
-                result = Matrix4x4.Scale(transform.lossyScale) * Matrix4x4.Rotate(transform.rotation) * result;
+                result = new Vector3(result.x * transform.localScale.x, result.y * transform.localScale.y, result.z * transform.localScale.z);
                 result += transform.position;
             }
 
+            float urbanness = Urbanness(result);
+            float randomValue = Random.Range(0.0f, 1.0f);
             DecoObject randomObj;
 
-            if (CheckUrban(result))
+            if (randomValue < urbanness)
             {
                 randomObj = new DecoObject(_urbanObjects[GetWeightedRandom(_urbanObjects, _totalUrbanWeight)]);
             }
@@ -199,12 +248,11 @@ public class IslandGenerator : MonoBehaviour
         //}
         GameObject clone = Instantiate(obj.gameObject);
         clone.transform.position = result;
-        float scale = Random.Range(obj.minScale, obj.maxScale);
-        clone.transform.localScale = Vector3.one * scale;
+        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
+        clone.transform.localScale = Vector3.one * obj.scale;
         clone.transform.up = normal;
         clone.transform.position += normal * obj.verticalOffset;
-        clone.transform.rotation = Quaternion.Euler(0, Random.Range(0.0f, 360.0f), 0);
-
+        
         clone.transform.SetParent(transform);
         _clones.Add(clone);
         /*for (float i = 0; i < Mathf.PI * 2; i += Mathf.PI / 8f)
@@ -226,7 +274,7 @@ public class IslandGenerator : MonoBehaviour
         _decoObjects.Clear();
         _clones.Clear();
     }
-    /*private float Urbanness(Vector3 pos) {
+    private float Urbanness(Vector3 pos) {
         float urbanTotal = 0;
         float environmentalTotal = 0;
         foreach(Vector3 urbanPoint in _urbanCenters)
@@ -248,19 +296,6 @@ public class IslandGenerator : MonoBehaviour
 
         
         return urbanness;
-    }*/
-
-    //Checks to see if an urban unit should be placed
-    private bool CheckUrban(Vector3 pos)
-    {
-        foreach (Vector3 urbanPoint in _urbanCenters)
-        {
-            if ((urbanPoint - pos).sqrMagnitude <= URBAN_CENTER_RADIUS * URBAN_CENTER_RADIUS)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     private int GetWeightedRandom(List<DecoObject> objs, int maxTotalWeight)

@@ -93,7 +93,7 @@ public class ChunkLoader : MonoBehaviour
         _regionDisplay = GameObject.Find("Canvas").GetComponent<TextMeshProUGUI>();
         _currentChunkPosition = new Vector2(_yStartingChunk, _xStartingChunk);
         // Physially move the player to the center of that chunk.
-        _ship.GetComponent<ShipMovement>().Position = new Vector3(_chunkSideLength * _currentChunkPosition.x, 1f, _chunkSideLength * _currentChunkPosition.y);
+        _ship.transform.position = new Vector3(_chunkSideLength * _currentChunkPosition.x, 1f, _chunkSideLength * _currentChunkPosition.y);
         _enemies = new List<GameObject>();
         LoadWorld();
 
@@ -420,7 +420,7 @@ public class ChunkLoader : MonoBehaviour
                         // Set current chunk to the chunk the ships in.
                         _currentChunkPosition = new Vector2(x, z);
                         _currentRegion = GetRegionName(_chunks[x, z].region);
-                        _map.UpdateCurrentChunk();
+                        _map.UpdateCurrentChunk(z, x);
 
                     }
                 }
