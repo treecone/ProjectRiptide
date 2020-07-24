@@ -183,7 +183,7 @@ public class ActiveAbilities : MonoBehaviour
     /// <param name="type">Type of skill</param>
     public void SetActiveSkill(int i, SkillType type)
     {
-        _skill[i] = GetActiveSkill(type, i);
+        _skill[i] = GetActiveSkill(_skillType[i], i);
         if (_skill[i] != null)
         {
             _buttons[i].GetComponentInChildren<TMP_Text>().text = _skill[i].Name;

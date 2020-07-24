@@ -96,7 +96,7 @@ public class Inventory : MonoBehaviour
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
             newEquipment.GetComponent<EquipmentSlot>().equipment = PlayerInventory.Instance.equipment[i];
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
@@ -106,7 +106,7 @@ public class Inventory : MonoBehaviour
             GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
             //assign item
             newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectItem(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
@@ -208,17 +208,14 @@ public class Inventory : MonoBehaviour
     {
         if (sortNum == -1)
         {
-            for (int i = 0; i < equipmentSlots.Count; i++)
+            for (int i = 0; i < _equipmentParent.transform.childCount; i++)
             {
-                if (PlayerInventory.Instance.CountOf(equipmentSlots[i].equipment.Name) > 0)
-                {
-                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
-                }
+                _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
             }
         }
         else
         {
-            for (int i = 0; i < equipmentSlots.Count; i++)
+            for (int i = 0; i < recipeParent.transform.childCount; i++)
             {
                 //if you can craft, it gets moved to top
                 if (equipmentSlots[i].equipment.Category != (ItemCategory)sortNum)
@@ -227,10 +224,7 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
-                    if (PlayerInventory.Instance.CountOf(equipmentSlots[i].equipment.Name) > 0)
-                    {
-                        _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
-                    }
+                    _equipmentParent.transform.GetChild(i).gameObject.SetActive(true);
                 }
             }
         }
