@@ -6,7 +6,6 @@ using LitJson;
 using System;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/Crafting")]
-[UnityEditor.InitializeOnLoad]
 public class Crafting : ScriptableObject
 {
     public static Crafting _instance;
