@@ -42,12 +42,26 @@ public class IslandGenerator : MonoBehaviour
     [SerializeField]
     private float _waterHeight;
 
-    [SerializeField]
-    private int _numUrbanCenters;
     private List<Vector3> _urbanCenters;
+    private List<float> _urbanCenterRadii;
 
     [SerializeField]
     private int _numDecoObjects;
+
+    [SerializeField]
+    private int _rocksWeight;
+    [SerializeField]
+    private int _pinkTreeWeight;
+    [SerializeField]
+    private int _greenTreeWeight;
+    [SerializeField]
+    private int _darkGreenTreeWeight;
+    [SerializeField]
+    private int _greenBushWeight;
+    [SerializeField]
+    private int _darkGreenBushWeight;
+    [SerializeField]
+    private int _bambooWeight;
 
     [Header("Island generation tools - check box to use")]
     [SerializeField]
@@ -62,7 +76,6 @@ public class IslandGenerator : MonoBehaviour
     private int _totalUrbanWeight;
     private int _totalEnviromentalWeight;
 
-    private const float URBAN_CENTER_RADIUS = 15.0f;
     private const float MAX_HEIGHT = 20.0f;
  
     // Start is called before the first frame update
@@ -83,6 +96,8 @@ public class IslandGenerator : MonoBehaviour
         }
         if(_generate)
         {
+            SetDecoObjectWeights();
+
             _totalUrbanWeight = 0;
             //Calculate total weights of urban and enviroment
             for (int i = 0; i < _urbanObjects.Count; i++)
@@ -117,10 +132,55 @@ public class IslandGenerator : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets weights for deco objects
+    /// </summary>
+    private void SetDecoObjectWeights()
+    {
+        //Rocks
+        for (int i = 0; i <= 2; i++)
+        {
+            _environmentalObjects[i].weight = _rocksWeight;
+        }
+
+        //Pink trees
+        for(int i = 3; i <= 6; i++)
+        {
+            _environmentalObjects[i].weight = _pinkTreeWeight;
+        }
+
+        //Bush
+        for (int i = 7; i <= 10; i++)
+        {
+            _environmentalObjects[i].weight = _greenBushWeight;
+        }
+
+        //Bamboo
+        _environmentalObjects[11].weight = _bambooWeight;
+
+        //Green trees
+        for (int i = 12; i <= 15; i++)
+        {
+            _environmentalObjects[i].weight = _greenTreeWeight;
+        }
+
+        //Dark green trees
+        for (int i = 16; i <= 19; i++)
+        {
+            _environmentalObjects[i].weight = _darkGreenTreeWeight;
+        }
+
+        //Dark green bush
+        for (int i = 20; i <= 23; i++)
+        {
+            _environmentalObjects[i].weight = _greenTreeWeight;
+        }
+    }
+
     private void Setup()
     {
-        _waterHeight = 0.9f;
         _urbanCenters = new List<Vector3>();
+        _urbanCenterRadii = new List<float>();
 
         //Manually set up urban centers
         Transform urbanCenters = transform.Find("UrbanCenters");
@@ -129,6 +189,7 @@ public class IslandGenerator : MonoBehaviour
             for (int i = 0; i < urbanCenters.childCount; i++)
             {
                 _urbanCenters.Add(urbanCenters.GetChild(i).position);
+                _urbanCenterRadii.Add(urbanCenters.GetChild(i).GetComponent<UrbanCenter>().Radius);
             }
         }
         else
@@ -253,9 +314,9 @@ public class IslandGenerator : MonoBehaviour
     //Checks to see if an urban unit should be placed
     private bool CheckUrban(Vector3 pos)
     {
-        foreach (Vector3 urbanPoint in _urbanCenters)
-        {
-            if ((urbanPoint - pos).sqrMagnitude <= URBAN_CENTER_RADIUS * URBAN_CENTER_RADIUS)
+        for(int i = 0; i < _urbanCenters.Count; i++)
+        { 
+            if ((_urbanCenters[i] - pos).sqrMagnitude <= _urbanCenterRadii[i] * _urbanCenterRadii[i])
             {
                 return true;
             }
