@@ -65,42 +65,16 @@ public class Map : MonoBehaviour
         _mapCursor.anchoredPosition = _mapTopLeftCorner + new Vector2(cursorPos.x, -cursorPos.y);
         _mapCursor.rotation = Quaternion.Euler(0, 0, -_chunkLoader.GetPlayerYEuler() - 90);
     }
-}
 
-public class MapPart
-{
-    private bool _hidden;
-    private Image _mapPartImage;
-    private Sprite _displaySprite;
-    private Sprite _hiddenSprite;
-    private Sprite _hiddenInSprite;
-    private int _x;
-    private int _y;
-
-    public MapPart(Image mapPartImage, Sprite hiddenSprite, Sprite hiddenInSprite, int x, int y)
+    /// <summary>
+    /// Returns if chunk has been exposed
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
+    public bool ChunkExposed(int x, int y)
     {
-        _hidden = true;
-        _mapPartImage = mapPartImage;
-        _hiddenSprite = hiddenSprite;
-        _hiddenInSprite = hiddenInSprite;
-        _x = x;
-        _y = y;
-    }
-
-    public void SetHiddenIn()
-    {
-        _mapPartImage.sprite = _hiddenInSprite;
-    }
-
-    public void SetHidden()
-    {
-        _mapPartImage.sprite = _hiddenSprite;
-    }
-
-    public void Reveal()
-    {
-        _hidden = false;
-        _mapPartImage.sprite = _displaySprite;
+        return _invMethods.ChunkExposed(x, y);
     }
 }
 
