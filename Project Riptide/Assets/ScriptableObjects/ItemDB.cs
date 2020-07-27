@@ -150,14 +150,24 @@ public class ItemDB : ScriptableObject
             }
             else
             {
-                for(int j = 0; j < data[i].upgrades.Count; j++)
+                for (int j = 0; j < data[i].upgrades.Count; j++)
                 {
                     List<Upgrade> upgradeList = new List<Upgrade>();
                     for (int k = 0; k < data[i].upgrades[j].Count; k++)
                     {
                         upgradeList.Add(data[i].upgrades[j][k]);
                     }
-                    _items.Add(new Item(startId + i * 4 + j, data[i].name + " - Tier " + (j + 1), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+
+                    //change name based on rarity
+                    if (data[i].rarity == 1)
+                    {
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                    }
+                    else
+                    {
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+
+                    }
                 }
             }
             

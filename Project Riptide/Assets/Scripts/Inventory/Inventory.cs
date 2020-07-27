@@ -31,6 +31,8 @@ public class Inventory : MonoBehaviour
     [SerializeField]
     private GameObject _equipmentParent;
     [SerializeField]
+    private GameObject _equipmentPics;
+    [SerializeField]
     private GameObject _equipmentPrefab;
     private List<EquipmentSlot> equipmentSlots;
 
@@ -248,6 +250,29 @@ public class Inventory : MonoBehaviour
             if (PlayerInventory.Instance.CountOf(equipment.equipment.Name) > 0)
             {
                 equipment.gameObject.SetActive(true);
+                //if change in equipment, do here
+                if (equipment.equipment.Equipped == true)
+                {
+                    //change icon
+                    _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(1).GetComponent<Image>().sprite = equipment.equipment.Icon;
+                    //change rarity
+                    if (equipment.equipment.Rarity == 1)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.white;
+                    }
+                    else if (equipment.equipment.Rarity == 2)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
+                    }
+                    else if (equipment.equipment.Rarity == 3)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+                    }
+                    else
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+                    }
+                }
             }
             else
             {

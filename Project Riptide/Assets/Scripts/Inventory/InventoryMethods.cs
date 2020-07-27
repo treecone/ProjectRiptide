@@ -549,7 +549,6 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeRecipe != null)
         {
-            bool craftable = true;
             _craftingName.SetText(_activeItem.Name);
             
             //do stats here, set their colors if upgradeValue is positive
@@ -604,10 +603,6 @@ public class InventoryMethods : MonoBehaviour
                     _neededItemsCrafting[i].transform.GetChild(0).GetComponent<Image>().sprite = ingredient.Icon;
                     _neededItemsCrafting[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
                     _neededItemsCrafting[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", PlayerInventory.Instance.CountOf(ingredient.Name), _activeRecipe.ingredientAmounts[i]);
-                    if (ingredient.Amount < _activeRecipe.ingredientAmounts[i])
-                    {
-                        craftable = false;
-                    }
                 }
                 else
                 {
@@ -617,24 +612,24 @@ public class InventoryMethods : MonoBehaviour
             
             if (_activeItem.Rarity == 1)   //check if it is an upgradable or not
             {
-                if (craftable == false)
+                if (Crafting.Instance.CanCraft(_activeRecipe))
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[1];
                 }
                 else
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[1];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
                 }
             }
             else
             {
-                if (craftable == false)
+                if (Crafting.Instance.CanCraft(_activeRecipe))
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[1];
                 }
                 else
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[1];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
                 }
             }
         }
