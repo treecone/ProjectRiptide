@@ -173,7 +173,7 @@ public class IslandGenerator : MonoBehaviour
         //Dark green bush
         for (int i = 20; i <= 23; i++)
         {
-            _environmentalObjects[i].weight = _greenTreeWeight;
+            _environmentalObjects[i].weight = _darkGreenBushWeight;
         }
     }
 
