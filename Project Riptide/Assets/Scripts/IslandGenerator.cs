@@ -194,7 +194,7 @@ public class IslandGenerator : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Place urban centers under a gameobject named 'UrbanCenters' parented to the island.");
+            Debug.LogWarning("Place urban centers under a gameobject named 'UrbanCenters' parented to the island.");
         }
     }
 
