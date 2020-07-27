@@ -11,6 +11,8 @@ public class InventoryMethods : MonoBehaviour
     private Item _activeItem = null;            //set it automatically to null, closing UI resets to null as well
     private Recipe _activeRecipe = null;        //set it automatically to null, closing UI resets to null as well
 
+    private int trashAmount = 0;
+
     #region SettingsUI
     [SerializeField]
     private Image _soundImage;
@@ -221,6 +223,7 @@ public class InventoryMethods : MonoBehaviour
             Debug.Log("Choosing " + _activeItem.Name);
             //automatically set this to 0
             _trashField.SetText("0");
+            trashAmount = 0;
             _itemName.SetText(_activeItem.Name);
             _itemDescription.SetText(_activeItem.Description);
             _itemCost.SetText("" + _activeItem.Value);
@@ -232,24 +235,27 @@ public class InventoryMethods : MonoBehaviour
     /// changes trash number
     /// </summary>
     /// <param name="num">change number in TextMeshPro</param>
-    public void ChangeNumber(int num)
+    public void ChangeNumber(int numIncrease)
     {
-        int amount = System.Convert.ToInt32(_trashField.text);
-
+        Debug.LogError("Trash Field: " + _trashField.text);
+        //int amount = System.Convert.ToInt32(_trashField.text);
+        Debug.LogError("Amount Num Converted: " + trashAmount);
         //if active item exists
         if (_activeItem != null || _activeItem.Name != "NullItem")
         {
-            amount += num;
+            trashAmount += numIncrease;
+            Debug.LogError("Amount Num Before Checks: " + trashAmount);
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                Debug.LogError("Amount is above active item");
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _trashField.SetText("{0}", amount);
+            _trashField.SetText("{0}", trashAmount);
         }
         else
         {
@@ -264,18 +270,17 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null)
         {
-            int amount = System.Convert.ToInt32(_trashField.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
 
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
             Debug.Log(saved.Amount);
             _trashField.SetText("0");
+            trashAmount = 0;
         }
     }
 
@@ -455,6 +460,7 @@ public class InventoryMethods : MonoBehaviour
             Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
             _marketTrash.SetText("0");
+            trashAmount = 0;
             _marketName.SetText(_activeItem.Name);
             _itemDescriptionMarket.SetText(_activeItem.Description);
             _itemCostMarket.SetText("" + _activeItem.Value);
@@ -489,22 +495,20 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeNumberMarket(int num)
     {
-        int amount = System.Convert.ToInt32(_marketTrash.text);
-
         //if active item exists
         if (_activeItem != null)
         {
-            amount += num;
+            trashAmount += num;
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _marketTrash.SetText("{0}", amount);
+            _marketTrash.SetText("{0}", trashAmount);
         }
         else
         {
@@ -520,38 +524,37 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null)
         {
-            int amount = System.Convert.ToInt32(_marketTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
 
             if (sell)
             {
-                PlayerInventory.Instance.TotalGold += saved.Value * amount;
-                PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+                PlayerInventory.Instance.TotalGold += saved.Value * trashAmount;
+                PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
             }
             else
             {
                 //checks if total gold is not enough
-                if (PlayerInventory.Instance.TotalGold < saved.Value * amount)
+                if (PlayerInventory.Instance.TotalGold < saved.Value * trashAmount)
                 {
-                    for (int i = 1; i <= amount; i++)
+                    for (int i = 1; i <= trashAmount; i++)
                     {
                         if (saved.Value * i > PlayerInventory.Instance.TotalGold)
                         {
-                            amount = i - 1;
+                            trashAmount = i - 1;
                             break;
                         } 
                     }
                 }
-                PlayerInventory.Instance.TotalGold -= saved.Value * amount;
-                PlayerInventory.Instance.AddItem(saved.Name, amount);
+                PlayerInventory.Instance.TotalGold -= saved.Value * trashAmount;
+                PlayerInventory.Instance.AddItem(saved.Name, trashAmount);
             }
             _marketTrash.SetText("0");
+            trashAmount = 0;
         }
     }
     #endregion
@@ -745,6 +748,7 @@ public class InventoryMethods : MonoBehaviour
             Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
             _vaultTrash.SetText("0");
+            trashAmount = 0;
             _vaultName.SetText(_activeItem.Name);
             _vaultDescription.SetText(_activeItem.Description);
             _vaultCost.SetText("{0}", _activeItem.Value);
@@ -756,22 +760,20 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeVaultNumber(int num)
     {
-        int amount = System.Convert.ToInt32(_vaultTrash.text);
-
         //if active item exists
         if (_activeItem != null)
         {
-            amount += num;
+            trashAmount += num;
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _vaultTrash.SetText("{0}", amount);
+            _vaultTrash.SetText("{0}", trashAmount);
         }
         else
         {
@@ -786,15 +788,13 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null || _activeItem.Name != "NullItem")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     public void TrashVaultItem()
@@ -802,31 +802,27 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     public void AddToShip()
     {
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerInventory.Instance.AddItem(saved.Name, amount);
-            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.AddItem(saved.Name, trashAmount);
+            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
 
@@ -834,16 +830,14 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerVault.Instance.AddItem(saved.Name, amount);
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            PlayerVault.Instance.AddItem(saved.Name, trashAmount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     #endregion
