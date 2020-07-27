@@ -186,12 +186,13 @@ public class ActiveAbilities : MonoBehaviour
         _skill[i] = GetActiveSkill(type, i);
         if (_skill[i] != null)
         {
-            _buttons[i].GetComponentInChildren<TMP_Text>().text = _skill[i].Name;
+            _buttons[i].GetComponentInChildren<Image>().sprite = Resources.Load<Sprite>("ActiveAbilities/Buttons/"+_skill[i].Name);
             _skill[i].OnCooldownEnd += ResetButton;
         }
         else
         {
-            _buttons[i].GetComponentInChildren<TMP_Text>().text = "None";
+            _buttons[i].GetComponentInChildren<Image>().sprite = null;
+            Debug.LogError("No active skill of that type found.");
         }
         _buttons[i].gameObject.SetActive(false);
     }
@@ -206,29 +207,29 @@ public class ActiveAbilities : MonoBehaviour
         switch(type)
         {
             case SkillType.SmallDash:
-                return new ActiveSkill("Short Dash", SmallDash, 5.0f, false, index);
+                return new ActiveSkill("ShortDash", SmallDash, 5.0f, false, index);
             case SkillType.Dash:
                 return new ActiveSkill("Dash", Dash, 5.0f, false, index);
             case SkillType.SmallManuverabilityBoost:
-                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 5.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 5.0f, 2.0f);
             case SkillType.MediumManuverabilityBoost:
-                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 6.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 6.0f, 2.0f);
             case SkillType.LargeManuverabilityBoost:
-                return new StatusSkill("Manuverability Boost", this, 20.0f, false, index, StatusType.Maneuverability, 7.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 7.0f, 2.0f);
             case SkillType.BubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 5.0f, 5.0f);
+                return new BubbleFieldSkill("BubbleField", this, 25.0f, false, index, 5.0f, 5.0f);
             case SkillType.StrongBubbleField:
-                return new BubbleFieldSkill("Bubble Field", this, 25.0f, false, index, 10.0f, 8.0f);
+                return new BubbleFieldSkill("BubbleField", this, 25.0f, false, index, 10.0f, 8.0f);
             case SkillType.StopMovement:
-                return new ActiveSkill("Stop Movement", StopMovement, 10.0f, false, index);
+                return new ActiveSkill("Stop", StopMovement, 10.0f, false, index);
             case SkillType.StrongStopMovement:
-                return new ActiveSkill("Stop Movement", StopMovement, 5.0f, false, index);
+                return new ActiveSkill("Stop", StopMovement, 5.0f, false, index);
             case SkillType.SmallSpeedBoost:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.0f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.0f, 1.5f);
             case SkillType.MediumSpeedBoost:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.5f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.5f, 1.5f);
             case SkillType.LargeSpeedBoost:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 1.75f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 1.75f);
             case SkillType.SmallRegeneration:
                 return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
             case SkillType.MediumRegeneration:
@@ -236,15 +237,15 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeRegeneration:
                 return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 20.0f / 3.0f);
             case SkillType.SmallDefenseBoost:
-                return new ActiveSkill("Defense Boost", SmallDefenseBoost, 20.0f, false, index);
+                return new ActiveSkill("DefenseBoost", SmallDefenseBoost, 20.0f, false, index);
             case SkillType.LargeDefenseBoost:
-                return new ActiveSkill("Defense Boost", LargeDefenseBoost, 20.0f, false, index);
+                return new ActiveSkill("DefenseBoost", LargeDefenseBoost, 20.0f, false, index);
             case SkillType.WeakSteelMine:
-                return new SteelMineSkill("Mine", this, 25.0f, false, index, 10.0f);
+                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 10.0f);
             case SkillType.MediumSteelMine:
-                return new SteelMineSkill("Mine", this, 25.0f, false, index, 15.0f);
+                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 15.0f);
             case SkillType.StrongSteelMine:
-                return new SteelMineSkill("Mine", this, 25.0f, false, index, 20.0f);
+                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 20.0f);
             case SkillType.SmallCounter:
                 return new CounterSkill("Counter", this, 15.0f, false, index, 5f);
             case SkillType.MediumCounter:
@@ -258,11 +259,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeRam:
                 return new RamSkill("Ram", this, 20.0f, false, index, 30.0f, 25.0f);
             case SkillType.SmallSeaglassSpeed:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 2.0f);
             case SkillType.MediumSeaglassSpeed:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 4.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 4.0f, 2.0f);
             case SkillType.LargeSeaglassSpeed:
-                return new StatusSkill("Speed Boost", this, 15.0f, false, index, StatusType.MovementSpeed, 5.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 5.0f, 2.0f);
             case SkillType.SmallInvulnerability:
                 return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
             case SkillType.MediumInvulnerability:
@@ -270,29 +271,29 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeInvulnerability:
                 return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
             case SkillType.SpreadShot:
-                return new SpecialShotSkill("Spread Shot", this, 15.0f, true, index, 4, 2, 0.2f, 20, 0);
+                return new SpecialShotSkill("SpreadShot", this, 15.0f, true, index, 4, 2, 0.2f, 20, 0);
             case SkillType.RapidShotFour:
-                return new RapidShotSkill("Rapid Shot", this, 20.0f, true, index, 4, 0.3f);
+                return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 4, 0.3f);
             case SkillType.RapidShotEight:
-                return new RapidShotSkill("Rapid Shot", this, 20.0f, true, index, 8, 0.15f);
+                return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 8, 0.15f);
             case SkillType.WeakBigShot:
-                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 5.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 5.0f, 3, 0, 0);
             case SkillType.MediumBigShot:
-                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 8.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 8.0f, 3, 0, 0);
             case SkillType.StrongBigShot:
-                return new SpecialShotSkill("Big Shot", this, 15.0f, true, index, 0, 10.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 10.0f, 3, 0, 0);
             case SkillType.SmallFireworkCircle:
-                return new ActiveSkill("Firework Burst", SmallFireworkCircle, 20.0f, false, index);
+                return new ActiveSkill("FireworkBlast", SmallFireworkCircle, 20.0f, false, index);
             case SkillType.LargeFireworkCircle:
-                return new ActiveSkill("Firework Burst", LargeFireworkCircle, 20.0f, false, index);
+                return new ActiveSkill("FireworkBlast", LargeFireworkCircle, 20.0f, false, index);
             case SkillType.PoisonCloud:
-                return new PoisonCloudSkill("Poison Cloud", this, 20.0f, true, index, 10.0f, 3.0f);
+                return new PoisonCloudSkill("PoisonCloud", this, 20.0f, true, index, 10.0f, 3.0f);
             case SkillType.StrongPoisonCloud:
-                return new PoisonCloudSkill("Poison Cloud", this, 20.0f, true, index, 10.0f, 5.0f);
+                return new PoisonCloudSkill("PoisonCloud", this, 20.0f, true, index, 10.0f, 5.0f);
             case SkillType.StunShot:
-                return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 10, 4.0f);
+                return new StunShotSkill("StunShot", this, 10.0f, true, index, 10, 4.0f);
             case SkillType.StrongStunShot:
-                return new StunShotSkill("Stun Shot", this, 10.0f, true, index, 14, 6.0f);
+                return new StunShotSkill("StunShot", this, 10.0f, true, index, 14, 6.0f);
             case SkillType.WeakFlameThrower:
                 return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 10.0f);
             case SkillType.MediumFlameThrower:
