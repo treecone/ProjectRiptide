@@ -42,9 +42,8 @@ public class IslandGenerator : MonoBehaviour
     [SerializeField]
     private float _waterHeight;
 
-    [SerializeField]
-    private int _numUrbanCenters;
     private List<Vector3> _urbanCenters;
+    private List<float> _urbanCenterRadii;
 
     [SerializeField]
     private int _numDecoObjects;
@@ -62,7 +61,6 @@ public class IslandGenerator : MonoBehaviour
     private int _totalUrbanWeight;
     private int _totalEnviromentalWeight;
 
-    private const float URBAN_CENTER_RADIUS = 15.0f;
     private const float MAX_HEIGHT = 20.0f;
  
     // Start is called before the first frame update
@@ -119,8 +117,8 @@ public class IslandGenerator : MonoBehaviour
 
     private void Setup()
     {
-        _waterHeight = 0.9f;
         _urbanCenters = new List<Vector3>();
+        _urbanCenterRadii = new List<float>();
 
         //Manually set up urban centers
         Transform urbanCenters = transform.Find("UrbanCenters");
@@ -129,6 +127,7 @@ public class IslandGenerator : MonoBehaviour
             for (int i = 0; i < urbanCenters.childCount; i++)
             {
                 _urbanCenters.Add(urbanCenters.GetChild(i).position);
+                _urbanCenterRadii.Add(urbanCenters.GetChild(i).GetComponent<UrbanCenter>().Radius);
             }
         }
         else
@@ -253,9 +252,9 @@ public class IslandGenerator : MonoBehaviour
     //Checks to see if an urban unit should be placed
     private bool CheckUrban(Vector3 pos)
     {
-        foreach (Vector3 urbanPoint in _urbanCenters)
-        {
-            if ((urbanPoint - pos).sqrMagnitude <= URBAN_CENTER_RADIUS * URBAN_CENTER_RADIUS)
+        for(int i = 0; i < _urbanCenters.Count; i++)
+        { 
+            if ((_urbanCenters[i] - pos).sqrMagnitude <= _urbanCenterRadii[i] * _urbanCenterRadii[i])
             {
                 return true;
             }
