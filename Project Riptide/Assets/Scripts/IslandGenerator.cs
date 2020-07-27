@@ -48,6 +48,21 @@ public class IslandGenerator : MonoBehaviour
     [SerializeField]
     private int _numDecoObjects;
 
+    [SerializeField]
+    private int _rocksWeight;
+    [SerializeField]
+    private int _pinkTreeWeight;
+    [SerializeField]
+    private int _greenTreeWeight;
+    [SerializeField]
+    private int _darkGreenTreeWeight;
+    [SerializeField]
+    private int _greenBushWeight;
+    [SerializeField]
+    private int _darkGreenBushWeight;
+    [SerializeField]
+    private int _bambooWeight;
+
     [Header("Island generation tools - check box to use")]
     [SerializeField]
     private bool _setup;
@@ -81,6 +96,8 @@ public class IslandGenerator : MonoBehaviour
         }
         if(_generate)
         {
+            SetDecoObjectWeights();
+
             _totalUrbanWeight = 0;
             //Calculate total weights of urban and enviroment
             for (int i = 0; i < _urbanObjects.Count; i++)
@@ -112,6 +129,51 @@ public class IslandGenerator : MonoBehaviour
         {
             _clear = false;
             ClearIsland();
+        }
+    }
+
+    /// <summary>
+    /// Sets weights for deco objects
+    /// </summary>
+    private void SetDecoObjectWeights()
+    {
+        //Rocks
+        for (int i = 0; i <= 2; i++)
+        {
+            _environmentalObjects[i].weight = _rocksWeight;
+        }
+
+        //Pink trees
+        for(int i = 3; i <= 6; i++)
+        {
+            _environmentalObjects[i].weight = _pinkTreeWeight;
+        }
+
+        //Bush
+        for (int i = 7; i <= 10; i++)
+        {
+            _environmentalObjects[i].weight = _greenBushWeight;
+        }
+
+        //Bamboo
+        _environmentalObjects[11].weight = _bambooWeight;
+
+        //Green trees
+        for (int i = 12; i <= 15; i++)
+        {
+            _environmentalObjects[i].weight = _greenTreeWeight;
+        }
+
+        //Dark green trees
+        for (int i = 16; i <= 19; i++)
+        {
+            _environmentalObjects[i].weight = _darkGreenTreeWeight;
+        }
+
+        //Dark green bush
+        for (int i = 20; i <= 23; i++)
+        {
+            _environmentalObjects[i].weight = _greenTreeWeight;
         }
     }
 
