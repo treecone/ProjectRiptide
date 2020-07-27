@@ -61,6 +61,11 @@ public class ChunkLoader : MonoBehaviour
         get { return _currentChunkPosition; }
     }
 
+    public Vector2 StartingChunk
+    {
+        get { return new Vector2(_xStartingChunk, _yStartingChunk); }
+    }
+
     public float ChunkLength
     {
         get { return _chunkSideLength; }

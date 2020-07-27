@@ -118,6 +118,11 @@ public class InventoryMethods : MonoBehaviour
         {
             _exposed[i] = false;
         }
+        int chunk = (int)((_chunkLoader.StartingChunk.x - 1) + (_chunkLoader.StartingChunk.y - 1) * 5);
+        _exposed[chunk] = true;
+        _mapImages[25].enabled = true;
+        //calculate where it should be on the map
+        _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
     }
 
     #region Shared Methods
@@ -424,6 +429,17 @@ public class InventoryMethods : MonoBehaviour
         _mapImages[25].enabled = true;
         //calculate where it should be on the map
         _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
+    }
+
+    /// <summary>
+    /// Returns if a chunk has been exposed
+    /// </summary>
+    /// <param name="x">x pos of chunk</param>
+    /// <param name="y">y pos of chunk</param>
+    /// <returns>If chunk has been exposed</returns>
+    public bool ChunkExposed(int x, int y)
+    {
+        return _exposed[(int)(x - 1) + (y * 5)];
     }
     #endregion
 
