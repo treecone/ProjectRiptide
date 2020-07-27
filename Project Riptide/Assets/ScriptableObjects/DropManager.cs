@@ -5,7 +5,6 @@ using System.IO;
 using LitJson;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/DropManager")]
-[UnityEditor.InitializeOnLoad]
 public class DropManager : ScriptableObject
 {
     public static DropManager _instance;

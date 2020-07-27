@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Custom Assets/Singletons/PlayerInventory")]
-[UnityEditor.InitializeOnLoad]
 public class PlayerInventory : ScriptableObject
 {
     private static PlayerInventory _instance;
