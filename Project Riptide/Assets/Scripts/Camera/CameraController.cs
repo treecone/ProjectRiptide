@@ -17,6 +17,8 @@ public class CameraController : MonoBehaviour
     private List<Enemy> allTargets;
     [SerializeField]
     private float _playerWeight = 0.3f;
+    [SerializeField]
+    private float _cameraShakeAmount;
 
     //Zoom
     private Enemy _farthestTarget;
@@ -165,16 +167,8 @@ public class CameraController : MonoBehaviour
         _offset = Vector3.Lerp(_minZoom, _maxZoom, (_player.transform.position - _farthestTarget.transform.position).sqrMagnitude / Mathf.Pow(_inputManager.MaxCombatRange,2) - 0.1f);
     }
 
-    public void ToggleCombatView(bool on)
+    public void CameraShake (Vector3 dir)
     {
-        /*if(on)
-        {
-            _offset = new Vector3(30, 30, 0);
-        }
-        else
-        {
-            _offset = new Vector3(35, 35, 0);
-        }
-        */
+        gameObject.transform.Translate(dir * _cameraShakeAmount);
     }
 }
