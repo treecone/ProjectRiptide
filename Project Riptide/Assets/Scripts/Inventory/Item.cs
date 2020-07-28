@@ -61,10 +61,8 @@ public class Item
 
     public int Value
     {
-        get
-        {
-            return value;
-        }
+        get;
+        set;
     }
 
     public string Slug
