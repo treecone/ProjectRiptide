@@ -168,9 +168,16 @@ public class Inventory : MonoBehaviour
     {
         if (PortManager.LastPortVisited != null)
         {
-            for (int i = 0; i < PortManager.LastPortVisited._marketItems.Count; i++)
+            for (int i = 0; i < _marketInventory.Count; i++)
             {
-                _marketInventory[i].item = PortManager.LastPortVisited._marketItems[i];
+                if (i < PortManager.LastPortVisited._marketItems.Count)
+                {
+                    _marketInventory[i].item = PortManager.LastPortVisited._marketItems[i];
+                }
+                else
+                {
+                    _marketInventory[i].item = ItemDB.Instance.FindItem("null");
+                }
                 _marketInventory[i].UpdateSlotVisuals();
             }
         }
