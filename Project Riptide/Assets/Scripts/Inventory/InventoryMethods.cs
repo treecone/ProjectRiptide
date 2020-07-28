@@ -444,7 +444,7 @@ public class InventoryMethods : MonoBehaviour
     /// <returns>If chunk has been exposed</returns>
     public bool ChunkExposed(int x, int y)
     {
-        return _exposed[(int)(x - 1) + (y * 5)];
+        return _exposed[(x - 1) + ((y - 1) * 5)];
     }
     #endregion
 
@@ -841,7 +841,4 @@ public class InventoryMethods : MonoBehaviour
         }
     }
     #endregion
-
-
-
 }
