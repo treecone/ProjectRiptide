@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PortManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PortManager : MonoBehaviour
     private Size portSize;
 
     public List<Item> _marketItems;
+    public string name = "";
+    public string tip = "";
 
     [SerializeField]
     private GameObject _player;
@@ -69,6 +72,10 @@ public class PortManager : MonoBehaviour
 		{
             _inPort = true;
 			_portUI.SetActive(true);
+            //title
+            _portUI.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(name);
+            //tip
+            _portUI.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Tip: " + tip);
             _player.GetComponent<ShipMovement>().StopMotion();
             _inventoryMethods.PauseMarketGame();
             LastPortVisited = this;
@@ -90,12 +97,11 @@ public class PortManager : MonoBehaviour
         {
             _marketItems = DropManager.Instance.GetDrops("largePort");
         }
+
         /*
         for (int i = 0; i < _marketItems.Count; i++)
         {
-            Debug.Log("Before" + _marketItems[i].Name + " " + _marketItems[i].Value);
-            _marketItems[i].Value = (int)2*_marketItems[i].Value;
-            Debug.Log(_marketItems[i].Name + " " + _marketItems[i].Value);
+            _marketItems[i].Value = (int)1.25*_marketItems[i].Value;
         }
         */
     }
