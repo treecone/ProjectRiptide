@@ -5,23 +5,35 @@ using UnityEngine.UI;
 
 public class PortManager : MonoBehaviour
 {
+    private enum Size { Small, Medium, Large };
+
     [SerializeField]
-	private GameObject _player;
+    private Size portSize;
+
+    public List<Item> _marketItems;
+
+    [SerializeField]
+    private GameObject _player;
     [SerializeField]
     private InventoryMethods _inventoryMethods;
     [SerializeField]
     private int _portNumber;
     [SerializeField]
-	private GameObject _canvas;
+    private GameObject _canvas;
     [SerializeField]
     private GameObject _portUI;
     [SerializeField]    //can remove this later
-	private bool _inPort;
+    private bool _inPort;
     [SerializeField]
     private Button _leavePort;
 
     public static PortManager LastPortVisited;
     public bool InPort { get; set; }
+
+    private void Start()
+    {
+        GenerateItems();
+    }
 
     void Awake()
 	{
@@ -41,8 +53,8 @@ public class PortManager : MonoBehaviour
         if (_leavePort == null)
         {
             _leavePort = _portUI.transform.GetChild(0).GetChild(4).gameObject.GetComponent<Button>();
+            _leavePort.onClick.AddListener(LeavePort);
         }
-        _leavePort.onClick.AddListener(LeavePort);
         _inventoryMethods = _canvas.GetComponent<InventoryMethods>();
 
         _inPort = false;
@@ -63,6 +75,30 @@ public class PortManager : MonoBehaviour
         
     }
 
+    public void GenerateItems()
+    {
+        if (portSize == Size.Small)
+        {
+            _marketItems = DropManager.Instance.GetDrops("smallPort");
+        }
+        else if (portSize == Size.Medium)
+        {
+            _marketItems = DropManager.Instance.GetDrops("mediumPort");
+        }
+        else
+        {
+            _marketItems = DropManager.Instance.GetDrops("largePort");
+        }
+        /*
+        for (int i = 0; i < _marketItems.Count; i++)
+        {
+            Debug.Log("Before" + _marketItems[i].Name + " " + _marketItems[i].Value);
+            _marketItems[i].Value = (int)2*_marketItems[i].Value;
+            Debug.Log(_marketItems[i].Name + " " + _marketItems[i].Value);
+        }
+        */
+    }
+
     public void LeavePort()
     {
         _player.GetComponent<ShipMovement>().Position += new Vector3(15, 0, 15);
@@ -70,4 +106,38 @@ public class PortManager : MonoBehaviour
         _portUI.SetActive(false);
         _inventoryMethods.UnpauseGame();
     }
+
+
+    public bool RemoveItem(string itemName, int amount)
+    {
+        if (_marketItems.Count == 0)
+        {
+            Debug.LogWarning("Nothing in inventory, nothing to delete!");
+            return false;
+        }
+        int remaining = amount;
+        for (int i = _marketItems.Count - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
+        {
+            if (_marketItems[i].Name == itemName)
+            {
+                if (_marketItems[i].Amount <= remaining)
+                {
+                    remaining -= _marketItems[i].Amount;
+                    _marketItems[i] = ItemDB.Instance.FindItem("null");
+                    if (remaining == 0)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    _marketItems[i].Amount -= remaining;
+                    return true;
+                }
+            }
+        }
+        Debug.LogWarning("[PortManager] When removing " + amount + " of " + itemName + ", not enough items of that type were found in the inventory!");
+        return false;
+    }
+
 }

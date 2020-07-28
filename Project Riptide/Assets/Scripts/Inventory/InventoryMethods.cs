@@ -227,7 +227,6 @@ public class InventoryMethods : MonoBehaviour
             _itemName.SetText(_activeItem.Name);
             _itemDescription.SetText(_activeItem.Description);
             _itemCost.SetText("" + _activeItem.Value);
-            //{0} did not work here
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
         }
     }
@@ -255,7 +254,7 @@ public class InventoryMethods : MonoBehaviour
             {
                 trashAmount = 0;
             }
-            _trashField.SetText("{0}", trashAmount);
+            _trashField.SetText(trashAmount.ToString());
         }
         else
         {
@@ -282,6 +281,17 @@ public class InventoryMethods : MonoBehaviour
             _trashField.SetText("0");
             trashAmount = 0;
         }
+    }
+
+
+    public void BuyMarket()
+    {
+        if (PlayerInventory.Instance.totalGold < _activeItem.Value * trashAmount)
+        {
+            trashAmount = PlayerInventory.Instance.totalGold / _activeItem.Value;
+            _marketTrash.SetText(trashAmount.ToString());
+        }
+        PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
     }
 
     #endregion
@@ -464,7 +474,6 @@ public class InventoryMethods : MonoBehaviour
             _marketName.SetText(_activeItem.Name);
             _itemDescriptionMarket.SetText(_activeItem.Description);
             _itemCostMarket.SetText("" + _activeItem.Value);
-            //{0} did not work here
             _sellName.SetText("Are you sure you want to sell " + _activeItem.Name + "?");
         }
 
@@ -508,7 +517,7 @@ public class InventoryMethods : MonoBehaviour
             {
                 trashAmount = 0;
             }
-            _marketTrash.SetText("{0}", trashAmount);
+            _marketTrash.SetText(trashAmount.ToString());
         }
         else
         {
@@ -751,7 +760,7 @@ public class InventoryMethods : MonoBehaviour
             trashAmount = 0;
             _vaultName.SetText(_activeItem.Name);
             _vaultDescription.SetText(_activeItem.Description);
-            _vaultCost.SetText("{0}", _activeItem.Value);
+            _vaultCost.SetText(_activeItem.Value.ToString());
         }
     }
     /// <summary>
@@ -773,7 +782,7 @@ public class InventoryMethods : MonoBehaviour
             {
                 trashAmount = 0;
             }
-            _vaultTrash.SetText("{0}", trashAmount);
+            _vaultTrash.SetText(trashAmount.ToString());
         }
         else
         {

@@ -36,6 +36,10 @@ public class Inventory : MonoBehaviour
     private GameObject _equipmentPrefab;
     private List<EquipmentSlot> equipmentSlots;
 
+    [SerializeField]
+    private GameObject _marketParent;
+    private List<InventorySlot> _marketInventory;
+    private List<Item> _marketItems;
     #endregion
 
 
@@ -57,6 +61,16 @@ public class Inventory : MonoBehaviour
             }
             inventorySlots.Add(slots);
         }
+        //market
+        _marketInventory = new List<InventorySlot>();
+        foreach (Transform t in _marketParent.transform)
+        {
+            if (t.gameObject.GetComponent<InventorySlot>() != null)
+            {
+                _marketInventory.Add(t.gameObject.GetComponent<InventorySlot>());
+            }
+        }
+
         //vault
         vaultSlots = new List<List<InventorySlot>>();
         foreach (GameObject vaultParent in vaultParents)
@@ -149,7 +163,24 @@ public class Inventory : MonoBehaviour
             textMesh.text = "" + PlayerInventory.Instance.totalGold;
         }
     }
-    
+
+    public void UpdateMarketVisuals()
+    {
+        Debug.Log(PortManager.LastPortVisited);
+
+        if (PortManager.LastPortVisited != null)
+        {
+            Debug.Log(PortManager.LastPortVisited._marketItems);
+            Debug.Log(PortManager.LastPortVisited._marketItems.Count);
+
+            for (int i = 0; i < PortManager.LastPortVisited._marketItems.Count; i++)
+            {
+                _marketInventory[i].item = PortManager.LastPortVisited._marketItems[i];
+                _marketInventory[i].UpdateSlotVisuals();
+            }
+        }
+    }
+
 
     public void UpdateRecipeVisuals()
     {
