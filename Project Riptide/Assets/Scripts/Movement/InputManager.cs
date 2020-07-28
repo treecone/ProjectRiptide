@@ -126,7 +126,6 @@ public class InputManager : MonoBehaviour
             //ACTIVATE COMBAT MODE
             _combatMode = true;
             _fireButton.gameObject.SetActive(true);
-            _cameraController.ToggleCombatView(true);
             _lineIndicator.enabled = true;
         }
 
@@ -136,7 +135,6 @@ public class InputManager : MonoBehaviour
             _combatMode = false;
             _fireButton.gameObject.SetActive(false);
             _fireSlider.gameObject.SetActive(false);
-            _cameraController.ToggleCombatView(false);
             _lineIndicator.enabled = false;
         }
 
@@ -312,7 +310,6 @@ public class InputManager : MonoBehaviour
                 if (!_combatMode && _movementScript.IndicatorActive)
                 {
                     _combatMode = true;
-                    _cameraController.ToggleCombatView(true);
                     _fireButton.gameObject.SetActive(true);
                     _movementScript.IndicatorActive = false;
                     _lineIndicator.enabled = true;
@@ -330,7 +327,6 @@ public class InputManager : MonoBehaviour
             if (!_combatMode && _movementScript.IndicatorActive)
             {
                 _combatMode = true;
-                _cameraController.ToggleCombatView(true);
                 _fireButton.gameObject.SetActive(true);
                 _movementScript.IndicatorActive = false;
                 _lineIndicator.enabled = true;

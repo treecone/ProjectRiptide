@@ -71,6 +71,9 @@ public class CannonFire : MonoBehaviour
         CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
         rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
 
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
+
         /*if (offset == 15.0f)
         {
             CannonShot rightShot = new CannonShot(direction, 90 + offset, _shipUpgradeScript.masterUpgrade);
@@ -118,6 +121,9 @@ public class CannonFire : MonoBehaviour
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade);
         rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
         return angle;
     }
 
@@ -155,6 +161,9 @@ public class CannonFire : MonoBehaviour
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade, onTrigger);
         rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
         return angle;
     }
 
