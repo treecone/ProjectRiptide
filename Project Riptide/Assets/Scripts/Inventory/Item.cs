@@ -61,8 +61,14 @@ public class Item
 
     public int Value
     {
-        get;
-        set;
+        get
+        {
+            return value;
+        }
+        set
+        {
+            this.value = value;
+        }
     }
 
     public string Slug
