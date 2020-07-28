@@ -98,12 +98,12 @@ public class PortManager : MonoBehaviour
             _marketItems = DropManager.Instance.GetDrops("largePort");
         }
 
-        /*
+        
         for (int i = 0; i < _marketItems.Count; i++)
         {
-            _marketItems[i].Value = (int)1.25*_marketItems[i].Value;
+            _marketItems[i].Value = (int)(1.25*_marketItems[i].Value);
         }
-        */
+        
     }
 
     public void LeavePort()

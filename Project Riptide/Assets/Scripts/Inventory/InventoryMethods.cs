@@ -134,7 +134,7 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void SelectItem(GameObject gObj)
     {
-        if (gObj.GetComponent<InventorySlot>().item != null || gObj.GetComponent<InventorySlot>().item.Name != "Null")
+        if (gObj.GetComponent<InventorySlot>().item != null && gObj.GetComponent<InventorySlot>().item.Name != "Null")
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
         }
@@ -142,7 +142,7 @@ public class InventoryMethods : MonoBehaviour
 
     public void SelectEquipment(GameObject gObj)
     {
-        if (gObj.GetComponent<EquipmentSlot>().equipment != null || gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
+        if (gObj.GetComponent<EquipmentSlot>().equipment != null && gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
         {
             _activeItem = gObj.GetComponent<EquipmentSlot>().equipment;
         }
@@ -215,7 +215,7 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventorySlot"></param>
     public void ChooseInventoryItem()
     {
-        if (_activeItem != null || _activeItem.Name != "Null")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
             //automatically set this to 0
             _trashField.SetText("0");
@@ -236,7 +236,7 @@ public class InventoryMethods : MonoBehaviour
         //int amount = System.Convert.ToInt32(_trashField.text);
         Debug.LogError("Amount Num Converted: " + trashAmount);
         //if active item exists
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null && _activeItem.Name != "NullItem")
         {
             trashAmount += numIncrease;
             Debug.LogError("Amount Num Before Checks: " + trashAmount);
