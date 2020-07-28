@@ -66,12 +66,10 @@ public class PortManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(_inPort);
 		//If the escape timer is zero and the player is near the port, then disable player movement
 		if (!_inPort && Vector3.SqrMagnitude(_player.transform.position - transform.position) < 100)
 		{
             _inPort = true;
-            Debug.Log("Going into port");
 			_portUI.SetActive(true);
             //title
             _portUI.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(name);
@@ -114,7 +112,6 @@ public class PortManager : MonoBehaviour
         _inPort = false;
         _portUI.SetActive(false);
         _inventoryMethods.UnpauseGame();
-        Debug.Log("Leaving Port: " + _inPort);
     }
 
 
