@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Menus : MonoBehaviour
 {
-    public void PlayerLeavePort()
+    /*public void PlayerLeavePort()
     {
         GameObject[] allPorts = GameObject.FindGameObjectsWithTag("Port");
         foreach (GameObject port in allPorts)
@@ -15,7 +15,7 @@ public class Menus : MonoBehaviour
                 return;
             }
         }
-    }
+    }*/
 
     public void EnablePortUI (GameObject windowToDisable)
     {
