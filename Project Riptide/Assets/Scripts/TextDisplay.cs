@@ -16,6 +16,8 @@ public class TextDisplay : MonoBehaviour
 
     private const float STARTING_HEIGHT = -644;
     private const float BETWEEN_TEXT_DISTANCE = 300;
+    private const float TIME_BETWEEN_DISPLAYS = 0.25f;
+    private float _currTime;
 
     // Start is called before the first frame update
     void Start()
@@ -40,7 +42,7 @@ public class TextDisplay : MonoBehaviour
             AddText("+9 Seaweed", Color.red);
         }
 
-        if(_displayText.Count < 5 && _waitingTextQueue.Count > 0)
+        if(_displayText.Count < 5 && _waitingTextQueue.Count > 0 && _currTime > TIME_BETWEEN_DISPLAYS)
         {
             //Add new text from queue to display
             TextObject textObj = _waitingTextQueue.Dequeue();
@@ -50,6 +52,7 @@ public class TextDisplay : MonoBehaviour
             textObj.SetObject(textGameObj);
             _displayText.Add(textObj);
             SetTextPositions();
+            _currTime = 0;
         }
 
         for(int i = 0; i < _displayText.Count; i++)
@@ -60,8 +63,11 @@ public class TextDisplay : MonoBehaviour
                 _displayText.RemoveAt(i);
                 i--;
                 SetTextPositions();
+                _currTime = 0;
             }
         }
+
+        _currTime += Time.deltaTime;
     }
 
     /// <summary>

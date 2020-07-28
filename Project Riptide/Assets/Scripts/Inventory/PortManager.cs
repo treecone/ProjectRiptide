@@ -28,7 +28,6 @@ public class PortManager : MonoBehaviour
     private Button _leavePort;
 
     public static PortManager LastPortVisited;
-    private static bool AddedListener = false;
     public bool InPort { get; set; }
 
     private void Start()
@@ -56,11 +55,8 @@ public class PortManager : MonoBehaviour
             _leavePort = _portUI.transform.GetChild(0).GetChild(4).gameObject.GetComponent<Button>();
         }
 
-        if (!AddedListener)
-        {
-            AddedListener = true;
-            _leavePort.onClick.AddListener(LeavePort);
-        }
+        _leavePort.onClick.RemoveAllListeners();
+        _leavePort.onClick.AddListener(LeavePort);
 
         _inventoryMethods = _canvas.GetComponent<InventoryMethods>();
 

@@ -33,6 +33,7 @@ public class MapPiece : MonoBehaviour
         {
             Debug.Log("Map Exposed");
             _map.ExposeCurrentChunk();
+            _map.GetComponent<TextDisplay>().AddText("Map piece discovered!!", new Color32(255, 215, 0, 255));
             Destroy(gameObject);
         }
     }
