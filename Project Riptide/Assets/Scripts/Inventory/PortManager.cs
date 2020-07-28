@@ -17,8 +17,6 @@ public class PortManager : MonoBehaviour
     [SerializeField]
     private InventoryMethods _inventoryMethods;
     [SerializeField]
-    private int _portNumber;
-    [SerializeField]
     private GameObject _canvas;
     [SerializeField]
     private GameObject _portUI;

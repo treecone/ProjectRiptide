@@ -160,19 +160,14 @@ public class Inventory : MonoBehaviour
         }
         foreach(TextMeshProUGUI textMesh in goldTextMeshes)
         {
-            textMesh.text = "" + PlayerInventory.Instance.totalGold;
+            textMesh.SetText(PlayerInventory.Instance.totalGold.ToString());
         }
     }
 
     public void UpdateMarketVisuals()
     {
-        Debug.Log(PortManager.LastPortVisited);
-
         if (PortManager.LastPortVisited != null)
         {
-            Debug.Log(PortManager.LastPortVisited._marketItems);
-            Debug.Log(PortManager.LastPortVisited._marketItems.Count);
-
             for (int i = 0; i < PortManager.LastPortVisited._marketItems.Count; i++)
             {
                 _marketInventory[i].item = PortManager.LastPortVisited._marketItems[i];

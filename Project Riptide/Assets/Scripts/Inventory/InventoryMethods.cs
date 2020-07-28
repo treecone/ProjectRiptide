@@ -137,7 +137,6 @@ public class InventoryMethods : MonoBehaviour
         if (gObj.GetComponent<InventorySlot>().item != null || gObj.GetComponent<InventorySlot>().item.Name != "Null")
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
-            Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
         }
     }
 
@@ -146,7 +145,6 @@ public class InventoryMethods : MonoBehaviour
         if (gObj.GetComponent<EquipmentSlot>().equipment != null || gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
         {
             _activeItem = gObj.GetComponent<EquipmentSlot>().equipment;
-            Debug.Log("Selected " + gObj.GetComponent<EquipmentSlot>().equipment.Name);
         }
     }
 
@@ -217,16 +215,14 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventorySlot"></param>
     public void ChooseInventoryItem()
     {
-        Debug.Log(_activeItem.Name);
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            Debug.Log("Choosing " + _activeItem.Name);
             //automatically set this to 0
             _trashField.SetText("0");
             trashAmount = 0;
             _itemName.SetText(_activeItem.Name);
             _itemDescription.SetText(_activeItem.Description);
-            _itemCost.SetText("" + _activeItem.Value);
+            _itemCost.SetText(_activeItem.Value.ToString());
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
         }
     }
@@ -277,7 +273,6 @@ public class InventoryMethods : MonoBehaviour
             }
 
             PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
-            Debug.Log(saved.Amount);
             _trashField.SetText("0");
             trashAmount = 0;
         }
@@ -467,13 +462,12 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null)
         {
-            Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
             _marketTrash.SetText("0");
             trashAmount = 0;
             _marketName.SetText(_activeItem.Name);
             _itemDescriptionMarket.SetText(_activeItem.Description);
-            _itemCostMarket.SetText("" + _activeItem.Value);
+            _itemCostMarket.SetText(_activeItem.Value.ToString());
             _sellName.SetText("Are you sure you want to sell " + _activeItem.Name + "?");
         }
 
@@ -533,34 +527,38 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null)
         {
-            Item saved = _activeItem;
-
             if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-
+            //sells item
             if (sell)
             {
-                PlayerInventory.Instance.TotalGold += saved.Value * trashAmount;
-                PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
+                PlayerInventory.Instance.TotalGold += _activeItem.Value * trashAmount;
+                PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
             }
+            //buys item
             else
             {
                 //checks if total gold is not enough
-                if (PlayerInventory.Instance.TotalGold < saved.Value * trashAmount)
+                Debug.Log("Total Gold: " + PlayerInventory.Instance.TotalGold);
+                Debug.Log("Active Item: " + _activeItem);
+                Debug.Log("active item value: " + _activeItem.Value);
+                Debug.Log("Trash amount: " + trashAmount);
+                if (PlayerInventory.Instance.TotalGold < _activeItem.Value * trashAmount)
                 {
-                    for (int i = 1; i <= trashAmount; i++)
+                    //sets it to max gold amount
+                    trashAmount = PlayerInventory.Instance.TotalGold / _activeItem.Value;
+                    //just double checking
+                    if (trashAmount > _activeItem.Amount)
                     {
-                        if (saved.Value * i > PlayerInventory.Instance.TotalGold)
-                        {
-                            trashAmount = i - 1;
-                            break;
-                        } 
+                        trashAmount = _activeItem.Amount;
                     }
+                    _marketTrash.SetText(trashAmount.ToString());
                 }
-                PlayerInventory.Instance.TotalGold -= saved.Value * trashAmount;
-                PlayerInventory.Instance.AddItem(saved.Name, trashAmount);
+                PlayerInventory.Instance.TotalGold -= _activeItem.Value * trashAmount;
+                PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+                PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
             _marketTrash.SetText("0");
             trashAmount = 0;
