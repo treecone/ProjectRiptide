@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1764,6 +1764,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -2141.61
       objectReference: {fileID: 0}
+    - target: {fileID: 2831806197157601388, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2831806197157601388, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3051329926068148495, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -3104,6 +3114,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 19
       objectReference: {fileID: 0}
+    - target: {fileID: 7719197695912568007, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7719197695912568007, guid: 08023d8f5d737d546916f57cf3805d62,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7760561468606443641, guid: 08023d8f5d737d546916f57cf3805d62,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -3856,7 +3876,7 @@ PrefabInstance:
     - target: {fileID: 271508308, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
       propertyPath: inventory
       value: 
-      objectReference: {fileID: 1514426813}
+      objectReference: {fileID: 0}
     - target: {fileID: 569296686, guid: 59ea9c24f4295d744a4b3d24a318a75b, type: 3}
       propertyPath: _inputManager
       value: 
@@ -4067,18 +4087,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &1514426813 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1912491708, guid: 08023d8f5d737d546916f57cf3805d62,
-    type: 3}
-  m_PrefabInstance: {fileID: 1434642320}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9002a1d9bcc6af848909f3cf4743c184, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1688909115
 PrefabInstance:
   m_ObjectHideFlags: 0

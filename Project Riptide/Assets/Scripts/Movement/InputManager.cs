@@ -730,7 +730,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void CheckEnemyTap()
     {
-        foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition)))
+        foreach(RaycastHit hit in UnityEngine.Physics.SphereCastAll(Camera.main.ScreenPointToRay(Input.mousePosition), 2.0f))
         {
             if (hit.collider.gameObject.tag == "Hitbox")
             {
