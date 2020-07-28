@@ -26,6 +26,7 @@ public class PortManager : MonoBehaviour
     private Button _leavePort;
 
     public static PortManager LastPortVisited;
+    private static bool AddedListener = false;
     public bool InPort { get; set; }
 
     private void Start()
@@ -53,8 +54,11 @@ public class PortManager : MonoBehaviour
             _leavePort = _portUI.transform.GetChild(0).GetChild(4).gameObject.GetComponent<Button>();
         }
 
-        _leavePort.onClick.RemoveAllListeners();
-        _leavePort.onClick.AddListener(LeavePort);
+        if (!AddedListener)
+        {
+            AddedListener = true;
+            _leavePort.onClick.AddListener(LeavePort);
+        }
 
         _inventoryMethods = _canvas.GetComponent<InventoryMethods>();
 
@@ -102,7 +106,8 @@ public class PortManager : MonoBehaviour
 
     public void LeavePort()
     {
-        _player.GetComponent<ShipMovement>().Position = LastPortVisited.transform.position - LastPortVisited.transform.right * 15.0f;
+        _player.GetComponent<ShipMovement>().Position = new Vector3(LastPortVisited.transform.position.x, _player.transform.position.y, LastPortVisited.transform.position.z) - LastPortVisited.transform.right * 18.0f;
+        //_player.GetComponent<ShipMovement>().Position += new Vector3(15.0f, 0, 15.0f);
         _inPort = false;
         _portUI.SetActive(false);
         _inventoryMethods.UnpauseGame();

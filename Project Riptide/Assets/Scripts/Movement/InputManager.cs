@@ -48,7 +48,7 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    private float _fireRate = 0.5f;
+    private float _fireRate = 1.0f;
     private float _currFireTime = 0.0f;
 
     private float _viewRange = 20.0f;
