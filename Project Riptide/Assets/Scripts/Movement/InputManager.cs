@@ -73,6 +73,9 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private bool _forceMobile = false;
 
+    [SerializeField]
+    private bool _letGoStop;
+
     void Awake()
     {
         _camera = Camera.main;
@@ -317,6 +320,12 @@ public class InputManager : MonoBehaviour
 
                 CheckEnemyTap();
             }
+            if (_letGoStop)
+            {
+                SetArrowIcon(_iconBase.position * _screenScale);
+                _movementScript.TargetDirection = Vector3.zero;
+                _movementScript.SpeedScale = 0;
+            }
         }
     }
 
@@ -333,6 +342,13 @@ public class InputManager : MonoBehaviour
             }
 
             CheckEnemyTap();
+        }
+
+        if (_letGoStop && Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - ((t.StartPosition + (Vector2)_screenCorrect) * _screenScale)) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+        {
+            SetArrowIcon(_iconBase.position * _screenScale);
+            _movementScript.TargetDirection = Vector3.zero;
+            _movementScript.SpeedScale = 0;
         }
     }
 

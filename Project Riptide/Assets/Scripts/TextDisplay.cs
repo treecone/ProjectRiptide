@@ -16,7 +16,7 @@ public class TextDisplay : MonoBehaviour
 
     private const float STARTING_HEIGHT = -644;
     private const float BETWEEN_TEXT_DISTANCE = 300;
-    private const float TIME_BETWEEN_DISPLAYS = 0.25f;
+    private const float TIME_BETWEEN_DISPLAYS = 0.15f;
     private float _currTime;
 
     // Start is called before the first frame update
@@ -97,7 +97,7 @@ public class TextObject
     private TextMeshProUGUI _textMesh;
     private float _currAlpha = 255;
 
-    private const float DISPLAY_TIME = 3.0f;
+    private const float DISPLAY_TIME = 1f;
     private float _currTime;
 
     public TextObject(string text, Color32 color)
