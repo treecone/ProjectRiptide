@@ -14,11 +14,15 @@ public class CannonBallBehavior : MonoBehaviour
         set { _onTrigger = value; }
     }
 
+    [SerializeField]
+    private GameObject _impactParticles;
+
     // Start is called before the first frame update
     void Start()
     {
         projHitbox = Instantiate(hitbox, transform);
         projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, Vector3.zero, new Vector3(1, 1, 1), HitboxType.PlayerHitbox, damageDealt);
+        projHitbox.GetComponent<Hitbox>().OnTrigger += PlayParticles;
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
         projHitbox.GetComponent<Hitbox>().OnTrigger += _onTrigger;
     }
@@ -40,5 +44,13 @@ public class CannonBallBehavior : MonoBehaviour
             Destroy(gameObject);
         if (hit.tag == "Enemy")
             Destroy(gameObject);
+    }
+
+    void PlayParticles(GameObject other)
+    {
+        if (other.tag == "Enemy")
+        {
+            GameObject.Instantiate(_impactParticles, transform.position, Quaternion.identity, other.transform);
+        }
     }
 }

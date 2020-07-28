@@ -73,6 +73,9 @@ public class InputManager : MonoBehaviour
     [SerializeField]
     private bool _forceMobile = false;
 
+    [SerializeField]
+    private bool _letGoStop;
+
     void Awake()
     {
         _camera = Camera.main;
@@ -126,7 +129,6 @@ public class InputManager : MonoBehaviour
             //ACTIVATE COMBAT MODE
             _combatMode = true;
             _fireButton.gameObject.SetActive(true);
-            _cameraController.ToggleCombatView(true);
             _lineIndicator.enabled = true;
         }
 
@@ -136,7 +138,6 @@ public class InputManager : MonoBehaviour
             _combatMode = false;
             _fireButton.gameObject.SetActive(false);
             _fireSlider.gameObject.SetActive(false);
-            _cameraController.ToggleCombatView(false);
             _lineIndicator.enabled = false;
         }
 
@@ -312,13 +313,18 @@ public class InputManager : MonoBehaviour
                 if (!_combatMode && _movementScript.IndicatorActive)
                 {
                     _combatMode = true;
-                    _cameraController.ToggleCombatView(true);
                     _fireButton.gameObject.SetActive(true);
                     _movementScript.IndicatorActive = false;
                     _lineIndicator.enabled = true;
                 }
 
                 CheckEnemyTap();
+            }
+            if (_letGoStop)
+            {
+                SetArrowIcon(_iconBase.position * _screenScale);
+                _movementScript.TargetDirection = Vector3.zero;
+                _movementScript.SpeedScale = 0;
             }
         }
     }
@@ -330,13 +336,19 @@ public class InputManager : MonoBehaviour
             if (!_combatMode && _movementScript.IndicatorActive)
             {
                 _combatMode = true;
-                _cameraController.ToggleCombatView(true);
                 _fireButton.gameObject.SetActive(true);
                 _movementScript.IndicatorActive = false;
                 _lineIndicator.enabled = true;
             }
 
             CheckEnemyTap();
+        }
+
+        if (_letGoStop && Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - ((t.StartPosition + (Vector2)_screenCorrect) * _screenScale)) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+        {
+            SetArrowIcon(_iconBase.position * _screenScale);
+            _movementScript.TargetDirection = Vector3.zero;
+            _movementScript.SpeedScale = 0;
         }
     }
 

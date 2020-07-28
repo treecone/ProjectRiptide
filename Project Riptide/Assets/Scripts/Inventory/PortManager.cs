@@ -24,12 +24,11 @@ public class PortManager : MonoBehaviour
     [SerializeField]
     private GameObject _portUI;
     [SerializeField]    //can remove this later
-    private bool _inPort;
+    private static bool _inPort;
     [SerializeField]
     private Button _leavePort;
 
     public static PortManager LastPortVisited;
-    public bool InPort { get; set; }
 
     private void Start()
     {
