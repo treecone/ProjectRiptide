@@ -525,12 +525,9 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="sell">sell for true, buy for false</param>
     public void SellItem(bool sell)
     {
+
         if (_activeItem != null)
         {
-            if (trashAmount >= _activeItem.Amount)
-            {
-                ResetActiveItem();
-            }
             //sells item
             if (sell)
             {
@@ -540,12 +537,6 @@ public class InventoryMethods : MonoBehaviour
             //buys item
             else
             {
-                //checks if total gold is not enough
-                Debug.Log("Total Gold: " + PlayerInventory.Instance.TotalGold);
-                Debug.Log("Active Item: " + _activeItem);
-                Debug.Log("Active Item: " + _activeItem.Amount);
-                Debug.Log("active item value: " + _activeItem.Value);
-                Debug.Log("Trash amount: " + trashAmount);
                 if (PlayerInventory.Instance.TotalGold < _activeItem.Value * trashAmount)
                 {
                     //sets it to max gold amount
