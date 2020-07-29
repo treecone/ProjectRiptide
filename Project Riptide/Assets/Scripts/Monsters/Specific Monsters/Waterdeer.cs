@@ -55,12 +55,12 @@ public partial class Waterdeer : Enemy
     }
 
     /// <summary>
-    /// On hostile, make other deer around hostile as well
+    /// On hit, make other deer around hostile as well
     /// </summary>
-    protected override void OnHostile()
+    protected override void OnHit()
     {
         AgitateDeersInRadius(30.0f);
-        base.OnHostile();
+        base.OnHit();
     }
 
     protected override void OnDeath()

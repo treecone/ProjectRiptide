@@ -290,6 +290,7 @@ public partial class Enemy : Physics
         {
             _health -= damage;
             _healthBar.UpdateHealth(_health);
+            OnHit();
             if (_state == EnemyState.Passive && _passiveCooldown <= 0 && damage > 0)
             {
                 _state = EnemyState.Hostile;
@@ -745,7 +746,13 @@ public partial class Enemy : Physics
         _dying = true;
         _isInvincible = true;
         _deathTimer = 0;
-        if(_lootType != "")
+        //destroy hitboxes
+        foreach (Hitbox hitbox in GetComponentsInChildren<Hitbox>())
+        {
+            Destroy(hitbox.gameObject);
+        }
+        _canvas.SetActive(false);
+        if (_lootType != "")
         {
             GameObject lootboxClone = Instantiate(_lootboxPrefab);
             lootboxClone.transform.position = transform.position;
@@ -756,13 +763,27 @@ public partial class Enemy : Physics
         }
     }
 
+    /// <summary>
+    /// Called when enemy becomes frozen
+    /// </summary>
     protected virtual void OnFreeze()
     {
     }
 
+    /// <summary>
+    /// Called when enemy becomes unfrozen
+    /// </summary>
     protected virtual void OnUnfreeze()
     {
         _acceleration = Vector3.zero;
+    }
+
+    /// <summary>
+    /// Called when enemy has been hit
+    /// </summary>
+    protected virtual void OnHit()
+    {
+
     }
 
     /// <summary>
