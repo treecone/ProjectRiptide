@@ -1,25 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Menus : MonoBehaviour
 {
-    public void PlayerLeavePort()
+    public void LoadScene(int num)
     {
-        GameObject[] allPorts = GameObject.FindGameObjectsWithTag("Port");
-        foreach (GameObject port in allPorts)
-        {
-            if (port.GetComponent<PortManager>().InPort)
-            {
-                port.GetComponent<PortManager>().LeavePort();
-                return;
-            }
-        }
-    }
-
-    public void EnablePortUI (GameObject windowToDisable)
-    {
-        windowToDisable.SetActive(false);
-        transform.Find("PortMainMenu").gameObject.SetActive(true);
+        SceneManager.LoadScene(num);
     }
 }

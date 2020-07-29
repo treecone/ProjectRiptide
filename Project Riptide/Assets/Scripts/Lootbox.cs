@@ -21,6 +21,8 @@ public class Lootbox : MonoBehaviour
 
     private int rarity;
 
+    private TextDisplay _textDisplay;
+
     private void Awake()
     {
         _meshFilter = GetComponent<MeshFilter>();
@@ -32,6 +34,7 @@ public class Lootbox : MonoBehaviour
     void Start()
     {
         _hitbox.OnTrigger += DropItems;
+        _textDisplay = GameObject.FindGameObjectWithTag("GameManager").GetComponent<TextDisplay>();
         SetShape();
     }
 
@@ -76,12 +79,13 @@ public class Lootbox : MonoBehaviour
                 Upgrades upgrades = obj.GetComponent<Upgrades>();
                 if (items[i].Name == "gold" || items[i].Name == "Gold")
                 {
-                    PlayerInventory.Instance.AddItem(items[i].Name, (int)(items[i].Amount * upgrades.masterUpgrade[StatusType.BonusGold]));
-
+                    PlayerInventory.Instance.AddItem(items[i].Name, (int)(items[i].Amount * (1 + upgrades.masterUpgrade[StatusType.BonusGold])));
+                    _textDisplay.AddText("+" + (int)(items[i].Amount * ( 1 + upgrades.masterUpgrade[StatusType.BonusGold])) + " " + items[i].Name, Color.yellow);
                 }
                 else
                 {
                     PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
+                    _textDisplay.AddText("+" + items[i].Amount + " " + items[i].Name, Color.black);
                 }
 
             }

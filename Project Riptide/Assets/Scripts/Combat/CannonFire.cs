@@ -71,6 +71,9 @@ public class CannonFire : MonoBehaviour
         CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
         rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
 
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
+
         /*if (offset == 15.0f)
         {
             CannonShot rightShot = new CannonShot(direction, 90 + offset, _shipUpgradeScript.masterUpgrade);
@@ -118,6 +121,9 @@ public class CannonFire : MonoBehaviour
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade);
         rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
+
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
         return angle;
     }
 
@@ -155,6 +161,9 @@ public class CannonFire : MonoBehaviour
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade, onTrigger);
         rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
+
+        //CameraShake
+        Camera.main.GetComponent<CameraController>().CameraShake(direction);
         return angle;
     }
 
@@ -174,7 +183,7 @@ public class CannonFire : MonoBehaviour
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
             this._count = 1 + (int)upgrade[StatusType.Count];
-            this._damage = 1 + (int)upgrade[StatusType.Damage];
+            this._damage = 3 + (int)upgrade[StatusType.Damage];
             this._direction = direction;
             this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
             this._fireAngle = fireAngle;
@@ -186,7 +195,7 @@ public class CannonFire : MonoBehaviour
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade, HitboxEnter onTrigger)
         {
             this._count = 1 + (int)upgrade[StatusType.Count];
-            this._damage = 1 + (int)upgrade[StatusType.Damage];
+            this._damage = 3 + (int)upgrade[StatusType.Damage];
             this._direction = direction;
             this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
             this._fireAngle = fireAngle;

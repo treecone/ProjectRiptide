@@ -48,7 +48,7 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    private float _fireRate = 0.5f;
+    private float _fireRate = 1.0f;
     private float _currFireTime = 0.0f;
 
     private float _viewRange = 20.0f;
@@ -72,6 +72,9 @@ public class InputManager : MonoBehaviour
 
     [SerializeField]
     private bool _forceMobile = false;
+
+    [SerializeField]
+    private bool _letGoStop;
 
     void Awake()
     {
@@ -126,7 +129,6 @@ public class InputManager : MonoBehaviour
             //ACTIVATE COMBAT MODE
             _combatMode = true;
             _fireButton.gameObject.SetActive(true);
-            _cameraController.ToggleCombatView(true);
             _lineIndicator.enabled = true;
         }
 
@@ -136,7 +138,6 @@ public class InputManager : MonoBehaviour
             _combatMode = false;
             _fireButton.gameObject.SetActive(false);
             _fireSlider.gameObject.SetActive(false);
-            _cameraController.ToggleCombatView(false);
             _lineIndicator.enabled = false;
         }
 
@@ -312,13 +313,18 @@ public class InputManager : MonoBehaviour
                 if (!_combatMode && _movementScript.IndicatorActive)
                 {
                     _combatMode = true;
-                    _cameraController.ToggleCombatView(true);
                     _fireButton.gameObject.SetActive(true);
                     _movementScript.IndicatorActive = false;
                     _lineIndicator.enabled = true;
                 }
 
                 CheckEnemyTap();
+            }
+            if (_letGoStop)
+            {
+                SetArrowIcon(_iconBase.position * _screenScale);
+                _movementScript.TargetDirection = Vector3.zero;
+                _movementScript.SpeedScale = 0;
             }
         }
     }
@@ -330,13 +336,19 @@ public class InputManager : MonoBehaviour
             if (!_combatMode && _movementScript.IndicatorActive)
             {
                 _combatMode = true;
-                _cameraController.ToggleCombatView(true);
                 _fireButton.gameObject.SetActive(true);
                 _movementScript.IndicatorActive = false;
                 _lineIndicator.enabled = true;
             }
 
             CheckEnemyTap();
+        }
+
+        if (_letGoStop && Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - ((t.StartPosition + (Vector2)_screenCorrect) * _screenScale)) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+        {
+            SetArrowIcon(_iconBase.position * _screenScale);
+            _movementScript.TargetDirection = Vector3.zero;
+            _movementScript.SpeedScale = 0;
         }
     }
 
@@ -730,7 +742,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     private void CheckEnemyTap()
     {
-        foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition)))
+        foreach(RaycastHit hit in UnityEngine.Physics.SphereCastAll(Camera.main.ScreenPointToRay(Input.mousePosition), 2.0f))
         {
             if (hit.collider.gameObject.tag == "Hitbox")
             {

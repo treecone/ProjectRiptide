@@ -24,6 +24,10 @@ public class Flocker : Physics
     // Update is called once per frame
     protected override void Update()
     {
+        if(_velocity.x == float.NaN)
+        {
+            _velocity = Vector3.zero;
+        }
         if (_velocity.x != 0 && _velocity.z != 0)
         {
             Quaternion desiredRotation = Quaternion.LookRotation(new Vector3(_velocity.x, 0, _velocity.z));

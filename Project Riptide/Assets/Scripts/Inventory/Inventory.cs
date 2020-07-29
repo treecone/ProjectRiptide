@@ -31,9 +31,15 @@ public class Inventory : MonoBehaviour
     [SerializeField]
     private GameObject _equipmentParent;
     [SerializeField]
+    private GameObject _equipmentPics;
+    [SerializeField]
     private GameObject _equipmentPrefab;
     private List<EquipmentSlot> equipmentSlots;
 
+    [SerializeField]
+    private GameObject _marketParent;
+    private List<InventorySlot> _marketInventory;
+    private List<Item> _marketItems;
     #endregion
 
 
@@ -56,6 +62,16 @@ public class Inventory : MonoBehaviour
             }
             inventorySlots.Add(slots);
         }
+        //market
+        _marketInventory = new List<InventorySlot>();
+        foreach (Transform t in _marketParent.transform)
+        {
+            if (t.gameObject.GetComponent<InventorySlot>() != null)
+            {
+                _marketInventory.Add(t.gameObject.GetComponent<InventorySlot>());
+            }
+        }
+
         //vault
         vaultSlots = new List<List<InventorySlot>>();
         foreach (GameObject vaultParent in vaultParents)
@@ -145,10 +161,29 @@ public class Inventory : MonoBehaviour
         }
         foreach(TextMeshProUGUI textMesh in goldTextMeshes)
         {
-            textMesh.text = "" + PlayerInventory.Instance.totalGold;
+            textMesh.SetText(PlayerInventory.Instance.totalGold.ToString());
         }
     }
-    
+
+    public void UpdateMarketVisuals()
+    {
+        if (PortManager.LastPortVisited != null)
+        {
+            for (int i = 0; i < _marketInventory.Count; i++)
+            {
+                if (i < PortManager.LastPortVisited._marketItems.Count)
+                {
+                    _marketInventory[i].item = PortManager.LastPortVisited._marketItems[i];
+                }
+                else
+                {
+                    _marketInventory[i].item = ItemDB.Instance.FindItem("null");
+                }
+                _marketInventory[i].UpdateSlotVisuals();
+            }
+        }
+    }
+
 
     public void UpdateRecipeVisuals()
     {
@@ -249,6 +284,29 @@ public class Inventory : MonoBehaviour
             if (PlayerInventory.Instance.CountOf(equipment.equipment.Name) > 0)
             {
                 equipment.gameObject.SetActive(true);
+                //if change in equipment, do here
+                if (equipment.equipment.Equipped == true)
+                {
+                    //change icon
+                    _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(1).GetComponent<Image>().sprite = equipment.equipment.Icon;
+                    //change rarity
+                    if (equipment.equipment.Rarity == 1)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.white;
+                    }
+                    else if (equipment.equipment.Rarity == 2)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
+                    }
+                    else if (equipment.equipment.Rarity == 3)
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+                    }
+                    else
+                    {
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+                    }
+                }
             }
             else
             {

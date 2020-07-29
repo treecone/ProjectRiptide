@@ -11,6 +11,8 @@ public class InventoryMethods : MonoBehaviour
     private Item _activeItem = null;            //set it automatically to null, closing UI resets to null as well
     private Recipe _activeRecipe = null;        //set it automatically to null, closing UI resets to null as well
 
+    private int trashAmount = 0;
+
     #region SettingsUI
     [SerializeField]
     private Image _soundImage;
@@ -118,6 +120,11 @@ public class InventoryMethods : MonoBehaviour
         {
             _exposed[i] = false;
         }
+        /*int chunk = (int)((_chunkLoader.StartingChunk.x - 1) + (_chunkLoader.StartingChunk.y - 1) * 5);
+        _exposed[chunk] = true;
+        _mapImages[25].enabled = true;
+        //calculate where it should be on the map
+        _uiAnimMethods.ExposeChunk(_mapImages[chunk]);*/
     }
 
     #region Shared Methods
@@ -127,19 +134,17 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="gObj"></param>
     public void SelectItem(GameObject gObj)
     {
-        if (gObj.GetComponent<InventorySlot>().item != null || gObj.GetComponent<InventorySlot>().item.Name != "Null")
+        if (gObj.GetComponent<InventorySlot>().item != null && gObj.GetComponent<InventorySlot>().item.Name != "Null")
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
-            Debug.Log("Selected " + gObj.GetComponent<InventorySlot>().item.Name);
         }
     }
 
     public void SelectEquipment(GameObject gObj)
     {
-        if (gObj.GetComponent<EquipmentSlot>().equipment != null || gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
+        if (gObj.GetComponent<EquipmentSlot>().equipment != null && gObj.GetComponent<EquipmentSlot>().equipment.Name != "Null")
         {
             _activeItem = gObj.GetComponent<EquipmentSlot>().equipment;
-            Debug.Log("Selected " + gObj.GetComponent<EquipmentSlot>().equipment.Name);
         }
     }
 
@@ -210,16 +215,14 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventorySlot"></param>
     public void ChooseInventoryItem()
     {
-        Debug.Log(_activeItem.Name);
-        if (_activeItem != null || _activeItem.Name != "Null")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
-            Debug.Log("Choosing " + _activeItem.Name);
             //automatically set this to 0
             _trashField.SetText("0");
+            trashAmount = 0;
             _itemName.SetText(_activeItem.Name);
             _itemDescription.SetText(_activeItem.Description);
-            _itemCost.SetText("" + _activeItem.Value);
-            //{0} did not work here
+            _itemCost.SetText(_activeItem.Value.ToString());
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
         }
     }
@@ -227,24 +230,27 @@ public class InventoryMethods : MonoBehaviour
     /// changes trash number
     /// </summary>
     /// <param name="num">change number in TextMeshPro</param>
-    public void ChangeNumber(int num)
+    public void ChangeNumber(int numIncrease)
     {
-        int amount = System.Convert.ToInt32(_trashField.text);
-
+        Debug.LogError("Trash Field: " + _trashField.text);
+        //int amount = System.Convert.ToInt32(_trashField.text);
+        Debug.LogError("Amount Num Converted: " + trashAmount);
         //if active item exists
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null && _activeItem.Name != "NullItem")
         {
-            amount += num;
+            trashAmount += numIncrease;
+            Debug.LogError("Amount Num Before Checks: " + trashAmount);
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                Debug.LogError("Amount is above active item");
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _trashField.SetText("{0}", amount);
+            _trashField.SetText(trashAmount.ToString());
         }
         else
         {
@@ -259,19 +265,28 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null)
         {
-            int amount = System.Convert.ToInt32(_trashField.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
 
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
-            Debug.Log(saved.Amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
             _trashField.SetText("0");
+            trashAmount = 0;
         }
+    }
+
+
+    public void BuyMarket()
+    {
+        if (PlayerInventory.Instance.totalGold < _activeItem.Value * trashAmount)
+        {
+            trashAmount = PlayerInventory.Instance.totalGold / _activeItem.Value;
+            _marketTrash.SetText(trashAmount.ToString());
+        }
+        PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
     }
 
     #endregion
@@ -425,6 +440,17 @@ public class InventoryMethods : MonoBehaviour
         //calculate where it should be on the map
         _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
     }
+
+    /// <summary>
+    /// Returns if a chunk has been exposed
+    /// </summary>
+    /// <param name="x">x pos of chunk</param>
+    /// <param name="y">y pos of chunk</param>
+    /// <returns>If chunk has been exposed</returns>
+    public bool ChunkExposed(int x, int y)
+    {
+        return _exposed[(x - 1) + ((y - 1) * 5)];
+    }
     #endregion
 
     #region Market Methods
@@ -436,13 +462,12 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null)
         {
-            Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
             _marketTrash.SetText("0");
+            trashAmount = 0;
             _marketName.SetText(_activeItem.Name);
             _itemDescriptionMarket.SetText(_activeItem.Description);
-            _itemCostMarket.SetText("" + _activeItem.Value);
-            //{0} did not work here
+            _itemCostMarket.SetText(_activeItem.Value.ToString());
             _sellName.SetText("Are you sure you want to sell " + _activeItem.Name + "?");
         }
 
@@ -473,22 +498,20 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeNumberMarket(int num)
     {
-        int amount = System.Convert.ToInt32(_marketTrash.text);
-
         //if active item exists
         if (_activeItem != null)
         {
-            amount += num;
+            trashAmount += num;
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _marketTrash.SetText("{0}", amount);
+            _marketTrash.SetText(trashAmount.ToString());
         }
         else
         {
@@ -502,40 +525,35 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="sell">sell for true, buy for false</param>
     public void SellItem(bool sell)
     {
+
         if (_activeItem != null)
         {
-            int amount = System.Convert.ToInt32(_marketTrash.text);
-
-            Item saved = _activeItem;
-
-            if (amount >= _activeItem.Amount)
-            {
-                ResetActiveItem();
-            }
-
+            //sells item
             if (sell)
             {
-                PlayerInventory.Instance.TotalGold += saved.Value * amount;
-                PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+                PlayerInventory.Instance.TotalGold += _activeItem.Value * trashAmount;
+                PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
             }
+            //buys item
             else
             {
-                //checks if total gold is not enough
-                if (PlayerInventory.Instance.TotalGold < saved.Value * amount)
+                if (PlayerInventory.Instance.TotalGold < _activeItem.Value * trashAmount)
                 {
-                    for (int i = 1; i <= amount; i++)
+                    //sets it to max gold amount
+                    trashAmount = PlayerInventory.Instance.TotalGold / _activeItem.Value;
+                    //just double checking
+                    if (trashAmount > _activeItem.Amount)
                     {
-                        if (saved.Value * i > PlayerInventory.Instance.TotalGold)
-                        {
-                            amount = i - 1;
-                            break;
-                        } 
+                        trashAmount = _activeItem.Amount;
                     }
+                    _marketTrash.SetText(trashAmount.ToString());
                 }
-                PlayerInventory.Instance.TotalGold -= saved.Value * amount;
-                PlayerInventory.Instance.AddItem(saved.Name, amount);
+                PlayerInventory.Instance.TotalGold -= _activeItem.Value * trashAmount;
+                PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+                PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
             _marketTrash.SetText("0");
+            trashAmount = 0;
         }
     }
     #endregion
@@ -549,7 +567,6 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeRecipe != null)
         {
-            bool craftable = true;
             _craftingName.SetText(_activeItem.Name);
             
             //do stats here, set their colors if upgradeValue is positive
@@ -604,10 +621,6 @@ public class InventoryMethods : MonoBehaviour
                     _neededItemsCrafting[i].transform.GetChild(0).GetComponent<Image>().sprite = ingredient.Icon;
                     _neededItemsCrafting[i].transform.GetChild(2).GetComponent<TextMeshProUGUI>().SetText(ingredient.Name);
                     _neededItemsCrafting[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().SetText("{0}/{1}", PlayerInventory.Instance.CountOf(ingredient.Name), _activeRecipe.ingredientAmounts[i]);
-                    if (ingredient.Amount < _activeRecipe.ingredientAmounts[i])
-                    {
-                        craftable = false;
-                    }
                 }
                 else
                 {
@@ -617,24 +630,24 @@ public class InventoryMethods : MonoBehaviour
             
             if (_activeItem.Rarity == 1)   //check if it is an upgradable or not
             {
-                if (craftable == false)
+                if (Crafting.Instance.CanCraft(_activeRecipe))
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[1];
                 }
                 else
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[1];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
                 }
             }
             else
             {
-                if (craftable == false)
+                if (Crafting.Instance.CanCraft(_activeRecipe))
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[1];
                 }
                 else
                 {
-                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[1];
+                    _craftAndUpgrade.GetComponent<Image>().sprite = _upgradeButtonImages[0];
                 }
             }
         }
@@ -734,9 +747,10 @@ public class InventoryMethods : MonoBehaviour
             Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
             _vaultTrash.SetText("0");
+            trashAmount = 0;
             _vaultName.SetText(_activeItem.Name);
             _vaultDescription.SetText(_activeItem.Description);
-            _vaultCost.SetText("{0}", _activeItem.Value);
+            _vaultCost.SetText(_activeItem.Value.ToString());
         }
     }
     /// <summary>
@@ -745,22 +759,20 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeVaultNumber(int num)
     {
-        int amount = System.Convert.ToInt32(_vaultTrash.text);
-
         //if active item exists
         if (_activeItem != null)
         {
-            amount += num;
+            trashAmount += num;
             //check for above and below minimum
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
-                amount = _activeItem.Amount;
+                trashAmount = _activeItem.Amount;
             }
-            else if (amount < 0)
+            else if (trashAmount < 0)
             {
-                amount = 0;
+                trashAmount = 0;
             }
-            _vaultTrash.SetText("{0}", amount);
+            _vaultTrash.SetText(trashAmount.ToString());
         }
         else
         {
@@ -775,15 +787,13 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null || _activeItem.Name != "NullItem")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     public void TrashVaultItem()
@@ -791,31 +801,27 @@ public class InventoryMethods : MonoBehaviour
         //checks if null item
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     public void AddToShip()
     {
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerInventory.Instance.AddItem(saved.Name, amount);
-            PlayerVault.Instance.RemoveItem(saved.Name, amount);
+            PlayerInventory.Instance.AddItem(saved.Name, trashAmount);
+            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
 
@@ -823,20 +829,15 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null || _activeItem.Name != "Null")
         {
-            int amount = System.Convert.ToInt32(_vaultTrash.text);
-
             Item saved = _activeItem;
 
-            if (amount >= _activeItem.Amount)
+            if (trashAmount >= _activeItem.Amount)
             {
                 ResetActiveItem();
             }
-            PlayerVault.Instance.AddItem(saved.Name, amount);
-            PlayerInventory.Instance.RemoveItem(saved.Name, amount);
+            PlayerVault.Instance.AddItem(saved.Name, trashAmount);
+            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     #endregion
-
-
-
 }

@@ -198,11 +198,14 @@ public class ShipMovement : Physics
         //Make sure collision is with an obstical
         if(obstical.tag == "Obstical")
         {
+            Collider obstCollider = obstical.GetComponent<Collider>();
+            Vector3 impactPoint = obstCollider.ClosestPointOnBounds(transform.position + transform.forward * 2.0f);
+
             //Stop motion
             StopMotion();
 
             //Create a force away from obstacle
-            Vector3 backForce = transform.position - obstical.transform.position;
+            Vector3 backForce = transform.position - impactPoint;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 20.0f * (60 * Time.deltaTime);
