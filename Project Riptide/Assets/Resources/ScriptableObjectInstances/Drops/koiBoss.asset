@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3dfcd6f3509fc498070ead6fff6baf, type: 3}
+  m_Name: koiBoss
+  m_EditorClassIdentifier: 
+  name: koiBoss
+  drops:
+  - chance: 1
+    minCount: 2
+    maxCount: 4
+    itemSlug: carpscale
+  - chance: 0.8
+    minCount: 1
+    maxCount: 2
+    itemSlug: carpwhisker
+  - chance: 0.25
+    minCount: 1
+    maxCount: 1
+    itemSlug: carpgem
+  - chance: 0.75
+    minCount: 3
+    maxCount: 5
+    itemSlug: bones
