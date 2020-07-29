@@ -64,7 +64,7 @@ public class Lootbox : MonoBehaviour
                 maxRarity = i.Rarity;
             }
         }
-
+        maxRarity = Mathf.Clamp(maxRarity, 1, 4);
         _meshRenderer.material = _rarityMaterials[maxRarity - 1];
         rarity = maxRarity;
 
