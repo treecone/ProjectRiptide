@@ -272,7 +272,7 @@ public partial class Enemy : Physics
         }
         else
         {
-            if(_deathTimer > 3.0f)
+            if(_deathTimer > 6.0f)
             {
                 _readyToDelete = true;
             }

@@ -35,6 +35,11 @@ public class Lootbox : MonoBehaviour
     {
         _hitbox.OnTrigger += DropItems;
         _textDisplay = GameObject.FindGameObjectWithTag("GameManager").GetComponent<TextDisplay>();
+        if(inventory == null)
+        {
+            inventory = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Inventory>();
+        }
+
         SetShape();
     }
 
