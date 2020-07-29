@@ -5,6 +5,7 @@ using UnityEngine;
 public class CannonBallBehavior : MonoBehaviour
 {
     public int damageDealt;
+    public List<StatusEffect> onhitEffects;
     public GameObject hitbox;
 
     private GameObject projHitbox;
@@ -19,6 +20,7 @@ public class CannonBallBehavior : MonoBehaviour
     {
         projHitbox = Instantiate(hitbox, transform);
         projHitbox.GetComponent<Hitbox>().SetHitbox(gameObject, Vector3.zero, new Vector3(1, 1, 1), HitboxType.PlayerHitbox, damageDealt);
+        projHitbox.GetComponent<Hitbox>().OnhitEffects = onhitEffects;
         projHitbox.GetComponent<Hitbox>().OnTrigger += DestroyProj;
         projHitbox.GetComponent<Hitbox>().OnTrigger += _onTrigger;
     }

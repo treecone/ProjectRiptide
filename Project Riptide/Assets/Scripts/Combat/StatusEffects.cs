@@ -51,7 +51,7 @@ public class StatusEffects : MonoBehaviour
                 {
                     if(isPlayer)
                     {
-                        _playerHealth.TakeDamage(status.Level * Time.deltaTime);
+                        _playerHealth.TakeDamage(status.Level * Time.deltaTime, true);
                     } else
                     {
                         _enemyHealth.TakeDamage(status.Level * Time.deltaTime);
@@ -161,9 +161,13 @@ public class StatusEffects : MonoBehaviour
 [System.Serializable]
 public class StatusEffect
 {
+    [SerializeField]
     private StatusType _type;
+    [SerializeField]
     private float _duration;
+    [SerializeField]
     private float _level;
+    [SerializeField]
     private string _tag;
 
     private float _currentDuration;

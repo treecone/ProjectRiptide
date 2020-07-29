@@ -91,14 +91,26 @@ public class PlayerHealth : MonoBehaviour
     /// Player takes damage, if health is 0 they die
     /// </summary>
     /// <param name="damage">Amount of damage taken</param>
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, bool isStatusDamage)
     {
         if(damage < 0)
         {
             AddHealth(-damage);
         } else
         {
-            health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
+            if (isStatusDamage)
+            {
+                health -= damage * Mathf.Max(0f, 1f - shipUpgradeScript.masterUpgrade[StatusType.StatusResist]);
+            }
+            else
+            {
+                if(shipUpgradeScript.masterUpgrade[StatusType.Armor] > 0)
+                {
+                    gameObject.GetComponent<StatusEffects>().AddStatus(StatusType.Regeneration, 3f, shipUpgradeScript.masterUpgrade[StatusType.RegenOnDamage]);
+                }
+                
+                health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
+            }
             healthBar.UpdateHealth(health);
             if (health < 0.5f && !dead)
             {

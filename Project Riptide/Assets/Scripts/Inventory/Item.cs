@@ -13,6 +13,7 @@ public class Item
     private string name;                //name
     private string description;         //tooltip for description
     private int rarity;                 //rarity color
+    [SerializeField]
     private int value;                  //gold value
     private string slug;                //lowercase names with no spaces
     private Sprite icon;                //sprite of item
@@ -25,6 +26,7 @@ public class Item
     private int equipmentRank;
     private string activeText;
     private string passiveText;
+    private string shotType;
     #endregion
 
     #region Properties
@@ -152,6 +154,14 @@ public class Item
         get
         {
             return activeText;
+        }
+    }
+
+    public string ShotType
+    {
+        get
+        {
+            return shotType;
         }
     }
     #endregion

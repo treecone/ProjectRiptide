@@ -141,7 +141,7 @@ public partial class ClamBoss : Enemy
             if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
             {
                 //Player takes damage
-                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime);
+                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime, false);
             }
         }
     }

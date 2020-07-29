@@ -59,6 +59,7 @@ public class PortManager : MonoBehaviour
             _player.GetComponent<ShipMovement>().StopMotion();
             _inventoryMethods.PauseMarketGame();
             LastPortVisited = this;
+            Debug.Log(LastPortVisited);
         }
         
     }

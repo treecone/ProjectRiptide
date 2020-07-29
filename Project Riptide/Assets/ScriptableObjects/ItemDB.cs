@@ -146,7 +146,7 @@ public class ItemDB : ScriptableObject
                 {
                     upgradeList.Add(data[i].upgrades[0][j]);
                 }*/
-                _items.Add(new Item(startId + i, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                _items.Add(new Item(startId + i, data[i].name, data[i].description, i + 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
             }
             else
             {

@@ -214,6 +214,17 @@ public class PlayerInventory : ScriptableObject
         return equipmentInCategory;
     }
 
+    public Item GetEquippedItemOfCategory(ItemCategory category)
+    {
+        for (int i = 0; i < equipment.Count; i++)
+        {
+            if (equipment[i].Category == category && equipment[i].Equipped)
+            {
+                return equipment[i];
+            }
+        }
+        return ItemDB.Instance.FindItem("null");
+    }
     public bool AddEquipment(Item equipmentItem)
     {
         bool addItems = true;
@@ -325,5 +336,4 @@ public class PlayerInventory : ScriptableObject
         }
         return toReturn;
     }
-
 }

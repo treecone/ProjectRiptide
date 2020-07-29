@@ -156,7 +156,7 @@ public partial class Stingray : Enemy
             if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
             {
                 //Player takes damage
-                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(DAMAGE_PER_SECOND * Time.deltaTime);
+                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(DAMAGE_PER_SECOND * Time.deltaTime, false);
             }
         }
     }

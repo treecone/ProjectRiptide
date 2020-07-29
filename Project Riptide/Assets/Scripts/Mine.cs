@@ -40,7 +40,7 @@ public class Mine : MonoBehaviour
     {
         if(obj.tag == "Player")
         {
-            obj.GetComponent<PlayerHealth>().TakeDamage(damage);
+            obj.GetComponent<PlayerHealth>().TakeDamage(damage, false);
             obj.GetComponent<StatusEffects>().AddStatus(statusType, statusDuration, statusLevel);
             Destroy(gameObject);
         }

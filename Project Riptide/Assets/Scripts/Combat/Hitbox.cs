@@ -18,6 +18,8 @@ public class Hitbox : MonoBehaviour
     [SerializeField]
     private float _damage;
     [SerializeField]
+    private List<StatusEffect> _onhitEffects;
+    [SerializeField]
     private GameObject _attachedObject;
     [SerializeField]
     private Vector2 _launchAngle;
@@ -35,6 +37,17 @@ public class Hitbox : MonoBehaviour
     {
         get { return _launchStrength; }
         set { _launchStrength = value; }
+    }
+    public List<StatusEffect> OnhitEffects
+    {
+        get
+        {
+            return _onhitEffects;
+        }
+        set
+        {
+            _onhitEffects = value;
+        }
     }
 
     /// <summary>
@@ -92,7 +105,7 @@ public class Hitbox : MonoBehaviour
                 if (_type == HitboxType.EnemyHitbox)
                 {
                     //Player takes damage
-                    hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(_damage * hitbox._damage);
+                    hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(_damage * hitbox._damage, false);
                     //Add knockback if there is any
                     if (_launchStrength != 0)
                     {
@@ -121,6 +134,13 @@ public class Hitbox : MonoBehaviour
                         }
                         //Calculate damage for enemies
                         enemy.TakeDamage(_damage * hitbox._damage);
+                        foreach(StatusEffect onhitEffect in _onhitEffects)
+                        {
+                            enemy.gameObject.GetComponent<StatusEffects>().AddStatus(
+                                onhitEffect.Type,
+                                onhitEffect.Duration,
+                                onhitEffect.Level);
+                        }
                     }
                     //Trigger any events associated with collision
                     OnTrigger?.Invoke(hitbox.AttachedObject);

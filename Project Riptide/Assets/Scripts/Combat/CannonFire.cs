@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CannonFire : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject _cannonBall;
+    //[SerializeField]
+    //private GameObject _defaultCannonBall;
     [SerializeField]
     private Upgrades _shipUpgradeScript;
     [SerializeField]
@@ -69,7 +69,7 @@ public class CannonFire : MonoBehaviour
         //Camera camera = Camera.main;
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, _shipUpgradeScript.masterUpgrade);
-        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
 
         /*if (offset == 15.0f)
         {
@@ -117,7 +117,7 @@ public class CannonFire : MonoBehaviour
         //Camera camera = Camera.main;
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade);
-        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
         return angle;
     }
 
@@ -154,13 +154,14 @@ public class CannonFire : MonoBehaviour
         //Camera camera = Camera.main;
         //camera.transform.Translate(0f, 2.0f, 2.0f);
         CannonShot rightShot = new CannonShot(direction, -angle + offset, upgrade, onTrigger);
-        rightShot.Fire(_cannonBall, gameObject, _cannonSmoke);
+        rightShot.Fire(ShotDB.Instance.currentShot, gameObject, _cannonSmoke);
         return angle;
     }
 
     public class CannonShot
     {
         private int _damage;
+        private List<StatusEffect> onhitEffects;
         private Vector3 _direction;
         private float _fireSpeed;
         private float _fireAngle;
