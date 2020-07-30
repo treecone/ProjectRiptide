@@ -157,10 +157,11 @@ public class PlayerHealth : MonoBehaviour
             _inputManager.ResetMovement();
             if(PortManager.LastPortVisited && !inPlace)
             {
-                transform.position = PortManager.LastPortVisited.transform.position + new Vector3(5, 0, 5);
-                transform.LookAt(PortManager.LastPortVisited.transform);
-                transform.rotation.SetEulerAngles(0, transform.rotation.eulerAngles.y, 0);
-                transform.Rotate(0, 180, 0);
+                GetComponent<ShipMovement>().Position =
+                    new Vector3(PortManager.LastPortVisited.gameObject.transform.position.x,
+                    GetComponent<ShipMovement>().Position.y,
+                    PortManager.LastPortVisited.gameObject.transform.position.z);
+
             }
             _deathUI.SetActive(false);
             if(inPlace)
