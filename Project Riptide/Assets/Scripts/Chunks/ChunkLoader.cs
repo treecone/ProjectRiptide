@@ -40,6 +40,7 @@ public class ChunkLoader : MonoBehaviour
     private TextMeshProUGUI _regionDisplay;
 
     private float _unloadTimer;
+    private GameObject _world;
 
     private string[] _lines;
     [SerializeField]
@@ -87,7 +88,6 @@ public class ChunkLoader : MonoBehaviour
     {
         _chunkSideLength *= _worldScale;
         _chunks = new Chunk[_xLen, _zLen];
-        SetUpMonsters();
         _unloadTimer = 0;
         _currentRegion = "china";
         _ship = GameObject.FindGameObjectWithTag("Player");
@@ -115,7 +115,7 @@ public class ChunkLoader : MonoBehaviour
 
     public void LoadWorld()
     {
-        GameObject world = GameObject.Find("World");
+        _world = GameObject.Find("World");
         // Get every line from the world text file.
         TextAsset t = Resources.Load<TextAsset>("World");
         string text = t.text;
@@ -154,6 +154,7 @@ public class ChunkLoader : MonoBehaviour
                 }
                 bool hasEnemies = false;
                 List<GameObject> enemies = new List<GameObject>();
+                List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
                 string pathName = "";
                 Region r = Region.OCEAN;
                 // Determine which region this chunk is in.
@@ -183,7 +184,7 @@ public class ChunkLoader : MonoBehaviour
                         unscaledEnviroment.GetChild(i).localScale = unscaledEnviroment.GetChild(i).localScale / _worldScale;
                     }
                 }
-                obj.transform.parent = world.transform;
+                obj.transform.parent = _world.transform;
 
                 // There are monsters to load in.
                 Transform spawnTransform = obj.transform.Find("Enemies");
@@ -196,20 +197,21 @@ public class ChunkLoader : MonoBehaviour
                     for(int i = 0; i < numEnemies; i++)
                     {
                         GameObject spawnPoint = listOfSpawnPoints.transform.GetChild(i).gameObject;
-                        GameObject enemyPrefab = spawnPoint.GetComponent<SpawnPoint>().EnemyPrefab;
+                        /*GameObject enemyPrefab = spawnPoint.GetComponent<SpawnPoint>().EnemyPrefab;
                         GameObject enemy = Instantiate(enemyPrefab, spawnPoint.transform.position, spawnPoint.transform.rotation);
-                        enemy.SetActive(false);
+                        enemy.SetActive(false);*/
 
-                        // Cash the starting position of this enemy
+                        spawnPoints.Add(spawnPoint.GetComponent<SpawnPoint>());
+
+                        /*// Cash the starting position of this enemy
                         enemy.GetComponent<Enemy>().EnemyStartingPosition = new Vector3(spawnPoint.transform.position.x, spawnPoint.transform.position.y, spawnPoint.transform.position.z);
-                        enemy.GetComponent<Enemy>().EnemyStartingChunk = new Vector2(x, z);
                         enemy.GetComponent<Enemy>().EnemyID = i;
-                        enemy.transform.parent = world.transform;
+                        enemy.transform.parent = _world.transform;
                         // Store a reference in the list of enemies corresponding to this species.
-                        enemies.Add(enemy);
+                        enemies.Add(enemy);*/
                     }
                 }
-                Chunk c = new Chunk(obj, r, new Vector2(x * _chunkSideLength, z * _chunkSideLength), enemies);
+                Chunk c = new Chunk(obj, r, new Vector2(x * _chunkSideLength, z * _chunkSideLength), spawnPoints);
                 c.hasEnemies = hasEnemies;
                 _chunks[x, z] = c;
                 _chunks[x, z].chunk.SetActive(false);
@@ -217,14 +219,14 @@ public class ChunkLoader : MonoBehaviour
         }
     }
     // Set up the dictionaries of monsters.
-    public void SetUpMonsters()
+    /*public void SetUpMonsters()
     {
         _monsters = new Dictionary<string, GameObject>();
         _monsters.Add("koi", null);
 
         // Add more monsters
 
-    }
+    }*/
     // Load a monster of the specified name at the specifed positon.
     /*public void LoadMonster(Vector2 position, Vector2 chunk, string name)
     {
@@ -239,18 +241,18 @@ public class ChunkLoader : MonoBehaviour
                 }
         }
     }*/
-    public void UnloadMonster(string name)
+    /*public void UnloadMonster(string name)
     {
         Destroy(_monsters[name]);
         _monsters[name] = null;
-    }
+    }*/
     // March through each monster and unload the monster if.
     // 1) The player is more than 2 chunks away from the monster AND
     //      a. The monster is Passive.
     public void CheckUnloadMonster()
     {
         // List of monsters to unload.
-        List<string> destroyMonsters = new List<string>();
+        /*List<string> destroyMonsters = new List<string>();
         // Loop through each potential monster.
         foreach(KeyValuePair<string, GameObject> kvpair in _monsters)
         {
@@ -259,7 +261,6 @@ public class ChunkLoader : MonoBehaviour
             // Monster exists and is roaming...
             if (monster)
             {
-                Vector2 start = monster.GetComponent<Enemy>().EnemyStartingChunk;
                 bool playerCloseToMonster = Mathf.Sqrt(Mathf.Pow(_ship.transform.position.x - monster.transform.position.x, 2) + Mathf.Pow(_ship.transform.position.z - monster.transform.position.z, 2)) < 1 * Mathf.Sqrt(2 * Mathf.Pow(_chunkSideLength / 2, 2));
                 // Monster is passive, and player is in a different chunk than it was loaded in, delete the monster. OR Monster is passive and is in a chunk it wasn't spawned in.
                 if ((!playerCloseToMonster && monster.GetComponent<Enemy>().State == EnemyState.Passive) || monster.GetComponent<Enemy>().ReadyToDelete)
@@ -273,21 +274,20 @@ public class ChunkLoader : MonoBehaviour
         foreach(string n in destroyMonsters)
         {
             UnloadMonster(n);
-        }
+        }*/
 
         // Check each smaller enemy and unload it if neccessary.
         for(int i = 0; i < _enemies.Count; i++)
         {
-            bool enemyIsFar = Mathf.Sqrt(Mathf.Pow(_enemies[i].transform.position.x - _ship.transform.position.x, 2) 
-                + Mathf.Pow(_enemies[i].transform.position.z - _ship.transform.position.z, 2)) > 2 * Mathf.Sqrt(2 * Mathf.Pow(_chunkSideLength / 2, 2));
+            bool enemyIsFar = Vector3.SqrMagnitude(_enemies[i].transform.position - _ship.transform.position) >= _chunkSideLength * _chunkSideLength;
             if (enemyIsFar || _enemies[i].GetComponent<Enemy>().ReadyToDelete)
             {
                 // Get the origin chunk of the enemy.
-                Vector2 originChunk = _enemies[i].GetComponent<Enemy>().EnemyStartingChunk;
+                Chunk originChunk = _enemies[i].GetComponent<Enemy>().EnemyStartingChunk;
                 // Mark this enemy as unloaded.
-                _chunks[(int)originChunk.x, (int)originChunk.y].enemieIsLoaded[_enemies[i].GetComponent<Enemy>().EnemyID] = false;
+                originChunk.enemieIsLoaded[_enemies[i].GetComponent<Enemy>().EnemyID] = false;
                 // Hide the enemy.
-                _enemies[i].SetActive(false);
+                Destroy(_enemies[i]);
                 // Remove it from the list of enemies.
                 _enemies.RemoveAt(i);
                 i--;
@@ -295,25 +295,31 @@ public class ChunkLoader : MonoBehaviour
 
         }
     }
-    public void ResetEnemy(GameObject enemy)
+    /*public void ResetEnemy(GameObject enemy)
     {
         Vector3 pos = enemy.GetComponent<Enemy>().EnemyStartingPosition;
         enemy.GetComponent<Enemy>().Position = new Vector3(pos.x, pos.y, pos.z);
         // other resetting stuffs
-    }
+    }*/
     public void CheckLoadEnemies(Chunk c)
     {
-        List<GameObject> e = c.enemies;
+        List<SpawnPoint> s = c.spawnPoints;
         // Look through each enemy and see who needs to be loaded in.
-        for(int i = 0; i < e.Count; i++)
+        for(int i = 0; i < s.Count; i++)
         {
             // Enemy is not loaded in.
             if (!c.enemieIsLoaded[i])
             {
-                ResetEnemy(e[i]);
-                e[i].SetActive(true);
+                GameObject enemyPrefab = s[i].EnemyPrefab;
+                GameObject enemy = Instantiate(enemyPrefab, s[i].transform.position, s[i].transform.rotation);
+
+                // Cash the starting position of this enemy
+                enemy.GetComponent<Enemy>().EnemyStartingPosition = new Vector3(s[i].transform.position.x, s[i].transform.position.y, s[i].transform.position.z);
+                enemy.GetComponent<Enemy>().EnemyStartingChunk = c;
+                enemy.GetComponent<Enemy>().EnemyID = i;
+                enemy.transform.parent = _world.transform;
                 c.enemieIsLoaded[i] = true;
-                _enemies.Add(e[i]);
+                _enemies.Add(enemy);
             }
         }
     }
@@ -403,7 +409,7 @@ public class ChunkLoader : MonoBehaviour
                 if (x >= 0 && z >= 0 && x < _xLen && z < _zLen && _chunks[x, z] != null)
                 {
                     // If the chunk is close enough to render.
-                    bool close = DistanceFromChunkCenter(_ship, x, z) < _chunkSideLength + 30;
+                    bool close = DistanceFromChunkCenter(_ship, x, z) < 650;//_chunkSideLength + 30;
                     bool inVisibleChunks = _visibleChunks.Contains(_chunks[x, z]);
                     // Chunk is close enough to render so do so.
                     if (close && !inVisibleChunks)

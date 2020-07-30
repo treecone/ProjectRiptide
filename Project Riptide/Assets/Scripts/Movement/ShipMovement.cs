@@ -24,7 +24,9 @@ public class ShipMovement : Physics
     private Upgrades shipUpgradeScript;
     private bool rotatePositive = true;
 
-    private Hitbox playerHurtbox;
+    private Hitbox _playerHurtbox;
+    private Vector3 _impactPoint;
+    private Vector3 _exitDir;
 
     public float SpeedScale
     {
@@ -59,11 +61,12 @@ public class ShipMovement : Physics
     {
         _camera = Camera.main;
         _cameraControl = _camera.GetComponent<CameraController>();
-        playerHurtbox = transform.GetComponentInChildren<Hitbox>();
+        _playerHurtbox = transform.GetComponentInChildren<Hitbox>();
         _canvas = transform.Find("Canvas").gameObject;
         _shotIndicator = _canvas.transform.Find("ShotIndicator").gameObject;
         //Add collision to hurt box
-        playerHurtbox.OnStay += OnObsticalCollision;
+        _playerHurtbox.OnStay += OnObsticalCollision;
+        _playerHurtbox.OnTrigger += OnObsticalEnter;
         base.Start();
     }
 
@@ -189,6 +192,36 @@ public class ShipMovement : Physics
     }
 
     /// <summary>
+    /// Set impact point for obstical collision
+    /// </summary>
+    /// <param name="obstical"></param>
+    public void OnObsticalEnter(GameObject obstical)
+    {
+        if(obstical.tag == "Obstical")
+        {
+            foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            {
+                if(hit.collider.tag == "Obstical")
+                {
+                    if (hit.collider is MeshCollider)
+                    {
+                        _exitDir = GetMeshColliderNormal(hit);
+                    }
+                    else
+                    {
+                        _exitDir = transform.position - obstical.transform.position;
+                    }
+                }
+            }
+
+            /*Collider obstCollider = obstical.GetComponent<Collider>();
+            _impactPoint = obstCollider.ClosestPointOnBounds(transform.position + _velocity.normalized * 2.0f);
+            Mesh obstMesh = obstical.GetComponent<MeshFilter>().sharedMesh;
+            _exitDir = transform.position - _impactPoint;*/
+        }
+    }
+
+    /// <summary>
     /// Called while colliding with an obstical
     /// Pushes player out from the obstacle to stop collision
     /// </summary>
@@ -198,18 +231,31 @@ public class ShipMovement : Physics
         //Make sure collision is with an obstical
         if(obstical.tag == "Obstical")
         {
-            Collider obstCollider = obstical.GetComponent<Collider>();
-            Vector3 impactPoint = obstCollider.ClosestPointOnBounds(transform.position + transform.forward * 2.0f);
-
             //Stop motion
             StopMotion();
 
+            foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            {
+                if (hit.collider.tag == "Obstical")
+                {
+                    if (hit.collider is MeshCollider)
+                    {
+                        _exitDir = GetMeshColliderNormal(hit);
+                    }
+                    else
+                    {
+                        _exitDir = transform.position - obstical.transform.position;
+                    }
+                }
+            }
+
             //Create a force away from obstacle
-            Vector3 backForce = transform.position - impactPoint;
+            Vector3 backForce = _exitDir;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
-            backForce *= 20.0f * (60 * Time.deltaTime);
+            backForce *= 50.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
+            Debug.DrawLine(transform.position, transform.position + backForce * 100, Color.black);
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
         {
@@ -229,5 +275,23 @@ public class ShipMovement : Physics
     public void TakeKnockback(Vector3 knockback)
     {
         ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Hardiness]));
+    }
+
+    private Vector3 GetMeshColliderNormal(RaycastHit hit)
+    {
+        MeshCollider collider = (MeshCollider)hit.collider;
+        Mesh mesh = collider.sharedMesh;
+        Vector3[] normals = mesh.normals;
+        int[] triangles = mesh.triangles;
+
+        Vector3 n0 = normals[triangles[hit.triangleIndex * 3 + 0]];
+        Vector3 n1 = normals[triangles[hit.triangleIndex * 3 + 1]];
+        Vector3 n2 = normals[triangles[hit.triangleIndex * 3 + 2]];
+        Vector3 baryCenter = hit.barycentricCoordinate;
+        Vector3 interpolatedNormal = n0 * baryCenter.x + n1 * baryCenter.y + n2 * baryCenter.z;
+        interpolatedNormal.Normalize();
+        interpolatedNormal = hit.transform.TransformDirection(interpolatedNormal);
+        Debug.Log(interpolatedNormal);
+        return interpolatedNormal;
     }
 }
