@@ -808,18 +808,6 @@ public partial class Enemy : Physics
     }
 
     /// <summary>
-    /// Fully resets monsters values
-    /// </summary>
-    public virtual void FullReset()
-    {
-        ResetHostile();
-        _health = _maxHealth;
-        _readyToDelete = false;
-        _state = EnemyState.Passive;
-        _canvas.transform.GetChild(0).gameObject.SetActive(false);
-    }
-
-    /// <summary>
     /// Gets normal of a raycast hit with a mesh collider
     /// </summary>
     /// <param name="hit">Raycast hit</param>
@@ -838,7 +826,6 @@ public partial class Enemy : Physics
         Vector3 interpolatedNormal = n0 * baryCenter.x + n1 * baryCenter.y + n2 * baryCenter.z;
         interpolatedNormal.Normalize();
         interpolatedNormal = hit.transform.TransformDirection(interpolatedNormal);
-        Debug.Log(interpolatedNormal);
         return interpolatedNormal;
     }
 }

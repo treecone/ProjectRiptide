@@ -30,35 +30,57 @@ public class RecipeSlot : MonoBehaviour
         //change rarity thing here
         if (itemResult.Rarity == 1)
         {
-            gameObject.transform.GetChild(0).GetComponent<Image>().color = Color.white;
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.white;
         }
         else if (itemResult.Rarity == 2)
         {
-            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
         }
         else if (itemResult.Rarity == 3)
         {
-            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
         }
         else
         {
-            gameObject.transform.GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
         }
         //change image
-        gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = itemResult.Icon;
+        gameObject.transform.GetChild(0).GetChild(1).GetComponent<Image>().sprite = itemResult.Icon;
         //change name
         gameObject.transform.Find("Name").GetComponent<TextMeshProUGUI>().SetText(itemResult.Name);
         //change icons based on recipes
+        Transform ingredients = gameObject.transform.Find("Ingredients");
         for (int i = 0; i < 5; i++)
         {
             if (recipe.ingredients.Count > i)
             {
                 Item ingredient = ItemDB.Instance.FindItem(recipe.ingredients[i]);
-                gameObject.transform.Find("Ingredients").GetChild(i).GetChild(0).GetComponentInChildren<Image>().sprite = ingredient.Icon;
+                ingredients.GetChild(i).GetChild(1).GetComponent<Image>().sprite = ingredient.Icon;
+                
+                if (ingredient.Rarity == 1 && ingredient.Category != ItemCategory.Material)
+                {
+                    ingredients.GetChild(i).GetChild(0).GetComponent<Image>().color = Color.white;
+                }
+                else if (ingredient.Rarity == 1)
+                {
+                    ingredients.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color32(125, 82, 52, 255);
+                }
+                else if (ingredient.Rarity == 2)
+                {
+                    ingredients.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
+                }
+                else if (ingredient.Rarity == 3)
+                {
+                    ingredients.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+                }
+                else
+                {
+                    ingredients.GetChild(i).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+                }
             }
             else
             {
-                gameObject.transform.Find("Ingredients").GetChild(i).GetChild(0).gameObject.SetActive(false);
+                ingredients.GetChild(i).gameObject.SetActive(false);
             }
         }
     }
