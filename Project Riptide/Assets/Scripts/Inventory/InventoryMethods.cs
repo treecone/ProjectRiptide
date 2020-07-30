@@ -11,7 +11,7 @@ public class InventoryMethods : MonoBehaviour
     private Item _activeItem = null;            //set it automatically to null, closing UI resets to null as well
     private Recipe _activeRecipe = null;        //set it automatically to null, closing UI resets to null as well
 
-    private int trashAmount = 0;
+    private int trashAmount = 1;
 
     #region SettingsUI
     [SerializeField]
@@ -157,6 +157,7 @@ public class InventoryMethods : MonoBehaviour
     {
         _activeRecipe = gObj.GetComponent<RecipeSlot>().Recipe;
         _activeItem = ItemDB.Instance.FindItem(_activeRecipe.result);
+        Debug.Log(_activeItem.Rarity);
     }
 
     /// <summary>
@@ -219,8 +220,8 @@ public class InventoryMethods : MonoBehaviour
         if (_activeItem != null && _activeItem.Name != "Null")
         {
             //automatically set this to 0
-            _trashField.SetText("0");
-            trashAmount = 0;
+            _trashField.SetText("1");
+            trashAmount = 1;
             _itemName.SetText(_activeItem.Name);
             _itemDescription.SetText(_activeItem.Description);
             _itemCost.SetText(_activeItem.Value.ToString());
@@ -247,9 +248,9 @@ public class InventoryMethods : MonoBehaviour
                 Debug.LogError("Amount is above active item");
                 trashAmount = _activeItem.Amount;
             }
-            else if (trashAmount < 0)
+            else if (trashAmount < 1)
             {
-                trashAmount = 0;
+                trashAmount = 1;
             }
             _trashField.SetText(trashAmount.ToString());
         }
@@ -274,8 +275,8 @@ public class InventoryMethods : MonoBehaviour
             }
 
             PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
-            _trashField.SetText("0");
-            trashAmount = 0;
+            _trashField.SetText("1");
+            trashAmount = 1;
         }
     }
 
@@ -464,8 +465,8 @@ public class InventoryMethods : MonoBehaviour
         if (_activeItem != null)
         {
             //automatically set this to 0
-            _marketTrash.SetText("0");
-            trashAmount = 0;
+            _marketTrash.SetText("1");
+            trashAmount = 1;
             _marketName.SetText(_activeItem.Name);
             _itemDescriptionMarket.SetText(_activeItem.Description);
             _itemCostMarket.SetText(_activeItem.Value.ToString());
@@ -553,8 +554,8 @@ public class InventoryMethods : MonoBehaviour
                 PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
                 PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
-            _marketTrash.SetText("0");
-            trashAmount = 0;
+            _marketTrash.SetText("1");
+            trashAmount = 1;
         }
     }
     #endregion
@@ -747,8 +748,8 @@ public class InventoryMethods : MonoBehaviour
         {
             Debug.Log("Clicked on " + _activeItem.Name);
             //automatically set this to 0
-            _vaultTrash.SetText("0");
-            trashAmount = 0;
+            _vaultTrash.SetText("1");
+            trashAmount = 1;
             _vaultName.SetText(_activeItem.Name);
             _vaultDescription.SetText(_activeItem.Description);
             _vaultCost.SetText(_activeItem.Value.ToString());
@@ -769,9 +770,9 @@ public class InventoryMethods : MonoBehaviour
             {
                 trashAmount = _activeItem.Amount;
             }
-            else if (trashAmount < 0)
+            else if (trashAmount < 1)
             {
-                trashAmount = 0;
+                trashAmount = 1;
             }
             _vaultTrash.SetText(trashAmount.ToString());
         }

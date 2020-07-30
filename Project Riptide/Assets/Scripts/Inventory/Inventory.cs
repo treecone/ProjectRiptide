@@ -296,15 +296,15 @@ public class Inventory : MonoBehaviour
                     }
                     else if (equipment.equipment.Rarity == 2)
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
                     }
                     else if (equipment.equipment.Rarity == 3)
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
                     }
                     else
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
                     }
                 }
             }

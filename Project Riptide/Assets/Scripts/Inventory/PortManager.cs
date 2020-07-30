@@ -67,7 +67,7 @@ public class PortManager : MonoBehaviour
     void Update()
     {
 		//If the escape timer is zero and the player is near the port, then disable player movement
-		if (!_inPort && Vector3.SqrMagnitude(_player.transform.position - transform.position) < 100)
+		if (!_inPort && Vector3.SqrMagnitude(_player.transform.position - transform.position) < 135)
 		{
             _inPort = true;
 			_portUI.SetActive(true);
