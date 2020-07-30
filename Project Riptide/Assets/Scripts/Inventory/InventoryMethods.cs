@@ -170,7 +170,7 @@ public class InventoryMethods : MonoBehaviour
         _itemName.SetText("");
         _itemDescription.SetText("");
         _itemCost.SetText("");
-        _trashField.SetText("0");
+        _trashField.SetText("1");
     }
 
     /// <summary>
@@ -283,12 +283,16 @@ public class InventoryMethods : MonoBehaviour
 
     public void BuyMarket()
     {
-        if (PlayerInventory.Instance.totalGold < _activeItem.Value * trashAmount)
+        if (_activeItem.Amount == 0)
+        {
+            ResetActiveItem();
+        }
+        if (_activeItem != null && PlayerInventory.Instance.totalGold < (_activeItem.Value * trashAmount))
         {
             trashAmount = PlayerInventory.Instance.totalGold / _activeItem.Value;
             _marketTrash.SetText(trashAmount.ToString());
+            PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
         }
-        PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
     }
 
     #endregion
@@ -527,7 +531,12 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="sell">sell for true, buy for false</param>
     public void SellItem(bool sell)
     {
-
+        if (_activeItem.Amount == 0)
+        {
+            _activeItem = null;
+            trashAmount = 0;
+            _marketTrash.SetText(trashAmount.ToString());
+        }
         if (_activeItem != null)
         {
             //sells item
@@ -699,10 +708,10 @@ public class InventoryMethods : MonoBehaviour
     {
         int goldAmount = System.Convert.ToInt32(_repairShip.text);
         int totalGold = PlayerInventory.Instance.totalGold;
-        if (totalGold <= goldAmount)
+        if (totalGold >= goldAmount)
         {
             totalGold -= goldAmount;
-            player.AddHealth(player.MaxHealth);
+            player.AddHealth(player.MaxHealth - player.Health);
         }
         else
         {
