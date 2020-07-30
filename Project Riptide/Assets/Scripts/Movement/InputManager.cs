@@ -222,10 +222,6 @@ public class InputManager : MonoBehaviour
                 if (_targetEnemies[i].IsDying || Vector3.SqrMagnitude(_ship.transform.position - _targetEnemies[i].Position) > MAX_COMBAT_RANGE * MAX_COMBAT_RANGE)
                 {
                     _targetEnemies[i].SetTargetIndicator(false);
-                    if (_targetEnemies[i].OffScreenIndicator != null)
-                    {
-                        Destroy(_targetEnemies[i].OffScreenIndicator);
-                    }
                     _targetEnemies.RemoveAt(i);
                     i--;
                 }
@@ -331,7 +327,7 @@ public class InputManager : MonoBehaviour
 
     void HandleTouch(TouchData t)
     {
-        if (_clickDuration < MAX_FAST_CLICK_DURATION) //double click
+        if (t.Duration < MAX_FAST_CLICK_DURATION) //double click
         {
             if (!_combatMode && _movementScript.IndicatorActive)
             {
@@ -759,11 +755,6 @@ public class InputManager : MonoBehaviour
                 }
                 else if (enemy != null)
                 {
-                    //Untarget enemy
-                    if (enemy.OffScreenIndicator != null)
-                    {
-                        Destroy(enemy.OffScreenIndicator);
-                    }
                     _targetEnemies.Remove(enemy);
                     enemy.SetTargetIndicator(false);
                 }

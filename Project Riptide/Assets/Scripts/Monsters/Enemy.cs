@@ -115,24 +115,14 @@ public partial class Enemy : Physics
 
     protected float _rotationalVeloctiy = 0.5f;
 
-    protected Renderer _renderer;
-    protected bool _isVisible;
-    protected GameObject _offScreenIndicator;
-    public GameObject OffScreenIndicator
-    {
-        get { return _offScreenIndicator; }
-        set { _offScreenIndicator = value; }
-    }
-
     protected Upgrades _enemyUpgrades;
 
     public float Health => _health;
     public bool IsInvincible => _isInvincible;
     public bool IsDying => _dying;
-    public bool IsVisible => _isVisible;
 
-    protected Vector2 _enemyStartingChunk;
-    public Vector2 EnemyStartingChunk
+    protected Chunk _enemyStartingChunk;
+    public Chunk EnemyStartingChunk
     {
         get { return _enemyStartingChunk; }
         set { _enemyStartingChunk = value; }
@@ -182,7 +172,6 @@ public partial class Enemy : Physics
         SendFriction = movement.ApplyFriction;
         _camera = Camera.main.GetComponent<Camera>();
         _animator = GetComponentInChildren<Animator>();
-        _renderer = GetComponentInChildren<Renderer>();
         _enemyUpgrades = GetComponent<Upgrades>();
 
         _widthVector = new Vector3(_widthMult, 0, 0);
@@ -258,15 +247,6 @@ public partial class Enemy : Physics
 
             _playerCollision = false;
             _obsticalCollision = false;
-
-            if(!_isVisible && _renderer.isVisible)
-            {
-                _isVisible = true;
-            }
-            else if(_isVisible && !_renderer.isVisible)
-            {
-                _isVisible = false;
-            }
 
             base.Update();
         }
@@ -519,7 +499,7 @@ public partial class Enemy : Physics
         Vector3 targetDir = target - transform.position;
         targetDir.Normalize();
         
-        for (int i = 0; i <= _halfView; i += 4)
+        for (int i = 0; i <= _halfView; i += 6)
         {
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(i, Vector3.up) * targetDir * _viewRange, Color.red);
             Debug.DrawRay(detectPosition, Quaternion.AngleAxis(-i, Vector3.up) * targetDir * _viewRange, Color.red);
@@ -570,7 +550,7 @@ public partial class Enemy : Physics
         RaycastHit hit;
 
         //Check 90 degrees for a path to avoid obstacle
-        for (int i = 0; i <= 90; i += 4)
+        for (int i = 0; i <= 90; i += 6)
         {
             //Check right side for path
             if (!UnityEngine.Physics.SphereCast(detectPosition, _widthMult, Quaternion.AngleAxis(i, Vector3.up) * targetDir, out hit, _viewRange * 1.5f))
@@ -605,7 +585,21 @@ public partial class Enemy : Physics
         if (obstical.tag == "Obstical")
         {
             StopHorizontalMotion();
-            Vector3 backForce = transform.position - obstical.transform.position;
+
+            Vector3 exitDir = Vector3.zero;
+            foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            {
+                if (hit.collider is MeshCollider)
+                {
+                    exitDir = GetMeshColliderNormal(hit);
+                }
+                else
+                {
+                    exitDir = transform.position - obstical.transform.position;
+                }
+            }
+
+            Vector3 backForce = exitDir;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 200.0f * (60 * Time.deltaTime);
@@ -811,5 +805,40 @@ public partial class Enemy : Physics
     {
         _state = EnemyState.Hostile;
         OnHostile();
+    }
+
+    /// <summary>
+    /// Fully resets monsters values
+    /// </summary>
+    public virtual void FullReset()
+    {
+        ResetHostile();
+        _health = _maxHealth;
+        _readyToDelete = false;
+        _state = EnemyState.Passive;
+        _canvas.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Gets normal of a raycast hit with a mesh collider
+    /// </summary>
+    /// <param name="hit">Raycast hit</param>
+    /// <returns>Normal</returns>
+    private Vector3 GetMeshColliderNormal(RaycastHit hit)
+    {
+        MeshCollider collider = (MeshCollider)hit.collider;
+        Mesh mesh = collider.sharedMesh;
+        Vector3[] normals = mesh.normals;
+        int[] triangles = mesh.triangles;
+
+        Vector3 n0 = normals[triangles[hit.triangleIndex * 3 + 0]];
+        Vector3 n1 = normals[triangles[hit.triangleIndex * 3 + 1]];
+        Vector3 n2 = normals[triangles[hit.triangleIndex * 3 + 2]];
+        Vector3 baryCenter = hit.barycentricCoordinate;
+        Vector3 interpolatedNormal = n0 * baryCenter.x + n1 * baryCenter.y + n2 * baryCenter.z;
+        interpolatedNormal.Normalize();
+        interpolatedNormal = hit.transform.TransformDirection(interpolatedNormal);
+        Debug.Log(interpolatedNormal);
+        return interpolatedNormal;
     }
 }

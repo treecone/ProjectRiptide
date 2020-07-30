@@ -11,7 +11,7 @@ public class Chunk
     public Vector2 center;
     public bool hasEnemies;
 
-    public List<GameObject> enemies = new List<GameObject>();
+    public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
     public bool[] enemieIsLoaded;
 
     /// <summary>
@@ -20,13 +20,13 @@ public class Chunk
     /// <param name="chunk"> The chunk itself</param>
     /// <param name="region"> The name of the region</param>
     /// <param name="center"> Where the center of the chunk is located</param>
-    public Chunk(GameObject chunk, Region region, Vector2 center, List<GameObject> enemies)
+    public Chunk(GameObject chunk, Region region, Vector2 center, List<SpawnPoint> spawnPoints)
     {
         this.chunk = chunk;
         this.region = region;
         this.center = center;
-        this.enemies = enemies;
-        if (enemies.Count > 0)
-            enemieIsLoaded = new bool[enemies.Count];
+        this.spawnPoints = spawnPoints;
+        if (spawnPoints.Count > 0)
+            enemieIsLoaded = new bool[spawnPoints.Count];
     }
 }

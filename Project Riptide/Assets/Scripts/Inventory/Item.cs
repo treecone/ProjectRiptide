@@ -174,6 +174,10 @@ public class Item
     {
         get
         {
+            if(inventoryTapSound == null)
+            {
+                return "";
+            }
             return inventoryTapSound;
         }
     }
