@@ -184,6 +184,7 @@ public class PlayerInventory : ScriptableObject
                 if (items[i].Amount <= remaining)
                 {
                     remaining -= items[i].Amount;
+                    items[i].Amount = 0;
                     items[i] = ItemDB.Instance.FindItem("null");
                     if(remaining == 0)
                     {
@@ -242,6 +243,18 @@ public class PlayerInventory : ScriptableObject
         return addItems;
     }
 
+    public Item HasEquipmentItem(string name)
+    {
+        for (int i = 0; i < equipment.Count; i++)
+        {
+            if (equipment[i].Slug == name || equipment[i].Name == name)
+            {
+                return equipment[i];
+            }
+        }
+        return null;
+    }
+
     public bool HasEquipment(string name)
     {
         for (int i = 0; i < equipment.Count; i++)
@@ -254,28 +267,21 @@ public class PlayerInventory : ScriptableObject
         return false;
     }
 
-    public void SetEquipped(string name)
+    public void SetEquipped(Item equipping)
     {
-        ItemCategory category = ItemCategory.Material;
-        Item foundEquip = null;
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Slug == name || equipment[i].Name == name)
-            {
-                category = equipment[i].Category;
-                foundEquip = equipment[i];
-            }
-        }
+        ItemCategory category = equipping.Category;
+       
         for(int i = 0; i < equipment.Count; i++)
         {
-            if(equipment[i] == foundEquip)
+            if(equipment[i].Name == equipping.Name)
             {
-                equipment[i].Equipped = true;
+                equipping.Equipped = true;
             }
             else
             {
-                if(equipment[i].Category == category)
+                if(equipment[i].Category.Equals(category))
                 {
+                    Debug.Log("Unequipped " + equipment[i].Name);
                     equipment[i].Equipped = false;
                 }
             }

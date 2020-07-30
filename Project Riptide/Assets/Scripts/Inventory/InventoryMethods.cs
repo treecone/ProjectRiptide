@@ -161,7 +161,6 @@ public class InventoryMethods : MonoBehaviour
     {
         _activeRecipe = gObj.GetComponent<RecipeSlot>().Recipe;
         _activeItem = ItemDB.Instance.FindItem(_activeRecipe.result);
-        Debug.Log(_activeItem.Rarity);
     }
 
     /// <summary>
@@ -506,9 +505,9 @@ public class InventoryMethods : MonoBehaviour
             {
                 trashAmount = _activeItem.Amount;
             }
-            else if (trashAmount < 0)
+            else if (trashAmount < 1)
             {
-                trashAmount = 0;
+                trashAmount = 1;
             }
             _marketTrash.SetText(trashAmount.ToString());
         }
@@ -667,40 +666,48 @@ public class InventoryMethods : MonoBehaviour
     //Use this to equip based on selected item
     public void Equip()
     {
-        PlayerInventory.Instance.SetEquipped(_activeItem.Name);
+        PlayerInventory.Instance.SetEquipped(_activeItem);
     }
 
     //use this to craft based on selected item
     public void Craft()
     {
-        if (Crafting.Instance.CanCraft(_activeRecipe))
+        if (_activeRecipe != null)
         {
-            _equippingText.SetText("You have crafted a " + _activeRecipe.name + ".\nEquip now?");
-            //rarity
-            if (_activeItem.Rarity == 1)
+            if (Crafting.Instance.CanCraft(_activeRecipe))
             {
-                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = Color.white;
-            }
-            else if (_activeItem.Rarity == 2)
-            {
-                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
-            }
-            else if (_activeItem.Rarity == 3)
-            {
-                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+                _equippingText.SetText("You have crafted a " + _activeRecipe.name + ".\nEquip now?");
+                //rarity
+                if (_activeItem.Rarity == 1)
+                {
+                    _equippingImage.transform.GetChild(0).GetComponent<Image>().color = Color.white;
+                }
+                else if (_activeItem.Rarity == 2)
+                {
+                    _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
+                }
+                else if (_activeItem.Rarity == 3)
+                {
+                    _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+                }
+                else
+                {
+                    _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+                }
+                _equippingImage.transform.GetChild(1).GetComponent<Image>().sprite = _activeItem.Icon;
+                Crafting.Instance.Craft(_activeRecipe);
+                _didCraft.SetActive(true);
+                _activeRecipe = null;
             }
             else
             {
-                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+                Debug.Log("Cannot Craft");
             }
-            _equippingImage.transform.GetChild(1).GetComponent<Image>().sprite = _activeItem.Icon;
-            Crafting.Instance.Craft(_activeRecipe);
-            _didCraft.SetActive(true);
-            _activeRecipe = null;
+
         }
         else
         {
-            Debug.Log("Cannot Craft");
+            Debug.Log("No Item");
         }
     }
 
@@ -758,11 +765,6 @@ public class InventoryMethods : MonoBehaviour
         }
     }
 
-    public void EquipItem(Item equipment)
-    {
-        PlayerInventory.Instance.SetEquipped(equipment.Name);
-        _activeItem = null;
-    }
     #endregion
 
     #region Vault Methods
@@ -850,8 +852,8 @@ public class InventoryMethods : MonoBehaviour
             if (_activeItem.Amount == 0)
             {
                 _activeItem = null;
-                _vaultTrash.SetText("0");
-                trashAmount = 0;
+                _vaultTrash.SetText("1");
+                trashAmount = 1;
                 _vaultName.SetText("");
                 _vaultDescription.SetText("");
                 _vaultCost.SetText("");
@@ -872,8 +874,8 @@ public class InventoryMethods : MonoBehaviour
             if (_activeItem.Amount == 0)
             {
                 _activeItem = null;
-                _vaultTrash.SetText("0");
-                trashAmount = 0;
+                _vaultTrash.SetText("1");
+                trashAmount = 1;
                 _vaultName.SetText("");
                 _vaultDescription.SetText("");
                 _vaultCost.SetText("");

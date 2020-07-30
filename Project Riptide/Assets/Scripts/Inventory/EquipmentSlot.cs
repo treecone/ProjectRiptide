@@ -22,15 +22,15 @@ public class EquipmentSlot : MonoBehaviour
         }
         else if (equipment.Rarity == 2)
         {
-            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(27, 150, 71); //green
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
         }
         else if (equipment.Rarity == 3)
         {
-            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(231, 181, 79);    //gold
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(231, 181, 79, 255);    //gold
         }
         else
         {
-            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color(159, 114, 146);   //purple
+            gameObject.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(159, 114, 146, 255);   //purple
         }
 
         //change item icon

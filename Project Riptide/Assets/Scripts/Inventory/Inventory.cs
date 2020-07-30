@@ -117,6 +117,7 @@ public class Inventory : MonoBehaviour
             newEquipment.GetComponent<EquipmentSlot>().equipment = PlayerInventory.Instance.equipment[i];
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(UpdateEquipmentVisuals);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
         //generates equipment prefab for all items
@@ -127,6 +128,7 @@ public class Inventory : MonoBehaviour
             newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
             newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(UpdateEquipmentVisuals);
             equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
         }
         UpdateEquipmentVisuals();
@@ -281,30 +283,30 @@ public class Inventory : MonoBehaviour
     {
         foreach (EquipmentSlot equipment in equipmentSlots)
         {
-            if (PlayerInventory.Instance.CountOf(equipment.equipment.Name) > 0)
+            Item equippingItem = PlayerInventory.Instance.HasEquipmentItem(equipment.equipment.Name);
+            if (equippingItem != null)
             {
-                equipment.gameObject.SetActive(true);
-                //if change in equipment, do here
-                if (equipment.equipment.Equipped == true)
+                //not getting past this point?
+                if (equippingItem.Equipped)
                 {
                     //change icon
-                    _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(1).GetComponent<Image>().sprite = equipment.equipment.Icon;
+                    _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(1).GetComponent<Image>().sprite = equippingItem.Icon;
                     //change rarity
-                    if (equipment.equipment.Rarity == 1)
+                    if (equippingItem.Rarity == 1)
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = Color.white;
+                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = Color.white;
                     }
-                    else if (equipment.equipment.Rarity == 2)
+                    else if (equippingItem.Rarity == 2)
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
+                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
                     }
-                    else if (equipment.equipment.Rarity == 3)
+                    else if (equippingItem.Rarity == 3)
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
                     }
                     else
                     {
-                        _equipmentPics.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
                     }
                 }
             }
