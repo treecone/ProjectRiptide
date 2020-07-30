@@ -150,7 +150,7 @@ public class ItemDB : ScriptableObject
                 {
                     upgradeList.Add(data[i].upgrades[0][j]);
                 }*/
-                _items.Add(new Item(startId + i, data[i].name, data[i].description, i + 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                _items.Add(new Item(startId + i, data[i].name, data[i].description, 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
             }
             else
             {
@@ -161,15 +161,13 @@ public class ItemDB : ScriptableObject
                     {
                         upgradeList.Add(data[i].upgrades[j][k]);
                     }
-
-                    //change name based on rarity
-                    if (data[i].rarity == 1)
+                    if (j == 0)
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
                     }
                     else
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
 
                     }
                 }
