@@ -131,6 +131,7 @@ public class PortManager : MonoBehaviour
                 if (_marketItems[i].Amount <= remaining)
                 {
                     remaining -= _marketItems[i].Amount;
+                    _marketItems[i].Amount = 0;
                     _marketItems[i] = ItemDB.Instance.FindItem("null");
                     if (remaining == 0)
                     {

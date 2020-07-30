@@ -141,6 +141,7 @@ public class PlayerVault : ScriptableObject
                 if (items[i].Amount <= remaining)
                 {
                     remaining -= items[i].Amount;
+                    items[i].Amount = 0;
                     items[i] = ItemDB.Instance.FindItem("null");
                     if (remaining == 0)
                     {

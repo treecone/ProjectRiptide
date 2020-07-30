@@ -263,34 +263,21 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void TrashItem()
     {
+        if (_activeItem.Amount == 0)
+        {
+            _activeItem = null;
+            _marketName.SetText("");
+            _itemDescriptionMarket.SetText("");
+            _itemCostMarket.SetText("");
+        }
         //checks if null item
         if (_activeItem != null)
         {
             Item saved = _activeItem;
 
-            if (trashAmount >= _activeItem.Amount)
-            {
-                ResetActiveItem();
-            }
-
             PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
             _trashField.SetText("1");
             trashAmount = 1;
-        }
-    }
-
-
-    public void BuyMarket()
-    {
-        if (_activeItem.Amount == 0)
-        {
-            ResetActiveItem();
-        }
-        if (_activeItem != null && PlayerInventory.Instance.totalGold < (_activeItem.Value * trashAmount))
-        {
-            trashAmount = PlayerInventory.Instance.totalGold / _activeItem.Value;
-            _marketTrash.SetText(trashAmount.ToString());
-            PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
         }
     }
 
@@ -475,7 +462,14 @@ public class InventoryMethods : MonoBehaviour
             _itemCostMarket.SetText(_activeItem.Value.ToString());
             _sellName.SetText("Are you sure you want to sell " + _activeItem.Name + "?");
         }
-
+        else
+        {
+            _marketTrash.SetText("1");
+            trashAmount = 1;
+            _marketName.SetText("");
+            _itemDescriptionMarket.SetText("");
+            _itemCostMarket.SetText("");
+        }
     }
 
     /// <summary>
@@ -530,12 +524,6 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="sell">sell for true, buy for false</param>
     public void SellItem(bool sell)
     {
-        if (_activeItem.Amount == 0)
-        {
-            _activeItem = null;
-            trashAmount = 0;
-            _marketTrash.SetText(trashAmount.ToString());
-        }
         if (_activeItem != null)
         {
             //sells item
@@ -552,19 +540,23 @@ public class InventoryMethods : MonoBehaviour
                     //sets it to max gold amount
                     trashAmount = PlayerInventory.Instance.TotalGold / _activeItem.Value;
                     //just double checking
-                    if (trashAmount > _activeItem.Amount)
-                    {
-                        trashAmount = _activeItem.Amount;
-                    }
                     _marketTrash.SetText(trashAmount.ToString());
                 }
                 PlayerInventory.Instance.TotalGold -= _activeItem.Value * trashAmount;
                 PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
                 PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
+            if (_activeItem.Amount == 0)
+            {
+                _activeItem = null;
+                _marketName.SetText("");
+                _itemDescriptionMarket.SetText("");
+                _itemCostMarket.SetText("");
+            }
             _marketTrash.SetText("1");
             trashAmount = 1;
         }
+
     }
     #endregion
 
@@ -578,24 +570,20 @@ public class InventoryMethods : MonoBehaviour
         if (_activeRecipe != null)
         {
             _craftingName.SetText(_activeItem.Name);
-            
-            //do stats here, set their colors if upgradeValue is positive
+            //stats
             for (int i = 0; i < 4; i++)
             {
-                //for however many upgrades there are
                 if (_activeItem.Upgrades.Count > i)
                 {
-                    /*
                     float upgradeVal = _activeItem.Upgrades[i].upgradeValue;
                     if (upgradeVal < 0)
                     {
-                        _stats[i].color = Color.red;
+                        _statsCrafting[i].color = Color.red;
                     }
                     else
                     {
-                        _stats[i].color = Color.green;
+                        _statsCrafting[i].color = Color.green;
                     }
-                    */
                     _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
                 }
                 else
@@ -603,7 +591,6 @@ public class InventoryMethods : MonoBehaviour
                     _statsCrafting[i].SetText("");
                 }
             }
-
             //abilities
             if (_activeItem.PassiveText != "")
             {
@@ -620,7 +607,6 @@ public class InventoryMethods : MonoBehaviour
                 _activeAbilityCrafting.SetText("");
                 _passiveAbilityCrafting.SetText("");
             }
-
             //ingredients
             for (int i = 0; i < 5; i++)
             {
@@ -637,8 +623,8 @@ public class InventoryMethods : MonoBehaviour
                     _neededItemsCrafting[i].SetActive(false);
                 }
             }
-            
-            if (_activeItem.Rarity == 1)   //check if it is an upgradable or not
+            //crafting/upgrading button
+            if (_activeItem.Rarity == 1)   
             {
                 if (Crafting.Instance.CanCraft(_activeRecipe))
                 {
@@ -661,6 +647,21 @@ public class InventoryMethods : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            _craftingName.SetText("");
+            for (int i = 0; i < 4; i++)
+            {
+                _statsCrafting[i].SetText("");
+            }
+            _activeAbilityCrafting.SetText("");
+            _passiveAbilityCrafting.SetText("");
+            for (int i = 0; i < 5; i++)
+            {
+                _neededItemsCrafting[i].SetActive(false);
+            }
+            _craftAndUpgrade.GetComponent<Image>().sprite = _craftButtonImages[0];
+        }
     }
 
     //Use this to equip based on selected item
@@ -675,7 +676,7 @@ public class InventoryMethods : MonoBehaviour
         if (Crafting.Instance.CanCraft(_activeRecipe))
         {
             _equippingText.SetText("You have crafted a " + _activeRecipe.name + ".\nEquip now?");
-
+            //rarity
             if (_activeItem.Rarity == 1)
             {
                 _equippingImage.transform.GetChild(0).GetComponent<Image>().color = Color.white;
@@ -696,7 +697,6 @@ public class InventoryMethods : MonoBehaviour
             Crafting.Instance.Craft(_activeRecipe);
             _didCraft.SetActive(true);
             _activeRecipe = null;
-            ExpandCraft();
         }
         else
         {
@@ -761,6 +761,7 @@ public class InventoryMethods : MonoBehaviour
     public void EquipItem(Item equipment)
     {
         PlayerInventory.Instance.SetEquipped(equipment.Name);
+        _activeItem = null;
     }
     #endregion
 
@@ -771,15 +772,21 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="inventorySlot"></param>
     public void ChooseVaultItem()
     {
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
-            Debug.Log("Clicked on " + _activeItem.Name);
-            //automatically set this to 0
             _vaultTrash.SetText("1");
             trashAmount = 1;
             _vaultName.SetText(_activeItem.Name);
             _vaultDescription.SetText(_activeItem.Description);
             _vaultCost.SetText(_activeItem.Value.ToString());
+        }
+        else
+        {
+            _vaultTrash.SetText("1");
+            trashAmount = 1;
+            _vaultName.SetText("");
+            _vaultDescription.SetText("");
+            _vaultCost.SetText("");
         }
     }
     /// <summary>
@@ -814,7 +821,7 @@ public class InventoryMethods : MonoBehaviour
     public void TrashInventoryItem()
     {
         //checks if null item
-        if (_activeItem != null || _activeItem.Name != "NullItem")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
             Item saved = _activeItem;
 
@@ -828,44 +835,49 @@ public class InventoryMethods : MonoBehaviour
     public void TrashVaultItem()
     {
         //checks if null item
-        if (_activeItem != null || _activeItem.Name != "Null")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
-            Item saved = _activeItem;
-
-            if (trashAmount >= _activeItem.Amount)
-            {
-                ResetActiveItem();
-            }
-            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
+            PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
         }
     }
     public void AddToShip()
     {
-        if (_activeItem != null || _activeItem.Name != "Null")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
-            Item saved = _activeItem;
+            PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+            PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
 
-            if (trashAmount >= _activeItem.Amount)
+            if (_activeItem.Amount == 0)
             {
-                ResetActiveItem();
+                _activeItem = null;
+                _vaultTrash.SetText("0");
+                trashAmount = 0;
+                _vaultName.SetText("");
+                _vaultDescription.SetText("");
+                _vaultCost.SetText("");
             }
-            PlayerInventory.Instance.AddItem(saved.Name, trashAmount);
-            PlayerVault.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
 
     public void AddToVault()
     {
-        if (_activeItem != null || _activeItem.Name != "Null")
+        if (_activeItem != null && _activeItem.Name != "Null")
         {
-            Item saved = _activeItem;
+            int savedAmount = _activeItem.Amount;
 
-            if (trashAmount >= _activeItem.Amount)
+            Debug.Log(_activeItem.Name + _activeItem.Amount);
+            PlayerVault.Instance.AddItem(_activeItem.Name, trashAmount);
+            PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
+
+            if (_activeItem.Amount == 0)
             {
-                ResetActiveItem();
+                _activeItem = null;
+                _vaultTrash.SetText("0");
+                trashAmount = 0;
+                _vaultName.SetText("");
+                _vaultDescription.SetText("");
+                _vaultCost.SetText("");
             }
-            PlayerVault.Instance.AddItem(saved.Name, trashAmount);
-            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
         }
     }
     #endregion
