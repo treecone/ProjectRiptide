@@ -179,7 +179,7 @@ public class PlayerInventory : ScriptableObject
         int remaining = amount;
         for (int i = items.Count - 1; i > -1; i--) //Finding the slot with the item, starts from the bottom up
         {
-            if (items[i].Name == itemName)
+            if (items[i].Name == itemName || items[i].Slug == itemName)
             {
                 if (items[i].Amount <= remaining)
                 {

@@ -9,12 +9,14 @@ public class StatusIcons : MonoBehaviour
     {
         public StatusType name;
         public Sprite sprite;
+        public Sprite opposite;
+        public float oppositeThreshold;
     }
 
     [SerializeField]
     private List<NamedSprite> sprites;
 
-    private Dictionary<StatusType, Sprite> spriteDict;
+    private Dictionary<StatusType, NamedSprite> spriteDict;
 
     [SerializeField]
     private GameObject iconPrefab;
@@ -29,10 +31,10 @@ public class StatusIcons : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        spriteDict = new Dictionary<StatusType, Sprite>();
+        spriteDict = new Dictionary<StatusType, NamedSprite>();
         for(int i = 0; i < sprites.Count;i++)
         {
-            spriteDict[sprites[i].name] = sprites[i].sprite;
+            spriteDict[sprites[i].name] = sprites[i];
         }
 
     }
@@ -66,7 +68,14 @@ public class StatusIcons : MonoBehaviour
         foreach(StatusEffect s in statusEffects)
         {
             GameObject iconClone = Instantiate(iconPrefab, transform);
-            iconClone.GetComponent<SpriteRenderer>().sprite = spriteDict[s.Type];
+            if(spriteDict[s.Type].opposite == null || s.Level >= spriteDict[s.Type].oppositeThreshold)
+            {
+                iconClone.GetComponent<SpriteRenderer>().sprite = spriteDict[s.Type].sprite;
+            } else
+            {
+                iconClone.GetComponent<SpriteRenderer>().sprite = spriteDict[s.Type].opposite;
+            }
+            
             iconClone.transform.localPosition = new Vector3(currentX, currentY, 0);
 
             i++;
