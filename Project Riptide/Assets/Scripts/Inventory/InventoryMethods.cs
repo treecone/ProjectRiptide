@@ -238,18 +238,13 @@ public class InventoryMethods : MonoBehaviour
     /// <param name="num">change number in TextMeshPro</param>
     public void ChangeNumber(int numIncrease)
     {
-        Debug.LogError("Trash Field: " + _trashField.text);
-        //int amount = System.Convert.ToInt32(_trashField.text);
-        Debug.LogError("Amount Num Converted: " + trashAmount);
         //if active item exists
         if (_activeItem != null && _activeItem.Name != "NullItem")
         {
             trashAmount += numIncrease;
-            Debug.LogError("Amount Num Before Checks: " + trashAmount);
             //check for above and below minimum
             if (trashAmount >= _activeItem.Amount)
             {
-                Debug.LogError("Amount is above active item");
                 trashAmount = _activeItem.Amount;
             }
             else if (trashAmount < 1)

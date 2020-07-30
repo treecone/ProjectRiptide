@@ -54,7 +54,6 @@ public class Crafting : ScriptableObject
     /// <returns>The item crafted, or null if the item cannot be crafted</returns>
     public Item Craft(Recipe recipe)
     {
-        Debug.Log(PlayerInventory.Instance.totalGold + " AT START");
         if (CanCraft(recipe))
         {
             for (int i = 0; i < recipe.ingredients.Count; i++)
