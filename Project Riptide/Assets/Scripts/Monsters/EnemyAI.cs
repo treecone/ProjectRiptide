@@ -15,6 +15,12 @@ public partial class Enemy : Physics
     /// </summary>
     public void PassiveWanderRadius()
     {
+        //Don't do anything if player if far enough away
+        if(_playerDistance >_maxRadius)
+        {
+            StopMotion();
+            return;
+        }
         //If the monster is currently outside the wander radius, go back to the radius.
         //This is important if the monster 
         if (_enemyDistance > _wanderRadius)
@@ -83,6 +89,12 @@ public partial class Enemy : Physics
     /// </summary>
     public void PassiveReturnToRadius()
     {
+        //Don't do anything if player if far enough away
+        if (_playerDistance > _maxRadius)
+        {
+            StopMotion();
+            return;
+        }
         if (_enemyDistance >= _wanderRadius)
         {
             Vector3 destination = new Vector3(_startPos.x, transform.position.y, _startPos.z);
@@ -859,6 +871,12 @@ public partial class Pandatee : Enemy
     /// </summary>
     protected void PassivePandateeWander()
     {
+        //Don't do anything if player if far enough away
+        if (_playerDistance > _maxRadius)
+        {
+            StopMotion();
+            return;
+        }
         //If pandatee is underwater, check to see if it should come up
         if (_isUnderwater)
         {
@@ -1561,7 +1579,7 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        /*if (_playerDistance < 30.0f)
+                        if (_playerDistance < 30.0f)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1582,7 +1600,7 @@ public partial class MonkeyBoss : Enemy
                                 _actionQueue.Enqueue(MonkeyLeftHandWaveReturn);
                                 StopMotion();
                             }
-                        }*/
+                        }
 
                         //Check to see if monster can use slam wave
                         if (_playerDistance < 25.0f)

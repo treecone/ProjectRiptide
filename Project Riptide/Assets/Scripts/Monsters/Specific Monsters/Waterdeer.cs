@@ -80,10 +80,14 @@ public partial class Waterdeer : Enemy
             if (collider.transform.gameObject.tag == "Hitbox")
             {
                 //Check to see if stingray can do cross zap attack
-                Waterdeer foundEnemy = collider.GetComponent<Hitbox>().AttachedObject.GetComponent<Waterdeer>();
-                if (foundEnemy != null && foundEnemy.gameObject != gameObject && foundEnemy.State == EnemyState.Passive)
+                Hitbox hitbox = collider.GetComponent<Hitbox>();
+                if (hitbox.Type == HitboxType.EnemyHurtbox)
                 {
-                    foundEnemy.TriggerHostile();
+                    Waterdeer foundEnemy = hitbox.AttachedObject.GetComponent<Waterdeer>();
+                    if (foundEnemy != null && foundEnemy.gameObject != gameObject && foundEnemy.State == EnemyState.Passive)
+                    {
+                        foundEnemy.TriggerHostile();
+                    }
                 }
             }
         }

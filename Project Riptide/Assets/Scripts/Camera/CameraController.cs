@@ -28,12 +28,6 @@ public class CameraController : MonoBehaviour
     private Vector3 _maxZoom;
     private InputManager _inputManager;
 
-    [SerializeField]
-    private GameObject _offScreenIndPrefab;
-    private float _screenLength;
-    private float _maxScreenX;
-    private float _maxScreenY;
-
 
     void Start ()
     {
@@ -44,9 +38,6 @@ public class CameraController : MonoBehaviour
             allTargets = _inputManager.TargetEnemies;
             Debug.LogWarning("No player was assigned to the camera. Default: Player Tag. ");
         }
-        _screenLength = Mathf.Sqrt(Mathf.Pow(Screen.width / 2, 2) + Mathf.Pow(Screen.height / 2, 2));
-        _maxScreenX = (Screen.width / 2f) - 100;
-        _maxScreenY = (Screen.height / 2f) - 100;
     }
 
     void Update()
@@ -96,7 +87,7 @@ public class CameraController : MonoBehaviour
     /// <summary>
     /// Sets screen indicators for target monsters off screen
     /// </summary>
-    private void SetOffScreenIndicators()
+    /*private void SetOffScreenIndicators()
     {
         for(int i = 0; i < _inputManager.TargetEnemies.Count; i++)
         {
@@ -154,7 +145,7 @@ public class CameraController : MonoBehaviour
                 _inputManager.TargetEnemies[i].OffScreenIndicator.SetActive(false);
             }
         }
-    }
+    }*/
 
     private void OnDrawGizmos()
     {
