@@ -27,6 +27,7 @@ public class Item
     private string activeText;
     private string passiveText;
     private string shotType;
+    private string inventoryTapSound;
     #endregion
 
     #region Properties
@@ -168,9 +169,17 @@ public class Item
             return shotType;
         }
     }
+
+    public string InventoryTapSound
+    {
+        get
+        {
+            return inventoryTapSound;
+        }
+    }
     #endregion
 
-    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category)
+    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category, string activeText, string passiveText, string shotType, string inventoryTapSound)
     {
         this.id = id;
         this.name = itemName;
@@ -182,8 +191,12 @@ public class Item
         this.amount = amount;
         this.maxAmount = maxAmount;
         this.upgrades = upgrades;
-        this.equipped = true;
+        this.equipped = false;
         this.category = category;
+        this.activeText = activeText;
+        this.passiveText = passiveText;
+        this.shotType = shotType;
+        this.inventoryTapSound = inventoryTapSound;
     }
 
     public Item(Item other)
@@ -204,6 +217,9 @@ public class Item
         }
         this.equipped = other.equipped;
         this.category = other.category;
+        this.activeText = other.activeText;
+        this.passiveText = other.passiveText;
+        this.shotType = other.shotType;
     }
 }
 

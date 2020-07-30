@@ -7,6 +7,8 @@ public class CannonBallBehavior : MonoBehaviour
     public int damageDealt;
     public List<StatusEffect> onhitEffects;
     public GameObject hitbox;
+    public string fireSound;
+    public string impactSound;
 
     private GameObject projHitbox;
     private HitboxEnter _onTrigger;
@@ -34,7 +36,6 @@ public class CannonBallBehavior : MonoBehaviour
     {
         if(transform.position.y < -2)
         {
-            SoundManager.instance.PlaySound("Splash");
             Destroy(this.gameObject);
         }
     }
@@ -43,9 +44,15 @@ public class CannonBallBehavior : MonoBehaviour
     void DestroyProj(GameObject hit)
     {
         if (hit.tag == "Obstical")
+        {
+            SoundManager.instance.PlaySound(impactSound);
             Destroy(gameObject);
+        }
         if (hit.tag == "Enemy")
+        {
+            SoundManager.instance.PlaySound(impactSound);
             Destroy(gameObject);
+        }
     }
 
     void PlayParticles(GameObject other)
