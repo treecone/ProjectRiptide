@@ -88,6 +88,10 @@ public class InventoryMethods : MonoBehaviour
     private Image[] _equippedImages;
     [SerializeField]
     private GameObject _didCraft;
+    [SerializeField]
+    private TextMeshProUGUI _equippingText;
+    [SerializeField]
+    private GameObject   _equippingImage;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -675,6 +679,25 @@ public class InventoryMethods : MonoBehaviour
     {
         if (Crafting.Instance.CanCraft(_activeRecipe))
         {
+            _equippingText.SetText("You have crafted a " + _activeRecipe.name + ".\nEquip now?");
+
+            if (_activeItem.Rarity == 1)
+            {
+                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = Color.white;
+            }
+            else if (_activeItem.Rarity == 2)
+            {
+                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
+            }
+            else if (_activeItem.Rarity == 3)
+            {
+                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+            }
+            else
+            {
+                _equippingImage.transform.GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+            }
+            _equippingImage.transform.GetChild(1).GetComponent<Image>().sprite = _activeItem.Icon;
             Crafting.Instance.Craft(_activeRecipe);
             _didCraft.SetActive(true);
             _activeRecipe = null;
