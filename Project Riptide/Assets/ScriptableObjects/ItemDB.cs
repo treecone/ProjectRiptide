@@ -36,6 +36,10 @@ public class ItemDB : ScriptableObject
         public Sprite icon;
         public int maxAmount;
         public List<ListWrapper> upgrades;
+        public string activeText;
+        public string passiveText;
+        public string shotType;
+        public string inventoryTapSound;
 
         [System.Serializable]
         public class ListWrapper
@@ -125,7 +129,7 @@ public class ItemDB : ScriptableObject
     public void Setup()
     {
         _items = new List<Item>();
-        _nullItem = new Item(-1, _nullItemData.name, _nullItemData.description, _nullItemData.rarity, _nullItemData.value, _nullItemData.slug, _nullItemData.icon, 1, _nullItemData.maxAmount, new List<Upgrade>(), ItemCategory.Material);
+        _nullItem = new Item(-1, _nullItemData.name, _nullItemData.description, _nullItemData.rarity, _nullItemData.value, _nullItemData.slug, _nullItemData.icon, 1, _nullItemData.maxAmount, new List<Upgrade>(), ItemCategory.Material, _nullItemData.activeText, _nullItemData.passiveText, _nullItemData.shotType, _nullItemData.inventoryTapSound);
         ImportItemData(_materials, ItemCategory.Material, 0);
         ImportItemData(_ships, ItemCategory.Ship, 100);
         ImportItemData(_sails, ItemCategory.Sails, 200);
@@ -146,7 +150,7 @@ public class ItemDB : ScriptableObject
                 {
                     upgradeList.Add(data[i].upgrades[0][j]);
                 }*/
-                _items.Add(new Item(startId + i, data[i].name, data[i].description, i + 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                _items.Add(new Item(startId + i, data[i].name, data[i].description, i + 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
             }
             else
             {
@@ -161,11 +165,11 @@ public class ItemDB : ScriptableObject
                     //change name based on rarity
                     if (data[i].rarity == 1)
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
                     }
                     else
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, data[i].rarity, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
 
                     }
                 }

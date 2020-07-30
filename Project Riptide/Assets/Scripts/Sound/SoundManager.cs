@@ -32,10 +32,14 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(string name)
     {
-        Sound sound = soundDict[name];
-        AudioSource source = soundDict[name].audioSource;
-        source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
-        source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
-        source.Play();
+        if(soundDict.ContainsKey(name))
+        {
+            Sound sound = soundDict[name];
+            AudioSource source = soundDict[name].audioSource;
+            source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
+            source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
+            source.Play();
+
+        }
     }
 }

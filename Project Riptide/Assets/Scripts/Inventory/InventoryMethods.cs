@@ -137,6 +137,7 @@ public class InventoryMethods : MonoBehaviour
         if (gObj.GetComponent<InventorySlot>().item != null && gObj.GetComponent<InventorySlot>().item.Name != "Null")
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
+            SoundManager.instance.PlaySound(_activeItem.InventoryTapSound);
         }
     }
 
