@@ -255,7 +255,6 @@ public class ShipMovement : Physics
             backForce.Normalize();
             backForce *= 50.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
-            Debug.DrawLine(transform.position, transform.position + backForce * 100, Color.black);
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
         {
@@ -291,7 +290,6 @@ public class ShipMovement : Physics
         Vector3 interpolatedNormal = n0 * baryCenter.x + n1 * baryCenter.y + n2 * baryCenter.z;
         interpolatedNormal.Normalize();
         interpolatedNormal = hit.transform.TransformDirection(interpolatedNormal);
-        Debug.Log(interpolatedNormal);
         return interpolatedNormal;
     }
 }

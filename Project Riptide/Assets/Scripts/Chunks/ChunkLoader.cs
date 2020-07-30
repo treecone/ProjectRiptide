@@ -279,7 +279,7 @@ public class ChunkLoader : MonoBehaviour
         // Check each smaller enemy and unload it if neccessary.
         for(int i = 0; i < _enemies.Count; i++)
         {
-            bool enemyIsFar = Vector3.SqrMagnitude(_enemies[i].transform.position - _ship.transform.position) >= _chunkSideLength * _chunkSideLength;
+            bool enemyIsFar = Vector3.SqrMagnitude(_enemies[i].transform.position - _ship.transform.position) >= 1050 * 1050;
             if (enemyIsFar || _enemies[i].GetComponent<Enemy>().ReadyToDelete)
             {
                 // Get the origin chunk of the enemy.
