@@ -46,6 +46,10 @@ public class DropManager : ScriptableObject
             {
                 Item item = ItemDB.Instance.FindItem(drop.itemSlug);
                 item.Amount = Random.Range(drop.minCount, drop.maxCount + 1);
+                if(item.Name == "Null")
+                {
+                    Debug.LogError("Item '" + drop.itemSlug + "' could not be found.");
+                }
                 items.Add(item);
             }
         }
