@@ -343,8 +343,7 @@ public partial class KoiBoss : Enemy
                     _initalPos = _initalPos - 0.9f * transform.localScale.y;
                     ReturnToInitalPosition();
                     //Change obstical detection position
-                    Transform detect = transform.GetChild(transform.childCount - 1);
-                    detect.position = new Vector3(detect.position.x, detect.position.y + 0.9f * transform.localScale.y, detect.position.z);
+                    _detectPosition.position = new Vector3(_detectPosition.position.x, _detectPosition.position.y + 0.9f * transform.localScale.y, _detectPosition.position.z);
 
                     StopMotion();
                     _currTime = 0;
