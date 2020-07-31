@@ -51,6 +51,7 @@ public class PlayerInventory : ScriptableObject
     }
     public void InitializeInventory()
     {
+        startingItemNames = new List<string>{ "patchworksails", "rustedcannon" };
         totalGold = 3000;
         items = new List<Item>();
         equipment = new List<Item>();
