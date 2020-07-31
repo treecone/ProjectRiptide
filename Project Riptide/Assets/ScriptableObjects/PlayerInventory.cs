@@ -27,6 +27,8 @@ public class PlayerInventory : ScriptableObject
         Debug.Log("wee woo");
         InitializeInventory();
     }
+    [SerializeField]
+    private List<string> startingItemNames;
     public int numItems;
     public List<Item> items;
     public List<Item> equipment;
@@ -55,6 +57,10 @@ public class PlayerInventory : ScriptableObject
         for(int i = 0; i < numItems; i++)
         {
             items.Add(ItemDB.Instance.FindItem("null"));
+        }
+        foreach(string s in startingItemNames)
+        {
+            AddItem(s, 1);
         }
     }
 
