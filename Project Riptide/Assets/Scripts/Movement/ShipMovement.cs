@@ -273,7 +273,7 @@ public class ShipMovement : Physics
     /// <param name="knockback">Knockback Force</param>
     public void TakeKnockback(Vector3 knockback)
     {
-        ApplyForce(knockback / (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Hardiness]));
+        ApplyForce(knockback * 10.0f / (10.0f + shipUpgradeScript.masterUpgrade[StatusType.Hardiness]));
     }
 
     private Vector3 GetMeshColliderNormal(RaycastHit hit)

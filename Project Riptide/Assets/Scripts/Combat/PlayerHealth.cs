@@ -109,7 +109,7 @@ public class PlayerHealth : MonoBehaviour
                     gameObject.GetComponent<StatusEffects>().AddStatus(StatusType.Regeneration, 3f, shipUpgradeScript.masterUpgrade[StatusType.RegenOnDamage]);
                 }
                 
-                health -= damage * (100f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 100f));
+                health -= damage * (10f / (shipUpgradeScript.masterUpgrade[StatusType.Armor] + 10f));
             }
             healthBar.UpdateHealth(health);
             if (health < 0.5f && !dead)
