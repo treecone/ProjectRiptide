@@ -17,7 +17,4 @@ public class Sound : ScriptableObject
     public float volumeVariance;
     [Range(0, 1)]
     public float pitchVariance;
-
-    [HideInInspector]
-    public AudioSource audioSource;
 }
