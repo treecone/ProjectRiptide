@@ -37,7 +37,6 @@ public class SoundManager : MonoBehaviour
     {
         if(soundDict.ContainsKey(name))
         {
-            Debug.Log("beginning play sound " + name);
             Sound sound = soundDict[name];
 
             bool foundSource = false;
@@ -52,7 +51,6 @@ public class SoundManager : MonoBehaviour
                     source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
                     source.Play();
                     audioSourceIds[i] = Random.Range(0, int.MaxValue);
-                    Debug.Log("playing on source " + i);
                     return audioSourceIds[i];
                 }
             }
@@ -68,14 +66,12 @@ public class SoundManager : MonoBehaviour
                 audioSourcePool.Add(source);
                 int id = Random.Range(0, int.MaxValue);
                 audioSourceIds.Add(id);
-                Debug.Log("no open source found, creating new source");
                 return id;
             }
             //will never hit here but needs a return to compile
             return -2;
         } else
         {
-            Debug.Log("no sound with name " + name);
             return -1;
         }
     }
