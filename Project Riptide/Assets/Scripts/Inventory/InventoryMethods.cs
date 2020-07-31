@@ -102,6 +102,8 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _vaultCost;
     [SerializeField]
     private TextMeshProUGUI _vaultTrash;
+    [SerializeField]
+    private TextMeshProUGUI _vaultTrashLine;
     #endregion
     #region Scripts
     [SerializeField]
@@ -569,7 +571,10 @@ public class InventoryMethods : MonoBehaviour
 
     public void ChangeToBuy()
     {
-        _sellName.SetText("Are you sure you want to buy " + _activeItem.Name + "?");
+        if (_activeItem != null)
+        {
+            _sellName.SetText("Are you sure you want to buy " + _activeItem.Name + "?");
+        }
     }
 
     #endregion
@@ -606,12 +611,12 @@ public class InventoryMethods : MonoBehaviour
                 }
             }
             //abilities
-            if (_activeItem.PassiveText != "")
+            if (_activeItem.PassiveText != null && _activeItem.PassiveText != "")
             {
                 _activeAbilityCrafting.SetText("Active: " + _activeItem.ActiveText);
                 _passiveAbilityCrafting.SetText("Passive: " + _activeItem.PassiveText);
             }
-            else if (_activeItem.ActiveText != "")
+            else if (_activeItem.ActiveText != null && _activeItem.ActiveText != "")
             {
                 _activeAbilityCrafting.SetText("Active: " + _activeItem.ActiveText);
                 _passiveAbilityCrafting.SetText("");
@@ -895,6 +900,14 @@ public class InventoryMethods : MonoBehaviour
                 _vaultDescription.SetText("");
                 _vaultCost.SetText("");
             }
+        }
+    }
+
+    public void ChangeToMove()
+    {
+        if (_activeItem != null)
+        {
+            _vaultTrashLine.SetText("Move " + _activeItem.Name + " to: ");
         }
     }
     #endregion
