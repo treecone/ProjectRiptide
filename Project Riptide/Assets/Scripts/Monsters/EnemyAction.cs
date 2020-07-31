@@ -25,8 +25,8 @@ public partial class Enemy : Physics
             destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
         }
         //Seek destination
-        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -57,8 +57,8 @@ public partial class Enemy : Physics
             destination = new Vector3(avoidDirection.x, transform.position.y, avoidDirection.z);
         }
         //Seek destination
-        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -711,8 +711,8 @@ public partial class KoiBoss : Enemy
             {
                 destination = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z);
             }
-            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 2.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -3088,7 +3088,7 @@ public partial class Waterdeer : Enemy
             StopMotion();
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 20f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]) / 2f) / transform.localScale.z), new Vector3(_widthMult, 1, 17 * (1 +_enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]) / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                CreateTelegraph(new Vector3(0, -0.5f, (_lengthMult + 20f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]) / 2f) / transform.localScale.z), new Vector3(_widthMult, 1, 17 * (1 +_enemyUpgrades.masterUpgrade[StatusType.Speed]) / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -3124,7 +3124,7 @@ public partial class Waterdeer : Enemy
         if (time == 0.0f)
         {
             _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(3, 3, 3), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            ApplyMoveForce(transform.forward, 20.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]), MAX_TIME);
+            ApplyMoveForce(transform.forward, 20.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]), MAX_TIME);
             _animator.SetFloat(_animParm[(int)WaterdeerAnim.SwimSpeed], 2.0f);
             if (DoTelegraphs())
             {

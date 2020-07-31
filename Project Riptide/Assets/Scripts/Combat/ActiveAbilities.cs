@@ -211,11 +211,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.Dash:
                 return new ActiveSkill("Dash", Dash, 5.0f, false, index);
             case SkillType.SmallManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 5.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 5.0f, 2.0f);
             case SkillType.MediumManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 6.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 6.0f, 2.0f);
             case SkillType.LargeManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Maneuverability, 7.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 7.0f, 2.0f);
             case SkillType.BubbleField:
                 return new BubbleFieldSkill("BubbleField", this, 25.0f, false, index, 5.0f, 5.0f);
             case SkillType.StrongBubbleField:
@@ -225,11 +225,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.StrongStopMovement:
                 return new ActiveSkill("Stop", StopMovement, 5.0f, false, index);
             case SkillType.SmallSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.0f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 2.0f, 1.5f);
             case SkillType.MediumSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 2.5f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 2.5f, 1.5f);
             case SkillType.LargeSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 1.75f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 1.75f);
             case SkillType.SmallRegeneration:
                 return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
             case SkillType.MediumRegeneration:
@@ -259,11 +259,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeRam:
                 return new RamSkill("Ram", this, 20.0f, false, index, 30.0f, 25.0f);
             case SkillType.SmallSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 3.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 2.0f);
             case SkillType.MediumSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 4.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 4.0f, 2.0f);
             case SkillType.LargeSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.MovementSpeed, 5.0f, 2.0f);
+                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 5.0f, 2.0f);
             case SkillType.SmallInvulnerability:
                 return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
             case SkillType.MediumInvulnerability:

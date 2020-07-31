@@ -54,8 +54,8 @@ public partial class Enemy : Physics
             destination = _destination;
         }
         //Seek destination
-        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+        Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+        netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
         //Rotate in towards direction of velocity
         if (_velocity != Vector3.zero)
@@ -105,8 +105,8 @@ public partial class Enemy : Physics
                 destination = transform.position + AvoidObstacle(destination);
             }
             //Seek destination
-            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -489,8 +489,8 @@ public partial class RockCrab : Enemy
                 destination = transform.position + AvoidObstacle(destination);
             }
             //Seek destination
-            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)
@@ -1357,8 +1357,8 @@ public partial class MonkeyBoss : Enemy
                 destination = transform.position + AvoidObstacle(destination);
             }
             //Seek destination
-            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.MovementSpeed]);
+            Vector3 netForce = Seek(destination) * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z).normalized * 1.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]);
 
             //Rotate in towards direction of velocity
             if (_velocity != Vector3.zero)

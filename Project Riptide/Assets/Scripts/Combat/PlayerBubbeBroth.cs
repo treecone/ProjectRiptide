@@ -79,7 +79,7 @@ public class PlayerBubbeBroth : MonoBehaviour
             StatusEffects status = other.GetComponent<StatusEffects>();
             if (status != null && !status.CheckStatus("PlayerBubbles"))
             {
-                status.AddStatus(StatusType.MovementSpeed, "PlayerBubbles", 9999.0f, -0.9f);
+                status.AddStatus(StatusType.Speed, "PlayerBubbles", 9999.0f, -0.9f);
                 _enemyStatus.Add(status);
             }
         }

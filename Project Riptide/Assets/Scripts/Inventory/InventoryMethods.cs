@@ -598,12 +598,13 @@ public class InventoryMethods : MonoBehaviour
                     if (upgradeVal < 0)
                     {
                         _statsCrafting[i].color = Color.red;
+                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
                     }
                     else
                     {
                         _statsCrafting[i].color = Color.green;
+                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " +" + _activeItem.Upgrades[i].upgradeValue);
                     }
-                    _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
                 }
                 else
                 {
