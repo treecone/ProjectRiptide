@@ -243,18 +243,6 @@ public class PlayerInventory : ScriptableObject
         return addItems;
     }
 
-    public Item HasEquipmentItem(string name)
-    {
-        for (int i = 0; i < equipment.Count; i++)
-        {
-            if (equipment[i].Slug == name || equipment[i].Name == name)
-            {
-                return equipment[i];
-            }
-        }
-        return null;
-    }
-
     public bool HasEquipment(string name)
     {
         for (int i = 0; i < equipment.Count; i++)
@@ -275,7 +263,8 @@ public class PlayerInventory : ScriptableObject
         {
             if(equipment[i].Name == equipping.Name)
             {
-                equipping.Equipped = true;
+                Debug.Log("Equipped " + equipment[i].Name);
+                equipment[i].Equipped = true;
             }
             else
             {

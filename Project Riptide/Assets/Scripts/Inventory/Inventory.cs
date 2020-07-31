@@ -35,6 +35,8 @@ public class Inventory : MonoBehaviour
     [SerializeField]
     private GameObject _equipmentPrefab;
     private List<EquipmentSlot> equipmentSlots;
+    private int _sortingNumE = -1;
+    private int _sortingNumR = -1;
 
     [SerializeField]
     private GameObject _marketParent;
@@ -200,6 +202,7 @@ public class Inventory : MonoBehaviour
             recipeSlots[i].UpdateSlotVisuals();
         }
         SortCraftRecipes();
+        SortRecipeByType(_sortingNumR);
     }
 
     public void SortCraftRecipes()
@@ -209,6 +212,7 @@ public class Inventory : MonoBehaviour
             //if you can craft, it gets moved to top
             if (Crafting.Instance.CanCraft(recipeSlots[i].Recipe))  
             {
+                Debug.Log("Can craft " + recipeSlots[i].Recipe.name);
                 recipeSlots[i].gameObject.transform.SetAsFirstSibling();
             }
         }
@@ -238,6 +242,7 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
+        _sortingNumR = sortNum;
     }
 
     /// <summary>
@@ -274,6 +279,7 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
+        _sortingNumE = sortNum;
     }
 
     /// <summary>
@@ -281,34 +287,35 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public void UpdateEquipmentVisuals()
     {
+        for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
+        {
+            Debug.Log(PlayerInventory.Instance.equipment[i].Name + " " + PlayerInventory.Instance.equipment[i].Equipped);
+            if (PlayerInventory.Instance.equipment[i].Equipped)
+            {
+                _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(1).GetComponent<Image>().sprite = PlayerInventory.Instance.equipment[i].Icon;
+                if (PlayerInventory.Instance.equipment[i].Rarity == 1)
+                {
+                    _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(0).GetComponent<Image>().color = Color.white;
+                }
+                else if (PlayerInventory.Instance.equipment[i].Rarity == 2)
+                {
+                    _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
+                }
+                else if (PlayerInventory.Instance.equipment[i].Rarity == 3)
+                {
+                    _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
+                }
+                else
+                {
+                    _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
+                }
+            }
+        }
         foreach (EquipmentSlot equipment in equipmentSlots)
         {
-            Item equippingItem = PlayerInventory.Instance.HasEquipmentItem(equipment.equipment.Name);
-            if (equippingItem != null)
+            if (PlayerInventory.Instance.HasEquipment(equipment.equipment.Name))
             {
-                //not getting past this point?
-                if (equippingItem.Equipped)
-                {
-                    //change icon
-                    _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(1).GetComponent<Image>().sprite = equippingItem.Icon;
-                    //change rarity
-                    if (equippingItem.Rarity == 1)
-                    {
-                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = Color.white;
-                    }
-                    else if (equippingItem.Rarity == 2)
-                    {
-                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(27, 150, 71, 255); //green
-                    }
-                    else if (equippingItem.Rarity == 3)
-                    {
-                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(253, 185, 63, 255);    //gold
-                    }
-                    else
-                    {
-                        _equipmentPics.transform.GetChild((int)equipment.equipment.Category + 1).GetChild(0).GetComponent<Image>().color = new Color32(137, 77, 158, 255);   //purple
-                    }
-                }
+                equipment.gameObject.SetActive(true);
             }
             else
             {
@@ -316,6 +323,8 @@ public class Inventory : MonoBehaviour
             }
             equipment.UpdateSlotVisuals();
         }
+        SortByEquipment(_sortingNumE);
     }
+
 
 }

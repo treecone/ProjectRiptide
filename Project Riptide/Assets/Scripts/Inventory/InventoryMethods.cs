@@ -211,6 +211,15 @@ public class InventoryMethods : MonoBehaviour
         _inputManagerScript.enabled = false;
         Time.timeScale = 0.0f;
     }
+
+    public void OpenPopUp(GameObject popup)
+    {
+        if (_activeItem != null)
+        {
+            popup.SetActive(true);
+        }
+    }
+
     #endregion
 
     #region Inventory Methods
@@ -557,6 +566,12 @@ public class InventoryMethods : MonoBehaviour
         }
 
     }
+
+    public void ChangeToBuy()
+    {
+        _sellName.SetText("Are you sure you want to buy " + _activeItem.Name + "?");
+    }
+
     #endregion
 
     #region Craft Methods
