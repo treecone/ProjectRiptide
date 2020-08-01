@@ -725,7 +725,7 @@ public class InventoryMethods : MonoBehaviour
         {
             if (Crafting.Instance.CanCraft(_activeRecipe))
             {
-                _equippingText.SetText("You have crafted a " + _activeRecipe.name + ".\nEquip now?");
+                _equippingText.SetText("You have crafted a " + _activeItem.Name + ".\nEquip now?");
                 //rarity
                 if (_activeItem.Rarity == 1)
                 {
