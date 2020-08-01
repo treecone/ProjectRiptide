@@ -31,6 +31,14 @@ public class ShipwreckDrops : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(transform.childCount == 1)
+        {
+            gameObject.GetComponent<WaterBobbing>().enabled = false;
+            gameObject.transform.Translate(Vector3.down * 0.01f);
+            if(gameObject.transform.position.y <= -5)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }
