@@ -42,6 +42,9 @@ public class Inventory : MonoBehaviour
     private GameObject _marketParent;
     private List<InventorySlot> _marketInventory;
     private List<Item> _marketItems;
+
+    [SerializeField]
+    private Upgrades _playerUpgrades;
     #endregion
 
 
@@ -324,6 +327,7 @@ public class Inventory : MonoBehaviour
             equipment.UpdateSlotVisuals();
         }
         SortByEquipment(_sortingNumE);
+        _playerUpgrades.Recalculate();
     }
 
 
