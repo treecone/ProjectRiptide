@@ -92,8 +92,6 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _equippingText;
     [SerializeField]
     private GameObject   _equippingImage;
-    [SerializeField]
-    private ActiveAbilities _activeAbilities;
     #endregion
     #region VaultUI
     [SerializeField]
