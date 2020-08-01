@@ -114,6 +114,8 @@ public class InventoryMethods : MonoBehaviour
     private ChunkLoader _chunkLoader;
     [SerializeField]
     private InputManager _inputManagerScript;
+    [SerializeField]
+    private ShipMovement _shipMovement;
     #endregion
 
     #endregion
@@ -702,7 +704,7 @@ public class InventoryMethods : MonoBehaviour
                 _activeAbilities.SetActiveSkill(0, (SkillType)_activeItem.ActiveAbilityID);
                 break;
             case ItemCategory.Ship:
-                
+                _shipMovement.ChangeShipClass(_activeItem.ShipPrefab);
                 break;
         }
     }

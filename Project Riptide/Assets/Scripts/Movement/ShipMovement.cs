@@ -293,4 +293,19 @@ public class ShipMovement : Physics
         interpolatedNormal = hit.transform.TransformDirection(interpolatedNormal);
         return interpolatedNormal;
     }
+
+    /// <summary>
+    /// Changes model of ship for ship class
+    /// </summary>
+    /// <param name="prefab">Ship class prefab</param>
+    public void ChangeShipClass(GameObject prefab)
+    {
+        Destroy(transform.GetChild(transform.childCount - 1).gameObject);
+        GameObject.Instantiate(prefab, transform.position, transform.rotation, transform);
+        //Re set hitbox values
+        /*_playerHurtbox = transform.GetComponentInChildren<Hitbox>();
+        _playerHurtbox.AttachedObject = gameObject;
+        _playerHurtbox.OnStay += OnObsticalCollision;
+        _playerHurtbox.OnTrigger += OnObsticalEnter;*/
+    }
 }
