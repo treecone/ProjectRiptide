@@ -51,7 +51,7 @@ public class PlayerInventory : ScriptableObject
     }
     public void InitializeInventory()
     {
-        startingItemNames = new List<string>{ "patchworksails", "rustedcannon" };
+        startingItemNames = new List<string>{ "patchworksails1", "rustedcannon1", "rudimentaryhull1", "raft1", "grandmascookies1" };
         totalGold = 3000;
         items = new List<Item>();
         equipment = new List<Item>();
@@ -61,7 +61,12 @@ public class PlayerInventory : ScriptableObject
         }
         foreach(string s in startingItemNames)
         {
+            Debug.Log(s);
             AddItem(s, 1);
+        }
+        for (int i = 0; i < equipment.Count; i++)
+        {
+            equipment[i].Equipped = true;
         }
     }
 
@@ -84,8 +89,10 @@ public class PlayerInventory : ScriptableObject
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = ItemDB.Instance.FindItem(itemName);
+        Debug.Log("Found " + itemToAdd.Name);
         if (itemToAdd.Category != ItemCategory.Material)
         {
+            Debug.Log("Added " + itemToAdd.Name);
             AddEquipment(itemToAdd);
             return;
         }

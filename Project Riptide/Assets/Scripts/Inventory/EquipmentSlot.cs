@@ -42,7 +42,7 @@ public class EquipmentSlot : MonoBehaviour
         for (int i = 0; i < equipment.Upgrades.Count; i++)
         {
             //for however many upgrades there are
-            if (equipment.Upgrades.Count < i)
+            if (equipment.Upgrades.Count > i)
             {
                 float upgradeVal = equipment.Upgrades[i].upgradeValue;
                 if (upgradeVal < 0)
