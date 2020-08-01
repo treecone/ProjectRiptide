@@ -176,10 +176,12 @@ public class InventoryMethods : MonoBehaviour
     public void ResetActiveItem()
     {
         _activeItem = null;
-        _itemName.SetText("");
-        _itemDescription.SetText("");
-        _itemCost.SetText("");
-        _trashField.SetText("1");
+    }
+
+    public void ResetActiveRecipe()
+    {
+        _activeItem = null;
+        _activeRecipe = null;
     }
 
     /// <summary>
@@ -460,6 +462,15 @@ public class InventoryMethods : MonoBehaviour
     #endregion
 
     #region Market Methods
+    public void ResetMarketDetails()
+    {
+        _marketTrash.SetText("1");
+        trashAmount = 1;
+        _marketName.SetText("");
+        _itemDescriptionMarket.SetText("");
+        _itemCostMarket.SetText("");
+    }
+
     /// <summary>
     /// Chooses inventory slot
     /// </summary>
@@ -808,6 +819,15 @@ public class InventoryMethods : MonoBehaviour
     #endregion
 
     #region Vault Methods
+    public void ResetVaultDetails()
+    {
+        _vaultTrash.SetText("1");
+        trashAmount = 1;
+        _vaultName.SetText("");
+        _vaultDescription.SetText("");
+        _vaultCost.SetText("");
+    }
+    
     /// <summary>
     /// Chooses inventory slot
     /// </summary>
