@@ -702,6 +702,7 @@ public class InventoryMethods : MonoBehaviour
                 _activeAbilities.SetActiveSkill(0, (SkillType)_activeItem.ActiveAbilityID);
                 break;
             case ItemCategory.Ship:
+                
                 break;
         }
     }

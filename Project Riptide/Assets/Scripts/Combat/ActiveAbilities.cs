@@ -16,7 +16,7 @@ public enum SkillType { SmallDash = 0, Dash = 1,
     MediumSeaglassSpeed = 27, LargeSeaglassSpeed = 28, SmallInvulnerability = 29, MediumInvulnerability = 30, LargeInvulnerability = 31,
     SpreadShot = 32, RapidShotFour = 33, RapidShotEight = 34, WeakBigShot = 35, MediumBigShot = 36, StrongBigShot = 37,
     SmallFireworkCircle = 38, LargeFireworkCircle = 39, PoisonCloud = 40, StrongPoisonCloud = 41, StunShot = 42, StrongStunShot = 43,
-    WeakFlameThrower = 44, MediumFlameThrower = 45, StrongFlameThrower = 46
+    WeakFlameThrower = 44, MediumFlameThrower = 45, StrongFlameThrower = 46, WeakDefenseBoost = 47, VeryWeakBigShot = 48
 }
 
 public class ActiveAbilities : MonoBehaviour
@@ -277,11 +277,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.RapidShotEight:
                 return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 8, 0.15f);
             case SkillType.WeakBigShot:
-                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 5.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 15.0f, 2, 0, 0);
             case SkillType.MediumBigShot:
-                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 8.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 20.0f, 2, 0, 0);
             case SkillType.StrongBigShot:
-                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 10.0f, 3, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 25.0f, 2, 0, 0);
             case SkillType.SmallFireworkCircle:
                 return new ActiveSkill("FireworkBlast", SmallFireworkCircle, 20.0f, false, index);
             case SkillType.LargeFireworkCircle:
@@ -300,6 +300,10 @@ public class ActiveAbilities : MonoBehaviour
                 return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 15.0f);
             case SkillType.StrongFlameThrower:
                 return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 20.0f);
+            case SkillType.WeakDefenseBoost:
+                return new StatusSkill("DefenseBoost", this, 15.0f, false, index, StatusType.Armor, 5.0f, 15.0f);
+            case SkillType.VeryWeakBigShot:
+                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 10.0f, 1, 0, 0);
         }
         return null;
     }
@@ -389,8 +393,8 @@ public class ActiveAbilities : MonoBehaviour
     private bool SmallDefenseBoost(Enemy enemy)
     {
         //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Armor, 3.0f, 25.0f);
-        _playerStatusEffects.AddStatus(StatusType.Hardiness, 3.0f, 0.5f);
+        _playerStatusEffects.AddStatus(StatusType.Armor, 5.0f, 25.0f);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, 5.0f, 0.5f);
         return true;
     }
 
@@ -404,8 +408,8 @@ public class ActiveAbilities : MonoBehaviour
     private bool LargeDefenseBoost(Enemy enemy)
     {
         //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Armor, 3.0f, 50.0f);
-        _playerStatusEffects.AddStatus(StatusType.Hardiness, 3.0f, 1.0f);
+        _playerStatusEffects.AddStatus(StatusType.Armor, 5.0f, 50.0f);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, 5.0f, 1.0f);
         return true;
     }
 
