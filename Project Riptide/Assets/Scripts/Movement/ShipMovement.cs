@@ -234,7 +234,7 @@ public class ShipMovement : Physics
             //Stop motion
             StopMotion();
 
-            foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            /*foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
             {
                 if (hit.collider.tag == "Obstical")
                 {
@@ -246,8 +246,9 @@ public class ShipMovement : Physics
                     {
                         _exitDir = transform.position - obstical.transform.position;
                     }
+                    break;
                 }
-            }
+            }*/
 
             //Create a force away from obstacle
             Vector3 backForce = _exitDir;

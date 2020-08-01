@@ -108,6 +108,7 @@ public partial class Enemy : Physics
     protected float _widthMult;
     [SerializeField]
     protected float _heightMult;
+    protected Vector3 _exitDir;
 
     protected float _halfView = 55.0f;
     protected float _viewRange = 20.0f;
@@ -328,12 +329,25 @@ public partial class Enemy : Physics
         if (collision.tag == "Obstical")
         {
             _obsticalCollision = true;
+            /*foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            {
+                if (hit.collider.tag == "Obstical")
+                {
+                    if (hit.collider is MeshCollider)
+                    {
+                        _exitDir = GetMeshColliderNormal(hit);
+                    }
+                    else
+                    {
+                        _exitDir = transform.position - collision.transform.position;
+                    }
+                }
+            }*/
         }
         if (collision.tag == "Player")
         {
             _playerCollision = true;
         }
-
     }
 
     /// <summary>
@@ -584,22 +598,26 @@ public partial class Enemy : Physics
     {
         if (obstical.tag == "Obstical")
         {
+            /*foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            {
+                if (hit.collider.tag == "Obstical")
+                {
+                    if (hit.collider is MeshCollider)
+                    {
+                        exitDir = GetMeshColliderNormal(hit);
+                    }
+                    else
+                    {
+                        exitDir = transform.position - obstical.transform.position;
+                    }
+                    Debug.Log(exitDir);
+                    break;
+                }
+            }*/
+
             StopHorizontalMotion();
 
-            Vector3 exitDir = Vector3.zero;
-            foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
-            {
-                if (hit.collider is MeshCollider)
-                {
-                    exitDir = GetMeshColliderNormal(hit);
-                }
-                else
-                {
-                    exitDir = transform.position - obstical.transform.position;
-                }
-            }
-
-            Vector3 backForce = exitDir;
+            Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 200.0f * (60 * Time.deltaTime);

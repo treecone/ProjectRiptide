@@ -25,6 +25,7 @@ public class Item
     private ItemCategory category;
     private int equipmentRank;
     private string activeText;
+    private int activeAbilityID;
     private string passiveText;
     private string shotType;
     private string inventoryTapSound;
@@ -162,6 +163,14 @@ public class Item
         }
     }
 
+    public int ActiveAbilityID
+    {
+        get
+        {
+            return activeAbilityID;
+        }
+    }
+
     public string ShotType
     {
         get
@@ -183,7 +192,7 @@ public class Item
     }
     #endregion
 
-    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category, string activeText, string passiveText, string shotType, string inventoryTapSound)
+    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category, string activeText, int activeAbilityID, string passiveText, string shotType, string inventoryTapSound)
     {
         this.id = id;
         this.name = itemName;
@@ -198,6 +207,7 @@ public class Item
         this.equipped = false;
         this.category = category;
         this.activeText = activeText;
+        this.activeAbilityID = activeAbilityID;
         this.passiveText = passiveText;
         this.shotType = shotType;
         this.inventoryTapSound = inventoryTapSound;
@@ -222,6 +232,7 @@ public class Item
         this.equipped = other.equipped;
         this.category = other.category;
         this.activeText = other.activeText;
+        this.activeAbilityID = other.activeAbilityID;
         this.passiveText = other.passiveText;
         this.shotType = other.shotType;
     }
