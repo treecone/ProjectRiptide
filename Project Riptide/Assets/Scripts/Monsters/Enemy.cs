@@ -329,8 +329,9 @@ public partial class Enemy : Physics
         if (collision.tag == "Obstical")
         {
             _obsticalCollision = true;
-            /*foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+            foreach (RaycastHit hit in UnityEngine.Physics.SphereCastAll(transform.position, _widthMult, _velocity.normalized, 10.0f))
             {
+                Debug.Log(hit.collider.gameObject);
                 if (hit.collider.tag == "Obstical")
                 {
                     if (hit.collider is MeshCollider)
@@ -342,7 +343,7 @@ public partial class Enemy : Physics
                         _exitDir = transform.position - collision.transform.position;
                     }
                 }
-            }*/
+            }
         }
         if (collision.tag == "Player")
         {
@@ -617,7 +618,7 @@ public partial class Enemy : Physics
 
             StopHorizontalMotion();
 
-            Vector3 backForce = transform.position - obstical.transform.position;
+            Vector3 backForce = _exitDir;
             backForce = new Vector3(backForce.x, 0, backForce.z);
             backForce.Normalize();
             backForce *= 200.0f * (60 * Time.deltaTime);
