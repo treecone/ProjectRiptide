@@ -48,12 +48,13 @@ public class EquipmentSlot : MonoBehaviour
                 if (upgradeVal < 0)
                 {
                     gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = Color.red;
+                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().SetText(equipment.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
                 }
                 else
                 {
                     gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = Color.green;
+                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().SetText(equipment.Upgrades[i].upgradeType.ToString() + " +" + upgradeVal);
                 }
-                gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().SetText(equipment.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
             }
             else
             {
