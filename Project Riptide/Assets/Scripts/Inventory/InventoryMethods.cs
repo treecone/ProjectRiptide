@@ -92,8 +92,6 @@ public class InventoryMethods : MonoBehaviour
     private TextMeshProUGUI _equippingText;
     [SerializeField]
     private GameObject   _equippingImage;
-    [SerializeField]
-    private ActiveAbilities _activeAbilities;
     #endregion
     #region VaultUI
     [SerializeField]
@@ -690,20 +688,6 @@ public class InventoryMethods : MonoBehaviour
     public void Equip()
     {
         PlayerInventory.Instance.SetEquipped(_activeItem);
-        switch (_activeItem.Category)
-        {
-            case ItemCategory.Cannon:
-                _activeAbilities.SetActiveSkill(1, (SkillType)_activeItem.ActiveAbilityID);
-                break;
-            case ItemCategory.Hull:
-                _activeAbilities.SetActiveSkill(2, (SkillType)_activeItem.ActiveAbilityID);
-                break;
-            case ItemCategory.Sails:
-                _activeAbilities.SetActiveSkill(0, (SkillType)_activeItem.ActiveAbilityID);
-                break;
-            case ItemCategory.Ship:
-                break;
-        }
     }
 
     //use this to craft based on selected item

@@ -66,7 +66,7 @@ public class PlayerInventory : ScriptableObject
         }
         for (int i = 0; i < equipment.Count; i++)
         {
-            equipment[i].Equipped = true;
+            SetEquipped(equipment[i]);
         }
     }
 
