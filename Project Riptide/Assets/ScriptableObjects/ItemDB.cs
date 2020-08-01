@@ -141,7 +141,6 @@ public class ItemDB : ScriptableObject
 
     private void ImportItemData(List<ItemData> data, ItemCategory category, int startId)
     {
-        
         for(int i = 0; i < data.Count; i++)
         {
             if(category == ItemCategory.Material)
