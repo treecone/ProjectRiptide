@@ -265,11 +265,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeSeaglassSpeed:
                 return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 5.0f, 2.0f);
             case SkillType.SmallInvulnerability:
-                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
+                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
             case SkillType.MediumInvulnerability:
-                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 1.5f, 999999.0f);
+                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 1.5f, 999999.0f);
             case SkillType.LargeInvulnerability:
-                return new StatusSkill("Invulnerability", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
+                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
             case SkillType.SpreadShot:
                 return new SpecialShotSkill("SpreadShot", this, 15.0f, true, index, 4, 2, 0.2f, 20, 0);
             case SkillType.RapidShotFour:

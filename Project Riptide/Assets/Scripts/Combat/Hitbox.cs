@@ -26,7 +26,12 @@ public class Hitbox : MonoBehaviour
     [SerializeField]
     private float _launchStrength;
 
-    public GameObject AttachedObject => _attachedObject;
+    public GameObject AttachedObject
+    {
+        get { return _attachedObject; }
+        set { _attachedObject = value; }
+    }
+
     public HitboxType Type => _type;
     public float Damage
     {

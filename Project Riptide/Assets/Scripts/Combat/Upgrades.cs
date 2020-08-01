@@ -109,6 +109,7 @@ public class Upgrades : MonoBehaviour
 
         if(_isPlayer)
         {
+            Debug.Log("Recalculating upgrades");
             for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
             {
                 Item item = PlayerInventory.Instance.equipment[i];
@@ -116,6 +117,7 @@ public class Upgrades : MonoBehaviour
                 {
                     foreach (Upgrade u in item.Upgrades)
                     {
+                        Debug.Log("Adding Upgrade from " + item.Name);
                         equippedUpgrades.Add(u);
                     }
                 }

@@ -303,9 +303,9 @@ public class ShipMovement : Physics
         Destroy(transform.GetChild(transform.childCount - 1).gameObject);
         GameObject.Instantiate(prefab, transform.position, transform.rotation, transform);
         //Re set hitbox values
-        /*_playerHurtbox = transform.GetComponentInChildren<Hitbox>();
+        _playerHurtbox = transform.GetChild(transform.childCount - 1).GetComponentInChildren<Hitbox>();
         _playerHurtbox.AttachedObject = gameObject;
         _playerHurtbox.OnStay += OnObsticalCollision;
-        _playerHurtbox.OnTrigger += OnObsticalEnter;*/
+        _playerHurtbox.OnTrigger += OnObsticalEnter;
     }
 }
