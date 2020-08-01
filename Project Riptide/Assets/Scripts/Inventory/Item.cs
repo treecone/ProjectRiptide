@@ -28,6 +28,7 @@ public class Item
     private int activeAbilityID;
     private string passiveText;
     private string shotType;
+    private GameObject shipPrefab;
     private string inventoryTapSound;
     #endregion
 
@@ -179,6 +180,14 @@ public class Item
         }
     }
 
+    public GameObject ShipPrefab
+    {
+        get
+        {
+            return shipPrefab;
+        }
+    }
+
     public string InventoryTapSound
     {
         get
@@ -192,7 +201,7 @@ public class Item
     }
     #endregion
 
-    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category, string activeText, int activeAbilityID, string passiveText, string shotType, string inventoryTapSound)
+    public Item(int id, string itemName, string description, int rarity, int value, string slug, Sprite icon, int amount, int maxAmount, List<Upgrade> upgrades, ItemCategory category, string activeText, int activeAbilityID, string passiveText, string shotType, GameObject shipPrefab, string inventoryTapSound)
     {
         this.id = id;
         this.name = itemName;
@@ -210,6 +219,7 @@ public class Item
         this.activeAbilityID = activeAbilityID;
         this.passiveText = passiveText;
         this.shotType = shotType;
+        this.shipPrefab = shipPrefab;
         this.inventoryTapSound = inventoryTapSound;
     }
 
@@ -235,6 +245,7 @@ public class Item
         this.activeAbilityID = other.activeAbilityID;
         this.passiveText = other.passiveText;
         this.shotType = other.shotType;
+        this.shipPrefab = other.shipPrefab;
     }
 }
 

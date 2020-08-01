@@ -40,6 +40,7 @@ public class ItemDB : ScriptableObject
         public int[] activeAbilityID;
         public string passiveText;
         public string shotType;
+        public GameObject shipPrefab;
         public string inventoryTapSound;
 
         [System.Serializable]
@@ -130,7 +131,7 @@ public class ItemDB : ScriptableObject
     public void Setup()
     {
         _items = new List<Item>();
-        _nullItem = new Item(-1, _nullItemData.name, _nullItemData.description, _nullItemData.rarity, _nullItemData.value, _nullItemData.slug, _nullItemData.icon, 1, _nullItemData.maxAmount, new List<Upgrade>(), ItemCategory.Material, _nullItemData.activeText, -1, _nullItemData.passiveText, _nullItemData.shotType, _nullItemData.inventoryTapSound);
+        _nullItem = new Item(-1, _nullItemData.name, _nullItemData.description, _nullItemData.rarity, _nullItemData.value, _nullItemData.slug, _nullItemData.icon, 1, _nullItemData.maxAmount, new List<Upgrade>(), ItemCategory.Material, _nullItemData.activeText, -1, _nullItemData.passiveText, _nullItemData.shotType, _nullItemData.shipPrefab, _nullItemData.inventoryTapSound);
         ImportItemData(_materials, ItemCategory.Material, 0);
         ImportItemData(_ships, ItemCategory.Ship, 100);
         ImportItemData(_sails, ItemCategory.Sails, 200);
@@ -150,7 +151,7 @@ public class ItemDB : ScriptableObject
                 {
                     upgradeList.Add(data[i].upgrades[0][j]);
                 }*/
-                _items.Add(new Item(startId + i, data[i].name, data[i].description, 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, -1, data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                _items.Add(new Item(startId + i, data[i].name, data[i].description, 1, data[i].value, data[i].slug, data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, -1, data[i].passiveText, data[i].shotType, data[i].shipPrefab, data[i].inventoryTapSound));
             }
             else
             {
@@ -163,11 +164,11 @@ public class ItemDB : ScriptableObject
                     }
                     if (j == 0)
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].activeAbilityID[j], data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name, data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].activeAbilityID[j], data[i].passiveText, data[i].shotType, data[i].shipPrefab, data[i].inventoryTapSound));
                     }
                     else
                     {
-                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].activeAbilityID[j], data[i].passiveText, data[i].shotType, data[i].inventoryTapSound));
+                        _items.Add(new Item(startId + i * 4 + j, data[i].name + " +" + (j), data[i].description, j+1, data[i].value, data[i].slug + (j + 1), data[i].icon, 1, data[i].maxAmount, upgradeList, category, data[i].activeText, data[i].activeAbilityID[j], data[i].passiveText, data[i].shotType, data[i].shipPrefab, data[i].inventoryTapSound));
 
                     }
                 }
