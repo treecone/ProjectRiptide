@@ -147,7 +147,7 @@ public class InventoryMethods : MonoBehaviour
         if (gObj.GetComponent<InventorySlot>().item != null && gObj.GetComponent<InventorySlot>().item.Name != "Null")
         {
             _activeItem = gObj.GetComponent<InventorySlot>().item;
-            SoundManager.instance.PlaySound(_activeItem.InventoryTapSound);
+            SoundManager.instance.PlaySound("uiTap_" + _activeItem.InventoryTapSound);
         }
     }
 
@@ -246,6 +246,7 @@ public class InventoryMethods : MonoBehaviour
             _itemDescription.SetText(_activeItem.Description);
             _itemCost.SetText(_activeItem.Value.ToString());
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
+
         }
     }
     /// <summary>

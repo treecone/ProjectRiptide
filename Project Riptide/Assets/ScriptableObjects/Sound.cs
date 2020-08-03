@@ -17,4 +17,14 @@ public class Sound : ScriptableObject
     public float volumeVariance;
     [Range(0, 1)]
     public float pitchVariance;
+    public bool looping;
+
+    void Reset()
+    {
+        volume = 1;
+        pitch = 1;
+        volumeVariance = 0.1f;
+        pitchVariance = 0.1f;
+        looping = false;
+    }
 }

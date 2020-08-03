@@ -28,14 +28,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83568729744095847}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
   - {fileID: 7938417368826441844}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!33 &83568729740928615
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -131,6 +131,9 @@ MonoBehaviour:
     _level: 5
     _tag: 
   hitbox: {fileID: 7583904746337916482, guid: ee0690e4b970cff4d9660bd25dcf5147, type: 3}
+  fireSound: CannonFire
+  impactSound: FireworkBlast
+  fireSoundId: 1961569208
   _impactParticles: {fileID: 5237576078356770903, guid: 53088b103c462d545bee74eecc85e03d,
     type: 3}
 --- !u!1 &2546072225183935030

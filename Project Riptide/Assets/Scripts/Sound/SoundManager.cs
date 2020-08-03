@@ -6,8 +6,6 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance;
     [SerializeField]
-    private Sound[] sounds;
-    [SerializeField]
     private int numStartingSources;
     private Dictionary<string, Sound> soundDict;
 
@@ -15,6 +13,8 @@ public class SoundManager : MonoBehaviour
     private List<int> audioSourceIds;
     private void Awake()
     {
+        Sound[] sounds = Resources.LoadAll<Sound>("ScriptableObjectInstances/Sounds");
+        Debug.Log(sounds.Length);
         audioSourcePool = new List<AudioSource>();
         audioSourceIds = new List<int>();
         soundDict = new Dictionary<string, Sound>();
@@ -80,8 +80,10 @@ public class SoundManager : MonoBehaviour
     {
         int index = 0;
         bool found = false;
+        Debug.Log("stopping " + id);
         for(int i = 0; i < audioSourceIds.Count; i++)
         {
+            Debug.Log(audioSourceIds[i]);
             if(audioSourceIds[i] == id)
             {
                 index = i;
@@ -90,7 +92,9 @@ public class SoundManager : MonoBehaviour
         }
         if(found)
         {
+            Debug.Log("found");
             audioSourcePool[index].Stop();
+            audioSourceIds[index] = -1;
         }
     }
 

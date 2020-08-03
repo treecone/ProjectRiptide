@@ -246,6 +246,7 @@ public class Item
         this.passiveText = other.passiveText;
         this.shotType = other.shotType;
         this.shipPrefab = other.shipPrefab;
+        this.inventoryTapSound = other.inventoryTapSound;
     }
 }
 

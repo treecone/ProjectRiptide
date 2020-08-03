@@ -24,7 +24,6 @@ public class PlayerInventory : ScriptableObject
     private void OnEnable()
     {
         _instance = this;
-        Debug.Log("wee woo");
         InitializeInventory();
     }
     [SerializeField]
@@ -61,7 +60,6 @@ public class PlayerInventory : ScriptableObject
         }
         foreach(string s in startingItemNames)
         {
-            Debug.Log(s);
             AddItem(s, 1);
         }
         for (int i = 0; i < equipment.Count; i++)

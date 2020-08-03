@@ -328,6 +328,7 @@ public class Inventory : MonoBehaviour
         }
         SortByEquipment(_sortingNumE);
         _playerUpgrades.Recalculate();
+        ShotDB.Instance.SetCurrentShot();
     }
 
 
