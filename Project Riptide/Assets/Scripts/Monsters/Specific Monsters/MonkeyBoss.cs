@@ -119,10 +119,6 @@ public partial class MonkeyBoss : Enemy
     // Update is called once per frame
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(10);
-        }
         MoveHands();
         //Keep storm above monkey
         if(_storm.activeSelf)

@@ -111,6 +111,7 @@ public class Hitbox : MonoBehaviour
                 {
                     //Player takes damage
                     hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(_damage * hitbox._damage, false);
+                    hitbox.AttachedObject.GetComponent<ShipMovement>().PlayHitParticles();
                     //Add knockback if there is any
                     if (_launchStrength != 0)
                     {

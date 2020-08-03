@@ -28,6 +28,9 @@ public class ShipMovement : Physics
     private Vector3 _impactPoint;
     private Vector3 _exitDir;
 
+    [SerializeField]
+    private GameObject _hitParticles;
+
     public float SpeedScale
     {
         get
@@ -307,5 +310,13 @@ public class ShipMovement : Physics
         _playerHurtbox.AttachedObject = gameObject;
         _playerHurtbox.OnStay += OnObsticalCollision;
         _playerHurtbox.OnTrigger += OnObsticalEnter;
+    }
+
+    /// <summary>
+    /// Plays hit particles
+    /// </summary>
+    public void PlayHitParticles()
+    {
+        Instantiate(_hitParticles, transform.position, transform.rotation, transform);
     }
 }
