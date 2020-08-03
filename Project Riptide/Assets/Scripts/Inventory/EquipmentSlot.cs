@@ -69,7 +69,7 @@ public class EquipmentSlot : MonoBehaviour
             gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText("Active: " + equipment.ActiveText);
             //active and passive
             gameObject.transform.GetChild(8).GetComponent<TextMeshProUGUI>().SetText("Passive: " + equipment.PassiveText);
-            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 384.9744f);
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1045f, 327.1178f);
         }
         //check for active
         else if (equipment.ActiveText != null && equipment.ActiveText != "") 
@@ -77,13 +77,13 @@ public class EquipmentSlot : MonoBehaviour
             //active
             gameObject.transform.GetChild(7).GetComponent<TextMeshProUGUI>().SetText("Active: " + equipment.ActiveText);
             gameObject.transform.GetChild(8).gameObject.SetActive(false);
-            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 276.8971f);
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1045f, 276.8971f);
         }
         else
         {
             gameObject.transform.GetChild(7).gameObject.SetActive(false);
             gameObject.transform.GetChild(8).gameObject.SetActive(false);
-            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(957.3792f, 225.4819f);
+            gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(1045f, 225.4819f);
         }
     }
 

@@ -26596,7 +26596,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2874.5, y: 7.0668}
+  m_AnchoredPosition: {x: -2718, y: 7.0668}
   m_SizeDelta: {x: 2120.96, y: 1438.5518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3044290374362416473
@@ -29015,7 +29015,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2874.5, y: 7.0668}
+  m_AnchoredPosition: {x: -2718, y: 7.0668}
   m_SizeDelta: {x: 2120.96, y: 1438.5518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6572860811925018895
@@ -29908,7 +29908,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1823, y: 647}
+  m_AnchoredPosition: {x: -1667.0001, y: 647}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &318067407609794914
@@ -32938,7 +32938,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Hi my name is cloth, I am very cool
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7bacaa80eb526bf4abfeae4d3f903322, type: 2}
   m_sharedMaterial: {fileID: 6966751825632981895, guid: 7bacaa80eb526bf4abfeae4d3f903322,
@@ -32984,7 +32984,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 111
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -33008,13 +33008,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0.10003125, w: 0.00043611234}
   m_textInfo:
     textComponent: {fileID: 5918367850642689390}
-    characterCount: 0
+    characterCount: 35
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 0
+    spaceCount: 8
+    wordCount: 9
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 2
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -34307,6 +34307,7 @@ MonoBehaviour:
   _didCraft: {fileID: 6026036070767143039}
   _equippingText: {fileID: 2525435879264677517}
   _equippingImage: {fileID: 7811455063926079651}
+  _activeAbilities: {fileID: 0}
   _vaultName: {fileID: 3528975243580209200}
   _vaultDescription: {fileID: 6362315373920777411}
   _vaultCost: {fileID: 5733756355716561967}
@@ -34315,6 +34316,7 @@ MonoBehaviour:
   _uiAnimMethods: {fileID: 646401208}
   _chunkLoader: {fileID: 0}
   _inputManagerScript: {fileID: 663314058}
+  _shipMovement: {fileID: 0}
 --- !u!114 &646401208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34364,6 +34366,7 @@ MonoBehaviour:
   _equipmentPrefab: {fileID: 1449825118962226637, guid: 4b4055bbd0d88c748a0bf3a5f325e9cd,
     type: 3}
   _marketParent: {fileID: 1711942494346726197}
+  _playerUpgrades: {fileID: 0}
 --- !u!1 &8642465038691694846
 GameObject:
   m_ObjectHideFlags: 0
