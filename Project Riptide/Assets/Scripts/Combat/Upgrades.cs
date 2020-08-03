@@ -123,10 +123,12 @@ public class Upgrades : MonoBehaviour
                 }
             }
         }
-        
-        for(int i = 0; i < _statusEffects.ActiveStatusEffects.Count; i++)
+        if(_statusEffects != null)
         {
-            equippedUpgrades.Add(new Upgrade(_statusEffects.ActiveStatusEffects[i]));
+            for (int i = 0; i < _statusEffects.ActiveStatusEffects.Count; i++)
+            {
+                equippedUpgrades.Add(new Upgrade(_statusEffects.ActiveStatusEffects[i]));
+            }
         }
         masterUpgrade.Recalculate(equippedUpgrades);
     }
