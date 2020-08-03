@@ -53,6 +53,7 @@ public class Inventory : MonoBehaviour
         PlayerInventory.Instance.InitializeInventory();
         PlayerVault.Instance.InitializeVault();
         ShotDB.Instance.LoadShots();
+        Crafting.Instance.Initialize();
         //inventory
         inventorySlots = new List<List<InventorySlot>>();
         foreach(GameObject inventoryParent in inventoryParents)

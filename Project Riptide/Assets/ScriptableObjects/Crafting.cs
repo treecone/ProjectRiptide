@@ -25,11 +25,17 @@ public class Crafting : ScriptableObject
     private void OnEnable()
     {
         _instance = this;
-        if(_reloadRecipesOnLoad)
+        Initialize();
+    }
+
+    public void Initialize()
+    {
+        if (_reloadRecipesOnLoad)
         {
             LoadRecipes();
             _reloadRecipesOnLoad = false;
         }
+
     }
 
     [SerializeField]
