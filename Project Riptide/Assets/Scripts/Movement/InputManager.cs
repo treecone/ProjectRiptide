@@ -98,6 +98,7 @@ public class InputManager : MonoBehaviour
         _fireSlider = _fireButton.GetComponentInChildren<Slider>();
         _fireButton.gameObject.SetActive(false);
         _fireSlider.gameObject.SetActive(false);
+        ResetMovement();
     }
 
     void Update()
