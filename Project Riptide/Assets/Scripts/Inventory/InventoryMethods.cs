@@ -611,15 +611,23 @@ public class InventoryMethods : MonoBehaviour
                 if (_activeItem.Upgrades.Count > i)
                 {
                     float upgradeVal = _activeItem.Upgrades[i].upgradeValue;
+                    if (_activeItem.Upgrades[i].upgradeType == StatusType.Speed)
+                    {
+                        upgradeVal *= 10;
+                    }
+                    if (_activeItem.Upgrades[i].upgradeType == StatusType.Turning)
+                    {
+                        upgradeVal *= 10;
+                    }
                     if (upgradeVal < 0)
                     {
-                        _statsCrafting[i].color = Color.red;
-                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + _activeItem.Upgrades[i].upgradeValue);
+                        _statsCrafting[i].color = new Color32(141, 25, 28, 255);
+                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
                     }
                     else
                     {
-                        _statsCrafting[i].color = Color.green;
-                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " +" + _activeItem.Upgrades[i].upgradeValue);
+                        _statsCrafting[i].color = new Color32(84, 178, 71, 255);
+                        _statsCrafting[i].SetText(_activeItem.Upgrades[i].upgradeType.ToString() + " +" + upgradeVal);
                     }
                 }
                 else
@@ -783,22 +791,29 @@ public class InventoryMethods : MonoBehaviour
     #region Equip Methods
     public void RepairShip(PlayerHealth player)
     {
-        int goldAmount = System.Convert.ToInt32(_repairShip.text);
-        int totalGold = PlayerInventory.Instance.totalGold;
-        if (totalGold >= goldAmount)
-        {
-            totalGold -= goldAmount;
-            player.AddHealth(player.MaxHealth - player.Health);
-        }
-        else
-        {
-            float percentage = (player.MaxHealth - player.Health) * (totalGold/goldAmount);
-            totalGold = 0;
+        Debug.Log(player.Health);
+        Debug.Log(player.MaxHealth);
 
-            player.AddHealth(percentage);
-        }
+        if (player.Health < player.MaxHealth)
+        {
+            int goldAmount = System.Convert.ToInt32(_repairShip.text);
+            int totalGold = PlayerInventory.Instance.totalGold;
 
-        PlayerInventory.Instance.totalGold = totalGold;
+            if (totalGold >= goldAmount)
+            {
+                totalGold -= goldAmount;
+                player.GetComponent<PlayerHealth>().AddHealth(player.MaxHealth - player.Health);
+            }
+            else
+            {
+                float percentage = (player.MaxHealth - player.Health) * (totalGold / goldAmount);
+                totalGold = 0;
+
+                player.GetComponent<PlayerHealth>().AddHealth(percentage);
+            }
+
+            PlayerInventory.Instance.totalGold = totalGold;
+        }
     }
 
     //choose button sorting

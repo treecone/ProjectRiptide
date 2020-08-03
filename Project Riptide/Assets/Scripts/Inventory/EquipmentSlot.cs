@@ -45,14 +45,22 @@ public class EquipmentSlot : MonoBehaviour
             if (equipment.Upgrades.Count > i)
             {
                 float upgradeVal = equipment.Upgrades[i].upgradeValue;
+                if (equipment.Upgrades[i].upgradeType == StatusType.Speed)
+                {
+                    upgradeVal *= 10;
+                }
+                if (equipment.Upgrades[i].upgradeType == StatusType.Turning)
+                {
+                    upgradeVal *= 10;
+                }
                 if (upgradeVal < 0)
                 {
-                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = Color.red;
+                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = new Color32(181, 22, 34, 255);
                     gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().SetText(equipment.Upgrades[i].upgradeType.ToString() + " " + upgradeVal);
                 }
                 else
                 {
-                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = Color.green;
+                    gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().color = new Color32(84, 178, 71, 255);
                     gameObject.transform.GetChild(i + 2).GetComponent<TextMeshProUGUI>().SetText(equipment.Upgrades[i].upgradeType.ToString() + " +" + upgradeVal);
                 }
             }

@@ -31,8 +31,8 @@ public class PlayerHealth : MonoBehaviour
     private bool canBuyback;
     private int buybackCost;
 
-    public float Health { get; }
-    public float MaxHealth { get; }
+    public float Health { get { return health; } }
+    public float MaxHealth { get { return maxHealth; } }
 
     // Start is called before the first frame update
     void Start()
