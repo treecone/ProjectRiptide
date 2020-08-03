@@ -89,10 +89,8 @@ public class PlayerInventory : ScriptableObject
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
         Item itemToAdd = ItemDB.Instance.FindItem(itemName);
-        Debug.Log("Found " + itemToAdd.Name);
         if (itemToAdd.Category != ItemCategory.Material)
         {
-            Debug.Log("Added " + itemToAdd.Name);
             AddEquipment(itemToAdd);
             return;
         }
@@ -277,14 +275,12 @@ public class PlayerInventory : ScriptableObject
         {
             if(equipment[i].Name == equipping.Name)
             {
-                Debug.Log("Equipped " + equipment[i].Name);
                 equipment[i].Equipped = true;
             }
             else
             {
                 if(equipment[i].Category.Equals(category))
                 {
-                    Debug.Log("Unequipped " + equipment[i].Name);
                     equipment[i].Equipped = false;
                 }
             }

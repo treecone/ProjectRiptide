@@ -293,7 +293,6 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < PlayerInventory.Instance.equipment.Count; i++)
         {
-            Debug.Log(PlayerInventory.Instance.equipment[i].Name + " " + PlayerInventory.Instance.equipment[i].Equipped);
             if (PlayerInventory.Instance.equipment[i].Equipped)
             {
                 _equipmentPics.transform.GetChild((int)PlayerInventory.Instance.equipment[i].Category + 1).GetChild(1).GetComponent<Image>().sprite = PlayerInventory.Instance.equipment[i].Icon;
