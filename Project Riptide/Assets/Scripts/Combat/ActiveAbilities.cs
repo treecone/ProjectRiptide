@@ -259,11 +259,11 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeRam:
                 return new RamSkill("Ram", this, 20.0f, false, index, 30.0f, 25.0f);
             case SkillType.SmallSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 2.0f);
             case SkillType.MediumSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 4.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 4.0f, 2.0f);
             case SkillType.LargeSeaglassSpeed:
-                return new StatusSkill("SeaglassSpeedBoost", this, 15.0f, false, index, StatusType.Speed, 5.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 5.0f, 2.0f);
             case SkillType.SmallInvulnerability:
                 return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
             case SkillType.MediumInvulnerability:

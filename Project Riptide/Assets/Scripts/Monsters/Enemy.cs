@@ -331,7 +331,6 @@ public partial class Enemy : Physics
             _obsticalCollision = true;
             foreach (RaycastHit hit in UnityEngine.Physics.SphereCastAll(transform.position, _widthMult, _velocity.normalized, 10.0f))
             {
-                Debug.Log(hit.collider.gameObject);
                 if (hit.collider.tag == "Obstical")
                 {
                     if (hit.collider is MeshCollider)
