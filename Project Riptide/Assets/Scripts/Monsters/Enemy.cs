@@ -727,10 +727,7 @@ public partial class Enemy : Physics
     /// </summary>
     protected virtual void OnPassive()
     {
-        if (_health == _maxHealth)
-        {
-            _canvas.transform.GetChild(0).gameObject.SetActive(false);
-        }
+        _canvas.transform.GetChild(0).gameObject.SetActive(false);
         ResetHostile();
         //Keep monster passive for 5 seconds at least
         _passiveCooldown = 5.0f;
