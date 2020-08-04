@@ -31,7 +31,7 @@ public class ItemDB : ScriptableObject
         public string description;
         [Range(1,4)]
         public int rarity = 1;
-        [Range(1,1000)]
+        [Range(1,2000)]
         public int value;
         public Sprite icon;
         public int maxAmount;
