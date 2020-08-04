@@ -27,6 +27,8 @@ public class ShipMovement : Physics
     private Hitbox _playerHurtbox;
     private Vector3 _impactPoint;
     private Vector3 _exitDir;
+    private const int COLLISION_RAY_COUNT = 12;
+    private const float COLLISION_RAY_DISTANCE = 6.0f;
 
     [SerializeField]
     private GameObject _hitParticles;
@@ -202,7 +204,8 @@ public class ShipMovement : Physics
     {
         if(obstical.tag == "Obstical")
         {
-            foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
+
+            /*foreach(RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
             {
                 if(hit.collider.tag == "Obstical")
                 {
@@ -215,7 +218,7 @@ public class ShipMovement : Physics
                         _exitDir = transform.position - obstical.transform.position;
                     }
                 }
-            }
+            }*/
 
             /*Collider obstCollider = obstical.GetComponent<Collider>();
             _impactPoint = obstCollider.ClosestPointOnBounds(transform.position + _velocity.normalized * 2.0f);
@@ -235,7 +238,7 @@ public class ShipMovement : Physics
         if(obstical.tag == "Obstical")
         {
             //Stop motion
-            StopMotion();
+            //StopMotion();
 
             /*foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, _velocity.normalized, 10.0f))
             {
@@ -252,6 +255,8 @@ public class ShipMovement : Physics
                     break;
                 }
             }*/
+            StopMotion();
+            GetExitDir(obstical);
 
             //Create a force away from obstacle
             Vector3 backForce = _exitDir;
@@ -318,5 +323,39 @@ public class ShipMovement : Physics
     public void PlayHitParticles()
     {
         Instantiate(_hitParticles, transform.position, transform.rotation, transform);
+    }
+
+    private void GetExitDir(GameObject obstical)
+    {
+        List<Vector3> outVecs = new List<Vector3>();
+        float rayPerDegree = 360 / COLLISION_RAY_COUNT;
+        for (int i = 0; i < COLLISION_RAY_COUNT; i++)
+        {
+            Vector3 rayPosition = transform.position + Quaternion.Euler(0, rayPerDegree * i, 0) * transform.forward;
+            Vector3 rayDistanceVec = rayPosition - transform.position;
+            Vector3 rayDirection = new Vector3(rayDistanceVec.x, 0, rayDistanceVec.z);
+            foreach (RaycastHit hit in UnityEngine.Physics.RaycastAll(transform.position, rayDirection, COLLISION_RAY_DISTANCE))
+            {
+                if (hit.collider.tag == "Obstical")
+                {
+                    float dist = Vector3.SqrMagnitude(hit.point - transform.position);
+                    if (hit.collider is MeshCollider)
+                    {
+                        outVecs.Add(GetMeshColliderNormal(hit) * dist);
+                    }
+                    else
+                    {
+                        outVecs.Add((transform.position - obstical.transform.position) * dist);
+                    }
+                }
+            }
+        }
+        //Get the exit direction
+        _exitDir = Vector3.zero;
+        foreach (Vector3 vec in outVecs)
+        {
+            _exitDir += vec;
+        }
+        _exitDir.Normalize();
     }
 }
