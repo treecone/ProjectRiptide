@@ -78,7 +78,7 @@ public partial class Enemy : Physics
     public void PassiveDoNothing()
     {
         //Do nothing
-        ApplyFriction(0.99f);
+        StopMotion();
     }
     
     /// <summary>
