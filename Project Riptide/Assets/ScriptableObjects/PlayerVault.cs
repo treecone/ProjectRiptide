@@ -42,11 +42,11 @@ public class PlayerVault : ScriptableObject
     /// </summary>
     /// <param name="itemName">The name of the item to be added</param>
     /// <param name="amountToAdd">The amount of that item to be added</param>
-    public void AddItem(string itemName, int amountToAdd)
+    public int AddItem(string itemName, int amountToAdd)
     {
         if (itemName == "null" || itemName == "Null")
         {
-            return;
+            return 0;
         }
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
@@ -64,7 +64,7 @@ public class PlayerVault : ScriptableObject
                 {
                     //Debug.Log("can fit rest of items in this slot, finishing");
                     item.Amount += amountToAddTemp;
-                    return; //Item is completely in the vault now, end
+                    return 0; //Item is completely in the inventory now, end
                 }
                 else //amount to add is too much, split it up
                 {
@@ -112,10 +112,11 @@ public class PlayerVault : ScriptableObject
             }
             else
             {
-                //Debug.LogWarning("[Vault] There is no space left for the rest of the items!");
-                return;
+                //Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
+                return amountToAdd;
             }
         }
+        return 0;
 
 
     }

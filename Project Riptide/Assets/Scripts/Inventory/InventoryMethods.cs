@@ -575,7 +575,6 @@ public class InventoryMethods : MonoBehaviour
                     _marketTrash.SetText(trashAmount.ToString());
                 }
                 PlayerInventory.Instance.TotalGold -= _activeItem.Value * trashAmount;
-                /*
                 int check = PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
                 if (check == 0)
                 {
@@ -585,9 +584,8 @@ public class InventoryMethods : MonoBehaviour
                 {
                     PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount - check);
                 }
-                */
-                PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
-                PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
+                //PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+                //PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
             if (_activeItem.Amount == 0)
             {
@@ -962,7 +960,6 @@ public class InventoryMethods : MonoBehaviour
         if (_activeItem != null && _activeItem.Name != "Null")
         {
 
-            /*
             int check = PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
             if (check == 0)
             {
@@ -972,10 +969,6 @@ public class InventoryMethods : MonoBehaviour
             {
                 PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount - check);
             }
-            */
-
-            PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
-            PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
 
             if (_activeItem.Amount == 0)
             {
@@ -997,7 +990,6 @@ public class InventoryMethods : MonoBehaviour
 
             Debug.Log(_activeItem.Name + _activeItem.Amount);
 
-            /*
             int check = PlayerVault.Instance.AddItem(_activeItem.Name, trashAmount);
             if (check == 0)
             {
@@ -1007,10 +999,6 @@ public class InventoryMethods : MonoBehaviour
             {
                 PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount - check);
             }
-            */
-
-            PlayerVault.Instance.AddItem(_activeItem.Name, trashAmount);
-            PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
 
             if (_activeItem.Amount == 0)
             {
