@@ -107,7 +107,10 @@ public partial class Waterdeer : Enemy
                 Waterdeer foundEnemy = collider.GetComponent<Hitbox>().AttachedObject.GetComponent<Waterdeer>();
                 if (foundEnemy != null && foundEnemy.gameObject != gameObject)
                 {
-                    foundEnemy.GetComponent<StatusEffects>().AddStatus(StatusType.Speed, 15.0f, 0.5f);
+                    if (foundEnemy.GetComponent<StatusEffects>().CheckStatus("DeerSpeedup"))
+                    {
+                        foundEnemy.GetComponent<StatusEffects>().AddStatus(StatusType.Speed, "DeerSpeedup", 15.0f, 0.5f);
+                    }
                 }
             }
         }
