@@ -27,7 +27,8 @@ public enum StatusType {
     ShipSpeed,
     StatusResist,
     RegenOnDamage,
-    SpeedMultiplier}
+    SpeedMultiplier,
+    FireRate}
 public class Upgrades : MonoBehaviour
 {
     /// <summary>

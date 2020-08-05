@@ -23,6 +23,7 @@ public class InputManager : MonoBehaviour
     //-----References-----
     private GameObject _ship;
     private ShipMovement _movementScript;
+    private Upgrades _playerUpgrades;
     private CannonFire _cannonFireScript;
     private CameraController _cameraController;
     private RectTransform _iconPoint;
@@ -48,7 +49,7 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    private float _fireRate = 1.0f;
+    private float _baseFireRate = 1.0f;
     private float _currFireTime = 0.0f;
 
     private float _viewRange = 20.0f;
@@ -85,11 +86,12 @@ public class InputManager : MonoBehaviour
         _screenScale = new Vector2((_canvasRect.rect.width / Screen.width), (_canvasRect.rect.height / Screen.height));
         _ship = GameObject.FindWithTag("Player");
         _movementScript = _ship.GetComponent<ShipMovement>();
+        _playerUpgrades = _ship.GetComponent<Upgrades>();
         _cannonFireScript = _ship.GetComponent<CannonFire>();
         _iconPoint = GameObject.Find("InputIcon").GetComponent<RectTransform>();
         _iconBase = GameObject.Find("InputBase").GetComponent<RectTransform>();
         EnemyCompare = ClosestHostileEnemy;
-        _currFireTime = _fireRate;
+        _currFireTime = GetFireRate();
         _currentTouches = new List<TouchData>();
     }
 
@@ -144,10 +146,10 @@ public class InputManager : MonoBehaviour
 
         if (_combatMode)
         {
-            if (_currFireTime < _fireRate)
+            if (_currFireTime < GetFireRate())
             {
                 _currFireTime += Time.deltaTime;
-                if (_currFireTime >= _fireRate)
+                if (_currFireTime >= GetFireRate())
                 {
                     //Reactivate fire button
                     ColorBlock colors = _fireButton.colors;
@@ -155,9 +157,9 @@ public class InputManager : MonoBehaviour
                     colors.highlightedColor = new Color32(255, 255, 255, 255);
                     _fireButton.colors = colors;
                     _fireSlider.gameObject.SetActive(false);
-                    _currFireTime = _fireRate;
+                    _currFireTime = GetFireRate();
                 }
-                _fireSlider.value = _currFireTime / _fireRate;
+                _fireSlider.value = _currFireTime / GetFireRate();
             }
 
             _lineIndicator.SetPosition(0, Vector3.zero);
@@ -692,7 +694,7 @@ public class InputManager : MonoBehaviour
     /// <param name="offset">Offset of ship fire angle</param>
     private bool AutoFire(Enemy enemy, float offset)
     {
-        if (_currFireTime >= _fireRate)
+        if (_currFireTime >= GetFireRate())
         {
             Vector3 diff = (enemy.transform.position - _ship.transform.position).normalized;
             _cannonFireScript.Fire(new Vector3(diff.x, 0, diff.z), offset);
@@ -766,6 +768,11 @@ public class InputManager : MonoBehaviour
     public void PressFireButton()
     {
         _fireButtonPressed = true;
+    }
+
+    private float GetFireRate()
+    {
+        return _baseFireRate * (1 + _playerUpgrades.masterUpgrade[StatusType.FireRate]);
     }
 }
 
