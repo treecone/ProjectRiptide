@@ -291,9 +291,9 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.StrongPoisonCloud:
                 return new PoisonCloudSkill("PoisonCloud", this, 20.0f, true, index, 10.0f, 5.0f);
             case SkillType.StunShot:
-                return new StunShotSkill("StunShot", this, 10.0f, true, index, 10, 4.0f);
+                return new StunShotSkill("StunShot", this, 20.0f, true, index, 10, 4.0f);
             case SkillType.StrongStunShot:
-                return new StunShotSkill("StunShot", this, 10.0f, true, index, 14, 6.0f);
+                return new StunShotSkill("StunShot", this, 22.0f, true, index, 14, 6.0f);
             case SkillType.WeakFlameThrower:
                 return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 10.0f);
             case SkillType.MediumFlameThrower:

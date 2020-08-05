@@ -169,7 +169,7 @@ public class CannonFire : MonoBehaviour
 
     public class CannonShot
     {
-        private int _damage;
+        private float _damage;
         private List<StatusEffect> onhitEffects;
         private Vector3 _direction;
         private float _fireSpeed;

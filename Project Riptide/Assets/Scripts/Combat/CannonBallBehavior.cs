@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CannonBallBehavior : MonoBehaviour
 {
-    public int damageDealt;
+    public float damageDealt;
     public List<StatusEffect> onhitEffects;
     public GameObject hitbox;
     public string fireSound;
