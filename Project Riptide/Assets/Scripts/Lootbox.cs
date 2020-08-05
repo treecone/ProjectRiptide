@@ -101,6 +101,10 @@ public class Lootbox : MonoBehaviour
                     }
                     else
                     {
+                        if(items[i].Amount > amount)
+                        {
+                            _textDisplay.AddText("+" + (items[i].Amount - amount) + " " + items[i].Name, Color.black);
+                        }
                         items[i].Amount = amount;
                         _textDisplay.AddText("Inventory Full!", Color.red);
                         itemsLeft = true;
