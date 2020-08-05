@@ -109,11 +109,11 @@ public class ActiveAbilities : MonoBehaviour
             {
                 _buttons[0].onClick?.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+            if (Input.GetKeyDown(KeyCode.Alpha4))
             {
                 _buttons[1].onClick?.Invoke();
             }
-            if (Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha3))
             {
                 _buttons[2].onClick?.Invoke();
             }
