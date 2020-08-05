@@ -118,7 +118,6 @@ public class Upgrades : MonoBehaviour
                 {
                     foreach (Upgrade u in item.Upgrades)
                     {
-                        Debug.Log("Adding Upgrade from " + item.Name);
                         equippedUpgrades.Add(u);
                     }
                 }
