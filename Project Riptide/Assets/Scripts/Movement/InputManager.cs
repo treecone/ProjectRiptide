@@ -49,7 +49,7 @@ public class InputManager : MonoBehaviour
     private float _clickDuration;
     private const float MAX_FAST_CLICK_DURATION = 0.4f;
 
-    private float _baseFireRate = 1.0f;
+    private const float BASE_FIRE_RATE = 1.0f;
     private float _currFireTime = 0.0f;
 
     private float _viewRange = 20.0f;
@@ -772,7 +772,7 @@ public class InputManager : MonoBehaviour
 
     private float GetFireRate()
     {
-        return _baseFireRate * (1 + _playerUpgrades.masterUpgrade[StatusType.FireRate]);
+        return BASE_FIRE_RATE * (1 + _playerUpgrades.masterUpgrade[StatusType.FireRate]);
     }
 }
 

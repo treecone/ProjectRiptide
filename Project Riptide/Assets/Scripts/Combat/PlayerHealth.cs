@@ -104,7 +104,7 @@ public class PlayerHealth : MonoBehaviour
             }
             else
             {
-                if(shipUpgradeScript.masterUpgrade[StatusType.Armor] > 0)
+                if(shipUpgradeScript.masterUpgrade[StatusType.RegenOnDamage] > 0 && damage > 0)
                 {
                     gameObject.GetComponent<StatusEffects>().AddStatus(StatusType.Regeneration, 3f, shipUpgradeScript.masterUpgrade[StatusType.RegenOnDamage]);
                 }
