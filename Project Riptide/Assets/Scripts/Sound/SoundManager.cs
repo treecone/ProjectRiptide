@@ -9,14 +9,25 @@ public class SoundManager : MonoBehaviour
     private int numStartingSources;
     private Dictionary<string, Sound> soundDict;
 
-    private List<AudioSource> audioSourcePool;
-    private List<int> audioSourceIds;
+    [SerializeField]
+    private List<iAudioSource> audioSourcePool;
+    [System.Serializable]
+    private class iAudioSource
+    {
+        public AudioSource audioSource;
+        public int id;
+
+        public iAudioSource(AudioSource audioSource, int id)
+        {
+            this.audioSource = audioSource;
+            this.id = id;
+        }
+    }
     private void Awake()
     {
         Sound[] sounds = Resources.LoadAll<Sound>("ScriptableObjectInstances/Sounds");
         Debug.Log(sounds.Length);
-        audioSourcePool = new List<AudioSource>();
-        audioSourceIds = new List<int>();
+        audioSourcePool = new List<iAudioSource>();
         soundDict = new Dictionary<string, Sound>();
         foreach(Sound s in sounds)
         {
@@ -25,9 +36,7 @@ public class SoundManager : MonoBehaviour
         for (int i = 0; i < numStartingSources; i++)
         {
             AudioSource source = gameObject.AddComponent<AudioSource>();
-            audioSourcePool.Add(source);
-
-            audioSourceIds.Add(-1);
+            audioSourcePool.Add(new iAudioSource(source, -1));
         }
 
         instance = this;
@@ -42,7 +51,7 @@ public class SoundManager : MonoBehaviour
             bool foundSource = false;
             for(int i = 0; i < audioSourcePool.Count; i++)
             {
-                AudioSource source = audioSourcePool[i];
+                AudioSource source = audioSourcePool[i].audioSource;
                 if (!source.isPlaying)
                 {
                     foundSource = true;
@@ -50,8 +59,9 @@ public class SoundManager : MonoBehaviour
                     source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
                     source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
                     source.Play();
-                    audioSourceIds[i] = Random.Range(0, int.MaxValue);
-                    return audioSourceIds[i];
+                    audioSourcePool[i].id = Random.Range(0, int.MaxValue);
+                    Debug.Log("playing sound on audiosource " + i + ", id " + audioSourcePool[i].id);
+                    return audioSourcePool[i].id;
                 }
             }
             if (!foundSource)
@@ -63,9 +73,9 @@ public class SoundManager : MonoBehaviour
                 source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
                 source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
                 source.Play();
-                audioSourcePool.Add(source);
+
                 int id = Random.Range(0, int.MaxValue);
-                audioSourceIds.Add(id);
+                audioSourcePool.Add(new iAudioSource(source, id));
                 return id;
             }
             //will never hit here but needs a return to compile
@@ -81,10 +91,9 @@ public class SoundManager : MonoBehaviour
         int index = 0;
         bool found = false;
         Debug.Log("stopping " + id);
-        for(int i = 0; i < audioSourceIds.Count; i++)
+        for(int i = 0; i < audioSourcePool.Count; i++)
         {
-            Debug.Log(audioSourceIds[i]);
-            if(audioSourceIds[i] == id)
+            if(audioSourcePool[i].id == id)
             {
                 index = i;
                 found = true;
@@ -93,8 +102,8 @@ public class SoundManager : MonoBehaviour
         if(found)
         {
             Debug.Log("found");
-            audioSourcePool[index].Stop();
-            audioSourceIds[index] = -1;
+            audioSourcePool[index].audioSource.Stop();
+            audioSourcePool[index].id = -1;
         }
     }
 
@@ -102,10 +111,9 @@ public class SoundManager : MonoBehaviour
     {
         for(int i = 0; i < audioSourcePool.Count; i++)
         {
-            if(!audioSourcePool[i].isPlaying && audioSourcePool.Count > numStartingSources)
+            if(!audioSourcePool[i].audioSource.isPlaying && audioSourcePool.Count > numStartingSources)
             {
                 audioSourcePool.RemoveAt(i);
-                audioSourceIds.RemoveAt(i);
                 i--;
             }
         }
