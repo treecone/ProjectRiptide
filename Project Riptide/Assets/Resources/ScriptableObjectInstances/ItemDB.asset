@@ -134,15 +134,15 @@ MonoBehaviour:
     amount: 1
   - id: 26
     name: Monkey Pelt
-    value: 525
+    value: 200
     amount: 1
   - id: 27
     name: Shattered Crown
-    value: 1000
+    value: 1500
     amount: 1
   - id: 28
     name: Monkey Claws
-    value: 500
+    value: 350
     amount: 1
   - id: 29
     name: Lotus Stem
@@ -1514,18 +1514,18 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: 0.075
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2
+        upgradeValue: 0.15
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 3
+        upgradeValue: 0.45
       - name: 
         upgradeType: 8
-        upgradeValue: 1
+        upgradeValue: 2
     activeText: Spread Shot
     activeAbilityID: 20000000200000002000000020000000
     passiveText: 
@@ -1544,34 +1544,43 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: -0.6
       - name: 
         upgradeType: 10
-        upgradeValue: 2
+        upgradeValue: 4
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.05
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2
+        upgradeValue: -0.55
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.1
       - name: 
         upgradeType: 10
-        upgradeValue: 2.5
+        upgradeValue: 6
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2.5
+        upgradeValue: -0.3
       - name: 
         upgradeType: 10
-        upgradeValue: 3
+        upgradeValue: 8
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.15
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 3
+        upgradeValue: -0.3
       - name: 
         upgradeType: 10
-        upgradeValue: 3.5
+        upgradeValue: 12
       - name: 
-        upgradeType: 11
-        upgradeValue: 1.1
+        upgradeType: 22
+        upgradeValue: 0.25
     activeText: Rapid Shot
     activeAbilityID: 21000000210000002100000022000000
     passiveText: 
@@ -1590,31 +1599,31 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: 0.3
       - name: 
         upgradeType: 11
-        upgradeValue: 1.05
+        upgradeValue: 0.05
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1.5
+        upgradeValue: 0.6
       - name: 
         upgradeType: 11
-        upgradeValue: 1.1
+        upgradeValue: 0.1
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2
+        upgradeValue: 0.9
       - name: 
         upgradeType: 11
-        upgradeValue: 1.15
+        upgradeValue: 0.15
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 3
+        upgradeValue: 1.3
       - name: 
         upgradeType: 11
-        upgradeValue: 1.2
+        upgradeValue: 0.2
       - name: 
         upgradeType: 10
         upgradeValue: -0.5
@@ -1635,22 +1644,28 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: -0.5
-      - name: 
-        upgradeType: 8
-        upgradeValue: 1
-    - list:
+        upgradeValue: -0.6
       - name: 
         upgradeType: 8
         upgradeValue: 2
     - list:
+      - name: 
+        upgradeType: 9
+        upgradeValue: -0.9
       - name: 
         upgradeType: 8
         upgradeValue: 3
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: -1
+      - name: 
+        upgradeType: 8
+        upgradeValue: 4
+    - list:
+      - name: 
+        upgradeType: 9
+        upgradeValue: -1.25
       - name: 
         upgradeType: 8
         upgradeValue: 4
@@ -1671,28 +1686,31 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: -1
+        upgradeValue: -0.3
       - name: 
         upgradeType: 11
-        upgradeValue: 1.05
-    - list:
-      - name: 
-        upgradeType: 11
-        upgradeValue: 1.1
+        upgradeValue: 0.05
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: -0.25
       - name: 
         upgradeType: 11
-        upgradeValue: 1.15
+        upgradeValue: 0.1
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2
+        upgradeValue: -0.2
       - name: 
         upgradeType: 11
-        upgradeValue: 1.2
+        upgradeValue: 0.15
+    - list:
+      - name: 
+        upgradeType: 9
+        upgradeValue: -0.15
+      - name: 
+        upgradeType: 11
+        upgradeValue: 0.2
     activeText: Poison Cloud
     activeAbilityID: 28000000280000002800000029000000
     passiveText: Applies Poison On-Hit
@@ -1711,40 +1729,49 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: -5
+        upgradeValue: -1.2
       - name: 
         upgradeType: 10
-        upgradeValue: 1
-      - name: 
-        upgradeType: 8
-        upgradeValue: 1
-    - list:
-      - name: 
-        upgradeType: 9
-        upgradeValue: -4
-      - name: 
-        upgradeType: 10
-        upgradeValue: 1.15
+        upgradeValue: 6
       - name: 
         upgradeType: 8
         upgradeValue: 2
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: -2
+        upgradeValue: -1.5
       - name: 
         upgradeType: 10
-        upgradeValue: 1.6
+        upgradeValue: 8
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.1
       - name: 
         upgradeType: 8
         upgradeValue: 3
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: -1
+        upgradeValue: -1.65
       - name: 
         upgradeType: 10
-        upgradeValue: 1.75
+        upgradeValue: 10
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.2
+      - name: 
+        upgradeType: 8
+        upgradeValue: 4
+    - list:
+      - name: 
+        upgradeType: 9
+        upgradeValue: -1.65
+      - name: 
+        upgradeType: 10
+        upgradeValue: 14
+      - name: 
+        upgradeType: 22
+        upgradeValue: 0.35
       - name: 
         upgradeType: 8
         upgradeValue: 4
@@ -1766,28 +1793,40 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 1
+        upgradeValue: 0.15
       - name: 
         upgradeType: 10
-        upgradeValue: -1
+        upgradeValue: -4
+      - name: 
+        upgradeType: 22
+        upgradeValue: -0.05
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 2
+        upgradeValue: 0.3
       - name: 
         upgradeType: 10
-        upgradeValue: -0.5
+        upgradeValue: -2
+      - name: 
+        upgradeType: 22
+        upgradeValue: -0.1
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 3
+        upgradeValue: 0.6
+      - name: 
+        upgradeType: 22
+        upgradeValue: -0.1
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 3
+        upgradeValue: 0.9
       - name: 
         upgradeType: 10
         upgradeValue: 1.1
+      - name: 
+        upgradeType: 22
+        upgradeValue: 2
     activeText: Flamethrower
     activeAbilityID: 2c0000002d0000002e00000000000000
     passiveText: Applies Fire On-Hit
@@ -1843,7 +1882,7 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 9
-        upgradeValue: 5
+        upgradeValue: 1.5
     activeText: 
     activeAbilityID: ffffffffffffffffffffffffffffffff
     passiveText: 

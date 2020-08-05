@@ -237,8 +237,10 @@ public class CannonFire : MonoBehaviour
                 }
 
                 angle *= Quaternion.Euler(0, trueSpreadAngle, 0);
+                ball.GetComponent<CannonBallBehavior>().fireSoundId = SoundManager.instance.PlaySound(cannonBall.GetComponent<CannonBallBehavior>().fireSound);
             }
-            cannonBall.GetComponent<CannonBallBehavior>().fireSoundId = SoundManager.instance.PlaySound(cannonBall.GetComponent<CannonBallBehavior>().fireSound);
+            
+
         }
     }
 }

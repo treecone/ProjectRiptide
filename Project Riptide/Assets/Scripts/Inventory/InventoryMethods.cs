@@ -585,6 +585,28 @@ public class InventoryMethods : MonoBehaviour
 
     }
 
+
+    public void SellItemVault()
+    {
+        if (_activeItem != null)
+        {
+            PlayerInventory.Instance.TotalGold += _activeItem.Value * trashAmount;
+            PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
+
+            if (_activeItem.Amount == 0)
+            {
+                _activeItem = null;
+                _marketName.SetText("");
+                _itemDescriptionMarket.SetText("");
+                _itemCostMarket.SetText("");
+            }
+            _marketTrash.SetText("1");
+            trashAmount = 1;
+        }
+
+    }
+
+
     public void ChangeToBuy()
     {
         if (_activeItem != null)
