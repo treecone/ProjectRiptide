@@ -246,7 +246,14 @@ public class InventoryMethods : MonoBehaviour
             _itemDescription.SetText(_activeItem.Description);
             _itemCost.SetText(_activeItem.Value.ToString());
             _trashName.SetText("Are you sure you want to throw out " + _activeItem.Name + "?");
-
+        }
+        else
+        {
+            _trashField.SetText("1");
+            trashAmount = 1;
+            _itemName.SetText("");
+            _itemDescription.SetText("");
+            _itemCost.SetText("0");
         }
     }
     /// <summary>
@@ -280,22 +287,21 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void TrashItem()
     {
-        if (_activeItem.Amount == 0)
-        {
-            _activeItem = null;
-            _marketName.SetText("");
-            _itemDescriptionMarket.SetText("");
-            _itemCostMarket.SetText("");
-        }
         //checks if null item
         if (_activeItem != null)
         {
-            Item saved = _activeItem;
-
-            PlayerInventory.Instance.RemoveItem(saved.Name, trashAmount);
-            _trashField.SetText("1");
-            trashAmount = 1;
+            PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
         }
+        if (_activeItem.Amount == 0)
+        {
+            _activeItem = null;
+            _itemName.SetText("");
+            _itemDescription.SetText("");
+            _itemCost.SetText("0");
+        }
+
+        _trashField.SetText("1");
+        trashAmount = 1;
     }
 
     #endregion
@@ -569,6 +575,17 @@ public class InventoryMethods : MonoBehaviour
                     _marketTrash.SetText(trashAmount.ToString());
                 }
                 PlayerInventory.Instance.TotalGold -= _activeItem.Value * trashAmount;
+                /*
+                int check = PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+                if (check == 0)
+                {
+                    PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
+                }
+                else
+                {
+                    PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount - check);
+                }
+                */
                 PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
                 PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }
@@ -944,6 +961,19 @@ public class InventoryMethods : MonoBehaviour
     {
         if (_activeItem != null && _activeItem.Name != "Null")
         {
+
+            /*
+            int check = PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
+            if (check == 0)
+            {
+                PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
+            }
+            else
+            {
+                PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount - check);
+            }
+            */
+
             PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
             PlayerVault.Instance.RemoveItem(_activeItem.Name, trashAmount);
 
@@ -966,6 +996,19 @@ public class InventoryMethods : MonoBehaviour
             int savedAmount = _activeItem.Amount;
 
             Debug.Log(_activeItem.Name + _activeItem.Amount);
+
+            /*
+            int check = PlayerVault.Instance.AddItem(_activeItem.Name, trashAmount);
+            if (check == 0)
+            {
+                PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
+            }
+            else
+            {
+                PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount - check);
+            }
+            */
+
             PlayerVault.Instance.AddItem(_activeItem.Name, trashAmount);
             PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
 
