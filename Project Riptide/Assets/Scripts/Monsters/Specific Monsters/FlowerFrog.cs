@@ -9,6 +9,8 @@ public partial class FlowerFrog : Enemy
 {
     [SerializeField]
     protected LineRenderer _tounge;
+    [SerializeField]
+    protected bool _isPoison;
 
     protected const float LATCH_DAMAGE_CAP = 15;
     protected const float MAX_DRAG_DIST = 15.0f;
@@ -79,7 +81,11 @@ public partial class FlowerFrog : Enemy
         if(other.tag == "Player")
         {
             _playerStatusEffects = other.GetComponent<StatusEffects>();
-            _playerStatusEffects.AddStatus(StatusType.Speed, "ToungeLatch", 999999.0f, -0.40f);
+            _playerStatusEffects.AddStatus(StatusType.Speed, "ToungeLatch" + _enemyID, 999999.0f, -0.40f);
+            if(_isPoison)
+            {
+                _playerStatusEffects.AddStatus(StatusType.Poison, "ToungePoison" + _enemyID, 999999.0f, 3.0f);
+            }
         }
     }
 
@@ -90,7 +96,11 @@ public partial class FlowerFrog : Enemy
     {
         if(_playerStatusEffects != null)
         {
-            _playerStatusEffects.RemoveStatus("ToungeLatch");
+            _playerStatusEffects.RemoveStatus("ToungeLatch" + _enemyID);
+            if(_isPoison)
+            {
+                _playerStatusEffects.RemoveStatus("ToungePoison" + _enemyID);
+            }
         }
     }
 

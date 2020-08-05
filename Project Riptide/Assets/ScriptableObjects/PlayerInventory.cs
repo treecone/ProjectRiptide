@@ -73,16 +73,16 @@ public class PlayerInventory : ScriptableObject
     /// </summary>
     /// <param name="itemName">The name of the item to be added</param>
     /// <param name="amountToAdd">The amount of that item to be added</param>
-    public void AddItem(string itemName, int amountToAdd)
+    public int AddItem(string itemName, int amountToAdd)
     {
         if (itemName == "gold" || itemName == "Gold")
         {
             totalGold += amountToAdd;
-            return;
+            return 0;
         }
         if (itemName == "null" || itemName == "Null")
         {
-            return;
+            return 0;
         }
         Queue<int> tempClearSlots = new Queue<int>();
         int amountToAddTemp = amountToAdd;
@@ -90,7 +90,7 @@ public class PlayerInventory : ScriptableObject
         if (itemToAdd.Category != ItemCategory.Material)
         {
             AddEquipment(itemToAdd);
-            return;
+            return 0;
         }
         //Debug.Log("Adding item " + itemName + " as " + itemToAdd.Name);
         for (int i = 0; i < items.Count; i++) //Checking to see if it can add the item to a existing slot
@@ -105,7 +105,7 @@ public class PlayerInventory : ScriptableObject
                 {
                     //Debug.Log("can fit rest of items in this slot, finishing");
                     item.Amount += amountToAddTemp;
-                    return; //Item is completely in the inventory now, end
+                    return 0; //Item is completely in the inventory now, end
                 }
                 else //amount to add is too much, split it up
                 {
@@ -154,11 +154,10 @@ public class PlayerInventory : ScriptableObject
             else
             {
                 //Debug.LogWarning("[Inventory] There is no space left for the rest of the items!");
-                return;
+                return amountToAdd;
             }
         }
-
-
+        return 0;
     }
 
     /// <summary>

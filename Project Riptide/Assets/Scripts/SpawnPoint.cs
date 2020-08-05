@@ -35,6 +35,13 @@ public class SpawnPoint : MonoBehaviour
             {
                 Gizmos.DrawMesh(meshRenderer.sharedMesh, transform.position + meshRenderer.transform.position - _enemyPrefab.transform.position, transform.rotation * meshRenderer.transform.rotation, meshRenderer.transform.lossyScale);
             }
+            foreach (MeshFilter meshFilter in _enemyPrefab.GetComponentsInChildren<MeshFilter>())
+            {
+                if (meshFilter.gameObject.tag != "Hitbox")
+                {
+                    Gizmos.DrawMesh(meshFilter.sharedMesh, transform.position + meshFilter.transform.position - _enemyPrefab.transform.position, transform.rotation * meshFilter.transform.rotation, meshFilter.transform.lossyScale);
+                }
+            }
         }
     }
 }

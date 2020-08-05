@@ -129,9 +129,9 @@ public class ShipMovement : Physics
         if (_speedScale > 0.05f)
         {
             //Add force moving towards desired location based on ship speed and speed scale
-            netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * _speedScale * (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Speed] * (1f + shipUpgradeScript.masterUpgrade[StatusType.SpeedMultiplier])), 1.0f);
+            netForce = GetConstantMoveForce(moveDirection, MAX_SHIP_SPEED * _speedScale * (Mathf.Max(0.1f, (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Speed])) * (1f + shipUpgradeScript.masterUpgrade[StatusType.SpeedMultiplier])), 1.0f);
             //Add force moving forwards
-            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * _speedScale * (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Speed]);
+            netForce += new Vector3(transform.forward.x, 0, transform.forward.z) * MAX_SHIP_SPEED * 1.5f * _speedScale * Mathf.Max(0.1f, (1.0f + shipUpgradeScript.masterUpgrade[StatusType.Speed]));
         }
         //Draw debug lines for net force and move direction
         Debug.DrawLine(_position, _position + netForce, Color.blue);

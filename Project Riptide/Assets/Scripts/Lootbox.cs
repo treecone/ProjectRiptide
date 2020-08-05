@@ -79,6 +79,7 @@ public class Lootbox : MonoBehaviour
     {
         if (obj.tag == "Player")
         {
+            bool itemsLeft = false;
             for (int i = 0; i < items.Count; i++)
             {
                 Upgrades upgrades = obj.GetComponent<Upgrades>();
@@ -86,11 +87,24 @@ public class Lootbox : MonoBehaviour
                 {
                     PlayerInventory.Instance.AddItem(items[i].Name, (int)(items[i].Amount * (1 + upgrades.masterUpgrade[StatusType.BonusGold])));
                     _textDisplay.AddText("+" + (int)(items[i].Amount * ( 1 + upgrades.masterUpgrade[StatusType.BonusGold])) + " " + items[i].Name, Color.yellow);
+                    items.RemoveAt(i);
+                    i--;
                 }
                 else
                 {
-                    PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
-                    _textDisplay.AddText("+" + items[i].Amount + " " + items[i].Name, Color.black);
+                    int amount = PlayerInventory.Instance.AddItem(items[i].Name, items[i].Amount);
+                    if (amount == 0)
+                    {
+                        _textDisplay.AddText("+" + items[i].Amount + " " + items[i].Name, Color.black);
+                        items.RemoveAt(i);
+                        i--;
+                    }
+                    else
+                    {
+                        items[i].Amount = amount;
+                        _textDisplay.AddText("Inventory Full!", Color.red);
+                        itemsLeft = true;
+                    }
                 }
 
             }
@@ -111,7 +125,10 @@ public class Lootbox : MonoBehaviour
                     break;
             }
 
-            Destroy(gameObject);
+            if (!itemsLeft)
+            {
+                Destroy(gameObject);
+            }
         }
 
     }
