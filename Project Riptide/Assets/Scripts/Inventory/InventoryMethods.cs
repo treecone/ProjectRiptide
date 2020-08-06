@@ -135,6 +135,12 @@ public class InventoryMethods : MonoBehaviour
         _mapImages[25].enabled = true;
         //calculate where it should be on the map
         _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
+
+        List<string> startingItemNames = new List<string> { "galleon4", "goldscalesails4", "monkeyhull4", "bubblebeam4", "monkeyscrown1" };
+        foreach (string startingItem in startingItemNames)
+        {
+            PlayerInventory.Instance.AddItem(startingItem, 1);
+        }
     }
 
     #region Shared Methods
