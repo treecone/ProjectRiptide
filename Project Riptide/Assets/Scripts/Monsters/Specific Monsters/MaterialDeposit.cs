@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MaterialDeposit : Enemy
 {
+    [SerializeField]
+    private float _depositHealth = 10.0f;
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -12,8 +15,8 @@ public class MaterialDeposit : Enemy
         //Set parameters
         _enemyType = EnemyType.MaterialDeposit;
         _speed = 1.0f;
-        _health = 10;
-        _maxHealth = 10;
+        _health = _depositHealth;
+        _maxHealth = _depositHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
