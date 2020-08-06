@@ -563,6 +563,7 @@ public class InventoryMethods : MonoBehaviour
             {
                 PlayerInventory.Instance.TotalGold += _activeItem.Value * trashAmount;
                 PlayerInventory.Instance.RemoveItem(_activeItem.Name, trashAmount);
+                SoundManager.instance.PlaySound("Gold1", "Gold2", "Gold3");
             }
             //buys item
             else
@@ -584,6 +585,7 @@ public class InventoryMethods : MonoBehaviour
                 {
                     PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount - check);
                 }
+                SoundManager.instance.PlaySound("Gold1", "Gold2", "Gold3");
                 //PlayerInventory.Instance.AddItem(_activeItem.Name, trashAmount);
                 //PortManager.LastPortVisited.RemoveItem(_activeItem.Name, trashAmount);
             }

@@ -30,6 +30,8 @@ public class ShipMovement : Physics
     private const int COLLISION_RAY_COUNT = 12;
     private const float COLLISION_RAY_DISTANCE = 6.0f;
 
+    private float _obstacleSoundTimer;
+
     [SerializeField]
     private GameObject _hitParticles;
 
@@ -147,6 +149,12 @@ public class ShipMovement : Physics
         //Update camera
         _cameraControl.UpdateCamera();
         Debug.DrawLine(_position, _position + _velocity, Color.green);
+
+        _obstacleSoundTimer -= Time.deltaTime;
+        if(_obstacleSoundTimer < 0)
+        {
+            _obstacleSoundTimer = 0;
+        }
     }
 
     /// <summary>
@@ -264,6 +272,12 @@ public class ShipMovement : Physics
             backForce.Normalize();
             backForce *= 50.0f * (60 * Time.deltaTime);
             ApplyForce(backForce);
+            if(_obstacleSoundTimer <= 0)
+            {
+                _obstacleSoundTimer = 1.5f;
+                SoundManager.instance.PlaySound("ShipCollide1", "ShipCollide2", "ShipCollide3", "ShipCollide4", "ShipCollide5");
+            }
+            
         }
         if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Enemy" && obstical.GetComponent<Hitbox>().Type != HitboxType.EnemyHitbox)
         {
