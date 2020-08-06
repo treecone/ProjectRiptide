@@ -26,6 +26,8 @@ public class MaterialDeposit : Enemy
         _maxRadius = 10.0f;
         _playerCollision = false;
         _isRaming = false;
+        _activeStates = new bool[2] { false, false };
+        _specialCooldown = new float[2] { 0, 0 };
         _ramingDamage = 0;
         _pushMult = 0.0f;
         _HostileAI = PassiveDoNothing;
