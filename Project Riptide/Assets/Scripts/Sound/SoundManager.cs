@@ -107,6 +107,11 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    public int PlaySound(params string[] list)
+    {
+        return PlaySound(list[Random.Range(0,list.Length)]);
+    }
+
     private void ClearOutSources()
     {
         for(int i = 0; i < audioSourcePool.Count; i++)
