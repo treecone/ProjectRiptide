@@ -139,7 +139,24 @@ public class InventoryMethods : MonoBehaviour
         List<string> startingItemNames = new List<string> { "galleon4", "goldscalesails4", "monkeyhull4", "bubblebeam4", "monkeyscrown1" };
         foreach (string startingItem in startingItemNames)
         {
+            Item item = ItemDB.Instance.FindItem(startingItem);
             PlayerInventory.Instance.AddItem(startingItem, 1);
+            PlayerInventory.Instance.SetEquipped(item);
+            switch (item.Category)
+            {
+                case ItemCategory.Cannon:
+                    _activeAbilities.SetActiveSkill(1, (SkillType)item.ActiveAbilityID);
+                    break;
+                case ItemCategory.Hull:
+                    _activeAbilities.SetActiveSkill(2, (SkillType)item.ActiveAbilityID);
+                    break;
+                case ItemCategory.Sails:
+                    _activeAbilities.SetActiveSkill(0, (SkillType)item.ActiveAbilityID);
+                    break;
+                case ItemCategory.Ship:
+                    _shipMovement.ChangeShipClass(item.ShipPrefab);
+                    break;
+            }
         }
     }
 

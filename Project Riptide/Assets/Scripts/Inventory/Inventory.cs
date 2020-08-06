@@ -129,13 +129,16 @@ public class Inventory : MonoBehaviour
         //generates equipment prefab for all items
         for (int i = 0; i < recipes.Count; i++)
         {
-            GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
-            //assign item
-            newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
-            newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(UpdateEquipmentVisuals);
-            equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
+            if(!PlayerInventory.Instance.equipment.Exists(delegate(Item item) { return item.Slug == recipes[i].result; }))
+            {
+                GameObject newEquipment = Instantiate(_equipmentPrefab, _equipmentParent.transform);
+                //assign item
+                newEquipment.GetComponent<EquipmentSlot>().equipment = ItemDB.Instance.FindItem(recipes[i].result);
+                newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(delegate { _inventoryMethods.SelectEquipment(newEquipment); });
+                newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(_inventoryMethods.Equip);
+                newEquipment.transform.GetChild(6).GetComponent<Button>().onClick.AddListener(UpdateEquipmentVisuals);
+                equipmentSlots.Add(newEquipment.GetComponent<EquipmentSlot>());
+            }
         }
         UpdateEquipmentVisuals();
     }
