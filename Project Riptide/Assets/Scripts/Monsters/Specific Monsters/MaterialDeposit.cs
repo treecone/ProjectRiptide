@@ -22,7 +22,7 @@ public class MaterialDeposit : Enemy
         _startPos = transform.position;
         _wanderRadius = 30.0f;
         _hostileRadius = 0.0f;
-        _passiveRadius = 10.0f;
+        _passiveRadius = 50.0f;
         _maxRadius = 10.0f;
         _playerCollision = false;
         _isRaming = false;

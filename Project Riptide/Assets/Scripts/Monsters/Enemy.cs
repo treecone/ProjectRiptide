@@ -760,6 +760,7 @@ public partial class Enemy : Physics
             lootbox.dropType = _lootType;
             lootbox.GenerateItems();
         }
+        transform.Find("StatusEffectIcons").gameObject.SetActive(false);
     }
 
     /// <summary>
