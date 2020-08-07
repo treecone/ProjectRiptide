@@ -51,7 +51,7 @@ public class PlayerInventory : ScriptableObject
     public void InitializeInventory()
     {
         //startingItemNames = new List<string>{ "galleon4", "goldscalesails4", "monkeyhull4", "bubblebeam4", "monkeyscrown1" };
-        totalGold = 3000;
+        totalGold = 200;
         items = new List<Item>();
         equipment = new List<Item>();
         for(int i = 0; i < numItems; i++)
