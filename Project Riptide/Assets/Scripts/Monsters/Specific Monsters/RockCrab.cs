@@ -14,8 +14,8 @@ public partial class RockCrab : Enemy
         //Set parameters
         _enemyType = EnemyType.RockCrab;
         _speed = 0.8f;
-        _health = 50;
-        _maxHealth = 50;
+        _health = 30;
+        _maxHealth = 30;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;

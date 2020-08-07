@@ -22,8 +22,8 @@ public partial class KoiBoss : Enemy
         //Set parameters
         _enemyType = EnemyType.KoiBoss;
         _speed = 1.0f;
-        _health = 200;
-        _maxHealth = 200;
+        _health = 100;
+        _maxHealth = 100;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;

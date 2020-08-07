@@ -56,7 +56,7 @@ public class InputManager : MonoBehaviour
 
     private bool _combatMode = false;
     public bool InCombatMode => _combatMode;
-    private const float MAX_COMBAT_RANGE = 50.0f;
+    private const float MAX_COMBAT_RANGE = 100.0f;
     private List<Enemy> _targetEnemies = new List<Enemy>();
     private Enemy _currEnemy;
     private Enemy _leftEnemy;
