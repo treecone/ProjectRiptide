@@ -123,8 +123,9 @@ public class InventoryMethods : MonoBehaviour
     public void Start()
     {
         _soundSlider.onValueChanged.AddListener(delegate { ChangeSoundImage(); });
+        _soundSlider.onValueChanged.AddListener(delegate { SoundManager.instance.SetGlobalVolume(_soundSlider.value); });
         _volumeSlider.onValueChanged.AddListener(delegate { ChangeVolumeImage(); });
-
+        _volumeSlider.onValueChanged.AddListener(delegate { MusicManager.instance.SetVolume(_volumeSlider.value); });
         //set all to false
         for (int i = 0; i < 25; i++)
         {

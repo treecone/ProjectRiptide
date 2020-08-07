@@ -9,6 +9,8 @@ public class SoundManager : MonoBehaviour
     private int numStartingSources;
     private Dictionary<string, Sound> soundDict;
 
+    private float globalVolume = 0.5f;
+
     [SerializeField]
     private List<iAudioSource> audioSourcePool;
     [System.Serializable]
@@ -56,11 +58,11 @@ public class SoundManager : MonoBehaviour
                 {
                     foundSource = true;
                     source.clip = sound.audioClip;
-                    source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
+                    source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f)) * globalVolume;
                     source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
                     source.Play();
                     audioSourcePool[i].id = Random.Range(0, int.MaxValue);
-                    Debug.Log("playing sound on audiosource " + i + ", id " + audioSourcePool[i].id);
+                    //Debug.Log("playing sound on audiosource " + i + ", id " + audioSourcePool[i].id);
                     return audioSourcePool[i].id;
                 }
             }
@@ -70,7 +72,7 @@ public class SoundManager : MonoBehaviour
                 AudioSource source = gameObject.AddComponent<AudioSource>();
 
                 source.clip = sound.audioClip;
-                source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f));
+                source.volume = sound.volume * (1f + Random.Range(-sound.volumeVariance / 2f, sound.volumeVariance / 2f)) * globalVolume;
                 source.pitch = sound.pitch * (1f + Random.Range(-sound.pitchVariance / 2f, sound.pitchVariance / 2f));
                 source.Play();
 
@@ -90,7 +92,7 @@ public class SoundManager : MonoBehaviour
     {
         int index = 0;
         bool found = false;
-        Debug.Log("stopping " + id);
+        //Debug.Log("stopping " + id);
         for(int i = 0; i < audioSourcePool.Count; i++)
         {
             if(audioSourcePool[i].id == id)
@@ -101,7 +103,7 @@ public class SoundManager : MonoBehaviour
         }
         if(found)
         {
-            Debug.Log("found");
+            //Debug.Log("found");
             audioSourcePool[index].audioSource.Stop();
             audioSourcePool[index].id = -1;
         }
@@ -121,6 +123,16 @@ public class SoundManager : MonoBehaviour
                 audioSourcePool.RemoveAt(i);
                 i--;
             }
+        }
+    }
+
+    public void SetGlobalVolume(float amount)
+    {
+        float oldGlobalVolume = globalVolume;
+        globalVolume = amount;
+        foreach(iAudioSource source in audioSourcePool)
+        {
+            source.audioSource.volume *= (globalVolume / oldGlobalVolume);
         }
     }
 }
