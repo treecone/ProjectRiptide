@@ -9,6 +9,7 @@ public class CannonBallBehavior : MonoBehaviour
     public GameObject hitbox;
     public string fireSound;
     public string impactSound;
+    public bool stopFireSoundOnImpact;
     [HideInInspector]
     public int fireSoundId = -1;
 
@@ -47,13 +48,19 @@ public class CannonBallBehavior : MonoBehaviour
     {
         if (hit.tag == "Obstical")
         {
-            SoundManager.instance.StopSound(fireSoundId);
+            if(stopFireSoundOnImpact)
+            {
+                SoundManager.instance.StopSound(fireSoundId);
+            }
             SoundManager.instance.PlaySound(impactSound);
             Destroy(gameObject);
         }
         if (hit.tag == "Enemy")
         {
-            SoundManager.instance.StopSound(fireSoundId);
+            if (stopFireSoundOnImpact)
+            {
+                SoundManager.instance.StopSound(fireSoundId);
+            }
             SoundManager.instance.PlaySound(impactSound);
             Destroy(gameObject);
         }
