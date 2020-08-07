@@ -14,7 +14,7 @@ public class WaterBobbing : MonoBehaviour
     void Start()
     {
         _bobOffset = Random.Range(0, Mathf.PI * 2);
-        _startY = transform.position.y;
+        _startY = 0.7f;
     }
 
     // Update is called once per frame

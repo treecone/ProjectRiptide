@@ -12,6 +12,8 @@ public class Mine : MonoBehaviour
     private float statusDuration;
     [SerializeField]
     private float statusLevel;
+    [SerializeField]
+    private GameObject _explosionParticles;
 
     private Hitbox _hitbox;
     // Start is called before the first frame update
@@ -42,6 +44,7 @@ public class Mine : MonoBehaviour
         {
             obj.GetComponent<PlayerHealth>().TakeDamage(damage, false);
             obj.GetComponent<StatusEffects>().AddStatus(statusType, statusDuration, statusLevel);
+            Instantiate(_explosionParticles, transform.position, _explosionParticles.transform.rotation);
             Destroy(gameObject);
         }
         

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SteelMine : MonoBehaviour
 {
+    [SerializeField]
+    private GameObject _explosionParticles;
+
     const float MAX_LIFE_SPAN = 60.0f;
     float _lifeSpan;
 
@@ -36,6 +39,7 @@ public class SteelMine : MonoBehaviour
     {
         if(other.tag == "Enemy")
         {
+            Instantiate(_explosionParticles, transform.position, _explosionParticles.transform.rotation);
             Destroy(gameObject);
         }
     }

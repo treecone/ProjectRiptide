@@ -142,7 +142,7 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void AddStartingItems()
     {
-        List<string> startingItemNames = new List<string> { "galleon4", "goldscalesails4", "monkeyhull4", "bubblebeam4", "monkeyscrown1" };
+        List<string> startingItemNames = new List<string> { "sloop1", "canvassails1", "steelhull1", "cannon1", "grandmascookies1" };
         foreach (string startingItem in startingItemNames)
         {
             Item item = ItemDB.Instance.FindItem(startingItem);

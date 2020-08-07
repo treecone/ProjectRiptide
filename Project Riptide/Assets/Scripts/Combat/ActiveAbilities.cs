@@ -271,7 +271,7 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.LargeInvulnerability:
                 return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
             case SkillType.SpreadShot:
-                return new SpecialShotSkill("SpreadShot", this, 15.0f, true, index, 4, 2, 0.2f, 20, 0);
+                return new SpecialShotSkill("SpreadShot", this, 15.0f, true, index, 4, 1, 0.2f, 20, 0);
             case SkillType.RapidShotFour:
                 return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 4, 0.3f);
             case SkillType.RapidShotEight:
