@@ -66,6 +66,7 @@ public class PlayerInventory : ScriptableObject
         {
             SetEquipped(equipment[i]);
         }
+        Debug.Log("Inventory initialization");
     }
 
     /// <summary>

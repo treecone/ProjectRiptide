@@ -625,7 +625,7 @@ public partial class Enemy : Physics
                 ApplyForce(backForce);
             }
         }
-        else if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.tag == "Player")
+        else if(obstical.tag == "Hitbox" && obstical.transform.parent != null && obstical.transform.parent.parent != null && obstical.transform.parent.parent.tag == "Player")
         {
             Vector3 backForce = transform.position - obstical.transform.position;
             backForce = new Vector3(backForce.x, 0, backForce.z);

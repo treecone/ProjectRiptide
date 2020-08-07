@@ -79,30 +79,39 @@ public partial class ChickenFishFlock : Enemy
             {
                 continue;
             }
-            //Find closest chicken to current chicken
-            Vector3 closest = Vector3.zero;
-            float dist = 99999;
-            for(int j = 0; j < _chickenFlock.Count; j++)
+
+            if (_playerDistance > _maxRadius)
             {
-                if(j == i)
-                {
-                    continue;
-                }
-
-                //Check if current chicken is closer then found chicken
-                float currDist = Vector3.SqrMagnitude(_chickenFlock[i].Position - _chickenFlock[j].Position);
-                if(currDist < dist)
-                {
-                    dist = currDist;
-                    closest = _chickenFlock[j].Position;
-                }
+                _chickenFlock[i].StopMotion();
+                continue;
             }
+            else
+            {
+                //Find closest chicken to current chicken
+                Vector3 closest = Vector3.zero;
+                float dist = 99999;
+                for (int j = 0; j < _chickenFlock.Count; j++)
+                {
+                    if (j == i)
+                    {
+                        continue;
+                    }
 
-            _chickenFlock[i].Alignment(_velocity);
-            _chickenFlock[i].Cohesion(transform.position);
-            _chickenFlock[i].Seperation(closest);
-            _chickenFlock[i].MoveUpAndDown();
-            _chickenFlock[i].FlockerAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
+                    //Check if current chicken is closer then found chicken
+                    float currDist = Vector3.SqrMagnitude(_chickenFlock[i].Position - _chickenFlock[j].Position);
+                    if (currDist < dist)
+                    {
+                        dist = currDist;
+                        closest = _chickenFlock[j].Position;
+                    }
+                }
+
+                _chickenFlock[i].Alignment(_velocity);
+                _chickenFlock[i].Cohesion(transform.position);
+                _chickenFlock[i].Seperation(closest);
+                _chickenFlock[i].MoveUpAndDown();
+                _chickenFlock[i].FlockerAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
+            }
         }
     }
 
