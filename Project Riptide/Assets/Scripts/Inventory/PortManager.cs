@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class PortManager : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class PortManager : MonoBehaviour
     private GameObject _player;
     [SerializeField]
     private InventoryMethods _inventoryMethods;
+    [SerializeField]
+    private UIAnimMethods _uiAnimMethods;
     [SerializeField]
     private GameObject _canvas;
     [SerializeField]
@@ -59,6 +62,7 @@ public class PortManager : MonoBehaviour
         _leavePort.onClick.AddListener(LeavePort);
 
         _inventoryMethods = _canvas.GetComponent<InventoryMethods>();
+        _uiAnimMethods = _canvas.GetComponent<UIAnimMethods>();
 
         _inPort = false;
 	}
@@ -71,6 +75,12 @@ public class PortManager : MonoBehaviour
 		{
             _inPort = true;
 			_portUI.SetActive(true);
+            for (int i = 0; i < _portUI.transform.childCount; i++)
+            {
+                Transform pos = _portUI.transform.GetChild(i).transform;
+                pos.DOLocalMoveX(pos.localPosition.x + 2700f, .55f).SetUpdate(true);
+            }
+            _uiAnimMethods.EnableMarketPanel(_portUI.GetComponent<Image>());
             //title
             _portUI.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(name);
             //tip
@@ -110,7 +120,12 @@ public class PortManager : MonoBehaviour
         _player.GetComponent<ShipMovement>().Position = new Vector3(LastPortVisited.transform.position.x, _player.transform.position.y, LastPortVisited.transform.position.z) - LastPortVisited.transform.right * 18.0f;
         //_player.GetComponent<ShipMovement>().Position += new Vector3(15.0f, 0, 15.0f);
         _inPort = false;
-        _portUI.SetActive(false);
+        for (int i = 0; i < _portUI.transform.childCount; i++)
+        {
+            Transform pos = _portUI.transform.GetChild(i).transform;
+            pos.DOLocalMoveX(pos.localPosition.x - 2700f, .4f).SetUpdate(true);
+        }
+        _uiAnimMethods.DisablePanelAnim(_portUI);
         _inventoryMethods.UnpauseGame();
     }
 
