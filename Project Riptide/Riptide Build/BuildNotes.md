@@ -1,9 +1,7 @@
 Riptide Build Notes 
 (The game was built for phones, we are including an APK for android phones and a PC build)
 
-Riptide is an open-world mobile game in which the player will sail through different regions, fight monsters, craft new gear, 
-and upgrade their ship in the name of exploration. Currently the only region in our game is China, where our bosses and some 
-smaller monsters are loosely based on myths from folklore. We plan on creating new regions that expand into other mythology as well.
+Riptide is an open-world mobile game in which the player will sail through different regions, fight monsters, craft new gear, and upgrade their ship in the name of exploration. Currently the only region in our game is China, where our bosses and some smaller monsters are loosely based on myths from folklore. We plan on creating new regions that expand into other mythology as well.
 
 Controls (Mobile)
 * To move, use the joystick on the right-hand side of the screen
