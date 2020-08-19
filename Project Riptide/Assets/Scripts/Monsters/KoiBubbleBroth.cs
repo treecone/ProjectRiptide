@@ -78,7 +78,7 @@ public class KoiBubbleBroth : MonoBehaviour
     private void RemoveSlowExit(GameObject other)
     {
         Debug.Log("Exiting bubble broth: " + other);
-        if(other.tag == "Hitbox" && other.transform.parent != null && other.transform.parent.parent.tag == "Player")
+        if(other.tag == "Hitbox" && other.transform.parent != null && other.transform.parent.parent != null && other.transform.parent.parent.tag == "Player")
         {
             if(_playerStatus!=null)
             {

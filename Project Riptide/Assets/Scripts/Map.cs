@@ -13,7 +13,8 @@ public class Map : MonoBehaviour
 
     private Vector2 _currentChunk;
 
-    private Vector2 _mapTopLeftCorner;
+    [SerializeField]
+    private Vector2 _mapTopLeftCorner; //Should always be 447.98, -81.77588
     [SerializeField]
     private RectTransform _mapCursor;
     private float _mapPartLength;
@@ -28,13 +29,14 @@ public class Map : MonoBehaviour
         //_mapBackground.transform.parent.gameObject.SetActive(true);
 
         //Calculate stuff for setting cursor position later
-        RectTransform topLeft = _mapBackground.transform.GetChild(0).GetComponent<RectTransform>();
+        /*RectTransform topLeft = _mapBackground.transform.GetChild(0).GetComponent<RectTransform>();
+        Debug.Log(_mapBackground.transform.parent.gameObject.activeSelf);
         _mapPartLength = topLeft.rect.width;
-        _mapTopLeftCorner = new Vector2(topLeft.anchoredPosition.x - (_mapPartLength / 2), topLeft.anchoredPosition.y + (_mapPartLength / 2));
-
-        //_mapBackground.transform.parent.gameObject.SetActive(false);
+        _mapTopLeftCorner = new Vector2(topLeft.anchoredPosition.x - (_mapPartLength / 2), topLeft.anchoredPosition.y + (_mapPartLength / 2));*/
 
         _invMethods.UpdateMap();
+
+        //_mapBackground.transform.parent.gameObject.SetActive(false);
     }
 
     /// <summary>
