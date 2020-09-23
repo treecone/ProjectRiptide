@@ -253,14 +253,14 @@ public class InputManager : MonoBehaviour
                 _startedMove = true;
             }*/
 
-            _clickStartPosition = new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale;
+            _clickStartPosition = Input.mousePosition * _screenScale;
             _clickDuration = 0;
         }
         //Mouse is being held
         else if (Input.GetMouseButton(0)) //mouse held
         {
             _clickCurrentPosition = (Input.mousePosition /*- _screenCorrect*/) * _screenScale;
-            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - _clickCurrentPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
+            if (Vector3.SqrMagnitude(new Vector2(_iconBase.position.x, _iconBase.position.y) * _screenScale - _clickStartPosition) <= MAX_ICON_RECLICK_DIST * MAX_ICON_RECLICK_DIST)
             {
                 _clickDuration += Time.deltaTime;
                 Vector2 clickDisplacement = _clickCurrentPosition - _clickStartPosition;

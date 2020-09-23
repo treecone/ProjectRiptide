@@ -456,7 +456,7 @@ public class InventoryMethods : MonoBehaviour
         //calculate what chunk player is in
         if (_exposed[chunk] == false)
         {
-            _mapImages[25].enabled = false; //disable player
+            _mapImages[25].enabled = true; //disable player
             _uiAnimMethods.InHiddenChunk(_mapImages[chunk]);
         }
         else
