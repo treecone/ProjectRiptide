@@ -246,14 +246,14 @@ public partial class KoiBoss : Enemy
                         _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                     //Check to see if monster can use triple dash special attack
-                    if (_playerDistance < 13.0f)
+                    if (_playerDistance < KOI_DASH_ATTACK_MAX_DISTANCE)
                     {
                         _specialCooldown[(int)KoiAttackState.TripleDash] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 5.0f;
-                            _specialCooldown[(int)KoiAttackState.TripleDash] = 6.0f;
+                            _specialCooldown[(int)KoiAttackState.TripleDash] = KOI_DASH_ATTACK_COOLDOWN;
                             _currTime = 0;
                             //Set up triple dash attack
                             _actionQueue.Enqueue(KoiStopTransition);
@@ -267,7 +267,7 @@ public partial class KoiBoss : Enemy
                     }
 
                     //Check to see if monster can use bubble attack
-                    if (_playerDistance > 10.0f)
+                    if (_playerDistance > KOI_BUBBLE_ATTACK_MIN_DISTANCE)
                     {
                         _specialCooldown[(int)KoiAttackState.BubbleAttack] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleAttack] < 0.0f && Random.Range(1, 4) == 1)
@@ -275,21 +275,21 @@ public partial class KoiBoss : Enemy
                             //Load projectile
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 2.0f;
-                            _specialCooldown[(int)KoiAttackState.BubbleAttack] = 3.0f;
+                            _specialCooldown[(int)KoiAttackState.BubbleAttack] = KOI_BUBBLE_ATTACK_COOLDOWN;
                             _currTime = 0;
                             _actionQueue.Enqueue(KoiBubbleAttack);
                         }
                     }
 
                     //Check to see if player can use charge projectile special attack
-                    if (_playerDistance < 20.0f)
+                    if (_playerDistance < KOI_BUBBLE_BLAST_MAX_DISTANCE)
                     {
                         _specialCooldown[(int)KoiAttackState.BubbleBlast] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             _activeStates[(int)AttackState.Active] = true;
-                            _specialCooldown[(int)AttackState.Active] = 6.0f;
-                            _specialCooldown[(int)KoiAttackState.BubbleBlast] = 8.0f;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)KoiAttackState.BubbleBlast] = KOI_BUBBLE_BLAST_COOLDOWN;
                             _initalPos = transform.position.y;
                             _currTime = 0;
                             //Set up bubble blast attack
@@ -382,7 +382,7 @@ public partial class KoiBoss : Enemy
                         _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                     //Check to see if monster can use triple dash special attack
-                    if (_playerDistance < 16.0f)
+                    if (_playerDistance < KOI_DASH_ATTACK_MAX_DISTANCE + 3.0f)
                     {
                         _specialCooldown[(int)KoiAttackState.TripleDash] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.TripleDash] < 0.0f && Random.Range(1, 4) == 1)
@@ -391,7 +391,7 @@ public partial class KoiBoss : Enemy
                             _initalPos = transform.position.y;
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 5.0f;
-                            _specialCooldown[(int)KoiAttackState.TripleDash] = 6.0f;
+                            _specialCooldown[(int)KoiAttackState.TripleDash] = KOI_DASH_ATTACK_COOLDOWN;
                             //Set up triple dash attack
                             _actionQueue.Enqueue(KoiDashCharge);
                             _actionQueue.Enqueue(KoiUnderwaterDash);
@@ -404,7 +404,7 @@ public partial class KoiBoss : Enemy
                     }
 
                     //Check to see if monster can use underwater attack
-                    if (_playerDistance < 15.0f)
+                    if (_playerDistance < KOI_UNDERWATER_ATTACK_MAX_DISTANCE + 3.0f)
                     {
                         _specialCooldown[(int)KoiAttackState.UnderwaterAttack] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.UnderwaterAttack] < 0.0f && Random.Range(1, 4) == 1)
@@ -413,7 +413,7 @@ public partial class KoiBoss : Enemy
                             _initalPos = transform.position.y;
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 5.0f;
-                            _specialCooldown[(int)KoiAttackState.UnderwaterAttack] = 8.0f;
+                            _specialCooldown[(int)KoiAttackState.UnderwaterAttack] = KOI_UNDERWATER_ATTACK_COOLDOWN;
                             //Set up Underwater attack
                             _actionQueue.Enqueue(KoiUnderwaterFollow);
                             _actionQueue.Enqueue(KoiUnderwaterAttack);
@@ -421,7 +421,7 @@ public partial class KoiBoss : Enemy
                     }
 
                     //Check to see if player can use charge projectile special attack
-                    if (_playerDistance < 23.0f)
+                    if (_playerDistance < KOI_BUBBLE_BLAST_MAX_DISTANCE + 3.0f)
                     {
                         _specialCooldown[(int)KoiAttackState.BubbleBlast] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)KoiAttackState.BubbleBlast] < 0.0f && Random.Range(1, 4) == 1)
@@ -429,8 +429,8 @@ public partial class KoiBoss : Enemy
                             //Use cooldown to store original height
                             _initalPos = transform.position.y;
                             _activeStates[(int)AttackState.Active] = true;
-                            _specialCooldown[(int)AttackState.Active] = 6.0f;
-                            _specialCooldown[(int)KoiAttackState.BubbleBlast] = 9.0f;
+                            _specialCooldown[(int)AttackState.Active] = 5.0f;
+                            _specialCooldown[(int)KoiAttackState.BubbleBlast] = KOI_BUBBLE_BLAST_COOLDOWN;
                             //Set up Underwater bubble blast
                             _actionQueue.Enqueue(KoiBubbleBlastUnderwaterCharge);
                             _actionQueue.Enqueue(KoiBubbleBlastCharge);
@@ -579,7 +579,7 @@ public partial class RockCrab : Enemy
                 FollowPlayer();
 
                 //Cooldown special while in 20 units of player
-                if (_playerDistance < 20.0f)
+                if (_playerDistance < ROCKCRAB_FLING_MAX_DISTANCE)
                 {
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                 }
@@ -600,7 +600,7 @@ public partial class RockCrab : Enemy
                 if (!DoActionQueue())
                 {
                     _activeStates[(int)AttackState.Active] = false;
-                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                    _specialCooldown[(int)AttackState.Active] = ROCKCRAB_FLING_COOLDOWN;
                 }
             }
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);

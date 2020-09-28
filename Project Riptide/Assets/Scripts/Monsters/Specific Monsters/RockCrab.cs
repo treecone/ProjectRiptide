@@ -6,6 +6,13 @@ public enum CrabAnim { Jump = 2, Open = 3, Close = 4 };
 
 public partial class RockCrab : Enemy
 {
+    #region Config Constants
+    private const float ROCKCRAB_FLING_MAX_DISTANCE = 20.0f;
+    private const float ROCKCRAB_FLING_COOLDOWN = 5.0f;
+    private const float ROCKCRAB_FLING_CHARGE_TIME = 1.0f;
+    private const float ROCKCRAB_FLING_DISTANCE = 15.0f;
+    #endregion
+
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -13,7 +20,7 @@ public partial class RockCrab : Enemy
 
         //Set parameters
         _enemyType = EnemyType.RockCrab;
-        _speed = 0.8f;
+        _speed = 1.0f;
         _health = 50;
         _maxHealth = 50;
         _timeBetween = 5.0;

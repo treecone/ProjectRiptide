@@ -11,7 +11,7 @@ public class EnemyProjectile : MonoBehaviour
     private GameObject _hitbox;
 
     private Vector3 _velocity;
-    private int _damage;
+    private float _damage;
     private float _speed;
     private float _currLifeSpan;
     private float _maxLifeSpan;
@@ -69,7 +69,7 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="speed">Speed of projectile</param>
     /// <param name="damage">Damage projectile inflicts</param>
     /// <param name="maxLifeSpan">Max life span of projectile</param>
-    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern)
+    public void LoadProjectile(Vector3 velocity, float speed, float damage, float maxLifeSpan, MovementPattern movementPattern)
     {
         this._velocity = velocity;
         this._speed = speed;
@@ -87,7 +87,7 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="maxLifeSpan">Max life span of projectile</param>
     /// <param name="launchAngle">Knockback angle for player</param>
     /// <param name="launchStrength">Knockback strength</param>
-    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
+    public void LoadProjectile(Vector3 velocity, float speed, float damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength)
     {
         _velocity = velocity;
         _speed = speed;
@@ -107,7 +107,7 @@ public class EnemyProjectile : MonoBehaviour
     /// <param name="maxLifeSpan">Max life span of projectile</param>
     /// <param name="launchAngle">Knockback angle for player</param>
     /// <param name="launchStrength">Knockback strength</param>
-    public void LoadProjectile(Vector3 velocity, float speed, int damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength, Vector3 hitboxSize)
+    public void LoadProjectile(Vector3 velocity, float speed, float damage, float maxLifeSpan, MovementPattern movementPattern, Vector2 launchAngle, float launchStrength, Vector3 hitboxSize)
     {
         _velocity = velocity;
         _speed = speed;

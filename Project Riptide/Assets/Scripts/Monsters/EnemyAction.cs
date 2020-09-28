@@ -239,8 +239,8 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiDashCharge(ref float time)
     {
-        const float MAX_TIME = 1.5f;
-        const float STALL_TIME = 0.2f;
+        const float MAX_TIME = KOI_DASH_ATTACK_CHARGE_TIME;
+        const float STALL_TIME = KOI_DASH_ATTACK_STALL_TIME;
 
         //Stop motion at begining of charge
         if (time == 0)
@@ -283,8 +283,8 @@ public partial class KoiBoss : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            ApplyMoveForce(transform.forward, 30.0f * _speed, 1.0f);
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, KOI_DASH_ATTACK_DAMGAGE, Vector2.zero, 2000));
+            ApplyMoveForce(transform.forward, KOI_DASH_ATTACK_DISTANCE, 1.0f);
             _animator.SetFloat(_animParm[(int)CarpAnim.SwimSpeed], 2.0f);
             if(DoTelegraphs())
             {
@@ -337,7 +337,7 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastTransitionDown(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = KOI_BUBBLE_BLAST_TRANSITION_DOWN_TIME;
 
         if (time == 0)
         {
@@ -348,7 +348,7 @@ public partial class KoiBoss : Enemy
             _animator.SetFloat(_animParm[(int)Anim.Velocity], 0);
         }
 
-        ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, 1.0f);
+        ApplyConstantMoveForce(Vector3.down, 3.0f * transform.localScale.y, MAX_TIME);
 
         if (time >= MAX_TIME)
         {
@@ -367,7 +367,7 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastTransitionUp(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = KOI_BUBBLE_BLAST_TRANSITION_UP_TIME;
 
         if (time == 0)
         {
@@ -376,7 +376,7 @@ public partial class KoiBoss : Enemy
             _animator.SetTrigger(_animParm[(int)CarpAnim.Shoot]);
         }
 
-        ApplyConstantMoveForce(Vector3.up, 3.0f * transform.localScale.y, 1.0f);
+        ApplyConstantMoveForce(Vector3.up, 3.0f * transform.localScale.y, MAX_TIME);
 
         if (time >= MAX_TIME)
         {
@@ -396,8 +396,8 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastCharge(ref float time)
     {
-        const float MAX_TIME = 2.0f;
-        const float STALL_TIME = 0.1f;
+        const float MAX_TIME = KOI_BUBBLE_BLAST_CHARGE_TIME;
+        const float STALL_TIME = KOI_BUBBLE_BLAST_STALL_TIME;
 
         if (time < MAX_TIME - STALL_TIME)
         {
@@ -442,13 +442,13 @@ public partial class KoiBoss : Enemy
             ClearTelegraphs();
         }
         //Spawn projectiles
-        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
-        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, 10, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, (5 * _lengthMult / 6)), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(-0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.10f, 0, (5 * _lengthMult / 6) - 0.25f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.25f, 0, (5 * _lengthMult / 6) - 0.75f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0.50f, 0, (5 * _lengthMult / 6) - 1.50f), new Vector3(1, 1, 1), 0.5f, KOI_BUBBLE_BLAST_DAMAGE, 1.0f, MovementPattern.Forward, Vector2.zero, 200);
 
         return false;
     }
@@ -456,15 +456,15 @@ public partial class KoiBoss : Enemy
     protected bool KoiBubbleBlastBig(ref float time)
     {
         //Spawn projectiles
-        SpawnProjectile(new Vector3(0, 0, _lengthMult / 3f), new Vector3(4, 4, 4), 0.4f, 10, 1.2f, MovementPattern.Forward, Vector2.zero, 2000);
+        SpawnProjectile(new Vector3(0, 0, _lengthMult / 3f), new Vector3(4, 4, 4), 0.4f, KOI_BUBBLE_BLAST_DAMAGE, 1.2f, MovementPattern.Forward, Vector2.zero, 2000);
 
         return false;
     }
 
     protected bool KoiBubbleBlastBigCharge(ref float time)
     {
-        const float MAX_TIME = 0.5f;
-        const float STALL_TIME = 0.1f;
+        const float MAX_TIME = KOI_BUBBLE_BLAST_RECHARGE_TIME;
+        const float STALL_TIME = KOI_BUBBLE_BLAST_RESTALL_TIME;
 
         if (time < MAX_TIME - STALL_TIME)
         {
@@ -493,7 +493,7 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleAttack(ref float time)
     {
-        SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), new Vector3(1,1,1), 1.0f, 10, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
+        SpawnProjectile(new Vector3(0, 0, 5 * _lengthMult / 6), new Vector3(1,1,1), 1.0f, KOI_BUBBLE_ATTACK_DAMAGE, 3.0f, MovementPattern.Forward, Vector2.zero, 200);
         CreateTelegraph(new Vector3(0, 0, (_lengthMult + 30) / transform.localScale.z), new Vector3(0.5f, 1, 62f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, false);
 
         if(time != 0)
@@ -516,8 +516,8 @@ public partial class KoiBoss : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            _gravity = ApplyArcForce(transform.forward, 30.0f * _speed, 2f * transform.localScale.y, 1.0f);
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(1, 1, 1), HitboxType.EnemyHitbox, KOI_DASH_ATTACK_DAMGAGE, Vector2.zero, 2000));
+            _gravity = ApplyArcForce(transform.forward, KOI_DASH_ATTACK_DISTANCE, 2f * transform.localScale.y, 1.0f);
             if (DoTelegraphs())
             {
                 _telegraphs[0].transform.parent = null;
@@ -576,8 +576,8 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiUnderwaterDashReturn(ref float time)
     {
-        const float MAX_TIME = 4.0f;
-        const float STALL_TIME = 3.0f;
+        const float MAX_TIME = KOI_UNDERWATER_DASH_VULNERABILITY_TIME + 1.0f;
+        const float STALL_TIME = KOI_UNDERWATER_DASH_VULNERABILITY_TIME;
 
         //Move fish above water
         if (time < MAX_TIME - STALL_TIME)
@@ -619,7 +619,7 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastUnderwaterCharge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = KOI_BUBBLE_BLAST_TRANSITION_UP_TIME;
 
         if (time == 0)
         {
@@ -629,7 +629,7 @@ public partial class KoiBoss : Enemy
         }
 
         //Move fish out of water
-        ApplyConstantMoveForce(Vector3.up, 1.0f * transform.localScale.y, 1.0f);
+        ApplyConstantMoveForce(Vector3.up, 1.0f * transform.localScale.y, MAX_TIME);
 
         if (time >= MAX_TIME)
         {
@@ -651,8 +651,8 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiBubbleBlastReturn(ref float time)
     {
-        const float MAX_TIME = 2.0f;
-        const float STALL_TIME = 1.5f;
+        const float MAX_TIME = KOI_UNDERWATER_BUBBLE_BLAST_VULNERABILITY_TIME + 0.5f;
+        const float STALL_TIME = KOI_UNDERWATER_BUBBLE_BLAST_VULNERABILITY_TIME;
 
         if (time < STALL_TIME)
         {
@@ -688,12 +688,12 @@ public partial class KoiBoss : Enemy
     /// <returns></returns>
     protected bool KoiUnderwaterFollow(ref float time)
     {
-        const float MAX_TIME = 4.5f;
-        const float STALL_TIME = 0.5f;
+        const float MAX_TIME = KOI_UNDERWATER_ATTACK_FOLLOW_TIME + KOI_UNDERWATER_ATTACK_STALL_TIME;
+        const float STALL_TIME = KOI_UNDERWATER_ATTACK_STALL_TIME;
 
         if (time == 0)
         {
-            _maxSpeed += 5.0f;
+            _maxSpeed += KOI_UNDERWATER_ATTACK_FOLLOW_SPEED;
             if (DoTelegraphs())
             {
                 CreateTelegraph(new Vector3(0, _detectPosition.localPosition.y - 0.1f, 0), new Vector3(_widthMult, 1, _lengthMult), Quaternion.identity, TelegraphType.Circle, true);
@@ -787,7 +787,7 @@ public partial class KoiBoss : Enemy
                 if (transform.position.y <= _initalPos)
                 {
                     ReturnToInitalPosition();
-                    time = 3.95f;
+                    time = KOI_UNDERWATER_ATTACK_VULNERABILIITY_TIME + 0.95f;
                 }
                 else
                 {
@@ -809,7 +809,7 @@ public partial class KoiBoss : Enemy
         }
 
         //If player was not hit, make the koi go back under water
-        if (time >= 3.95f && !_inKnockback)
+        if (time >= KOI_UNDERWATER_ATTACK_VULNERABILIITY_TIME + 0.95f && !_inKnockback)
         {
             //Move fish down until its back in original position
             if (transform.position.y > _initalPos)
@@ -824,7 +824,7 @@ public partial class KoiBoss : Enemy
             }
         }
         //Finish attack
-        else if (time >= 3.95f)
+        else if (time >= KOI_UNDERWATER_ATTACK_VULNERABILIITY_TIME + 0.95f)
         {
             StopMotion();
             _inKnockback = false;
@@ -840,14 +840,14 @@ public partial class RockCrab : Enemy
 {
     protected bool RockCrabFlingCharge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        const float MAX_TIME = ROCKCRAB_FLING_CHARGE_TIME;
 
         if(time == 0)
         {
             //Set up telegraph
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, 0, 7.5f), new Vector3(2, 1, 15f), Quaternion.identity, TelegraphType.Square, true);
+                CreateTelegraph(new Vector3(0, 0, ROCKCRAB_FLING_DISTANCE / 2.0f), new Vector3(2, 1, ROCKCRAB_FLING_DISTANCE), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -880,7 +880,7 @@ public partial class RockCrab : Enemy
         if (time == 0.0f)
         {
             _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
-            _gravity = ApplyArcForce(transform.forward, _playerDistance * _speed * 1.5f, 2f * transform.localScale.y, 1.0f);
+            _gravity = ApplyArcForce(transform.forward, ROCKCRAB_FLING_DISTANCE, 2f * transform.localScale.y, 1.0f);
             _animator.SetTrigger(_animParm[(int)CrabAnim.Jump]);
             if (DoTelegraphs())
             {
