@@ -14,7 +14,7 @@ public delegate void GiveFloat(float f);
 public delegate void DeleteHostile(GameObject g);
 public enum EnemyType { FirstEnemy = 0, KoiBoss = 1, DefensiveEnemy = 2, PassiveEnemy = 3, RockCrab = 4, SeaSheep = 5,
     FlowerFrog = 6, ClamBoss = 7, Pandatee = 8, ChickenFlock = 9, Stingray = 10, Mox = 11, MonkeyBoss = 12, MonkeyStorm = 13,
-    Waterdeer = 14, MaterialDeposit = 15}
+    Waterdeer = 14, MaterialDeposit = 15, BombCrab = 16}
 public enum Anim { Die = 0, Velocity = 1};
 public enum TelegraphType { Circle = 0, Square = 1, Cone = 2};
 
@@ -280,7 +280,7 @@ public partial class Enemy : Physics
                 _state = EnemyState.Hostile;
                 OnHostile();
             }
-            if (_health <= 0)
+            if (_health <= 0 && !_dying)
             {
                 _health = 0;
                 OnDeath();

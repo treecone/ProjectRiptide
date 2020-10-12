@@ -13,6 +13,14 @@ MonoBehaviour:
   m_Name: EnemyConfig
   m_EditorClassIdentifier: 
   _koiBoss:
+    _base:
+      _maxHealth: 200
+      _baseSpeed: 1
+      _wanderRadius: 60
+      _hostileRadius: 30
+      _passiveRadius: 90
+      _maxRadius: 240
+      _pushMultiplier: 0.1
     _dashAttack:
       _maxDistance: 13
       _cooldown: 6
@@ -46,3 +54,18 @@ MonoBehaviour:
       _damage: 20
       _followSpeed: 5
       _vulnerabilityTime: 3
+  _bombCrab:
+    _base:
+      _maxHealth: 20
+      _baseSpeed: 1
+      _wanderRadius: 10
+      _hostileRadius: 20
+      _passiveRadius: 60
+      _maxRadius: 240
+      _pushMultiplier: 1
+    _explosion:
+      _maxRadius: 5
+      _damage: 20
+      _damageRadius: 6
+      _chargeTime: 0.75
+      _knockback: 500

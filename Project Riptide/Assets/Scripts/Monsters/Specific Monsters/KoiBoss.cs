@@ -21,16 +21,16 @@ public partial class KoiBoss : Enemy
 
         //Set parameters
         _enemyType = EnemyType.KoiBoss;
-        _speed = 1.0f;
-        _health = 200;
-        _maxHealth = 200;
+        _speed = EnemyConfig.Instance.KoiBoss.Base.BaseSpeed;
+        _health = EnemyConfig.Instance.KoiBoss.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.KoiBoss.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 60.0f;
-        _hostileRadius = 30.0f;
-        _passiveRadius = 120.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.KoiBoss.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.KoiBoss.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.KoiBoss.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.KoiBoss.Base.MaxRadius;
         _specialCooldown = new float[5] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
         _animParm = new int[6] {
@@ -43,7 +43,7 @@ public partial class KoiBoss : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.1f;
+        _pushMult = EnemyConfig.Instance.KoiBoss.Base.PushMult;
         _HostileAI = HostileKoiBoss;
         _PassiveAI = PassiveWanderRadius;
 

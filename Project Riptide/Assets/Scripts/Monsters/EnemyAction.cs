@@ -3168,3 +3168,59 @@ public partial class Waterdeer : Enemy
         }
     }
 }
+
+public partial class BombCrab : Enemy
+{
+    /// <summary>
+    /// Bomb crab charges explosion
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool BombCrabChargeExplosion(ref float time)
+    {
+        float MAX_TIME = EnemyConfig.Instance.BombCrab.Explosion.ChargeTime;
+
+        if(time == 0)
+        {
+            //Play explosion animation
+            _animator.Play(_animParm[(int)BombCrabAnim.Explode]);
+            StopMotion();
+        }
+
+        if(time >= MAX_TIME)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /// <summary>
+    /// Bomb crab charges explosion
+    /// </summary>
+    /// <param name="time"></param>
+    /// <returns></returns>
+    protected bool BombCrabExplode(ref float time)
+    {
+        if (time == 0)
+        {
+            _explosionParticles.Play();
+            float radius = EnemyConfig.Instance.BombCrab.Explosion.DamageRadius;
+            _hitboxes.Add(CreateHitbox(new Vector3(0, 0, 0), new Vector3(radius, radius, radius), HitboxType.EnemyHitbox, EnemyConfig.Instance.BombCrab.Explosion.Damage, Vector2.zero, EnemyConfig.Instance.BombCrab.Explosion.Knockback));
+            _hitboxes.Add(CreateHitbox(new Vector3(0, 0, 0), new Vector3(radius, radius, radius), HitboxType.PlayerHitbox, EnemyConfig.Instance.BombCrab.Explosion.Damage / 2, Vector2.zero, EnemyConfig.Instance.BombCrab.Explosion.Knockback));
+        }
+
+        if (time > 0)
+        {
+            ClearHitboxes();
+            TakeDamage(9999);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+}

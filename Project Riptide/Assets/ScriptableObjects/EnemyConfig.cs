@@ -23,9 +23,40 @@ public class EnemyConfig : ScriptableObject
     }
 
     [System.Serializable]
+    public class BaseEnemyConfig
+    {
+        [SerializeField]
+        protected float _maxHealth = 100;
+        public float MaxHealth => _maxHealth;
+        [SerializeField]
+        protected float _baseSpeed = 1.0f;
+        public float BaseSpeed => _baseSpeed;
+        [SerializeField]
+        protected float _wanderRadius = 60.0f;
+        public float WanderRadius => _wanderRadius;
+        [SerializeField]
+        protected float _hostileRadius = 30.0f;
+        public float HostileRadius => _hostileRadius;
+        [SerializeField]
+        protected float _passiveRadius = 90.0f;
+        public float PassiveRadius => _passiveRadius;
+        [SerializeField]
+        protected float _maxRadius = 240.0f;
+        public float MaxRadius => _maxRadius;
+        [SerializeField]
+        protected float _pushMultiplier = 1f;
+        public float PushMult => _pushMultiplier;
+
+    }
+
+    [System.Serializable]
     public class KoiBossConfig
     {
         //Constant values for Koi boss AI
+        [SerializeField]
+        private BaseEnemyConfig _base;
+        public BaseEnemyConfig Base => _base;
+
         //Koi dash attack
         [System.Serializable]
         public class KoiDashAttack
@@ -162,8 +193,44 @@ public class EnemyConfig : ScriptableObject
         public KoiUnderwaterAttack UnderwaterAttack => _underwaterAttack;
     }
 
+    [System.Serializable]
+    public class BombCrabConfig
+    {
+        [SerializeField]
+        private BaseEnemyConfig _base;
+        public BaseEnemyConfig Base => _base;
+
+        [System.Serializable]
+        public class BombCrabExplosion
+        {
+            [SerializeField]
+            private float _maxRadius = 5.0f;
+            public float MaxRadius => _maxRadius;
+            [SerializeField]
+            private float _damage = 20.0f;
+            public float Damage => _damage;
+            [SerializeField]
+            private float _damageRadius = 2.5f;
+            public float DamageRadius => _damageRadius;
+            [SerializeField]
+            private float _chargeTime = 1.5f;
+            public float ChargeTime => _chargeTime;
+            [SerializeField]
+            private float _knockback = 1000.0f;
+            public float Knockback => _knockback;
+        }
+        [SerializeField]
+        private BombCrabExplosion _explosion;
+        public BombCrabExplosion Explosion => _explosion;
+
+    }
+
     [SerializeField]
     private KoiBossConfig _koiBoss;
     public KoiBossConfig KoiBoss => _koiBoss;
+
+    [SerializeField]
+    private BombCrabConfig _bombCrab;
+    public BombCrabConfig BombCrab => _bombCrab;
 
 }

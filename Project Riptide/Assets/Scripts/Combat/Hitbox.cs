@@ -133,7 +133,7 @@ public class Hitbox : MonoBehaviour
                 if (_type == HitboxType.PlayerHitbox)
                 {
                     Enemy enemy = hitbox.AttachedObject.GetComponent<Enemy>();
-                    if (enemy != null)
+                    if (enemy != null && _attachedObject != hitbox.AttachedObject)
                     {
                         //Add knockback if there is any
                         if (_launchStrength != 0)
