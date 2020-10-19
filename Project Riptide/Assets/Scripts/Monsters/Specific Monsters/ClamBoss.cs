@@ -39,8 +39,6 @@ public partial class ClamBoss : Enemy
     protected ParticleSystem _waterSpoutDown;
     protected List<ParticleSystem> _dragonSmokeParticles = new List<ParticleSystem>();
 
-    const int DRAGON_SMOKE_CLOUDS = 10;
-
     // Start is called before the first frame update
     protected override void Start()
     {
@@ -48,16 +46,16 @@ public partial class ClamBoss : Enemy
 
         //Set parameters
         _enemyType = EnemyType.ClamBoss;
-        _speed = 1.0f;
-        _health = 250;
-        _maxHealth = 250;
+        _speed = EnemyConfig.Instance.ClamBoss.Base.Speed;
+        _health = EnemyConfig.Instance.ClamBoss.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.ClamBoss.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 60.0f;
-        _hostileRadius = 30.0f;
-        _passiveRadius = 80.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.ClamBoss.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.ClamBoss.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.ClamBoss.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.ClamBoss.Base.MaxRadius;
         _specialCooldown = new float[8] { 1.0f, 0.0f, 0.0f, 0.0f, 5.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[4] { false, false, false, false };
         _animParm = new int[5] {
@@ -69,7 +67,7 @@ public partial class ClamBoss : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.0f;
+        _pushMult = EnemyConfig.Instance.ClamBoss.Base.PushMult;
         _HostileAI = HostileClamBoss;
         _PassiveAI = PassiveDoNothing;
 
@@ -90,11 +88,6 @@ public partial class ClamBoss : Enemy
     // Update is called once per frame
     protected override void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            TakeDamage(10);
-        }
-
         if(_activeStates[(int)ClamAttackState.Opened])
         {
             _puppetCanvas.transform.rotation = new Quaternion(_camera.transform.rotation.x, _camera.transform.rotation.y, _camera.transform.rotation.z, _camera.transform.rotation.w);
@@ -131,8 +124,6 @@ public partial class ClamBoss : Enemy
     /// <param name="hitbox"></param>
     protected void DealWaterSpoutDamage(GameObject other)
     {
-        const float WATER_SPOUT_DAMAGE_PER_SECOND = 15.0f;
-
         //If the collision was with another hitbox
         if (other.CompareTag("Hitbox"))
         {
@@ -141,7 +132,7 @@ public partial class ClamBoss : Enemy
             if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
             {
                 //Player takes damage
-                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(WATER_SPOUT_DAMAGE_PER_SECOND * Time.deltaTime, false);
+                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(EnemyConfig.Instance.ClamBoss.OpenAttack.WaterSpoutAttack.DamagePerSecond * Time.deltaTime, false);
             }
         }
     }
@@ -155,7 +146,7 @@ public partial class ClamBoss : Enemy
         if(player.tag == "Player")
         {
             //Deal 2 damage per second for 5 seconds
-            player.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, 5.0f, 4.0f);
+            player.GetComponent<StatusEffects>().AddStatus(StatusType.Poison, 5.0f, EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.PoisonDamage);
         }
     }
 

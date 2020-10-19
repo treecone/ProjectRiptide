@@ -25,16 +25,16 @@ public partial class FlowerFrog : Enemy
 
         //Set parameters
         _enemyType = EnemyType.FlowerFrog;
-        _speed = 1.0f;
-        _health = 50;
-        _maxHealth = 50;
+        _speed = EnemyConfig.Instance.FlowerFrog.Base.Speed;
+        _health = EnemyConfig.Instance.FlowerFrog.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.FlowerFrog.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 30.0f;
-        _hostileRadius = 15.0f;
-        _passiveRadius = 60.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.FlowerFrog.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.FlowerFrog.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.FlowerFrog.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.FlowerFrog.Base.MaxRadius;
         _specialCooldown = new float[2] { 0.0f, 0.0f};
         _activeStates = new bool[2] { false, false };
         _animParm = new int[4] {
@@ -45,7 +45,7 @@ public partial class FlowerFrog : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 2.0f;
+        _pushMult = EnemyConfig.Instance.FlowerFrog.Base.PushMult;
         _HostileAI = HostileFlowerFrog;
         _PassiveAI = PassiveReturnToRadius;
 
@@ -81,10 +81,10 @@ public partial class FlowerFrog : Enemy
         if(other.tag == "Player")
         {
             _playerStatusEffects = other.GetComponent<StatusEffects>();
-            _playerStatusEffects.AddStatus(StatusType.Speed, "ToungeLatch" + _enemyID, 999999.0f, -0.40f);
+            _playerStatusEffects.AddStatus(StatusType.Speed, "ToungeLatch" + _enemyID, 999999.0f, EnemyConfig.Instance.FlowerFrog.ToungeLatch.SlowDownEffect);
             if(_isPoison)
             {
-                _playerStatusEffects.AddStatus(StatusType.Poison, "ToungePoison" + _enemyID, 999999.0f, 3.0f);
+                _playerStatusEffects.AddStatus(StatusType.Poison, "ToungePoison" + _enemyID, 999999.0f, EnemyConfig.Instance.FlowerFrog.ToungeLatch.PoisonDamage);
             }
         }
     }

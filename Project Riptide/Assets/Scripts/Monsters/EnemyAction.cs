@@ -840,14 +840,14 @@ public partial class RockCrab : Enemy
 {
     protected bool RockCrabFlingCharge(ref float time)
     {
-        const float MAX_TIME = ROCKCRAB_FLING_CHARGE_TIME;
+        float MAX_TIME = EnemyConfig.Instance.RockCrab.FlingAttack.ChargeTime;
 
         if(time == 0)
         {
             //Set up telegraph
             if (DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, 0, ROCKCRAB_FLING_DISTANCE / 2.0f), new Vector3(2, 1, ROCKCRAB_FLING_DISTANCE), Quaternion.identity, TelegraphType.Square, true);
+                CreateTelegraph(new Vector3(0, 0, EnemyConfig.Instance.RockCrab.FlingAttack.Distance / 2.0f), new Vector3(2, 1, EnemyConfig.Instance.RockCrab.FlingAttack.Distance), Quaternion.identity, TelegraphType.Square, true);
             }
         }
 
@@ -879,8 +879,8 @@ public partial class RockCrab : Enemy
         //Start dashing
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, _ramingDamage, new Vector2(90, 0), 1000));
-            _gravity = ApplyArcForce(transform.forward, ROCKCRAB_FLING_DISTANCE, 2f * transform.localScale.y, 1.0f);
+            _hitboxes.Add(CreateHitbox(Vector3.zero, new Vector3(1.66f, 3f, 1.66f) * transform.localScale.x / 2.0f, HitboxType.EnemyHitbox, EnemyConfig.Instance.RockCrab.FlingAttack.Damage, new Vector2(0, 0), EnemyConfig.Instance.RockCrab.FlingAttack.Knockback));
+            _gravity = ApplyArcForce(transform.forward, EnemyConfig.Instance.RockCrab.FlingAttack.Distance, 2f * transform.localScale.y, 1.0f);
             _animator.SetTrigger(_animParm[(int)CrabAnim.Jump]);
             if (DoTelegraphs())
             {
@@ -939,10 +939,9 @@ public partial class FlowerFrog : Enemy
     /// <returns></returns>
     protected bool ToungeCharge(ref float time)
     {
-        const float MAX_TIME = 1.5f;
-        const float STALL_TIME = 0.0f;
+        float MAX_TIME = EnemyConfig.Instance.FlowerFrog.ToungeLatch.ChargeTime;
 
-        if (time < MAX_TIME - STALL_TIME)
+        if (time < MAX_TIME)
         {
             //Stop motion at start
             if (time == 0)
@@ -1094,21 +1093,19 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamCircleAttack(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.CircleAttack.ChargeTime * _speedScale;
 
         if(time == 0)
         {
             //Spawn Tentcales around clam in a radius
-            const float CIRCLE_TENTACLES = 10;
-            const float CIRCLE_RADIUS = 7.0f;
-            float tentaclePerDegree = 360 / 10;
-            for (int i = 0; i < CIRCLE_TENTACLES; i++)
+            float tentaclePerDegree = 360 / EnemyConfig.Instance.ClamBoss.CircleAttack.TentacleAmount;
+            for (int i = 0; i < EnemyConfig.Instance.ClamBoss.CircleAttack.TentacleAmount; i++)
             {
-                Vector3 tentaclePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS;
+                Vector3 tentaclePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * EnemyConfig.Instance.ClamBoss.CircleAttack.CircleRadius;
                 Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - transform.position);
                 Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, tentacleRotation)
                     .GetComponent<ClamTentacle>()
-                    .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, 5.0f, 2.0f, 1.0f, 2.0f, _speedScale, 1);
+                    .SetTentacle(TentacleMode.StationarySlap, PlayerPosition, EnemyConfig.Instance.ClamBoss.CircleAttack.Damage, EnemyConfig.Instance.ClamBoss.CircleAttack.RiseTime, EnemyConfig.Instance.ClamBoss.CircleAttack.TrackTime, EnemyConfig.Instance.ClamBoss.CircleAttack.AttackTime, _speedScale, 1);
             }
 
             /*if(DoTelegraphs())
@@ -1136,18 +1133,17 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamTrackAttack(ref float time)
     {
-        float MAX_TIME = 1.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.TrackingAttack.ChargeTime * _speedScale;
 
         if (time == 0)
         {
             //Spawn Tentcale near the player
-            const float CIRCLE_RADIUS = 5.0f;
-            Vector2 randomOnCircle = Random.insideUnitCircle.normalized * CIRCLE_RADIUS;
+            Vector2 randomOnCircle = Random.insideUnitCircle.normalized * EnemyConfig.Instance.ClamBoss.TrackingAttack.CircleRadius;
             Vector3 tentaclePosition = PlayerPosition() + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
             Quaternion tentacleRotation = Quaternion.LookRotation(tentaclePosition - PlayerPosition());
             Instantiate(_tentaclePrefab, tentaclePosition, tentacleRotation)
                 .GetComponent<ClamTentacle>()
-                .SetTentacle(TentacleMode.TrackingSlap, PlayerPosition, 5.0f, 2.0f, 1.0f, 1.0f, _speedScale, 1);
+                .SetTentacle(TentacleMode.TrackingSlap, PlayerPosition, EnemyConfig.Instance.ClamBoss.TrackingAttack.Damage, EnemyConfig.Instance.ClamBoss.TrackingAttack.RiseTime, EnemyConfig.Instance.ClamBoss.TrackingAttack.TrackTime, EnemyConfig.Instance.ClamBoss.TrackingAttack.AttackTime, _speedScale, 1);
         }
 
         if (time >= MAX_TIME)
@@ -1167,7 +1163,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamLineAttack(ref float time)
     {
-        float MAX_TIME = 0.25f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.LineAttack.ChargeTime * _speedScale;
 
         if (time == 0)
         {
@@ -1176,7 +1172,7 @@ public partial class ClamBoss : Enemy
             Quaternion tentacleRotation = _rotation;
             Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2f, tentacleRotation)
                 .GetComponent<ClamTentacle>()
-                .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1.5f);
+                .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, EnemyConfig.Instance.ClamBoss.LineAttack.Damage, EnemyConfig.Instance.ClamBoss.LineAttack.RiseTime, EnemyConfig.Instance.ClamBoss.LineAttack.TrackTime, EnemyConfig.Instance.ClamBoss.LineAttack.AttackTime, _speedScale, 1.5f);
             _lineOffset += 5.0f;
             if(DoTelegraphs() && _lineOffset == 10.0f)
             {
@@ -1202,20 +1198,18 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamBurstAttack(ref float time)
     {
-        const float MAX_TIME = 2.0f;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.BurstAttack.Duration;
 
         if (time == 0)
         {
             //Spawn Tentcales around clam in a radius
-            const float CIRCLE_TENTACLES = 50;
-            const float CIRCLE_RADIUS = 30.0f;
-            for (int i = 0; i < CIRCLE_TENTACLES; i++)
+            for (int i = 0; i < EnemyConfig.Instance.ClamBoss.BurstAttack.TentacleAmount; i++)
             {
-                Vector2 randomOnCircle = Random.insideUnitCircle * CIRCLE_RADIUS;
+                Vector2 randomOnCircle = Random.insideUnitCircle * EnemyConfig.Instance.ClamBoss.BurstAttack.AttackRadius;
                 Vector3 tentaclePosition = transform.position + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
                 Instantiate(_tentaclePrefab, tentaclePosition + Vector3.up * -2, _rotation)
                     .GetComponent<ClamTentacle>()
-                    .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, 10.0f, 1.0f, 1.0f, 1.0f, _speedScale, 1);
+                    .SetTentacle(TentacleMode.RisingAttack, PlayerPosition, EnemyConfig.Instance.ClamBoss.BurstAttack.Damage, EnemyConfig.Instance.ClamBoss.BurstAttack.RiseTime, EnemyConfig.Instance.ClamBoss.BurstAttack.TrackTime, EnemyConfig.Instance.ClamBoss.BurstAttack.AttackTime, _speedScale, 1);
             }
         }
 
@@ -1236,7 +1230,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamOpen(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.ChargeTime * _speedScale;
 
         if(time == 0)
         {
@@ -1264,7 +1258,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamWait(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.WaitTime * _speedScale;
 
         if(time >= MAX_TIME)
         {
@@ -1283,7 +1277,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamClose(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.ChargeTime * _speedScale;
 
         if (time == 0)
         {
@@ -1309,7 +1303,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamWaterSpoutStart(ref float time)
     {
-        float MAX_TIME = 0.5f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.WaterSpoutAttack.ChargeTime * _speedScale;
 
         if (time == 0)
         {
@@ -1336,8 +1330,8 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamWaterSpoutAttack(ref float time)
     {
-        float MAX_TIME = 5.0f * _speedScale;
-        float STALL_TIME = 0.5f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.WaterSpoutAttack.Duration * _speedScale;
+        float STALL_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.WaterSpoutAttack.StallTime * _speedScale;
 
         ParticleSystem.ShapeModule shape;
 
@@ -1397,7 +1391,7 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamBirdAttack(ref float time)
     {
-        float MAX_TIME = 4.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.BirdAttack.Duration * _speedScale;
 
         //Fire a random projectile randomly every couple frames
         if(Random.Range(0, (int)Mathf.Ceil(8 * _speedScale)) == 0)
@@ -1426,7 +1420,7 @@ public partial class ClamBoss : Enemy
             {
                 projectile = Instantiate(_stickPrefab, spawnPosition, Quaternion.LookRotation(fireDirection));
             }
-            projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, 0.5f * (1 / _speedScale), 5, 1, MovementPattern.Forward, Vector2.zero, 300, new Vector3(1.8f, 1.8f, 1.6f));
+            projectile.GetComponent<EnemyProjectile>().LoadProjectile(fireDirection, EnemyConfig.Instance.ClamBoss.OpenAttack.BirdAttack.RockSpeed * (1 / _speedScale), EnemyConfig.Instance.ClamBoss.OpenAttack.BirdAttack.Damage, 1, MovementPattern.Forward, Vector2.zero, EnemyConfig.Instance.ClamBoss.OpenAttack.BirdAttack.Knockback, new Vector3(1.8f, 1.8f, 1.6f));
             if (DoTelegraphs())
             {
                 CreateTelegraph(transform.InverseTransformVector(fireDirection.normalized) * 20, new Vector3(0.5f, 1, 40 / transform.localScale.z), Quaternion.LookRotation(fireDirection), TelegraphType.Square, true);
@@ -1455,14 +1449,14 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamDragonCharge(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.ChargeTime * _speedScale;
 
         if(time == 0)
         {
             //Spawn clouds of poison smoke around clam in a radius
             const float CIRCLE_RADIUS = 6.0f;
-            float tentaclePerDegree = 360 / DRAGON_SMOKE_CLOUDS;
-            for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+            float tentaclePerDegree = 360 / EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.SmokeClouds;
+            for (int i = 0; i < EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.SmokeClouds; i++)
             {
                 Vector3 smokePosition = transform.position + Quaternion.Euler(0, tentaclePerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.up * 2.0f;
                 Vector3 smokeDistanceVec = smokePosition - transform.position;
@@ -1483,7 +1477,7 @@ public partial class ClamBoss : Enemy
             }
         }
 
-        for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+        for (int i = 0; i < EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.SmokeClouds; i++)
         {
             _dragonSmokeParticles[i].transform.localScale = new Vector3(_dragonSmokeParticles[i].transform.localScale.x + Time.deltaTime / MAX_TIME, _dragonSmokeParticles[i].transform.localScale.y + Time.deltaTime / MAX_TIME, _dragonSmokeParticles[i].transform.localScale.z + Time.deltaTime / MAX_TIME);
         }
@@ -1506,17 +1500,17 @@ public partial class ClamBoss : Enemy
     /// <returns></returns>
     protected bool ClamDragonAttack(ref float time)
     {
-        float MAX_TIME = 2.0f * _speedScale;
+        float MAX_TIME = EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.Duration * _speedScale;
 
         //Move smoke clouds forward
-        for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+        for (int i = 0; i < EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.SmokeClouds; i++)
         {
-            _dragonSmokeParticles[i].transform.Translate(_dragonSmokeParticles[i].transform.forward * 35 * Time.deltaTime / MAX_TIME, Space.World);
+            _dragonSmokeParticles[i].transform.Translate(_dragonSmokeParticles[i].transform.forward * EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.Distance * Time.deltaTime / MAX_TIME, Space.World);
         }
 
         if (time > MAX_TIME)
         {
-            for (int i = 0; i < DRAGON_SMOKE_CLOUDS; i++)
+            for (int i = 0; i < EnemyConfig.Instance.ClamBoss.OpenAttack.DragonAttack.SmokeClouds; i++)
             {
                 _dragonSmokeParticles[i].Stop();
             }

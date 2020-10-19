@@ -18,7 +18,7 @@ public partial class BombCrab : Enemy
 
         //Set parameters
         _enemyType = EnemyType.BombCrab;
-        _speed = EnemyConfig.Instance.BombCrab.Base.BaseSpeed;
+        _speed = EnemyConfig.Instance.BombCrab.Base.Speed;
         _health = EnemyConfig.Instance.BombCrab.Base.MaxHealth;
         _maxHealth = EnemyConfig.Instance.BombCrab.Base.MaxHealth;
         _timeBetween = 5.0;

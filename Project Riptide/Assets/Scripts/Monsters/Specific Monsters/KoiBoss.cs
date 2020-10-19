@@ -21,7 +21,7 @@ public partial class KoiBoss : Enemy
 
         //Set parameters
         _enemyType = EnemyType.KoiBoss;
-        _speed = EnemyConfig.Instance.KoiBoss.Base.BaseSpeed;
+        _speed = EnemyConfig.Instance.KoiBoss.Base.Speed;
         _health = EnemyConfig.Instance.KoiBoss.Base.MaxHealth;
         _maxHealth = EnemyConfig.Instance.KoiBoss.Base.MaxHealth;
         _timeBetween = 5.0;

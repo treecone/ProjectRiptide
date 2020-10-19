@@ -579,7 +579,7 @@ public partial class RockCrab : Enemy
                 FollowPlayer();
 
                 //Cooldown special while in 20 units of player
-                if (_playerDistance < ROCKCRAB_FLING_MAX_DISTANCE)
+                if (_playerDistance < EnemyConfig.Instance.RockCrab.FlingAttack.MaxDistance)
                 {
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                 }
@@ -600,7 +600,7 @@ public partial class RockCrab : Enemy
                 if (!DoActionQueue())
                 {
                     _activeStates[(int)AttackState.Active] = false;
-                    _specialCooldown[(int)AttackState.Active] = ROCKCRAB_FLING_COOLDOWN;
+                    _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.RockCrab.FlingAttack.Cooldown;
                 }
             }
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
@@ -633,7 +633,7 @@ public partial class FlowerFrog : Enemy
                     ApplyFriction(0.5f);
 
                     //Cooldown special while in a 10 units of player
-                    if (_playerDistance < 20.0f)
+                    if (_playerDistance < EnemyConfig.Instance.FlowerFrog.ToungeLatch.MaxDistance)
                     {
                         _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                     }
@@ -670,7 +670,7 @@ public partial class FlowerFrog : Enemy
                 if (!DoActionQueue())
                 {
                     _activeStates[(int)AttackState.Active] = false;
-                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                    _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.FlowerFrog.ToungeLatch.Cooldown;
                 }
             }
             //_animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
@@ -718,7 +718,7 @@ public partial class ClamBoss : Enemy
                     {
                         _activeStates[(int)AttackState.Active] = true;
                         _activeStates[(int)ClamAttackState.TentacleBurst] = true;
-                        _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                        _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.ClamBoss.BurstAttack.Cooldown * _speedScale;
                         _currTime = 0;
                         //Set up circle tentacle attack attack
                         //_actionQueue.Enqueue(ClamBurstCharge);
@@ -730,7 +730,7 @@ public partial class ClamBoss : Enemy
                     {
                         _activeStates[(int)AttackState.Active] = true;
                         _activeStates[(int)ClamAttackState.TentacleTripleBurst] = true;
-                        _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
+                        _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.ClamBoss.BurstAttack.Cooldown * _speedScale;
                         _currTime = 0;
                         //Set up circle tentacle attack attack
                         //_actionQueue.Enqueue(ClamBurstCharge);
@@ -743,14 +743,14 @@ public partial class ClamBoss : Enemy
                     if (_specialCooldown[(int)ClamAttackState.OpenAttack] > 0)
                     {
                         //Check to see if monster can use circle tentacle special attack
-                        if (_playerDistance < 15.0f)
+                        if (_playerDistance < EnemyConfig.Instance.ClamBoss.CircleAttack.MaxDistance)
                         {
                             _specialCooldown[(int)ClamAttackState.TentacleCircle] -= Time.deltaTime;
                             if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleCircle] < 0.0f)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
-                                _specialCooldown[(int)ClamAttackState.TentacleCircle] = 3.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleCircle] = EnemyConfig.Instance.ClamBoss.CircleAttack.Cooldown * _speedScale;
                                 _currTime = 0;
                                 //Set up circle tentacle attack attack
                                 //_actionQueue.Enqueue(ClamCircleCharge);
@@ -759,7 +759,7 @@ public partial class ClamBoss : Enemy
                         }
 
                         //Check to see if monster can use tracking tentacle attack
-                        if (_playerDistance < 25.0f)
+                        if (_playerDistance < EnemyConfig.Instance.ClamBoss.TrackingAttack.MaxDistance)
                         {
                             _specialCooldown[(int)ClamAttackState.TentacleTrack] -= Time.deltaTime;
                             if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleTrack] < 0.0f && Random.Range(1, 4) == 1)
@@ -767,7 +767,7 @@ public partial class ClamBoss : Enemy
                                 //Load projectile
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 4.0f * _speedScale;
-                                _specialCooldown[(int)ClamAttackState.TentacleTrack] = 5.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleTrack] = EnemyConfig.Instance.ClamBoss.TrackingAttack.Cooldown * _speedScale;
                                 _currTime = 0;
                                 //Set up tracking tentacles attack
                                 _actionQueue.Enqueue(ClamTrackAttack);
@@ -777,14 +777,14 @@ public partial class ClamBoss : Enemy
                         }
 
                         //Check to see if player can use tentacle line attack
-                        if (_playerDistance < 20.0f)
+                        if (_playerDistance < EnemyConfig.Instance.ClamBoss.LineAttack.MaxDistance)
                         {
                             _specialCooldown[(int)ClamAttackState.TentacleLine] -= Time.deltaTime;
                             if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.TentacleLine] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 5.0f * _speedScale;
-                                _specialCooldown[(int)ClamAttackState.TentacleLine] = 8.0f * _speedScale;
+                                _specialCooldown[(int)ClamAttackState.TentacleLine] = EnemyConfig.Instance.ClamBoss.LineAttack.Cooldown * _speedScale;
                                 _currTime = 0;
                                 _lineOffset = 5.0f;
                                 _lineForward = new Vector3(PlayerPosition().x, transform.position.y, PlayerPosition().z) + PlayerVelocity() * 4.0f;
@@ -803,7 +803,7 @@ public partial class ClamBoss : Enemy
                     }
 
                     //Check to see if player can use open attack
-                    if (_playerDistance < 25.0f)
+                    if (_playerDistance < EnemyConfig.Instance.ClamBoss.OpenAttack.MaxDistance)
                     {
                         _specialCooldown[(int)ClamAttackState.OpenAttack] -= Time.deltaTime;
                         if (!_activeStates[(int)AttackState.Active] && _specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)ClamAttackState.OpenAttack] < 0.0f)
@@ -811,7 +811,7 @@ public partial class ClamBoss : Enemy
                             _activeStates[(int)AttackState.Active] = true;
                             _activeStates[(int)ClamAttackState.Opened] = true;
                             _specialCooldown[(int)AttackState.Active] = 0.0f;
-                            _specialCooldown[(int)ClamAttackState.OpenAttack] = 15.0f * _speedScale;
+                            _specialCooldown[(int)ClamAttackState.OpenAttack] = EnemyConfig.Instance.ClamBoss.OpenAttack.Cooldown * _speedScale;
                             _currTime = 0;
                             //Set up open attack
                             _actionQueue.Enqueue(ClamOpen);
