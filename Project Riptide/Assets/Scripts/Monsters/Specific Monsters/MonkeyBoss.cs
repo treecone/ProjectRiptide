@@ -52,17 +52,17 @@ public partial class MonkeyBoss : Enemy
         base.Start();
 
         //Set parameters
-        _enemyType = EnemyType.KoiBoss;
-        _speed = 1.0f;
-        _health = 300;
-        _maxHealth = 300;
+        _enemyType = EnemyType.MonkeyBoss;
+        _speed = EnemyConfig.Instance.MonkeyBoss.Base.Speed;
+        _health = EnemyConfig.Instance.MonkeyBoss.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.MonkeyBoss.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 20.0f;
-        _hostileRadius = 30.0f;
-        _passiveRadius = 90.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.MonkeyBoss.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.MonkeyBoss.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.MonkeyBoss.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.MonkeyBoss.Base.MaxRadius;
         _specialCooldown = new float[9] { 5.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
         _animParm = new int[9] {
@@ -78,7 +78,7 @@ public partial class MonkeyBoss : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.1f;
+        _pushMult = EnemyConfig.Instance.MonkeyBoss.Base.PushMult;
         _HostileAI = HostileMonkeyBoss;
         _PassiveAI = PassiveMonkeyBoss;
 

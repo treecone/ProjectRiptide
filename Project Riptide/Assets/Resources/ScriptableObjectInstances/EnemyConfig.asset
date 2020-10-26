@@ -15,7 +15,7 @@ MonoBehaviour:
   _koiBoss:
     _base:
       _maxHealth: 200
-      _baseSpeed: 1
+      _speed: 1
       _wanderRadius: 60
       _hostileRadius: 30
       _passiveRadius: 90
@@ -54,10 +54,259 @@ MonoBehaviour:
       _damage: 20
       _followSpeed: 5
       _vulnerabilityTime: 3
+  _rockCrab:
+    _base:
+      _maxHealth: 50
+      _speed: 1
+      _wanderRadius: 45
+      _hostileRadius: 10
+      _passiveRadius: 50
+      _maxRadius: 240
+      _pushMultiplier: 1
+    _flingAttack:
+      _maxDistance: 13
+      _cooldown: 6
+      _chargeTime: 1.5
+      _damage: 20
+      _distance: 30
+      _knockback: 1000
+  _flowerFrog:
+    _base:
+      _maxHealth: 50
+      _speed: 1
+      _wanderRadius: 30
+      _hostileRadius: 15
+      _passiveRadius: 60
+      _maxRadius: 240
+      _pushMultiplier: 2
+    _toungeLatch:
+      _maxDistance: 20
+      _cooldown: 5
+      _chargeTime: 1
+      _slowDownEffect: -0.4
+      _poisonDamage: 3
+  _clamBoss:
+    _base:
+      _maxHealth: 250
+      _speed: 1
+      _wanderRadius: 60
+      _hostileRadius: 30
+      _passiveRadius: 80
+      _maxRadius: 240
+      _pushMultiplier: 0
+    _circleAttack:
+      _maxDistance: 20
+      _cooldown: 5
+      _chargeTime: 1
+      _damage: 20
+      _tentacleAmount: 7
+      _circleRadius: 7
+      _riseTime: 7
+      _trackTime: 2
+      _attackTime: 2
+    _trackingAttack:
+      _maxDistance: 20
+      _cooldown: 5
+      _chargeTime: 1
+      _damage: 20
+      _circleRadius: 7
+      _riseTime: 2
+      _trackTime: 1
+      _attackTime: 2
+    _lineAttack:
+      _maxDistance: 20
+      _cooldown: 5
+      _chargeTime: 1
+      _damage: 20
+      _riseTime: 2
+      _trackTime: 1
+      _attackTime: 1
+    _burstAttack:
+      _cooldown: 8
+      _duration: 2
+      _damage: 10
+      _attackRadius: 30
+      _tentacleAmount: 50
+      _riseTime: 1
+      _trackTime: 1
+      _attackTime: 1
+    _openAttack:
+      _maxDistance: 20
+      _cooldown: 5
+      _chargeTime: 1
+      _waitTime: 2
+      _dragonAttack:
+        _chargeTime: 1
+        _poisonDamage: 4
+        _circleRadius: 6
+        _smokeClouds: 50
+        _distance: 35
+        _duration: 2
+      _waterSpoutAttack:
+        _chargeTime: 1
+        _duration: 0.5
+        _stallTime: 5
+        _damagePerSecond: 15
+      _birdAttack:
+        _duration: 1
+        _damage: 20
+        _rockSpeed: 0.5
+        _knockback: 1000
+  _pandatee:
+    _base:
+      _maxHealth: 50
+      _speed: 0.7
+      _wanderRadius: 45
+      _hostileRadius: 10
+      _passiveRadius: 20
+      _maxRadius: 100
+      _pushMultiplier: 1
+  _chickenFish:
+    _base:
+      _maxHealth: 50
+      _speed: 0.7
+      _wanderRadius: 45
+      _hostileRadius: 20
+      _passiveRadius: 40
+      _maxRadius: 100
+      _pushMultiplier: 0
+    _jump:
+      _maxDistance: 20
+      _cooldown: 5
+      _duration: 1
+      _damage: 20
+      _distance: 15
+      _height: 5
+      _knockback: 1000
+  _stingray:
+    _base:
+      _maxHealth: 50
+      _speed: 1
+      _wanderRadius: 60
+      _hostileRadius: 30
+      _passiveRadius: 70
+      _maxRadius: 240
+      _pushMultiplier: 1
+    _boltAttack:
+      _maxDistance: 16
+      _cooldown: 6
+      _chargeTime: 2
+      _stallTime: 0.5
+      _damage: 15
+      _boltLength: 30
+      _knockback: 100
+    _crossZap:
+      _maxDistance: 16
+      _cooldown: 6
+      _maxPartnerDistance: 25
+      _chargeTime: 2
+      _duration: 10
+      _damagePerSecond: 10
+  _mox:
+    _base:
+      _maxHealth: 70
+      _speed: 0.8
+      _wanderRadius: 45
+      _hostileRadius: 20
+      _passiveRadius: 50
+      _maxRadius: 240
+      _pushMultiplier: 1
+    _dashAttack:
+      _maxDistance: 10
+      _cooldown: 6
+      _chargeTime: 1.5
+      _stallTime: 0.2
+      _damage: 20
+      _knockback: 1000
+      _distance: 30
+  _monkeyBoss:
+    _base:
+      _maxHealth: 300
+      _speed: 1
+      _wanderRadius: 20
+      _hostileRadius: 30
+      _passiveRadius: 90
+      _maxRadius: 240
+      _pushMultiplier: 0.1
+    _handPush:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _duration: 0.8
+      _damage: 30
+      _knockback: 1000
+      _distance: 20
+    _handSwipe:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _duration: 0.8
+      _damage: 30
+      _knockback: 1000
+      _distance: 15
+      _xDisplacement: 10
+    _handClap:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _stallTime: 0.2
+      _duration: 0.2
+      _damage: 30
+      _knockback: 1000
+      _xDisplacement: 10
+    _handProtect:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _protectDuration: 4
+      _counterStallTime: 0.25
+      _counterDuration: 1
+      _damage: 30
+      _knockback: 1000
+      _distance: 20
+    _screech:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _duration: 0.2
+      _damage: 30
+      _knockback: 1000
+      _distance: 40
+    _handPushWave:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _duration: 0.2
+      _damage: 30
+      _knockback: 1000
+      _distance: 25
+      _waveDuration: 0.6
+    _slamWave:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _stallTime: 0.2
+      _damage: 30
+      _knockback: 1000
+    _stormCloud:
+      _trackingStorm:
+        _maxDistance: 10
+        _cooldown: 5
+        _chargeTime: 1.5
+        _stallTime: 0.2
+        _damage: 30
+        _knockback: 1000
+      _circleStorm:
+        _maxDistance: 10
+        _cooldown: 5
+        _chargeTime: 1.5
+        _stallTime: 0.2
+        _damage: 30
+        _knockback: 1000
   _bombCrab:
     _base:
       _maxHealth: 20
-      _baseSpeed: 1
+      _speed: 1
       _wanderRadius: 10
       _hostileRadius: 20
       _passiveRadius: 60

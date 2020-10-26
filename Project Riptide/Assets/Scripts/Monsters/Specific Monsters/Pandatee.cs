@@ -17,16 +17,16 @@ public partial class Pandatee : Enemy
 
         //Set parameters
         _enemyType = EnemyType.Pandatee;
-        _speed = 0.7f;
-        _health = 50;
-        _maxHealth = 50;
+        _speed = EnemyConfig.Instance.Pandatee.Base.Speed;
+        _health = EnemyConfig.Instance.Pandatee.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.Pandatee.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 45.0f;
-        _hostileRadius = 10.0f;
-        _passiveRadius = 20.0f;
-        _maxRadius = 100.0f;
+        _wanderRadius = EnemyConfig.Instance.Pandatee.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.Pandatee.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.Pandatee.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.Pandatee.Base.MaxRadius;
         _specialCooldown = new float[4] { 5.0f, 0.0f, 0.0f, 0.0f };
         _activeStates = new bool[4] { false, false, false, false };
         _animParm = new int[4] {
@@ -37,7 +37,7 @@ public partial class Pandatee : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 1.0f;
+        _pushMult = EnemyConfig.Instance.Pandatee.Base.PushMult;
         _HostileAI = HostilePandateeRunAway;
         _PassiveAI = PassivePandateeWander;
 

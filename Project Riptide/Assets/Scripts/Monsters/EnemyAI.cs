@@ -1106,7 +1106,7 @@ public partial class ChickenFishFlock : Enemy
             FollowPlayer();
 
             //Cooldown special while in 20 units of player
-            if (_playerDistance < 20.0f)
+            if (_playerDistance < EnemyConfig.Instance.ChickenFish.Jump.MaxDistance)
             {
                 _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
             }
@@ -1114,7 +1114,7 @@ public partial class ChickenFishFlock : Enemy
             if (_specialCooldown[(int)AttackState.Active] <= 0)
             {
                 _activeStates[(int)AttackState.Active] = true;
-                _specialCooldown[(int)AttackState.Active] = 2.0f;
+                _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.ChickenFish.Jump.Cooldown;
                 _currTime = 0;
                 _initalPos = transform.position.y;
                 //Load an attack that charges a dash then attacks
@@ -1157,7 +1157,7 @@ public partial class Stingray : Enemy
                         _activeStates[(int)AttackState.Active] = true;
                         _actionQueue.Enqueue(StingrayCrossZapSetup);
                         _crossZapSetup = true;
-                        _hostileCooldown = MAX_CROSS_ZAP_TIME + 1.0f;
+                        _hostileCooldown = _maxCrossZapTime + 1.0f;
                     }
                     else
                     {
@@ -1191,10 +1191,10 @@ public partial class Stingray : Enemy
                         //Stop cross zapping if buddy is dead or distance is too great
                         if(_zapBuddy.IsDying || dist >= 35.0f)
                         {
-                            _crossZapTime = MAX_CROSS_ZAP_TIME;
+                            _crossZapTime = _maxCrossZapTime;
                         }
 
-                        if(_crossZapTime >= MAX_CROSS_ZAP_TIME)
+                        if(_crossZapTime >= _maxCrossZapTime)
                         {
                             //Remove electric particles
                             if (_crossZapParent)
@@ -1235,14 +1235,14 @@ public partial class Stingray : Enemy
                         _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                     //Check to see if monster can use bolt attack
-                    if (_playerDistance < 16.0f)
+                    if (_playerDistance < EnemyConfig.Instance.Stingray.BoltAttack.MaxDistance)
                     {
                         _specialCooldown[(int)StingrayAttackState.BoltAttack] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.BoltAttack] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             _activeStates[(int)AttackState.Active] = true;
                             _specialCooldown[(int)AttackState.Active] = 5.0f;
-                            _specialCooldown[(int)StingrayAttackState.BoltAttack] = 6.0f;
+                            _specialCooldown[(int)StingrayAttackState.BoltAttack] = EnemyConfig.Instance.Stingray.BoltAttack.Cooldown;
                             _currTime = 0;
                             //Set up bolt attack
                             _actionQueue.Enqueue(StingrayBoltCharge);
@@ -1251,14 +1251,14 @@ public partial class Stingray : Enemy
                     }
 
                     //Check to see if stingray can use cross zap attack
-                    if (_playerDistance < 20.0f)
+                    if (_playerDistance < EnemyConfig.Instance.Stingray.CrossZap.MaxDistance)
                     {
                         _specialCooldown[(int)StingrayAttackState.CrossZap] -= Time.deltaTime;
                         if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)StingrayAttackState.CrossZap] < 0.0f && Random.Range(1, 4) == 1)
                         {
                             _specialCooldown[(int)AttackState.Active] = 1.0f;
-                            _specialCooldown[(int)StingrayAttackState.CrossZap] = 2.0f;
-                            CheckForZapPartner(25.0f);
+                            _specialCooldown[(int)StingrayAttackState.CrossZap] = EnemyConfig.Instance.Stingray.CrossZap.Cooldown;
+                            CheckForZapPartner(EnemyConfig.Instance.Stingray.CrossZap.MaxPartnerDistance);
                         }
                     }
                 }
@@ -1301,7 +1301,7 @@ public partial class Mox : Enemy
                 FollowPlayer();
 
                 //Cooldown special while in a 10 units of player
-                if (_playerDistance < 10.0f)
+                if (_playerDistance < EnemyConfig.Instance.Mox.DashAttack.MaxDistance)
                 {
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                 }
@@ -1321,7 +1321,7 @@ public partial class Mox : Enemy
                 if (!DoActionQueue())
                 {
                     _activeStates[(int)AttackState.Active] = false;
-                    _specialCooldown[(int)AttackState.Active] = 5.0f;
+                    _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.Mox.DashAttack.Cooldown;
                 }
             }
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
@@ -1465,14 +1465,14 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push attack
-                        if (_playerDistance < 25.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandPush.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandPush] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandPush] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                _specialCooldown[(int)MonkeyAttackState.HandPush] = 5.0f;
+                                _specialCooldown[(int)MonkeyAttackState.HandPush] = EnemyConfig.Instance.MonkeyBoss.HandPush.Cooldown;
                                 _currTime = 0;
                                 //Set up hand push
                                 _actionQueue.Enqueue(MonkeyRightHandPushCharge);
@@ -1484,7 +1484,7 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use hand swipe attack
-                        if (_playerDistance < 24.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandSwipe.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandSwipe] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandSwipe] < 0.0f && Random.Range(1, 4) == 1)
@@ -1492,7 +1492,7 @@ public partial class MonkeyBoss : Enemy
                                 //Set up attack
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 6.0f;
+                                _specialCooldown[(int)MonkeyAttackState.HandSwipe] = EnemyConfig.Instance.MonkeyBoss.HandSwipe.Cooldown;
                                 _currTime = 0;
                                 //Set up monkey swipe
                                 _actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
@@ -1504,14 +1504,14 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use hand clap attack
-                        if (_playerDistance < 20.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandClap.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.HandClap] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandClap] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                _specialCooldown[(int)MonkeyAttackState.HandClap] = 10.0f;
+                                _specialCooldown[(int)MonkeyAttackState.HandClap] = EnemyConfig.Instance.MonkeyBoss.HandClap.Cooldown;
                                 _currTime = 0;
                                 //Set up clap attack
                                 _actionQueue.Enqueue(MonkeyClapCharge);
@@ -1522,14 +1522,14 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use hand protect attack
-                        if (_playerDistance < 25.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandProtect.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Protect] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Protect] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                _specialCooldown[(int)MonkeyAttackState.Protect] = 8.0f;
+                                _specialCooldown[(int)MonkeyAttackState.Protect] = EnemyConfig.Instance.MonkeyBoss.HandProtect.Cooldown;
                                 _currTime = 0;
                                 //Set up protect attack
                                 _actionQueue.Enqueue(MonkeyProtectCharge);
@@ -1541,14 +1541,14 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use screech attack
-                        if (_playerDistance < 15.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.Screech.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                _specialCooldown[(int)MonkeyAttackState.Screech] = 4.0f;
+                                _specialCooldown[(int)MonkeyAttackState.Screech] = EnemyConfig.Instance.MonkeyBoss.Screech.Cooldown;
                                 _currTime = 0;
                                 //Set up protect attack
                                 _actionQueue.Enqueue(MonkeyScreechCharge);
@@ -1579,14 +1579,14 @@ public partial class MonkeyBoss : Enemy
                             _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                         //Check to see if monster can use hand push wave attack
-                        if (_playerDistance < 30.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandPushWave.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.PushWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.PushWave] < 0.0f && Random.Range(1, 4) == 1)
                             {
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                _specialCooldown[(int)MonkeyAttackState.PushWave] = 8.0f;
+                                _specialCooldown[(int)MonkeyAttackState.PushWave] = EnemyConfig.Instance.MonkeyBoss.HandPushWave.Cooldown;
                                 _currTime = 0;
                                 //Set up hand push wave
                                 _actionQueue.Enqueue(MonkeyRightHandWaveCharge);

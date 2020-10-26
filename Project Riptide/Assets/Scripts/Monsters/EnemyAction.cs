@@ -1561,7 +1561,7 @@ public partial class ChickenFishFlock : Enemy
     /// <returns></returns>
     protected bool ChickenFishAttack(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        float MAX_TIME = EnemyConfig.Instance.ChickenFish.Jump.Duration;
 
         if(time == 0)
         {
@@ -1578,21 +1578,21 @@ public partial class ChickenFishFlock : Enemy
             _chickenFlock[_attackingChickenID].Rotation = Quaternion.LookRotation(new Vector3(attackDirection.x, 0, attackDirection.z).normalized);
 
             //Apply force to move chicken towards player
-            _gravity = _chickenFlock[_attackingChickenID].ApplyArcForce(new Vector3(attackDirection.x, 0, attackDirection.z).normalized, 15.0f, 5.0f, 1.0f);
+            _gravity = _chickenFlock[_attackingChickenID].ApplyArcForce(new Vector3(attackDirection.x, 0, attackDirection.z).normalized, EnemyConfig.Instance.ChickenFish.Jump.Distance, EnemyConfig.Instance.ChickenFish.Jump.Height, MAX_TIME);
             //Play animation
             _chickenFlock[_attackingChickenID].FlockerAnimator.Play(_animParm[(int)ChickenFishAnim.Fly]);
 
             //Set up hitbox
             GameObject hitbox = Instantiate(_hitbox, _chickenFlock[_attackingChickenID].transform);
-            hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 0.11f), new Vector3(2.2f, 2.2f, 2.2f), HitboxType.EnemyHitbox, 10);
+            hitbox.GetComponent<Hitbox>().SetHitbox(gameObject, new Vector3(0, 0, 0.11f), new Vector3(2.2f, 2.2f, 2.2f), HitboxType.EnemyHitbox, EnemyConfig.Instance.ChickenFish.Jump.Damage, Vector2.zero, EnemyConfig.Instance.ChickenFish.Jump.Knockback);
             hitbox.GetComponent<Hitbox>().OnTrigger += HitboxTriggered;
 
             //Set up telegraph
             if (DoTelegraphs())
             {
                 GameObject temp = Instantiate(_telegraphPrefab[(int)TelegraphType.Square], _chickenFlock[_attackingChickenID].transform.position, _chickenFlock[_attackingChickenID].transform.rotation, _chickenFlock[_attackingChickenID].transform);
-                temp.transform.localPosition = new Vector3(0,0, 7.5f / _chickenFlock[_attackingChickenID].transform.localScale.z);
-                temp.transform.localScale = new Vector3(1, 1, 15f);
+                temp.transform.localPosition = new Vector3(0,0, EnemyConfig.Instance.ChickenFish.Jump.Distance / 2 / _chickenFlock[_attackingChickenID].transform.localScale.z);
+                temp.transform.localScale = new Vector3(1, 1, EnemyConfig.Instance.ChickenFish.Jump.Distance);
                 _telegraphs.Add(temp);
                 _telegraphs[0].transform.parent = null;
                 ClearTelegraphs();
@@ -1658,8 +1658,8 @@ public partial class Stingray : Enemy
     /// <returns></returns>
     protected bool StingrayBoltCharge(ref float time)
     {
-        const float MAX_TIME = 2.0f;
-        const float STALL_TIME = 0.5f;
+        float MAX_TIME = EnemyConfig.Instance.Stingray.BoltAttack.ChargeTime;
+        float STALL_TIME = EnemyConfig.Instance.Stingray.BoltAttack.StallTime;
 
         if (time < MAX_TIME - STALL_TIME)
         {
@@ -1670,7 +1670,7 @@ public partial class Stingray : Enemy
                 _electricChargeParticles.Play();
                 if (DoTelegraphs())
                 {
-                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + 15f) / transform.localScale.z), new Vector3(5.0f, 1, 32.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
+                    CreateTelegraph(new Vector3(0, 0, (_lengthMult + EnemyConfig.Instance.Stingray.BoltAttack.BoltLength / 2) / transform.localScale.z), new Vector3(5.0f, 1, EnemyConfig.Instance.Stingray.BoltAttack.BoltLength + 2.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
                 }
             }
 
@@ -1705,8 +1705,8 @@ public partial class Stingray : Enemy
         {
             //Set up bolt particles
             _electricBoltParticles = Instantiate(_electricBoltParticlesPrefab, transform.position, transform.rotation, transform);
-            _electricBoltParticles.transform.localPosition = new Vector3(0, 0, (_lengthMult + 13f) / transform.localScale.z);
-            _electricBoltParticles.transform.localScale = new Vector3(5.0f, 1, 15.0f / transform.localScale.z);
+            _electricBoltParticles.transform.localPosition = new Vector3(0, 0, (_lengthMult + EnemyConfig.Instance.Stingray.BoltAttack.BoltLength / 2 - 2.0f) / transform.localScale.z);
+            _electricBoltParticles.transform.localScale = new Vector3(5.0f, 1, EnemyConfig.Instance.Stingray.BoltAttack.BoltLength / 2 / transform.localScale.z);
             _electricBoltParticles.transform.parent = null;
             _electricChargeParticles.Stop();
 
@@ -1717,7 +1717,7 @@ public partial class Stingray : Enemy
             }
 
             //Set up hitbox
-            _hitboxes.Add(CreateHitbox(new Vector3(0, 0.6f, 17), new Vector3(3.5f, 2.0f, 30.0f), HitboxType.EnemyHitbox, 15, Vector2.zero, 100));
+            _hitboxes.Add(CreateHitbox(new Vector3(0, 0.6f, EnemyConfig.Instance.Stingray.BoltAttack.BoltLength / 2 + 2.0f), new Vector3(3.5f, 2.0f, EnemyConfig.Instance.Stingray.BoltAttack.BoltLength), HitboxType.EnemyHitbox, EnemyConfig.Instance.Stingray.BoltAttack.Damage, Vector2.zero, EnemyConfig.Instance.Stingray.BoltAttack.Knockback));
             _hitboxes[0].transform.parent = null;
             _hitboxes[0].GetComponent<Hitbox>().OnTrigger += AddElectricEffect;
             _hitboxes[0].GetComponent<Hitbox>().OnExit += RemoveElectricEffectOnExit;
@@ -1746,7 +1746,7 @@ public partial class Stingray : Enemy
     /// <returns></returns>
     protected bool StingrayCrossZapSetup(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        float MAX_TIME = EnemyConfig.Instance.Stingray.CrossZap.ChargeTime;
 
         if(time == 0)
         {
@@ -1811,8 +1811,8 @@ public partial class Mox : Enemy
     /// <returns></returns>
     protected bool MoxDashCharge(ref float time)
     {
-        const float MAX_TIME = 1.5f;
-        const float STALL_TIME = 0.2f;
+        float MAX_TIME = EnemyConfig.Instance.Mox.DashAttack.ChargeTime;
+        float STALL_TIME = EnemyConfig.Instance.Mox.DashAttack.StallTime;
 
         //Stop motion at begining of charge
         if (time == 0)
@@ -1855,8 +1855,8 @@ public partial class Mox : Enemy
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(4, 4, 4), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            ApplyMoveForce(transform.forward, 20.0f * _speed, 1.0f);
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(4, 4, 4), HitboxType.EnemyHitbox, EnemyConfig.Instance.Mox.DashAttack.Damage, Vector2.zero, EnemyConfig.Instance.Mox.DashAttack.Knockback));
+            ApplyMoveForce(transform.forward, EnemyConfig.Instance.Mox.DashAttack.Distance * _speed, 1.0f);
             _animator.SetFloat(_animParm[(int)MoxAnim.SwimSpeed], 2.0f);
             if (DoTelegraphs())
             {
@@ -1909,7 +1909,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandPushCharge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPush.ChargeTime;
 
         if(time == 0)
         {
@@ -1944,11 +1944,11 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandPush(ref float time)
     {
-        const float MAX_TIME = 0.8f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPush.Duration;
 
         if (time == 0)
         {
-            _rightHand.ApplyMoveForce(_rightHand.transform.forward, 20.0f * _speed, MAX_TIME);
+            _rightHand.ApplyMoveForce(_rightHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandPush.Distance * _speed, MAX_TIME);
             _rotateLeftWithBody = false;
             _moveRightWithBody = false;
             if (DoTelegraphs())
@@ -1957,8 +1957,8 @@ public partial class MonkeyBoss : Enemy
                 ClearTelegraphs();
                 CreateLeftHandTelegraph(new Vector3(0, -1f, 10.0f / transform.localScale.z), new Vector3(5.0f, 1, 22.0f / transform.localScale.z), Quaternion.identity, TelegraphType.Square, true);
             }
-            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
-            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
+            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandPush.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandPush.Knockback));
+            _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandPush.Knockback));
 
             _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
@@ -2008,20 +2008,20 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyLeftHandPush(ref float time)
     {
-        const float MAX_TIME = 0.8f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPush.Duration;
 
         if (time == 0)
         {
             _rightHandReturnDist = Vector3.Magnitude(transform.TransformPoint(_rightHandStartPos) - _rightHand.Position);
-            _leftHand.ApplyMoveForce(_leftHand.transform.forward, 20.0f * _speed, MAX_TIME);
+            _leftHand.ApplyMoveForce(_leftHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandPush.Distance * _speed, MAX_TIME);
             _moveLeftWithBody = false;
             if (DoTelegraphs())
             {
                 _telegraphs[0].transform.parent = null;
                 ClearTelegraphs();
             }
-            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
-            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0f, Vector2.zero, 1000));
+            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandPush.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandPush.Knockback));
+            _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0f, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandPush.Knockback));
 
             _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
         }
@@ -2104,7 +2104,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandSwipeCharge(ref float time)
     {
-        const float MAX_TIME = 1.0f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandSwipe.ChargeTime;
 
         if(time == 0)
         {
@@ -2116,7 +2116,7 @@ public partial class MonkeyBoss : Enemy
         LookAtPlayer();
 
         //Move hand to side of player
-        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(10, _rightHandStartPos.y, _playerDistance)) - _rightHand.Position;
+        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(EnemyConfig.Instance.MonkeyBoss.HandSwipe.XDisplacement, _rightHandStartPos.y, _playerDistance)) - _rightHand.Position;
         rightHandMoveDir.Normalize();
         _rightHand.ApplyConstantMoveForce(rightHandMoveDir, _playerDistance, MAX_TIME);
 
@@ -2138,14 +2138,14 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandSwipe(ref float time)
     {
-        const float MAX_TIME = 0.75f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandSwipe.Duration;
 
         if (time == 0)
         {
             //Apply force to move right hand
             Vector3 playerDirection = new Vector3(PlayerPosition().x, _rightHand.transform.position.y, PlayerPosition().z) - _rightHand.Position;
             playerDirection.Normalize();
-            _rightHand.ApplyMoveForce(playerDirection, 15.0f, MAX_TIME);
+            _rightHand.ApplyMoveForce(playerDirection, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Distance, MAX_TIME);
 
             _moveLeftWithBody = false;
 
@@ -2155,7 +2155,7 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.rotation = Quaternion.LookRotation(playerDirection);
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
-            _hitboxes.Add(CreateRightHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500));
+            _hitboxes.Add(CreateRightHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Knockback));
 
             _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Swipe]);
         }
@@ -2168,7 +2168,7 @@ public partial class MonkeyBoss : Enemy
         LookAtPlayer();
 
         //Move left hand to side of player
-        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-10, _leftHandStartPos.y, _playerDistance)) - _leftHand.Position;
+        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-EnemyConfig.Instance.MonkeyBoss.HandSwipe.XDisplacement, _leftHandStartPos.y, _playerDistance)) - _leftHand.Position;
         leftHandMoveDir.Normalize();
         _leftHand.ApplyConstantMoveForce(leftHandMoveDir, _playerDistance, MAX_TIME);
 
@@ -2192,7 +2192,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyLeftHandSwipe(ref float time)
     {
-        const float MAX_TIME = 0.75f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandSwipe.Duration;
 
         if(time ==  0)
         {
@@ -2201,7 +2201,7 @@ public partial class MonkeyBoss : Enemy
             //Apply force to move left hand
             Vector3 playerDirection = new Vector3(PlayerPosition().x, _leftHand.transform.position.y, PlayerPosition().z) - _leftHand.Position;
             playerDirection.Normalize();
-            _leftHand.ApplyMoveForce(playerDirection, 15.0f, MAX_TIME);
+            _leftHand.ApplyMoveForce(playerDirection, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Distance, MAX_TIME);
 
             if (DoTelegraphs())
             {
@@ -2210,7 +2210,7 @@ public partial class MonkeyBoss : Enemy
                 _telegraphs[0].transform.position += _telegraphs[0].transform.forward * 8.0f + Vector3.down;
             }
 
-            _hitboxes.Add(CreateLeftHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, 15.0f, Vector2.zero, 1500));
+            _hitboxes.Add(CreateLeftHandHitbox(Vector3.forward * 4.0f, new Vector3(1.0f, 1.0f, 5.0f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandSwipe.Knockback));
         }
 
         if (DoTelegraphs() && _telegraphs.Count > 0 && time != 0)
@@ -2244,7 +2244,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyClapCharge(ref float time)
     {
-        const float MAX_TIME = 0.7f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandClap.ChargeTime;
 
         if (time == 0)
         {
@@ -2258,13 +2258,13 @@ public partial class MonkeyBoss : Enemy
         LookAtPlayer();
 
         //Move right hand to side of player
-        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(10, _rightHandStartPos.y, _playerDistance)) - _rightHand.Position;
+        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(EnemyConfig.Instance.MonkeyBoss.HandClap.XDisplacement, _rightHandStartPos.y, _playerDistance)) - _rightHand.Position;
         rightHandMoveDir.Normalize();
         _rightHand.ApplyConstantMoveForce(rightHandMoveDir, _playerDistance, MAX_TIME);
         _rightHand.Rotation = Quaternion.RotateTowards(_rightHand.Rotation, Quaternion.LookRotation(_leftHand.Position - _rightHand.Position), 2.0f);
 
         //Move left hand to side of player
-        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-10, _leftHandStartPos.y, _playerDistance)) - _leftHand.Position;
+        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-EnemyConfig.Instance.MonkeyBoss.HandClap.XDisplacement, _leftHandStartPos.y, _playerDistance)) - _leftHand.Position;
         leftHandMoveDir.Normalize();
         _leftHand.ApplyConstantMoveForce(leftHandMoveDir, _playerDistance, MAX_TIME);
         _leftHand.Rotation = Quaternion.RotateTowards(_leftHand.Rotation, Quaternion.LookRotation(_rightHand.Position - _leftHand.Position), 2.0f);
@@ -2293,8 +2293,8 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyClap(ref float time)
     {
-        const float MAX_TIME = 1.0f;
-        const float WAIT_TIME = 0.25f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandClap.Duration;
+        float WAIT_TIME = EnemyConfig.Instance.MonkeyBoss.HandClap.StallTime;
 
         if (time == 0)
         {
@@ -2325,18 +2325,18 @@ public partial class MonkeyBoss : Enemy
             //Create hitboxes
             if(_hitboxes.Count == 0)
             {
-                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
-                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandClap.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandClap.Knockback));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandClap.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandClap.Knockback));
                 //Add hitboxes to knockback other enemies
-                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
-                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandClap.Knockback));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandClap.Knockback));
             }
 
             if(!_inKnockback)
             {
                 //Move hands together
-                _leftHand.ApplyConstantMoveForce(_leftHand.transform.forward, 10.0f, MAX_TIME - WAIT_TIME);
-                _rightHand.ApplyConstantMoveForce(_rightHand.transform.forward, 10.0f, MAX_TIME - WAIT_TIME);
+                _leftHand.ApplyConstantMoveForce(_leftHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandClap.XDisplacement, MAX_TIME - WAIT_TIME);
+                _rightHand.ApplyConstantMoveForce(_rightHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandClap.XDisplacement, MAX_TIME - WAIT_TIME);
 
                 if (_playerCollision || _obsticalCollision)
                 {
@@ -2418,7 +2418,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyProtectCharge(ref float time)
     {
-        const float MAX_TIME = 0.5f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandProtect.ChargeTime;
 
         if(time == 0)
         {
@@ -2458,7 +2458,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyProtect(ref float time)
     {
-        const float MAX_TIME = 4.0f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandProtect.ProtectDuration;
 
         LookAtPlayer();
 
@@ -2482,8 +2482,8 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyCounter(ref float time)
     {
-        const float MAX_TIME = 1.0f;
-        const float WAIT_TIME = 0.25f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandProtect.CounterDuration;
+        float WAIT_TIME = EnemyConfig.Instance.MonkeyBoss.HandProtect.CounterStallTime;
 
         if (time == 0)
         {
@@ -2505,10 +2505,10 @@ public partial class MonkeyBoss : Enemy
             //Create hitboxes
             if (_hitboxes.Count == 0)
             {
-                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
-                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, 20.0f, Vector2.zero, 1000));
-                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
-                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, 1000));
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandProtect.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandProtect.Knockback));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.HandProtect.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandProtect.Knockback));
+                _hitboxes.Add(CreateLeftHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandProtect.Knockback));
+                _hitboxes.Add(CreateRightHandHitbox(new Vector3(0, 0, 1.0f), new Vector3(4.5f, 7.0f, 1.5f), HitboxType.PlayerHitbox, 0, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.HandProtect.Knockback));
 
                 _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
                 _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Still]);
@@ -2517,8 +2517,8 @@ public partial class MonkeyBoss : Enemy
             if (!_inKnockback)
             {
                 //Move hands together
-                _leftHand.ApplyConstantMoveForce(_leftHand.transform.forward, 20.0f, MAX_TIME - WAIT_TIME);
-                _rightHand.ApplyConstantMoveForce(_rightHand.transform.forward, 20.0f, MAX_TIME - WAIT_TIME);
+                _leftHand.ApplyConstantMoveForce(_leftHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandProtect.Distance, MAX_TIME - WAIT_TIME);
+                _rightHand.ApplyConstantMoveForce(_rightHand.transform.forward, EnemyConfig.Instance.MonkeyBoss.HandProtect.Distance, MAX_TIME - WAIT_TIME);
 
                 if (_playerCollision || _obsticalCollision)
                 {
@@ -2560,13 +2560,13 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyScreechCharge(ref float time)
     {
-        const float MAX_TIME = 1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.Screech.ChargeTime;
 
         if(time == 0)
         {
             if(DoTelegraphs())
             {
-                CreateTelegraph(new Vector3(0, -2f, 20f), new Vector3(40f, 0, 40.0f), Quaternion.identity, TelegraphType.Cone, true);
+                CreateTelegraph(new Vector3(0, -2f, EnemyConfig.Instance.MonkeyBoss.Screech.Distance/2), new Vector3(EnemyConfig.Instance.MonkeyBoss.Screech.Distance, 0, EnemyConfig.Instance.MonkeyBoss.Screech.Distance), Quaternion.identity, TelegraphType.Cone, true);
             }
             _animator.SetFloat(_animParm[(int)Anim.Velocity], _velocity.sqrMagnitude);
         }
@@ -2597,7 +2597,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyScreech(ref float time)
     {
-        const float MAX_TIME = 0.5f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.Screech.Duration;
 
         if (time == 0)
         {
@@ -2607,10 +2607,10 @@ public partial class MonkeyBoss : Enemy
             }
             ToggleScreechParticles(true);
 
-            _hitboxes.Add(CreateHitbox(new Vector3(0, -1.0f, 4.0f), new Vector3(8.0f, 2.0f, 1.5f), HitboxType.EnemyHitbox, 5, Vector2.zero, 2500));
+            _hitboxes.Add(CreateHitbox(new Vector3(0, -1.0f, 4.0f), new Vector3(8.0f, 2.0f, 1.5f), HitboxType.EnemyHitbox, EnemyConfig.Instance.MonkeyBoss.Screech.Damage, Vector2.zero, EnemyConfig.Instance.MonkeyBoss.Screech.Knockback));
         }
 
-        _hitboxes[0].transform.position += _hitboxes[0].transform.forward * (40f / MAX_TIME) * Time.deltaTime;
+        _hitboxes[0].transform.position += _hitboxes[0].transform.forward * (EnemyConfig.Instance.MonkeyBoss.Screech.Distance / MAX_TIME) * Time.deltaTime;
 
         if (time >= MAX_TIME)
         {
@@ -2631,7 +2631,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandWaveCharge(ref float time)
     {
-        const float MAX_TIME = 1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.ChargeTime;
 
         if (time == 0)
         {
@@ -2681,7 +2681,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandWaveAttack(ref float time)
     {
-        const float MAX_TIME = 0.1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.Duration;
 
         if (time == 0)
         {
@@ -2698,7 +2698,7 @@ public partial class MonkeyBoss : Enemy
             _rightHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(25.0f, 0.6f, 20, 2000);
+            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.Distance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
             _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
@@ -2714,7 +2714,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyLeftHandWaveCharge(ref float time)
     {
-        const float MAX_TIME = 1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.ChargeTime;
 
         if (time == 0)
         {
@@ -2771,7 +2771,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyLeftHandWaveAttack(ref float time)
     {
-        const float MAX_TIME = 0.1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.Duration;
 
         if (time == 0)
         {
@@ -2788,7 +2788,7 @@ public partial class MonkeyBoss : Enemy
             _leftHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(25.0f, 0.6f, 20, 2000);
+            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.Distance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
             _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
@@ -2804,7 +2804,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyRightHandWaveRecharge(ref float time)
     {
-        const float MAX_TIME = 1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.ChargeTime;
 
         if (time == 0)
         {
@@ -2861,7 +2861,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyLeftHandWaveReturn(ref float time)
     {
-        const float MAX_TIME = 1f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.HandPushWave.ChargeTime;
 
         if (time == 0)
         {

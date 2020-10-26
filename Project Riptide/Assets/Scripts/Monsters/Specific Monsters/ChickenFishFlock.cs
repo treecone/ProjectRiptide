@@ -18,16 +18,16 @@ public partial class ChickenFishFlock : Enemy
 
         //Set parameters
         _enemyType = EnemyType.ChickenFlock;
-        _speed = 0.7f;
-        _health = 50;
-        _maxHealth = 50;
+        _speed = EnemyConfig.Instance.ChickenFish.Base.Speed;
+        _health = EnemyConfig.Instance.ChickenFish.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.ChickenFish.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 45.0f;
-        _hostileRadius = 20.0f;
-        _passiveRadius = 40.0f;
-        _maxRadius = 100.0f;
+        _wanderRadius = EnemyConfig.Instance.ChickenFish.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.ChickenFish.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.ChickenFish.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.ChickenFish.Base.MaxRadius;
         _specialCooldown = new float[2] { 5.0f, 0.0f };
         _activeStates = new bool[1] { false };
         _animParm = new int[4] {
@@ -38,7 +38,7 @@ public partial class ChickenFishFlock : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 0.0f;
+        _pushMult = EnemyConfig.Instance.ChickenFish.Base.PushMult;
         _HostileAI = HostileChickenFish;
         _PassiveAI = PassiveWanderRadius;
 

@@ -25,7 +25,7 @@ public partial class Stingray : Enemy
     private bool _crossZapSetup;
     private float _crossZapTime;
     private bool _crossZapParent;
-    private const float MAX_CROSS_ZAP_TIME = 10.0f;
+    private float _maxCrossZapTime;
 
     public bool CanCrossZap
     {
@@ -57,16 +57,16 @@ public partial class Stingray : Enemy
 
         //Set parameters
         _enemyType = EnemyType.Stingray;
-        _speed = 1.0f;
-        _health = 50;
-        _maxHealth = 50;
+        _speed = EnemyConfig.Instance.Stingray.Base.Speed;
+        _health = EnemyConfig.Instance.Stingray.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.Stingray.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 60.0f;
-        _hostileRadius = 30.0f;
-        _passiveRadius = 70.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.Stingray.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.Stingray.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.Stingray.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.Stingray.Base.MaxRadius;
         _specialCooldown = new float[5] { 5.0f, 0.0f, Random.Range(0, 2.0f), 0.0f, 0.0f };
         _activeStates = new bool[3] { false, false, false };
         _animParm = new int[2] {
@@ -75,7 +75,8 @@ public partial class Stingray : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 20;
-        _pushMult = 1.0f;
+        _pushMult = EnemyConfig.Instance.Stingray.Base.PushMult;
+        _maxCrossZapTime = EnemyConfig.Instance.Stingray.CrossZap.Duration;
         _HostileAI = HostileStingray;
         _PassiveAI = PassiveWanderRadius;
 
@@ -146,8 +147,6 @@ public partial class Stingray : Enemy
     /// <param name="hitbox"></param>
     protected void DealElectricDamage(GameObject other)
     {
-        const float DAMAGE_PER_SECOND = 10.0f;
-
         //If the collision was with another hitbox
         if (other.CompareTag("Hitbox"))
         {
@@ -156,7 +155,7 @@ public partial class Stingray : Enemy
             if (hitbox.Type == HitboxType.PlayerHurtbox && hitbox.AttachedObject.CompareTag("Player"))
             {
                 //Player takes damage
-                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(DAMAGE_PER_SECOND * Time.deltaTime, false);
+                hitbox.AttachedObject.GetComponent<PlayerHealth>().TakeDamage(EnemyConfig.Instance.Stingray.CrossZap.DamagePerSecond * Time.deltaTime, false);
             }
         }
     }

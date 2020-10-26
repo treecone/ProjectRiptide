@@ -13,16 +13,16 @@ public partial class Mox : Enemy
 
         //Set parameters
         _enemyType = EnemyType.Mox;
-        _speed = 0.8f;
-        _health = 70;
-        _maxHealth = 70;
+        _speed = EnemyConfig.Instance.Mox.Base.Speed;
+        _health = EnemyConfig.Instance.Mox.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.Mox.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 45.0f;
-        _hostileRadius = 20.0f;
-        _passiveRadius = 50.0f;
-        _maxRadius = 240.0f;
+        _wanderRadius = EnemyConfig.Instance.Mox.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.Mox.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.Mox.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.Mox.Base.MaxRadius;
         _specialCooldown = new float[1] { 5.0f };
         _activeStates = new bool[1] { false };
         _animParm = new int[3] {
@@ -32,7 +32,7 @@ public partial class Mox : Enemy
         _playerCollision = false;
         _isRaming = false;
         _ramingDamage = 30;
-        _pushMult = 1.0f;
+        _pushMult = EnemyConfig.Instance.Mox.Base.PushMult;
         _HostileAI = HostileMox;
         _PassiveAI = PassiveWanderRadius;
 
