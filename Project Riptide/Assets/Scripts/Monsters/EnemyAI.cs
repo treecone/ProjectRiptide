@@ -1603,7 +1603,7 @@ public partial class MonkeyBoss : Enemy
                         }
 
                         //Check to see if monster can use slam wave
-                        if (_playerDistance < 25.0f)
+                        if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.SlamWave.MaxDistance)
                         {
                             _specialCooldown[(int)MonkeyAttackState.SlamWave] -= Time.deltaTime;
                             if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.SlamWave] < 0.0f && Random.Range(1, 4) == 1)
@@ -1611,7 +1611,7 @@ public partial class MonkeyBoss : Enemy
                                 //Set up attack
                                 _activeStates[(int)AttackState.Active] = true;
                                 _specialCooldown[(int)AttackState.Active] = 5.0f;
-                                _specialCooldown[(int)MonkeyAttackState.SlamWave] = 8.0f;
+                                _specialCooldown[(int)MonkeyAttackState.SlamWave] = EnemyConfig.Instance.MonkeyBoss.SlamWave.Cooldown;
                                 _currTime = 0;
                                 //Set up monkey swipe
                                 _actionQueue.Enqueue(MonkeyCircleWaveCharge);
@@ -1625,14 +1625,14 @@ public partial class MonkeyBoss : Enemy
                         if (!_activeStates[(int)AttackState.Active])
                         {
                             //Check to see if monster can use hand push attack
-                            if (_playerDistance < 25.0f)
+                            if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandPush.MaxDistance)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandPush] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandPush] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
                                     _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.HandPush] = 5.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.HandPush] = EnemyConfig.Instance.MonkeyBoss.HandPush.Cooldown;
                                     _currTime = 0;
                                     //Set up hand push
                                     _actionQueue.Enqueue(MonkeyRightHandPushCharge);
@@ -1644,7 +1644,7 @@ public partial class MonkeyBoss : Enemy
                             }
 
                             //Check to see if monster can use hand swipe attack
-                            if (_playerDistance < 24.0f)
+                            if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandSwipe.MaxDistance)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandSwipe] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandSwipe] < 0.0f && Random.Range(1, 4) == 1)
@@ -1652,7 +1652,7 @@ public partial class MonkeyBoss : Enemy
                                     //Set up attack
                                     _activeStates[(int)AttackState.Active] = true;
                                     _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.HandSwipe] = 6.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.HandSwipe] = EnemyConfig.Instance.MonkeyBoss.HandSwipe.Cooldown;
                                     _currTime = 0;
                                     //Set up monkey swipe
                                     _actionQueue.Enqueue(MonkeyRightHandSwipeCharge);
@@ -1664,14 +1664,14 @@ public partial class MonkeyBoss : Enemy
                             }
 
                             //Check to see if monster can use hand clap attack
-                            if (_playerDistance < 20.0f)
+                            if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandClap.MaxDistance)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.HandClap] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.HandClap] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
                                     _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.HandClap] = 10.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.HandClap] = EnemyConfig.Instance.MonkeyBoss.HandClap.Cooldown;
                                     _currTime = 0;
                                     //Set up clap attack
                                     _actionQueue.Enqueue(MonkeyClapCharge);
@@ -1682,14 +1682,14 @@ public partial class MonkeyBoss : Enemy
                             }
 
                             //Check to see if monster can use hand protect attack
-                            if (_playerDistance < 25.0f)
+                            if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.HandProtect.MaxDistance)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.Protect] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Protect] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
                                     _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.Protect] = 8.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.Protect] = EnemyConfig.Instance.MonkeyBoss.HandProtect.Cooldown;
                                     _currTime = 0;
                                     //Set up protect attack
                                     _actionQueue.Enqueue(MonkeyProtectCharge);
@@ -1701,14 +1701,14 @@ public partial class MonkeyBoss : Enemy
                             }
 
                             //Check to see if monster can use screech attack
-                            if (_playerDistance < 18.0f)
+                            if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.Screech.MaxDistance)
                             {
                                 _specialCooldown[(int)MonkeyAttackState.Screech] -= Time.deltaTime;
                                 if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyAttackState.Screech] < 0.0f && Random.Range(1, 4) == 1)
                                 {
                                     _activeStates[(int)AttackState.Active] = true;
                                     _specialCooldown[(int)AttackState.Active] = 3.0f;
-                                    _specialCooldown[(int)MonkeyAttackState.Screech] = 4.0f;
+                                    _specialCooldown[(int)MonkeyAttackState.Screech] = EnemyConfig.Instance.MonkeyBoss.Screech.Cooldown;
                                     _currTime = 0;
                                     //Set up protect attack
                                     _actionQueue.Enqueue(MonkeyScreechCharge);
@@ -1756,14 +1756,14 @@ public partial class MonkeyStormCloud : Enemy
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
 
                 //Check to see if monster can use tracking storm cloud
-                if (_playerDistance < 25.0f)
+                if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.MaxDistance)
                 {
                     _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] -= Time.deltaTime;
                     if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] < 0.0f && Random.Range(1, 4) == 1)
                     {
                         _activeStates[(int)AttackState.Active] = true;
                         _specialCooldown[(int)AttackState.Active] = 5.0f;
-                        _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] = 6.0f;
+                        _specialCooldown[(int)MonkeyStormAttackState.TrackingStorm] = EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.Cooldown;
                         _currTime = 0;
                         //Set up tracking storm
                         _actionQueue.Enqueue(MonkeyStormTrackingStorm);
@@ -1773,7 +1773,7 @@ public partial class MonkeyStormCloud : Enemy
                 }
 
                 //Check to see if monster can use circle storm
-                if (_playerDistance < 24.0f)
+                if (_playerDistance < EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.MaxDistance)
                 {
                     _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] -= Time.deltaTime;
                     if (_specialCooldown[(int)AttackState.Active] < 0.0f && _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] < 0.0f && Random.Range(1, 4) == 1)
@@ -1781,7 +1781,7 @@ public partial class MonkeyStormCloud : Enemy
                         //Set up attack
                         _activeStates[(int)AttackState.Active] = true;
                         _specialCooldown[(int)AttackState.Active] = 5.0f;
-                        _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] = 8.0f;
+                        _specialCooldown[(int)MonkeyStormAttackState.CircleStorm] = EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Cooldown;
                         _currTime = 0;
                         //Set up circle storm
                         _actionQueue.Enqueue(MonkeyStormCircleStorm);
@@ -1828,7 +1828,7 @@ public partial class Waterdeer : Enemy
                 FollowPlayer();
 
                 //Cooldown special while in 14 units of player
-                if (_playerDistance < 14.0f)
+                if (_playerDistance < EnemyConfig.Instance.Waterdeer.DashAttack.MaxDistance)
                 {
                     _specialCooldown[(int)AttackState.Active] -= Time.deltaTime;
                 }
@@ -1836,7 +1836,7 @@ public partial class Waterdeer : Enemy
                 if (_specialCooldown[(int)AttackState.Active] <= 0)
                 {
                     _activeStates[(int)AttackState.Active] = true;
-                    _specialCooldown[(int)AttackState.Active] = 4.0f;
+                    _specialCooldown[(int)AttackState.Active] = EnemyConfig.Instance.Waterdeer.DashAttack.Cooldown;
                     _currTime = 0;
                     //Load an attack that charges a dash then attacks
                     _actionQueue.Enqueue(WaterdeerDashCharge);

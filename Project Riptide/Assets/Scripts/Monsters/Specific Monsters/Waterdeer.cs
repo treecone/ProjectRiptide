@@ -13,16 +13,16 @@ public partial class Waterdeer : Enemy
 
         //Set parameters
         _enemyType = EnemyType.Waterdeer;
-        _speed = 0.8f;
-        _health = 45;
-        _maxHealth = 45;
+        _speed = EnemyConfig.Instance.Waterdeer.Base.Speed;
+        _health = EnemyConfig.Instance.Waterdeer.Base.MaxHealth;
+        _maxHealth = EnemyConfig.Instance.Waterdeer.Base.MaxHealth;
         _timeBetween = 5.0;
         _timeCurrent = _timeBetween;
         _startPos = transform.position;
-        _wanderRadius = 50.0f;
-        _hostileRadius = 0.0f;
-        _passiveRadius = 50.0f;
-        _maxRadius = 140.0f;
+        _wanderRadius = EnemyConfig.Instance.Waterdeer.Base.WanderRadius;
+        _hostileRadius = EnemyConfig.Instance.Waterdeer.Base.HostileRadius;
+        _passiveRadius = EnemyConfig.Instance.Waterdeer.Base.PassiveRadius;
+        _maxRadius = EnemyConfig.Instance.Waterdeer.Base.MaxRadius;
         _specialCooldown = new float[1] { 5.0f };
         _activeStates = new bool[1] { false };
         _animParm = new int[3] {
@@ -30,7 +30,7 @@ public partial class Waterdeer : Enemy
                     Animator.StringToHash("velocity"),
                     Animator.StringToHash("swimSpeed")};
         _playerCollision = false;
-        _pushMult = 1.0f;
+        _pushMult = EnemyConfig.Instance.Waterdeer.Base.PushMult;
         _isRaming = false;
         _ramingDamage = 20;
         _HostileAI = HostileWaterdeer;
@@ -59,13 +59,13 @@ public partial class Waterdeer : Enemy
     /// </summary>
     protected override void OnHit()
     {
-        AgitateDeersInRadius(30.0f);
+        AgitateDeersInRadius(EnemyConfig.Instance.Waterdeer.HoardBuff.AgitateDistance);
         base.OnHit();
     }
 
     protected override void OnDeath()
     {
-        SpeedupDeersInRadius(40.0f);
+        SpeedupDeersInRadius(EnemyConfig.Instance.Waterdeer.HoardBuff.SpeedupDistance);
         base.OnDeath();
     }
 
@@ -109,7 +109,7 @@ public partial class Waterdeer : Enemy
                 {
                     if (!foundEnemy.GetComponent<StatusEffects>().CheckStatus("DeerSpeedup"))
                     {
-                        foundEnemy.GetComponent<StatusEffects>().AddStatus(StatusType.Speed, "DeerSpeedup", 15.0f, 0.5f);
+                        foundEnemy.GetComponent<StatusEffects>().AddStatus(StatusType.Speed, "DeerSpeedup", EnemyConfig.Instance.Waterdeer.HoardBuff.SpeedBuffDuration, EnemyConfig.Instance.Waterdeer.HoardBuff.SpeedBuffLevel);
                     }
                 }
             }

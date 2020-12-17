@@ -2698,7 +2698,7 @@ public partial class MonkeyBoss : Enemy
             _rightHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.Distance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
+            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDistance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
             _rightHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
@@ -2788,7 +2788,7 @@ public partial class MonkeyBoss : Enemy
             _leftHand.StopMotion();
             ForwardWave wave = Instantiate(_forwardWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<ForwardWave>();
             //wave.transform.localScale = new Vector3(3.0f, 4.0f, 2.0f);
-            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.Distance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
+            wave.StartWave(EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDistance, EnemyConfig.Instance.MonkeyBoss.HandPushWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Damage, EnemyConfig.Instance.MonkeyBoss.HandPushWave.Knockback);
             _leftHandAnimator.SetTrigger(_animParm[(int)MonkeyAnim.Idle]);
             return false;
         }
@@ -2892,7 +2892,7 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyCircleWaveCharge(ref float time)
     {
-        const float MAX_TIME = 0.7f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.SlamWave.ChargeTime;
 
         if (time == 0)
         {
@@ -2904,12 +2904,12 @@ public partial class MonkeyBoss : Enemy
         LookAtPlayer();
 
         //Move right hand to side of player
-        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(10, _rightHandStartPos.y, 10)) - _rightHand.Position;
+        Vector3 rightHandMoveDir = transform.TransformPoint(new Vector3(EnemyConfig.Instance.MonkeyBoss.SlamWave.Displacement, _rightHandStartPos.y, EnemyConfig.Instance.MonkeyBoss.SlamWave.Displacement)) - _rightHand.Position;
         rightHandMoveDir.Normalize();
         _rightHand.ApplyConstantMoveForce(rightHandMoveDir, _playerDistance, MAX_TIME);
 
         //Move left hand to side of player
-        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-10, _leftHandStartPos.y, 10)) - _leftHand.Position;
+        Vector3 leftHandMoveDir = transform.TransformPoint(new Vector3(-EnemyConfig.Instance.MonkeyBoss.SlamWave.Displacement, _leftHandStartPos.y, EnemyConfig.Instance.MonkeyBoss.SlamWave.Displacement)) - _leftHand.Position;
         leftHandMoveDir.Normalize();
         _leftHand.ApplyConstantMoveForce(leftHandMoveDir, _playerDistance, MAX_TIME);
 
@@ -2932,21 +2932,21 @@ public partial class MonkeyBoss : Enemy
     /// <returns></returns>
     protected bool MonkeyCircleWaveAttack(ref float time)
     {
-        const float MAX_TIME = 0.6f;
-        const float WAIT_TIME = 0.5f;
+        float STALL_TIME = EnemyConfig.Instance.MonkeyBoss.SlamWave.WaitTime;
+        float MAX_TIME = STALL_TIME + 0.1f;
 
         if (time == 0)
         {
             if (DoTelegraphs())
             {
-                CreateLeftHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
-                CreateRightHandTelegraph(Vector3.zero, new Vector3(30, 1, 30), Quaternion.identity, TelegraphType.Circle, false);
+                CreateLeftHandTelegraph(Vector3.zero, new Vector3(EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance * 3, 1, EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance * 3), Quaternion.identity, TelegraphType.Circle, false);
+                CreateRightHandTelegraph(Vector3.zero, new Vector3(EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance * 3, 1, EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance * 3), Quaternion.identity, TelegraphType.Circle, false);
             }
             _leftHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
             _rightHandAnimator.Play(_animParm[(int)MonkeyAnim.Slam]);
         }
 
-        if(time >= WAIT_TIME)
+        if(time >= STALL_TIME)
         {
             if(DoTelegraphs())
             {
@@ -2960,9 +2960,9 @@ public partial class MonkeyBoss : Enemy
         if (time >= MAX_TIME)
         {
             CircleWave rightWave = Instantiate(_circleWavePrefab, _rightHand.transform.position + Vector3.down * 3, _rightHand.Rotation).GetComponent<CircleWave>();
-            rightWave.StartWave(10.0f, 0.8f, 20, 2000);
+            rightWave.StartWave(EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance, EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.SlamWave.Damage, EnemyConfig.Instance.MonkeyBoss.SlamWave.Knockback);
             CircleWave leftWave = Instantiate(_circleWavePrefab, _leftHand.transform.position + Vector3.down * 3, _leftHand.Rotation).GetComponent<CircleWave>();
-            leftWave.StartWave(10.0f, 0.8f, 20, 2000);
+            leftWave.StartWave(EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDistance, EnemyConfig.Instance.MonkeyBoss.SlamWave.WaveDuration, EnemyConfig.Instance.MonkeyBoss.SlamWave.Damage, EnemyConfig.Instance.MonkeyBoss.SlamWave.Knockback);
             return false;
         }
         else
@@ -2981,12 +2981,12 @@ public partial class MonkeyStormCloud : Enemy
     /// <returns></returns>
     protected bool MonkeyStormTrackingStorm(ref float time)
     {
-        const float MAX_TIME = 1.5f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.StallTime;
 
         if (time == 0)
         {
             //Spawn storm cloud near the player
-            const float CIRCLE_RADIUS = 6.0f;
+            float CIRCLE_RADIUS = EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.RadiusFromPlayer;
             Vector2 randomOnCircle = Random.insideUnitCircle.normalized * CIRCLE_RADIUS;
             Vector3 stormPosition = PlayerPosition() + new Vector3(randomOnCircle.x, 0, randomOnCircle.y);
             stormPosition += Vector3.up * 3.0f;
@@ -3002,7 +3002,7 @@ public partial class MonkeyStormCloud : Enemy
             //Spawn in storm cloud
             Instantiate(_stormCloud, stormPosition, stormRotation)
                 .GetComponent<StormCloud>()
-                .SetStorm(3.0f, 15, 500, Vector3.zero, 0, _telegraph);
+                .SetStorm(EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.Duration, EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.Damage, EnemyConfig.Instance.MonkeyBoss.StormCloud.TrackingStorm.Knockback, Vector3.zero, 0, _telegraph);
         }
 
         if (time >= MAX_TIME)
@@ -3022,15 +3022,15 @@ public partial class MonkeyStormCloud : Enemy
     /// <returns></returns>
     protected bool MonkeyStormCircleStorm(ref float time)
     {
-        const float MAX_TIME = 2.0f;
+        float MAX_TIME = EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.StallTime;
 
         if (time == 0)
         {
             //Spawn storms in cicle around player
-            const float CIRCLE_RADIUS = 6.0f;
-            float _stormClouds = Random.Range(7,11);
-            float stormPerDegree = 360 / _stormClouds;
-            for (int i = 0; i < _stormClouds; i++)
+            float CIRCLE_RADIUS = EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Radius;
+            float stormClouds = Random.Range(EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.MinStormClouds, EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.MaxStormClouds);
+            float stormPerDegree = 360 / stormClouds;
+            for (int i = 0; i < stormClouds; i++)
             {
                 Vector3 stormPosition = transform.position + Quaternion.Euler(0, stormPerDegree * i, 0) * transform.forward * CIRCLE_RADIUS + Vector3.down * 10f;
                 Vector3 stormDistanceVec = stormPosition - transform.position;
@@ -3039,11 +3039,11 @@ public partial class MonkeyStormCloud : Enemy
                 //Spawn in storm cloud
                 Instantiate(_stormCloud, stormPosition, stormRotation, transform)
                     .GetComponent<StormCloud>()
-                    .SetStorm(3.5f, 15, 500, stormDirection.normalized, 30, null);
+                    .SetStorm(EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Duration, EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Damage, EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Knockback, stormDirection.normalized, EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Distance, null);
 
                 if (DoTelegraphs())
                 {
-                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * 15 + Vector3.down * 12f, new Vector3(3f, 1, 30f), stormRotation, TelegraphType.Square, true);
+                    CreateTelegraph(transform.InverseTransformVector(stormDirection.normalized) * (EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Distance / 2f) + Vector3.down * 12f, new Vector3(3f, 1, EnemyConfig.Instance.MonkeyBoss.StormCloud.CircleStorm.Distance), stormRotation, TelegraphType.Square, true);
                     if(stormRotation == Quaternion.identity)
                     {
                         _telegraphs[_telegraphs.Count - 1].transform.rotation = Quaternion.identity;
@@ -3073,8 +3073,8 @@ public partial class Waterdeer : Enemy
     /// <returns></returns>
     protected bool WaterdeerDashCharge(ref float time)
     {
-        const float MAX_TIME = 1.5f;
-        const float STALL_TIME = 0.3f;
+        float MAX_TIME = EnemyConfig.Instance.Waterdeer.DashAttack.ChargeTime;
+        float STALL_TIME = EnemyConfig.Instance.Waterdeer.DashAttack.StallTime;
 
         //Stop motion at begining of charge
         if (time == 0)
@@ -3112,13 +3112,13 @@ public partial class Waterdeer : Enemy
     /// <returns></returns>
     protected bool WaterdeerDashAttack(ref float time)
     {
-        const float MAX_TIME = 0.7f;
+        float MAX_TIME = EnemyConfig.Instance.Waterdeer.DashAttack.Duration;
 
         //Add hitbox and start dash
         if (time == 0.0f)
         {
-            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(3, 3, 3), HitboxType.EnemyHitbox, _ramingDamage, Vector2.zero, 2000));
-            ApplyMoveForce(transform.forward, 20.0f * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]), MAX_TIME);
+            _hitboxes.Add(CreateHitbox(Vector3.forward * 2.2f + Vector3.up * 0.2f, new Vector3(3, 3, 3), HitboxType.EnemyHitbox, EnemyConfig.Instance.Waterdeer.DashAttack.Damage, Vector2.zero, EnemyConfig.Instance.Waterdeer.DashAttack.Knockback));
+            ApplyMoveForce(transform.forward, EnemyConfig.Instance.Waterdeer.DashAttack.Distance * (1 + _enemyUpgrades.masterUpgrade[StatusType.Speed]), MAX_TIME);
             _animator.SetFloat(_animParm[(int)WaterdeerAnim.SwimSpeed], 2.0f);
             if (DoTelegraphs())
             {

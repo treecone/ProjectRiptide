@@ -817,7 +817,7 @@ public class EnemyConfig : ScriptableObject
             private float _maxDistance = 15.0f; //Max distance to be able to use dash attack
             public float MaxDistance => _maxDistance;
             [SerializeField]
-            private float _cooldown = .0f;
+            private float _cooldown = 4.0f;
             public float Cooldown => _cooldown;
             [SerializeField]
             private float _chargeTime = 1.0f; //Time charging dash
@@ -861,8 +861,8 @@ public class EnemyConfig : ScriptableObject
             private float _knockback = 2000.0f;
             public float Knockback => _knockback;
             [SerializeField]
-            private float _distance = 25.0f;
-            public float Distance => _distance;
+            private float _waveDistance = 25.0f;
+            public float WaveDistance => _waveDistance;
             [SerializeField]
             private float _waveDuration = 0.6f;
             public float WaveDuration => _waveDuration;
@@ -875,23 +875,32 @@ public class EnemyConfig : ScriptableObject
         public class MonkeyBossSlamWave
         {
             [SerializeField]
-            private float _maxDistance = 10.0f; //Max distance to be able to use dash attack
+            private float _maxDistance = 25.0f; //Max distance to be able to use dash attack
             public float MaxDistance => _maxDistance;
             [SerializeField]
-            private float _cooldown = 5.0f;
+            private float _cooldown = 8.0f;
             public float Cooldown => _cooldown;
             [SerializeField]
-            private float _chargeTime = 1.5f; //Time charging dash
+            private float _chargeTime = 0.7f; //Time charging dash
             public float ChargeTime => _chargeTime;
             [SerializeField]
-            private float _stallTime = 0.2f; //Time stalling after charging before using dash
-            public float StallTime => _stallTime;
+            private float _waitTime = 0.5f; //Time stalling after charging before using dash
+            public float WaitTime => _waitTime;
             [SerializeField]
-            private float _damage = 30.0f;
+            private float _damage = 20.0f;
             public float Damage => _damage;
             [SerializeField]
-            private float _knockback = 1000.0f;
+            private float _knockback = 2000.0f;
             public float Knockback => _knockback;
+            [SerializeField]
+            private float _displacement = 10.0f;
+            public float Displacement => _displacement;
+            [SerializeField]
+            private float _waveDistance = 10.0f;
+            public float WaveDistance => _waveDistance;
+            [SerializeField]
+            private float _waveDuration = 0.8f;
+            public float WaveDuration => _waveDuration;
         }
         [SerializeField]
         private MonkeyBossSlamWave _slamWave;
@@ -904,22 +913,25 @@ public class EnemyConfig : ScriptableObject
             public class MonkeyBossTrackingStorm
             {
                 [SerializeField]
-                private float _maxDistance = 10.0f; //Max distance to be able to use dash attack
+                private float _maxDistance = 25.0f; //Max distance to be able to use dash attack
                 public float MaxDistance => _maxDistance;
                 [SerializeField]
-                private float _cooldown = 5.0f;
+                private float _cooldown = 6.0f;
                 public float Cooldown => _cooldown;
                 [SerializeField]
-                private float _chargeTime = 1.5f; //Time charging dash
-                public float ChargeTime => _chargeTime;
-                [SerializeField]
-                private float _stallTime = 0.2f; //Time stalling after charging before using dash
+                private float _stallTime = 1.5f; //Time stalling after charging before using dash
                 public float StallTime => _stallTime;
                 [SerializeField]
-                private float _damage = 30.0f;
+                private float _radiusFromPlayer = 6.0f;
+                public float RadiusFromPlayer => _radiusFromPlayer;
+                [SerializeField]
+                private float _damage = 15.0f;
                 public float Damage => _damage;
                 [SerializeField]
-                private float _knockback = 1000.0f;
+                private float _duration = 3.0f;
+                public float Duration => _duration;
+                [SerializeField]
+                private float _knockback = 500.0f;
                 public float Knockback => _knockback;
             }
             [SerializeField]
@@ -930,23 +942,36 @@ public class EnemyConfig : ScriptableObject
             public class MonkeyBossCircleStorm
             {
                 [SerializeField]
-                private float _maxDistance = 10.0f; //Max distance to be able to use dash attack
+                private float _maxDistance = 24.0f; //Max distance to be able to use dash attack
                 public float MaxDistance => _maxDistance;
                 [SerializeField]
-                private float _cooldown = 5.0f;
+                private float _cooldown = 8.0f;
                 public float Cooldown => _cooldown;
                 [SerializeField]
-                private float _chargeTime = 1.5f; //Time charging dash
-                public float ChargeTime => _chargeTime;
-                [SerializeField]
-                private float _stallTime = 0.2f; //Time stalling after charging before using dash
+                private float _stallTime = 2.0f; //Time stalling after charging before using dash
                 public float StallTime => _stallTime;
                 [SerializeField]
-                private float _damage = 30.0f;
+                private float _radius = 6.0f;
+                public float Radius => _radius;
+                [SerializeField]
+                private float _damage = 15.0f;
                 public float Damage => _damage;
                 [SerializeField]
-                private float _knockback = 1000.0f;
+                private float _knockback = 500.0f;
                 public float Knockback => _knockback;
+                [SerializeField]
+                private float _duration = 3.5f;
+                public float Duration => _duration;
+                [SerializeField]
+                private float _distance = 30f;
+                public float Distance => _distance;
+                [SerializeField]
+                private int _minStormClouds = 7;
+                public int MinStormClouds => _minStormClouds;
+                [SerializeField]
+                private int _maxStormClouds = 11;
+                public int MaxStormClouds => _maxStormClouds;
+
             }
             [SerializeField]
             private MonkeyBossCircleStorm _circleStorm;
@@ -956,6 +981,67 @@ public class EnemyConfig : ScriptableObject
         [SerializeField]
         private MonkeyBossStormCloud _stormCloud;
         public MonkeyBossStormCloud StormCloud => _stormCloud;
+    }
+
+    [System.Serializable]
+    public class WaterdeerConfig
+    {
+        [SerializeField]
+        private BaseEnemyConfig _base;
+        public BaseEnemyConfig Base => _base;
+
+        [System.Serializable]
+        public class WaterdeerDashAttack
+        {
+            [SerializeField]
+            private float _maxDistance = 14.0f; //Max distance to be able to use dash attack
+            public float MaxDistance => _maxDistance;
+            [SerializeField]
+            private float _cooldown = 4.0f;
+            public float Cooldown => _cooldown;
+            [SerializeField]
+            private float _chargeTime = 1.5f; //Time charging dash
+            public float ChargeTime => _chargeTime;
+            [SerializeField]
+            private float _stallTime = 0.3f; //Time stalling after charging before using dash
+            public float StallTime => _stallTime;
+            [SerializeField]
+            private float _damage = 20.0f;
+            public float Damage => _damage;
+            [SerializeField]
+            private float _knockback = 2000.0f;
+            public float Knockback => _knockback;
+            [SerializeField]
+            private float _distance = 20.0f; //If this is changed, telegraph will need to be change manually
+            public float Distance => _distance;
+            [SerializeField]
+            private float _duration = 0.7f; //If this is changed, telegraph will need to be change manually
+            public float Duration => _duration;
+        }
+
+        [SerializeField]
+        private WaterdeerDashAttack _dashAttack;
+        public WaterdeerDashAttack DashAttack => _dashAttack;
+
+        [System.Serializable]
+        public class WaterdeerHoardBuff
+        {
+            [SerializeField]
+            private float _agitateDistance = 30.0f; //Max distance to be able to use dash attack
+            public float AgitateDistance => _agitateDistance;
+            [SerializeField]
+            private float _speedupDistance = 40.0f; //Max distance to be able to use dash attack
+            public float SpeedupDistance => _speedupDistance;
+            [SerializeField]
+            private float _speedBuffLevel = 0.5f; //Max distance to be able to use dash attack
+            public float SpeedBuffLevel => _speedBuffLevel;
+            [SerializeField]
+            private float _speedBuffDuration = 15.0f; //Max distance to be able to use dash attack
+            public float SpeedBuffDuration => _speedBuffDuration;
+        }
+        [SerializeField]
+        private WaterdeerHoardBuff _hoardBuff;
+        public WaterdeerHoardBuff HoardBuff => _hoardBuff;
     }
 
     [SerializeField]
@@ -993,6 +1079,10 @@ public class EnemyConfig : ScriptableObject
     [SerializeField]
     private MonkeyBossConfig _monkeyBoss;
     public MonkeyBossConfig MonkeyBoss => _monkeyBoss;
+
+    [SerializeField]
+    private WaterdeerConfig _waterdeer;
+    public WaterdeerConfig Waterdeer => _waterdeer;
 
     [SerializeField]
     private BombCrabConfig _bombCrab;
