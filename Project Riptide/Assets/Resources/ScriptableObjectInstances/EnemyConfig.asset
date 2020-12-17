@@ -279,30 +279,61 @@ MonoBehaviour:
       _duration: 0.2
       _damage: 30
       _knockback: 1000
-      _distance: 25
+      _waveDistance: 25
       _waveDuration: 0.6
     _slamWave:
+      _maxDistance: 10
+      _cooldown: 5
+      _chargeTime: 1.5
+      _waitTime: 0.5
+      _damage: 30
+      _knockback: 1000
+      _displacement: 10
+      _waveDistance: 10
+      _waveDuration: 0.8
+    _stormCloud:
+      _trackingStorm:
+        _maxDistance: 10
+        _cooldown: 5
+        _stallTime: 0.2
+        _radiusFromPlayer: 6
+        _damage: 30
+        _duration: 3
+        _knockback: 1000
+      _circleStorm:
+        _maxDistance: 10
+        _cooldown: 5
+        _stallTime: 0.2
+        _radius: 6
+        _damage: 30
+        _knockback: 1000
+        _duration: 3.5
+        _distance: 30
+        _minStormClouds: 7
+        _maxStormClouds: 11
+  _waterdeer:
+    _base:
+      _maxHealth: 45
+      _speed: 0.8
+      _wanderRadius: 50
+      _hostileRadius: 0
+      _passiveRadius: 50
+      _maxRadius: 140
+      _pushMultiplier: 1
+    _dashAttack:
       _maxDistance: 10
       _cooldown: 5
       _chargeTime: 1.5
       _stallTime: 0.2
       _damage: 30
       _knockback: 1000
-    _stormCloud:
-      _trackingStorm:
-        _maxDistance: 10
-        _cooldown: 5
-        _chargeTime: 1.5
-        _stallTime: 0.2
-        _damage: 30
-        _knockback: 1000
-      _circleStorm:
-        _maxDistance: 10
-        _cooldown: 5
-        _chargeTime: 1.5
-        _stallTime: 0.2
-        _damage: 30
-        _knockback: 1000
+      _distance: 20
+      _duration: 0.7
+    _hoardBuff:
+      _agitateDistance: 30
+      _speedupDistance: 40
+      _speedBuffLevel: 0.5
+      _speedBuffDuration: 15
   _bombCrab:
     _base:
       _maxHealth: 20
