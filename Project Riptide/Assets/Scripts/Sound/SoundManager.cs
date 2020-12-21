@@ -135,4 +135,9 @@ public class SoundManager : MonoBehaviour
             source.audioSource.volume *= (globalVolume / oldGlobalVolume);
         }
     }
+
+    public float GetGlobalVolume()
+    {
+        return globalVolume;
+    }
 }

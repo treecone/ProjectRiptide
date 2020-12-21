@@ -10,11 +10,12 @@ public class MusicManager : MonoBehaviour
 
     private AudioSource _audioSource;
     private float startVolume;
-
+    private float currentVolumeMod;
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
         startVolume = _audioSource.volume;
+        currentVolumeMod = 0.5f;
         instance = this;
     }
 
@@ -31,6 +32,11 @@ public class MusicManager : MonoBehaviour
 
     public void SetVolume(float amount)
     {
-        _audioSource.volume = startVolume * amount;
+        currentVolumeMod = amount;
+        _audioSource.volume = startVolume * currentVolumeMod;
+    }
+    public float GetVolume()
+    {
+        return currentVolumeMod;
     }
 }
