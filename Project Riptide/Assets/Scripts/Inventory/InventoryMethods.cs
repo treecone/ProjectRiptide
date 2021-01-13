@@ -133,11 +133,14 @@ public class InventoryMethods : MonoBehaviour
         {
             _exposed[i] = false;
         }
-        int chunk = (int)((_chunkLoader.StartingChunk.x - 1) + (_chunkLoader.StartingChunk.y - 1) * 5);
-        _exposed[chunk] = true;
-        _mapImages[25].enabled = true;
-        //calculate where it should be on the map
-        _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
+        if (_chunkLoader)
+        {
+            int chunk = (int)((_chunkLoader.StartingChunk.x - 1) + (_chunkLoader.StartingChunk.y - 1) * 5);
+            _exposed[chunk] = true;
+            _mapImages[25].enabled = true;
+            //calculate where it should be on the map
+            _uiAnimMethods.ExposeChunk(_mapImages[chunk]);
+        }
     }
 
     /// <summary>

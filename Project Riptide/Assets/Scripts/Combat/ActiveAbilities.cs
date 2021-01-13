@@ -29,7 +29,7 @@ public class ActiveAbilities : MonoBehaviour
     [SerializeField]
     private InputManager _inputManager;
 
-    [SerializeField]
+    //[SerializeField]
     private SkillType[] _skillType = new SkillType[SKILL_AMOUNT];
 
     [SerializeField]
@@ -62,7 +62,8 @@ public class ActiveAbilities : MonoBehaviour
         //Set up skill based on inital values
         for (int i = 0; i < SKILL_AMOUNT; i++)
         {
-            SetActiveSkill(i, _skillType[i]);
+            if(_skill[i] == null)
+                SetActiveSkill(i, _skillType[i]);
             _sliders[i] = _buttons[i].GetComponentInChildren<Slider>();
             _sliders[i].gameObject.SetActive(false);
         }
