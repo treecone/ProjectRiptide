@@ -36,6 +36,8 @@ public class InventoryMethods : MonoBehaviour
     #endregion
     #region InventoryUI
     [SerializeField]
+    private bool _customStartingItems = false;
+    [SerializeField]
     private TextMeshProUGUI _trashField;
     [SerializeField]
     private TextMeshProUGUI _itemName;
@@ -143,7 +145,12 @@ public class InventoryMethods : MonoBehaviour
     /// </summary>
     public void AddStartingItems()
     {
-        List<string> startingItemNames = new List<string> { "raft1", "patchworksails1", "rudimentaryhull1", "rustedcannon1", "grandmascookies1" };
+        List<string> startingItemNames = new List<string>();
+        //Set starting items using scriptable object
+        if (_customStartingItems)
+            startingItemNames = StartingItems.Instance.GetStartingItemList();
+        else
+            startingItemNames = StartingItems.Instance.GetDefaultStartingItemList();
         foreach (string startingItem in startingItemNames)
         {
             Item item = ItemDB.Instance.FindItem(startingItem);
