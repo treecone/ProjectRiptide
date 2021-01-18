@@ -49,8 +49,8 @@ public class SaveLoad : MonoBehaviour
         MusicManager.instance.SetVolume((float)save.musicVolume);
         SoundManager.instance.SetGlobalVolume((float)save.sfxVolume);
         player.GetComponent<PlayerHealth>().Health = (float)save.playerHealth;
-        player.transform.position = save.playerLocation;
-        player.transform.rotation = save.playerRotation;
+        player.GetComponent<ShipMovement>().Position = save.playerLocation;
+        player.GetComponent<ShipMovement>().Rotation = save.playerRotation;
         //inv_items = PlayerInventory.Instance.items;
         //inv_equipment = PlayerInventory.Instance.equipment;
     }
