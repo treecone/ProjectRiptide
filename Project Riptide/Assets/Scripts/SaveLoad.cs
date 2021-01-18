@@ -10,6 +10,8 @@ public class SaveLoad : MonoBehaviour
     private const string SAVE_FILE_NAME = "savedata.json";
     [SerializeField]
     private GameObject player;
+
+    private SaveData save;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,21 +23,52 @@ public class SaveLoad : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.P))
         {
-            string json_test = new SaveData(this).GetJson();
-            StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
-            
-            sw.Write(json_test);
-            sw.Close();
-            sw.Dispose();
-            Debug.Log(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
-            Debug.Log(json_test);
+            Save();
         }
         if (Input.GetKeyDown(KeyCode.O))
         {
-            SaveData.FromJson();
+            Load();
         }
     }
 
+    private void Save()
+    {
+        string json_test = new SaveData(this).GetJson();
+        StreamWriter sw = new StreamWriter(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
+
+        sw.Write(json_test);
+        sw.Close();
+        sw.Dispose();
+        Debug.Log(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
+        Debug.Log(json_test);
+    }
+    private void Load()
+    {
+        save = SaveData.FromJson();
+    }
+    private void OnApplicationFocus(bool focus)
+    {
+        Debug.Log("OnApplicationFocus called with parameter " + focus);
+        if (focus)
+        {
+            //load on refocus
+            Load();
+        } else
+        {
+            //save on loss of focus
+            Save();
+        }
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        Debug.Log("OnApplicationPause called with parameter " + pause);
+    }
+
+    private void OnApplicationQuit()
+    {
+        Debug.Log("OnApplicationQuit called");
+    }
     public class SaveData
     {
         //floats are doubles here bc litjson likes that idk
@@ -53,6 +86,10 @@ public class SaveLoad : MonoBehaviour
         public List<Item> inv_items;
         public List<Item> inv_equipment;
         public SaveData()
+        {
+
+        }
+        private SaveData(string jsonData)
         {
 
         }
@@ -150,7 +187,7 @@ public class SaveLoad : MonoBehaviour
             StreamReader sr = new StreamReader(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
             string jsonSaveData = sr.ReadToEnd();
             Debug.Log(jsonSaveData);
-            return new SaveData();
+            return new SaveData(jsonSaveData);
         }
     }
 }
