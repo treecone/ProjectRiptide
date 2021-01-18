@@ -31,15 +31,26 @@ public class PlayerHealth : MonoBehaviour
     private bool canBuyback;
     private int buybackCost;
 
-    public float Health { get { return health; } }
+    public float Health
+    {
+        get { return health; }
+        set //only to be used for save/load
+        {
+            health = value;
+            healthBar.UpdateHealth(health);
+        }
+    }
     public float MaxHealth { get { return maxHealth; } }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         maxHealth = 100;
         health = 100;
         healthBar = GetComponent<HealthBar>();
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
         healthBar.SetMaxHealth(maxHealth);
         healthBar.UpdateHealth(health);
         camera = Camera.main;
@@ -50,6 +61,10 @@ public class PlayerHealth : MonoBehaviour
     {
         //Make health bar face player
         //healthBarObject.transform.rotation = new Quaternion(camera.transform.rotation.x, camera.transform.rotation.y, camera.transform.rotation.z, camera.transform.rotation.w);
+        if(Input.GetKeyDown(KeyCode.I))
+        {
+            TakeDamage(10, false);
+        }
         UpdateHealth();
     }
 

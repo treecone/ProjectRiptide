@@ -15,7 +15,7 @@ public class SaveLoad : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Load();
     }
 
     // Update is called once per frame
@@ -45,11 +45,19 @@ public class SaveLoad : MonoBehaviour
     private void Load()
     {
         save = SaveData.FromJson();
+
+        MusicManager.instance.SetVolume((float)save.musicVolume);
+        SoundManager.instance.SetGlobalVolume((float)save.sfxVolume);
+        player.GetComponent<PlayerHealth>().Health = (float)save.playerHealth;
+        player.transform.position = save.playerLocation;
+        player.transform.rotation = save.playerRotation;
+        //inv_items = PlayerInventory.Instance.items;
+        //inv_equipment = PlayerInventory.Instance.equipment;
     }
     private void OnApplicationFocus(bool focus)
     {
         Debug.Log("OnApplicationFocus called with parameter " + focus);
-        if (focus)
+        /*if (focus)
         {
             //load on refocus
             Load();
@@ -57,7 +65,7 @@ public class SaveLoad : MonoBehaviour
         {
             //save on loss of focus
             Save();
-        }
+        }*/
     }
 
     private void OnApplicationPause(bool pause)
@@ -91,7 +99,58 @@ public class SaveLoad : MonoBehaviour
         }
         private SaveData(string jsonData)
         {
+            JsonReader reader = new JsonReader(jsonData);
+            while(reader.Read())
+            {
+                //Debug.Log("" + reader.Token + " -- " + reader.Value);
+                if(reader.Token == JsonToken.PropertyName)
+                {
+                    switch (reader.Value)
+                    {
+                        case "musicVolume":
+                            reader.Read();
+                            musicVolume = double.Parse(reader.Value.ToString());
+                            break;
+                        case "sfxVolume":
+                            reader.Read();
+                            sfxVolume = double.Parse(reader.Value.ToString());
+                            break;
+                        case "playerHealth":
+                            reader.Read();
+                            playerHealth = double.Parse(reader.Value.ToString());
+                            break;
+                        case "playerLocation":
+                            reader.Read();
+                            reader.Read();
+                            float x = float.Parse(reader.Value.ToString());
+                            reader.Read();
+                            float y = float.Parse(reader.Value.ToString());
+                            reader.Read();
+                            float z = float.Parse(reader.Value.ToString());
+                            playerLocation = new Vector3(x, y, z);
+                            break;
+                        case "playerRotation":
+                            reader.Read();
+                            reader.Read();
+                            float _x = float.Parse(reader.Value.ToString());
+                            reader.Read();
+                            float _y = float.Parse(reader.Value.ToString());
+                            reader.Read();
+                            float _z = float.Parse(reader.Value.ToString());
+                            reader.Read();
+                            float _w = float.Parse(reader.Value.ToString());
+                            playerRotation = new Quaternion(_x, _y, _z, _w);
+                            break;
+                        case "items":
+                            break;
 
+                        case "equipment":
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
         public SaveData(SaveLoad sl)
         {
