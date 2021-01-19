@@ -183,7 +183,7 @@ public class CannonFire : MonoBehaviour
         public CannonShot(Vector3 direction, float fireAngle, Upgrade upgrade)
         {
             this._count = 1 + (int)upgrade[StatusType.Count];
-            this._damage = 3 + (int)upgrade[StatusType.Damage];
+            this._damage = 3 + upgrade[StatusType.Damage];
             this._direction = direction;
             this._fireSpeed = 40 + upgrade[StatusType.FireSpeed];
             this._fireAngle = fireAngle;
