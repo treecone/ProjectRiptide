@@ -13,6 +13,7 @@ public class QuickSpawn : MonoBehaviour
     private List<SpawnInfo> _spawnInfo;
     private Dictionary<EnemyType, GameObject> _prefabs;
     private bool _hidden = false;
+    private GameObject _camera;
 
     private void Start()
     {
@@ -22,6 +23,7 @@ public class QuickSpawn : MonoBehaviour
         {
             _prefabs.Add(_spawnInfo[i].Type, _spawnInfo[i].Prefab);
         }
+        _camera = GameObject.Find("Main Camera");
     }
 
     /// <summary>
@@ -78,7 +80,9 @@ public class QuickSpawn : MonoBehaviour
                         break;
                     }
             }
-            Instantiate(_prefabs[type], new Vector3(transform.position.x, yPosition, transform.position.z), transform.rotation);
+            Vector3 lookPos = _camera.transform.position - this.transform.position;
+            lookPos.y = 0;
+            Instantiate(_prefabs[type], new Vector3(transform.position.x, yPosition, transform.position.z), Quaternion.LookRotation(lookPos));
         }
         else
         {
