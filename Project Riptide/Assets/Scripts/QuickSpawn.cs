@@ -53,7 +53,32 @@ public class QuickSpawn : MonoBehaviour
         //EnemyType type = EnemyType.KoiBoss;
         if(_prefabs.ContainsKey(type))
         {
-            Instantiate(_prefabs[type], transform.position, transform.rotation);
+            float yPosition = transform.position.y;
+            // Adjust spawn height.
+            switch (type)
+            {
+                case EnemyType.ChickenFlock:
+                {
+                        yPosition += 1f;
+                        break;
+                }
+                case EnemyType.Stingray:
+                    {
+                        yPosition += 1f;
+                        break;
+                    }
+                case EnemyType.BombCrab:
+                    {
+                        yPosition += 1f;
+                        break;
+                    }
+                case EnemyType.MonkeyBoss:
+                    {
+                        yPosition -= 6f;
+                        break;
+                    }
+            }
+            Instantiate(_prefabs[type], new Vector3(transform.position.x, yPosition, transform.position.z), transform.rotation);
         }
         else
         {
