@@ -208,9 +208,9 @@ public class ActiveAbilities : MonoBehaviour
         switch(type)
         {
             case SkillType.SmallDash:
-                return new ActiveSkill("ShortDash", SmallDash, 5.0f, false, index);
+                return new ActiveSkill("ShortDash", SmallDash, 8.0f, false, index);
             case SkillType.Dash:
-                return new ActiveSkill("Dash", Dash, 5.0f, false, index);
+                return new ActiveSkill("Dash", Dash, 7.0f, false, index);
             case SkillType.SmallManuverabilityBoost:
                 return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 5.0f, 2.0f);
             case SkillType.MediumManuverabilityBoost:
@@ -302,9 +302,9 @@ public class ActiveAbilities : MonoBehaviour
             case SkillType.StrongFlameThrower:
                 return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 20.0f);
             case SkillType.WeakDefenseBoost:
-                return new StatusSkill("DefenseBoost", this, 15.0f, false, index, StatusType.Armor, 5.0f, 15.0f);
+                return new StatusSkill("DefenseBoost", this, 22.0f, false, index, StatusType.Armor, 3.0f, 15.0f);
             case SkillType.VeryWeakBigShot:
-                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 10.0f, 1, 0, 0);
+                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 8.0f, 1, 0, 0);
         }
         return null;
     }

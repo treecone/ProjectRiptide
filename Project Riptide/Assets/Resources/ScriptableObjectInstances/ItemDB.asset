@@ -149,7 +149,7 @@ MonoBehaviour:
     value: 50
     amount: 1
   - id: 30
-    name: Citation For Potching WIldlife
+    name: Citation For Poaching Wildlife
     value: 1
     amount: 1
   - id: 31
@@ -613,10 +613,10 @@ MonoBehaviour:
     - list:
       - name: 
         upgradeType: 7
-        upgradeValue: 0.05
+        upgradeValue: 0.5
       - name: 
         upgradeType: 6
-        upgradeValue: 0.025
+        upgradeValue: 0.1
       - name: 
         upgradeType: 0
         upgradeValue: -0.5
@@ -1510,7 +1510,10 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: e8b248ca1c1625d4a89cc8de2413f358, type: 3}
     maxAmount: 1
     upgrades:
-    - list: []
+    - list:
+      - name: 
+        upgradeType: 9
+        upgradeValue: 0.25
     - list:
       - name: 
         upgradeType: 9

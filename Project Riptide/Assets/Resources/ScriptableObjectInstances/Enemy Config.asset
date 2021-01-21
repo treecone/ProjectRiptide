@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _koiBoss:
     _base:
-      _maxHealth: 100
+      _maxHealth: 250
       _speed: 1
       _wanderRadius: 60
       _hostileRadius: 30
@@ -26,7 +26,7 @@ MonoBehaviour:
       _cooldown: 6
       _chargeTime: 1.5
       _stallTime: 0.2
-      _damage: 20
+      _damage: 18
       _distance: 30
     _bubbleBlast:
       _maxDistance: 20
@@ -43,9 +43,9 @@ MonoBehaviour:
       _cooldown: 3
       _damage: 10
     _underwaterDash:
-      _vulnerabilityTime: 3
+      _vulnerabilityTime: 6
     _underwaterBubbleBlast:
-      _vulnerabilityTime: 2.5
+      _vulnerabilityTime: 5
     _underwaterAttack:
       _maxDistance: 15
       _cooldown: 8
@@ -53,7 +53,7 @@ MonoBehaviour:
       _stallTime: 0.5
       _damage: 20
       _followSpeed: 5
-      _vulnerabilityTime: 3
+      _vulnerabilityTime: 6
   _rockCrab:
     _base:
       _maxHealth: 100
@@ -65,7 +65,7 @@ MonoBehaviour:
       _pushMultiplier: 1
     _flingAttack:
       _maxDistance: 20
-      _cooldown: 5
+      _cooldown: 3
       _chargeTime: 1
       _damage: 20
       _distance: 15
@@ -87,7 +87,7 @@ MonoBehaviour:
       _poisonDamage: 3
   _clamBoss:
     _base:
-      _maxHealth: 100
+      _maxHealth: 350
       _speed: 1
       _wanderRadius: 60
       _hostileRadius: 30
@@ -98,38 +98,38 @@ MonoBehaviour:
       _maxDistance: 15
       _cooldown: 3
       _chargeTime: 2
-      _damage: 5
+      _damage: 50
       _tentacleAmount: 10
       _circleRadius: 7
-      _riseTime: 2
-      _trackTime: 1
-      _attackTime: 2
+      _riseTime: 1.5
+      _trackTime: 0.8
+      _attackTime: 1.5
     _trackingAttack:
       _maxDistance: 25
       _cooldown: 5
       _chargeTime: 1
-      _damage: 5
+      _damage: 40
       _circleRadius: 5
-      _riseTime: 2
-      _trackTime: 1
-      _attackTime: 1
+      _riseTime: 1.5
+      _trackTime: 0.8
+      _attackTime: 0.8
     _lineAttack:
       _maxDistance: 20
       _cooldown: 8
       _chargeTime: 0.25
-      _damage: 10
-      _riseTime: 1
-      _trackTime: 1
-      _attackTime: 1
+      _damage: 40
+      _riseTime: 0.8
+      _trackTime: 0.8
+      _attackTime: 0.8
     _burstAttack:
       _cooldown: 5
       _duration: 2
-      _damage: 10
+      _damage: 70
       _attackRadius: 30
       _tentacleAmount: 50
-      _riseTime: 1
-      _trackTime: 1
-      _attackTime: 1
+      _riseTime: 0.8
+      _trackTime: 0.8
+      _attackTime: 0.8
     _openAttack:
       _maxDistance: 25
       _cooldown: 15
@@ -137,16 +137,16 @@ MonoBehaviour:
       _waitTime: 2
       _dragonAttack:
         _chargeTime: 2
-        _poisonDamage: 4
+        _poisonDamage: 12
         _circleRadius: 6
         _smokeClouds: 10
         _distance: 35
         _duration: 2
       _waterSpoutAttack:
-        _chargeTime: 0.5
+        _chargeTime: 0.2
         _duration: 5
-        _stallTime: 0.5
-        _damagePerSecond: 15
+        _stallTime: 0.2
+        _damagePerSecond: 45
       _birdAttack:
         _duration: 4
         _damage: 10
@@ -163,7 +163,7 @@ MonoBehaviour:
       _pushMultiplier: 1
   _chickenFish:
     _base:
-      _maxHealth: 100
+      _maxHealth: 30
       _speed: 1
       _wanderRadius: 60
       _hostileRadius: 30
@@ -174,7 +174,7 @@ MonoBehaviour:
       _maxDistance: 20
       _cooldown: 2
       _duration: 1
-      _damage: 20
+      _damage: 10
       _distance: 15
       _height: 5
       _knockback: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
       _cooldown: 6
       _chargeTime: 2
       _stallTime: 0.5
-      _damage: 15
+      _damage: 30
       _boltLength: 30
       _knockback: 100
     _crossZap:
@@ -201,10 +201,10 @@ MonoBehaviour:
       _maxPartnerDistance: 25
       _chargeTime: 1
       _duration: 10
-      _damagePerSecond: 10
+      _damagePerSecond: 25
   _mox:
     _base:
-      _maxHealth: 100
+      _maxHealth: 135
       _speed: 1
       _wanderRadius: 60
       _hostileRadius: 30
@@ -212,7 +212,7 @@ MonoBehaviour:
       _maxRadius: 240
       _pushMultiplier: 1
     _dashAttack:
-      _maxDistance: 10
+      _maxDistance: 15
       _cooldown: 5
       _chargeTime: 1.5
       _stallTime: 0.2
