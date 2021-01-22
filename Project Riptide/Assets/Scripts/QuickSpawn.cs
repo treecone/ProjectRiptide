@@ -13,6 +13,7 @@ public class QuickSpawn : MonoBehaviour
     private List<SpawnInfo> _spawnInfo;
     private Dictionary<EnemyType, GameObject> _prefabs;
     private bool _hidden = false;
+    private GameObject _camera;
 
     private void Start()
     {
@@ -22,6 +23,7 @@ public class QuickSpawn : MonoBehaviour
         {
             _prefabs.Add(_spawnInfo[i].Type, _spawnInfo[i].Prefab);
         }
+        _camera = GameObject.Find("Main Camera");
     }
 
     /// <summary>
@@ -53,7 +55,34 @@ public class QuickSpawn : MonoBehaviour
         //EnemyType type = EnemyType.KoiBoss;
         if(_prefabs.ContainsKey(type))
         {
-            Instantiate(_prefabs[type], transform.position, transform.rotation);
+            float yPosition = transform.position.y;
+            // Adjust spawn height.
+            switch (type)
+            {
+                case EnemyType.ChickenFlock:
+                {
+                        yPosition += 1f;
+                        break;
+                }
+                case EnemyType.Stingray:
+                    {
+                        yPosition += 1f;
+                        break;
+                    }
+                case EnemyType.BombCrab:
+                    {
+                        yPosition += 1f;
+                        break;
+                    }
+                case EnemyType.MonkeyBoss:
+                    {
+                        yPosition -= 6f;
+                        break;
+                    }
+            }
+            Vector3 lookPos = _camera.transform.position - this.transform.position;
+            lookPos.y = 0;
+            Instantiate(_prefabs[type], new Vector3(transform.position.x, yPosition, transform.position.z), Quaternion.LookRotation(lookPos));
         }
         else
         {

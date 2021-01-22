@@ -75,6 +75,10 @@ public class ShipMovement : Physics
         _playerHurtbox.OnStay += OnObsticalCollision;
         _playerHurtbox.OnTrigger += OnObsticalEnter;
         base.Start();
+        if(!SaveLoad.Instance.Data.newGame)
+        {
+            Position = SaveLoad.Instance.Data.playerLocation;
+        }
     }
 
     // Update is called once per frame

@@ -69,6 +69,18 @@ public class PlayerInventory : ScriptableObject
         Debug.Log("Inventory initialization");
     }
 
+    public void LoadInventoryAndEquipment(List<Item> items, List<Item> equipment)
+    {
+        foreach(Item i in items)
+        {
+            AddItem(i.Name, i.Amount);
+        }
+        foreach(Item i in equipment)
+        {
+            AddEquipment(i);
+        }
+    }
+
     /// <summary>
     /// Adds items to the inventory
     /// </summary>
@@ -252,6 +264,7 @@ public class PlayerInventory : ScriptableObject
         }
         return addItems;
     }
+    
 
     public bool HasEquipment(string name)
     {

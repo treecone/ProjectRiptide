@@ -7,11 +7,30 @@ using System.IO;
 
 public class SaveLoad : MonoBehaviour
 {
+    private static SaveLoad instance;
+    public static SaveLoad Instance
+    {
+        get
+        {
+            return instance;
+        }
+    }
     private const string SAVE_FILE_NAME = "savedata.json";
     [SerializeField]
     private GameObject player;
 
     private SaveData save;
+    public SaveData Data
+    {
+        get
+        {
+            return save;
+        }
+    }
+    private void Awake()
+    {
+        instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -45,14 +64,16 @@ public class SaveLoad : MonoBehaviour
     private void Load()
     {
         save = SaveData.FromJson();
+        if(!save.newGame)
+        {
+            MusicManager.instance.SetVolume((float)save.musicVolume);
+            SoundManager.instance.SetGlobalVolume((float)save.sfxVolume);
+            player.GetComponent<PlayerHealth>().Health = (float)save.playerHealth;
+            player.GetComponent<ShipMovement>().Position = save.playerLocation;
+            player.GetComponent<ShipMovement>().Rotation = save.playerRotation;
+            PlayerInventory.Instance.LoadInventoryAndEquipment(save.inv_items, save.inv_equipment);
 
-        MusicManager.instance.SetVolume((float)save.musicVolume);
-        SoundManager.instance.SetGlobalVolume((float)save.sfxVolume);
-        player.GetComponent<PlayerHealth>().Health = (float)save.playerHealth;
-        player.GetComponent<ShipMovement>().Position = save.playerLocation;
-        player.GetComponent<ShipMovement>().Rotation = save.playerRotation;
-        //inv_items = PlayerInventory.Instance.items;
-        //inv_equipment = PlayerInventory.Instance.equipment;
+        }
     }
     private void OnApplicationFocus(bool focus)
     {
@@ -79,8 +100,11 @@ public class SaveLoad : MonoBehaviour
     }
     public class SaveData
     {
+
         //floats are doubles here bc litjson likes that idk
 
+        //newgame flag
+        public bool newGame;
         //settings
         public double musicVolume;
         public double sfxVolume;
@@ -95,14 +119,15 @@ public class SaveLoad : MonoBehaviour
         public List<Item> inv_equipment;
         public SaveData()
         {
-
+            newGame = true;
         }
         private SaveData(string jsonData)
         {
+            newGame = false;
             JsonReader reader = new JsonReader(jsonData);
             while(reader.Read())
             {
-                //Debug.Log("" + reader.Token + " -- " + reader.Value);
+                Debug.Log("" + reader.Token + " -- " + reader.Value);
                 if(reader.Token == JsonToken.PropertyName)
                 {
                     switch (reader.Value)
@@ -142,9 +167,52 @@ public class SaveLoad : MonoBehaviour
                             playerRotation = new Quaternion(_x, _y, _z, _w);
                             break;
                         case "items":
+                            reader.Read(); //skip to arraystart--
+                            List<Item> tempItems = new List<Item>();
+                            while(true)
+                            {
+                                reader.Read();//skip to objectstart-- or arrayend--
+                                if(reader.Token ==JsonToken.ArrayEnd)
+                                {
+                                    break;
+                                }
+                                reader.Read();//skip to propertyname--name
+                                reader.Read();//skip to string--{name}
+                                Item item = ItemDB.Instance.FindItem(reader.Value.ToString());
+                                reader.Read();//skip to propertyname--amount
+                                reader.Read();//skip to int--{amount}
+                                item.Amount = (int)reader.Value;
+                                tempItems.Add(item);
+                                reader.Read();//skip to objectend--
+
+                            }
+                            inv_items = tempItems;
                             break;
 
                         case "equipment":
+                            reader.Read(); //skip to arraystart--
+                            List<Item> tempEquipment = new List<Item>();
+                            while (true)
+                            {
+                                reader.Read();//skip to objectstart-- or arrayend--
+                                if (reader.Token == JsonToken.ArrayEnd)
+                                {
+                                    break;
+                                }
+                                reader.Read();//skip to propertyname--name
+                                reader.Read();//skip to string--{name}
+                                Item item = ItemDB.Instance.FindItem(reader.Value.ToString());
+                                reader.Read();//skip to propertyname--amount
+                                reader.Read();//skip to int--{amount}
+                                item.Amount = (int)reader.Value;
+                                reader.Read();//skip to propertyname--equipped
+                                reader.Read();//skip to bool-{equipped}
+                                item.Equipped = (bool)reader.Value;
+                                tempEquipment.Add(item);
+                                reader.Read();//skip to objectend--
+
+                            }
+                            inv_equipment = tempEquipment;
                             break;
                         default:
                             break;
@@ -154,6 +222,7 @@ public class SaveLoad : MonoBehaviour
         }
         public SaveData(SaveLoad sl)
         {
+            newGame = false;
             musicVolume = MusicManager.instance.GetVolume();
             sfxVolume = SoundManager.instance.GetGlobalVolume();
             playerHealth = sl.player.GetComponent<PlayerHealth>().Health;
@@ -196,10 +265,10 @@ public class SaveLoad : MonoBehaviour
             #region playerRotation
             writer.WritePropertyName("playerRotation");
             writer.WriteArrayStart();
-            writer.Write(playerRotation.w);
             writer.Write(playerRotation.x);
             writer.Write(playerRotation.y);
             writer.Write(playerRotation.z);
+            writer.Write(playerRotation.w);
             writer.WriteArrayEnd();
             #endregion
 
@@ -231,6 +300,8 @@ public class SaveLoad : MonoBehaviour
                 writer.Write(i.Name);
                 writer.WritePropertyName("amount");
                 writer.Write(i.Amount);
+                writer.WritePropertyName("equipped");
+                writer.Write(i.Equipped);
                 writer.WriteObjectEnd();
             }
             writer.WriteArrayEnd();
@@ -243,10 +314,16 @@ public class SaveLoad : MonoBehaviour
 
         public static SaveData FromJson()
         {
-            StreamReader sr = new StreamReader(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
-            string jsonSaveData = sr.ReadToEnd();
-            Debug.Log(jsonSaveData);
-            return new SaveData(jsonSaveData);
+            if(File.Exists(Application.persistentDataPath + "/" + SAVE_FILE_NAME)) {
+
+                StreamReader sr = new StreamReader(Application.persistentDataPath + "/" + SAVE_FILE_NAME);
+                string jsonSaveData = sr.ReadToEnd();
+                Debug.Log(jsonSaveData);
+                return new SaveData(jsonSaveData);
+            } else
+            {
+                return new SaveData();
+            }
         }
     }
 }
