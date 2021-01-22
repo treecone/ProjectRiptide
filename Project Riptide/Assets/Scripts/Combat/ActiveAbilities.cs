@@ -208,103 +208,103 @@ public class ActiveAbilities : MonoBehaviour
         switch(type)
         {
             case SkillType.SmallDash:
-                return new ActiveSkill("ShortDash", SmallDash, 8.0f, false, index);
+                return new ActiveSkill("ShortDash", SmallDash, ActiveAbilityDB.Instance.SmallDash.Cooldown, false, index);
             case SkillType.Dash:
-                return new ActiveSkill("Dash", Dash, 7.0f, false, index);
+                return new ActiveSkill("Dash", Dash, ActiveAbilityDB.Instance.Dash.Cooldown, false, index);
             case SkillType.SmallManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 5.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, ActiveAbilityDB.Instance.SmallManuverabilityBoost.Cooldown, false, index, StatusType.Turning, ActiveAbilityDB.Instance.SmallManuverabilityBoost.Duration, ActiveAbilityDB.Instance.SmallManuverabilityBoost.Level);
             case SkillType.MediumManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 6.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, ActiveAbilityDB.Instance.MediumManuverabilityBoost.Cooldown, false, index, StatusType.Turning, ActiveAbilityDB.Instance.MediumManuverabilityBoost.Duration, ActiveAbilityDB.Instance.MediumManuverabilityBoost.Level);
             case SkillType.LargeManuverabilityBoost:
-                return new StatusSkill("AgilityBoost", this, 20.0f, false, index, StatusType.Turning, 7.0f, 2.0f);
+                return new StatusSkill("AgilityBoost", this, ActiveAbilityDB.Instance.LargeManuverabilityBoost.Cooldown, false, index, StatusType.Turning, ActiveAbilityDB.Instance.LargeManuverabilityBoost.Duration, ActiveAbilityDB.Instance.LargeManuverabilityBoost.Level);
             case SkillType.BubbleField:
-                return new BubbleFieldSkill("BubbleField", this, 25.0f, false, index, 5.0f, 5.0f);
+                return new BubbleFieldSkill("BubbleField", this, ActiveAbilityDB.Instance.BubbleField.Cooldown, false, index, ActiveAbilityDB.Instance.BubbleField.FieldDuration, ActiveAbilityDB.Instance.BubbleField.EffectDuration);
             case SkillType.StrongBubbleField:
-                return new BubbleFieldSkill("BubbleField", this, 25.0f, false, index, 10.0f, 8.0f);
+                return new BubbleFieldSkill("BubbleField", this, ActiveAbilityDB.Instance.StrongBubbleField.Cooldown, false, index, ActiveAbilityDB.Instance.StrongBubbleField.FieldDuration, ActiveAbilityDB.Instance.StrongBubbleField.EffectDuration);
             case SkillType.StopMovement:
-                return new ActiveSkill("Stop", StopMovement, 10.0f, false, index);
+                return new ActiveSkill("Stop", StopMovement, ActiveAbilityDB.Instance.StopMovement.Cooldown, false, index);
             case SkillType.StrongStopMovement:
-                return new ActiveSkill("Stop", StopMovement, 5.0f, false, index);
+                return new ActiveSkill("Stop", StopMovement, ActiveAbilityDB.Instance.StrongStopMovement.Cooldown, false, index);
             case SkillType.SmallSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 2.0f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.SmallSpeedBoost.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.SmallSpeedBoost.Duration, ActiveAbilityDB.Instance.SmallSpeedBoost.Level);
             case SkillType.MediumSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 2.5f, 1.5f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.MediumSpeedBoost.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.MediumSpeedBoost.Duration, ActiveAbilityDB.Instance.MediumSpeedBoost.Level);
             case SkillType.LargeSpeedBoost:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 1.75f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.LargeSpeedBoost.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.LargeSpeedBoost.Duration, ActiveAbilityDB.Instance.LargeSpeedBoost.Level);
             case SkillType.SmallRegeneration:
-                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 10.0f / 3.0f);
+                return new StatusSkill("Regeneration", this, ActiveAbilityDB.Instance.SmallRegeneration.Cooldown, false, index, StatusType.Regeneration, ActiveAbilityDB.Instance.SmallRegeneration.Duration, ActiveAbilityDB.Instance.SmallRegeneration.Level);
             case SkillType.MediumRegeneration:
-                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 15.0f / 3.0f);
+                return new StatusSkill("Regeneration", this, ActiveAbilityDB.Instance.MediumRegeneration.Cooldown, false, index, StatusType.Regeneration, ActiveAbilityDB.Instance.MediumRegeneration.Duration, ActiveAbilityDB.Instance.MediumRegeneration.Level);
             case SkillType.LargeRegeneration:
-                return new StatusSkill("Regeneration", this, 25.0f, false, index, StatusType.Regeneration, 3.0f, 20.0f / 3.0f);
+                return new StatusSkill("Regeneration", this, ActiveAbilityDB.Instance.LargeRegeneration.Cooldown, false, index, StatusType.Regeneration, ActiveAbilityDB.Instance.LargeRegeneration.Duration, ActiveAbilityDB.Instance.LargeRegeneration.Level);
             case SkillType.SmallDefenseBoost:
-                return new ActiveSkill("DefenseBoost", SmallDefenseBoost, 20.0f, false, index);
+                return new ActiveSkill("DefenseBoost", SmallDefenseBoost, ActiveAbilityDB.Instance.SmallDefenseBoost.Cooldown, false, index);
             case SkillType.LargeDefenseBoost:
-                return new ActiveSkill("DefenseBoost", LargeDefenseBoost, 20.0f, false, index);
+                return new ActiveSkill("DefenseBoost", LargeDefenseBoost, ActiveAbilityDB.Instance.LargeDefenseBoost.Cooldown, false, index);
             case SkillType.WeakSteelMine:
-                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 10.0f);
+                return new SteelMineSkill("TripleMine", this, ActiveAbilityDB.Instance.WeakSteelMine.Cooldown, false, index, ActiveAbilityDB.Instance.WeakSteelMine.Damage);
             case SkillType.MediumSteelMine:
-                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 15.0f);
+                return new SteelMineSkill("TripleMine", this, ActiveAbilityDB.Instance.MediumSteelMine.Cooldown, false, index, ActiveAbilityDB.Instance.MediumSteelMine.Damage);
             case SkillType.StrongSteelMine:
-                return new SteelMineSkill("TripleMine", this, 25.0f, false, index, 20.0f);
+                return new SteelMineSkill("TripleMine", this, ActiveAbilityDB.Instance.StrongSteelMine.Cooldown, false, index, ActiveAbilityDB.Instance.StrongSteelMine.Damage);
             case SkillType.SmallCounter:
-                return new CounterSkill("Counter", this, 15.0f, false, index, 5f);
+                return new CounterSkill("Counter", this, ActiveAbilityDB.Instance.SmallCounter.Cooldown, false, index, ActiveAbilityDB.Instance.SmallCounter.Damage);
             case SkillType.MediumCounter:
-                return new CounterSkill("Counter", this, 15.0f, false, index, 8f);
+                return new CounterSkill("Counter", this, ActiveAbilityDB.Instance.MediumCounter.Cooldown, false, index, ActiveAbilityDB.Instance.MediumCounter.Damage);
             case SkillType.LargeCounter:
-                return new CounterSkill("Counter", this, 15.0f, false, index, 10.0f);
+                return new CounterSkill("Counter", this, ActiveAbilityDB.Instance.LargeCounter.Cooldown, false, index, ActiveAbilityDB.Instance.LargeCounter.Damage);
             case SkillType.SmallRam:
-                return new RamSkill("Ram", this, 20.0f, false, index, 20.0f, 20.0f);
+                return new RamSkill("Ram", this, ActiveAbilityDB.Instance.SmallRam.Cooldown, false, index, ActiveAbilityDB.Instance.SmallRam.Damage, ActiveAbilityDB.Instance.SmallRam.Distance);
             case SkillType.MediumRam:
-                return new RamSkill("Ram", this, 20.0f, false, index, 25.0f, 20.0f);
+                return new RamSkill("Ram", this, ActiveAbilityDB.Instance.MediumRam.Cooldown, false, index, ActiveAbilityDB.Instance.MediumRam.Damage, ActiveAbilityDB.Instance.MediumRam.Distance);
             case SkillType.LargeRam:
-                return new RamSkill("Ram", this, 20.0f, false, index, 30.0f, 25.0f);
+                return new RamSkill("Ram", this, ActiveAbilityDB.Instance.LargeRam.Cooldown, false, index, ActiveAbilityDB.Instance.LargeRam.Damage, ActiveAbilityDB.Instance.LargeRam.Distance);
             case SkillType.SmallSeaglassSpeed:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 3.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.SmallSeaglassSpeed.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.SmallSeaglassSpeed.Duration, ActiveAbilityDB.Instance.SmallSeaglassSpeed.Level);
             case SkillType.MediumSeaglassSpeed:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 4.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.MediumSeaglassSpeed.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.MediumSeaglassSpeed.Duration, ActiveAbilityDB.Instance.MediumSeaglassSpeed.Level);
             case SkillType.LargeSeaglassSpeed:
-                return new StatusSkill("SpeedBoost", this, 15.0f, false, index, StatusType.Speed, 5.0f, 2.0f);
+                return new StatusSkill("SpeedBoost", this, ActiveAbilityDB.Instance.LargeSeaglassSpeed.Cooldown, false, index, StatusType.Speed, ActiveAbilityDB.Instance.LargeSeaglassSpeed.Duration, ActiveAbilityDB.Instance.LargeSeaglassSpeed.Level);
             case SkillType.SmallInvulnerability:
-                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 1.0f, 999999.0f);
+                return new StatusSkill("Invincible", this, ActiveAbilityDB.Instance.SmallInvulnerability.Cooldown, false, index, StatusType.Armor, ActiveAbilityDB.Instance.SmallInvulnerability.Duration, ActiveAbilityDB.Instance.SmallInvulnerability.Level);
             case SkillType.MediumInvulnerability:
-                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 1.5f, 999999.0f);
+                return new StatusSkill("Invincible", this, ActiveAbilityDB.Instance.MediumInvulnerability.Cooldown, false, index, StatusType.Armor, ActiveAbilityDB.Instance.MediumInvulnerability.Duration, ActiveAbilityDB.Instance.MediumInvulnerability.Level);
             case SkillType.LargeInvulnerability:
-                return new StatusSkill("Invincible", this, 20.0f, false, index, StatusType.Armor, 2.0f, 999999.0f);
+                return new StatusSkill("Invincible", this, ActiveAbilityDB.Instance.LargeInvulnerability.Cooldown, false, index, StatusType.Armor, ActiveAbilityDB.Instance.LargeInvulnerability.Duration, ActiveAbilityDB.Instance.LargeInvulnerability.Level);
             case SkillType.SpreadShot:
-                return new SpecialShotSkill("SpreadShot", this, 15.0f, true, index, 4, 1, 0.2f, 20, 0);
+                return new SpecialShotSkill("SpreadShot", this, ActiveAbilityDB.Instance.SpreadShot.Cooldown, true, index, 4, ActiveAbilityDB.Instance.SpreadShot.Damage, 0.2f, 20, 0);
             case SkillType.RapidShotFour:
-                return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 4, 0.3f);
+                return new RapidShotSkill("RapidShot", this, ActiveAbilityDB.Instance.RapidShotFour.Cooldown, true, index, 4, 0.3f, ActiveAbilityDB.Instance.RapidShotFour.Damage);
             case SkillType.RapidShotEight:
-                return new RapidShotSkill("RapidShot", this, 20.0f, true, index, 8, 0.15f);
+                return new RapidShotSkill("RapidShot", this, ActiveAbilityDB.Instance.RapidShotEight.Cooldown, true, index, 8, 0.15f, ActiveAbilityDB.Instance.RapidShotEight.Damage);
             case SkillType.WeakBigShot:
-                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 15.0f, 2, 0, 0);
+                return new SpecialShotSkill("BigShot", this, ActiveAbilityDB.Instance.WeakBigShot.Cooldown, true, index, 0, ActiveAbilityDB.Instance.WeakBigShot.Damage, 2, 0, 0);
             case SkillType.MediumBigShot:
-                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 20.0f, 2, 0, 0);
+                return new SpecialShotSkill("BigShot", this, ActiveAbilityDB.Instance.MediumBigShot.Cooldown, true, index, 0, ActiveAbilityDB.Instance.MediumBigShot.Damage, 2, 0, 0);
             case SkillType.StrongBigShot:
-                return new SpecialShotSkill("BigShot", this, 10.0f, true, index, 0, 25.0f, 2, 0, 0);
+                return new SpecialShotSkill("BigShot", this, ActiveAbilityDB.Instance.StrongBigShot.Cooldown, true, index, 0, ActiveAbilityDB.Instance.StrongBigShot.Damage, 2, 0, 0);
             case SkillType.SmallFireworkCircle:
-                return new ActiveSkill("FireworkBlast", SmallFireworkCircle, 20.0f, false, index);
+                return new ActiveSkill("FireworkBlast", SmallFireworkCircle, ActiveAbilityDB.Instance.SmallFireworkCircle.Cooldown, false, index);
             case SkillType.LargeFireworkCircle:
-                return new ActiveSkill("FireworkBlast", LargeFireworkCircle, 20.0f, false, index);
+                return new ActiveSkill("FireworkBlast", LargeFireworkCircle, ActiveAbilityDB.Instance.LargeFireworkCircle.Cooldown, false, index);
             case SkillType.PoisonCloud:
-                return new PoisonCloudSkill("PoisonCloud", this, 20.0f, true, index, 10.0f, 3.0f);
+                return new PoisonCloudSkill("PoisonCloud", this, ActiveAbilityDB.Instance.PoisonCloud.Cooldown, true, index, ActiveAbilityDB.Instance.PoisonCloud.Level, ActiveAbilityDB.Instance.PoisonCloud.Duration);
             case SkillType.StrongPoisonCloud:
-                return new PoisonCloudSkill("PoisonCloud", this, 20.0f, true, index, 10.0f, 5.0f);
+                return new PoisonCloudSkill("PoisonCloud", this, ActiveAbilityDB.Instance.StrongPoisonCloud.Cooldown, true, index, ActiveAbilityDB.Instance.StrongPoisonCloud.Level, ActiveAbilityDB.Instance.StrongPoisonCloud.Duration);
             case SkillType.StunShot:
-                return new StunShotSkill("StunShot", this, 20.0f, true, index, 10, 4.0f);
+                return new StunShotSkill("StunShot", this, ActiveAbilityDB.Instance.StunShot.Cooldown, true, index, ActiveAbilityDB.Instance.StunShot.Damage, ActiveAbilityDB.Instance.StunShot.StunDuration);
             case SkillType.StrongStunShot:
-                return new StunShotSkill("StunShot", this, 22.0f, true, index, 14, 6.0f);
+                return new StunShotSkill("StunShot", this, ActiveAbilityDB.Instance.StrongStunShot.Cooldown, true, index, ActiveAbilityDB.Instance.StrongStunShot.Damage, ActiveAbilityDB.Instance.StrongStunShot.StunDuration);
             case SkillType.WeakFlameThrower:
-                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 10.0f);
+                return new FlamethrowerSkill("Flamethrower", this, ActiveAbilityDB.Instance.WeakFlamethrower.Cooldown, false, index, ActiveAbilityDB.Instance.WeakFlamethrower.Damage);
             case SkillType.MediumFlameThrower:
-                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 15.0f);
+                return new FlamethrowerSkill("Flamethrower", this, ActiveAbilityDB.Instance.MediumFlamethrower.Cooldown, false, index, ActiveAbilityDB.Instance.MediumFlamethrower.Damage);
             case SkillType.StrongFlameThrower:
-                return new FlamethrowerSkill("Flamethrower", this, 25.0f, false, index, 20.0f);
+                return new FlamethrowerSkill("Flamethrower", this, ActiveAbilityDB.Instance.StrongFlamethrower.Cooldown, false, index, ActiveAbilityDB.Instance.StrongFlamethrower.Damage);
             case SkillType.WeakDefenseBoost:
-                return new StatusSkill("DefenseBoost", this, 22.0f, false, index, StatusType.Armor, 3.0f, 15.0f);
+                return new StatusSkill("DefenseBoost", this, ActiveAbilityDB.Instance.WeakDefenseBoost.Cooldown, false, index, StatusType.Armor, ActiveAbilityDB.Instance.WeakDefenseBoost.Duration, ActiveAbilityDB.Instance.WeakDefenseBoost.Level);
             case SkillType.VeryWeakBigShot:
-                return new SpecialShotSkill("BigShot", this, 15.0f, true, index, 0, 8.0f, 1, 0, 0);
+                return new SpecialShotSkill("BigShot", this, ActiveAbilityDB.Instance.VeryWeakBigShot.Cooldown, true, index, 0, ActiveAbilityDB.Instance.VeryWeakBigShot.Damage, 1, 0, 0);
         }
         return null;
     }
@@ -347,8 +347,8 @@ public class ActiveAbilities : MonoBehaviour
     private bool SmallDash(Enemy enemy, ref float time)
     {
         //Applies force forward for player
-        _movementScript.ApplyConstantMoveForce(transform.forward, 8.0f, 0.5f);
-        if (time > 0.5f)
+        _movementScript.ApplyConstantMoveForce(transform.forward, ActiveAbilityDB.Instance.SmallDash.Distance, ActiveAbilityDB.Instance.SmallDash.Time);
+        if (time > ActiveAbilityDB.Instance.SmallDash.Time)
         {
             return true;
         }
@@ -364,8 +364,8 @@ public class ActiveAbilities : MonoBehaviour
     {
         //Applies force in direction of player velocity
 
-        _movementScript.ApplyConstantMoveForce(transform.forward, 10.0f, 0.5f);
-        if(time > 0.5f)
+        _movementScript.ApplyConstantMoveForce(transform.forward, ActiveAbilityDB.Instance.Dash.Distance, ActiveAbilityDB.Instance.Dash.Time);
+        if(time > ActiveAbilityDB.Instance.Dash.Time)
         {
             return true;
         }
@@ -394,8 +394,8 @@ public class ActiveAbilities : MonoBehaviour
     private bool SmallDefenseBoost(Enemy enemy)
     {
         //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Armor, 5.0f, 25.0f);
-        _playerStatusEffects.AddStatus(StatusType.Hardiness, 5.0f, 0.5f);
+        _playerStatusEffects.AddStatus(StatusType.Armor, ActiveAbilityDB.Instance.SmallDefenseBoost.Duration, ActiveAbilityDB.Instance.SmallDefenseBoost.ArmorLevel);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, ActiveAbilityDB.Instance.SmallDefenseBoost.Duration, ActiveAbilityDB.Instance.SmallDefenseBoost.HardinessLevel);
         return true;
     }
 
@@ -409,8 +409,8 @@ public class ActiveAbilities : MonoBehaviour
     private bool LargeDefenseBoost(Enemy enemy)
     {
         //Applies speed effect to player
-        _playerStatusEffects.AddStatus(StatusType.Armor, 5.0f, 50.0f);
-        _playerStatusEffects.AddStatus(StatusType.Hardiness, 5.0f, 1.0f);
+        _playerStatusEffects.AddStatus(StatusType.Armor, ActiveAbilityDB.Instance.LargeDefenseBoost.Duration, ActiveAbilityDB.Instance.LargeDefenseBoost.ArmorLevel);
+        _playerStatusEffects.AddStatus(StatusType.Hardiness, ActiveAbilityDB.Instance.LargeDefenseBoost.Duration, ActiveAbilityDB.Instance.LargeDefenseBoost.HardinessLevel);
         return true;
     }
 
@@ -424,7 +424,7 @@ public class ActiveAbilities : MonoBehaviour
         Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
         {
             {StatusType.Count, 12 },
-            {StatusType.Damage, 8 },
+            {StatusType.Damage, ActiveAbilityDB.Instance.SmallFireworkCircle.Damage },
             {StatusType.ShotSize, 0},
             {StatusType.SpreadAngle, 130},
             {StatusType.VerticalRatio, 0 }
@@ -446,7 +446,7 @@ public class ActiveAbilities : MonoBehaviour
         Dictionary<StatusType, float> shotValues = new Dictionary<StatusType, float>()
         {
             {StatusType.Count, 12 },
-            {StatusType.Damage, 12 },
+            {StatusType.Damage, ActiveAbilityDB.Instance.LargeFireworkCircle.Damage },
             {StatusType.ShotSize, 0},
             {StatusType.SpreadAngle, 130},
             {StatusType.VerticalRatio, 0 }
@@ -648,14 +648,16 @@ public class RapidShotSkill : ActiveSkill
     private int _shotCount;
     private int _maxShots;
     private float _shotDelay;
+    private float _damage;
 
-    public RapidShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, int maxShots, float shotDelay) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
+    public RapidShotSkill(string name, ActiveAbilities activeAbilities, float cooldown, bool needsEnemy, int index, int maxShots, float shotDelay, float damage) : base(name, (OvertimeSkill)null, cooldown, needsEnemy, index)
     {
         _activeAbilities = activeAbilities;
         _movementScript = activeAbilities.GetComponent<ShipMovement>();
         _maxShots = maxShots;
         _shotDelay = shotDelay;
         _timeSkill = RapidShot;
+        _damage = damage;
     }
 
     /// <summary>
@@ -679,7 +681,7 @@ public class RapidShotSkill : ActiveSkill
 
         if (time == 0)
         {
-            _activeAbilities.SpecialShot(enemy, 0, 4, 0.2f, 0, 0);
+            _activeAbilities.SpecialShot(enemy, 0, _damage, 0.2f, 0, 0);
             _shotCount += 1;
         }
 
