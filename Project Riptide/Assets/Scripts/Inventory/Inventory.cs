@@ -58,6 +58,9 @@ public class Inventory : MonoBehaviour
         {
             Debug.Log("new game found, giving starting items");
             _inventoryMethods.AddStartingItems();
+        } else
+        {
+            SaveLoad.Instance.LoadInventory();
         }
         //inventory
         inventorySlots = new List<List<InventorySlot>>();

@@ -77,7 +77,7 @@ public class ShipMovement : Physics
         base.Start();
         if(!SaveLoad.Instance.Data.newGame)
         {
-            Position = SaveLoad.Instance.Data.playerLocation;
+            SaveLoad.Instance.LoadPosition();
         }
     }
 

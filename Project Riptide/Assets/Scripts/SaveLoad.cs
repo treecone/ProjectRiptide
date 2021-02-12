@@ -71,9 +71,21 @@ public class SaveLoad : MonoBehaviour
             player.GetComponent<PlayerHealth>().Health = (float)save.playerHealth;
             player.GetComponent<ShipMovement>().Position = save.playerLocation;
             player.GetComponent<ShipMovement>().Rotation = save.playerRotation;
-            PlayerInventory.Instance.LoadInventoryAndEquipment(save.inv_items, save.inv_equipment);
+            
 
         }
+    }
+
+    public void LoadInventory()
+    {
+        Debug.Log("num items loaded: " + save.inv_items.Count + " and eq " + save.inv_equipment.Count);
+        PlayerInventory.Instance.LoadInventoryAndEquipment(save.inv_items, save.inv_equipment);
+    }
+
+    public void LoadPosition()
+    {
+        player.GetComponent<ShipMovement>().Position = save.playerLocation;
+
     }
     private void OnApplicationFocus(bool focus)
     {
@@ -87,6 +99,10 @@ public class SaveLoad : MonoBehaviour
             //save on loss of focus
             Save();
         }*/
+        if(!focus)
+        {
+            Save();
+        }
     }
 
     private void OnApplicationPause(bool pause)
@@ -127,7 +143,7 @@ public class SaveLoad : MonoBehaviour
             JsonReader reader = new JsonReader(jsonData);
             while(reader.Read())
             {
-                Debug.Log("" + reader.Token + " -- " + reader.Value);
+                //Debug.Log("" + reader.Token + " -- " + reader.Value);
                 if(reader.Token == JsonToken.PropertyName)
                 {
                     switch (reader.Value)
