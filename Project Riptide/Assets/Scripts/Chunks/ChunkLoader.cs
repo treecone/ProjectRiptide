@@ -94,8 +94,11 @@ public class ChunkLoader : MonoBehaviour
         _regionDisplay = GameObject.Find("Canvas").GetComponent<TextMeshProUGUI>();
         _currentChunkPosition = new Vector2(_yStartingChunk, _xStartingChunk);
         // Physially move the player to the center of that chunk.
-        //commented out for save/load to work - jimmie
-        //_ship.GetComponent<ShipMovement>().Position = new Vector3(_chunkSideLength * _currentChunkPosition.x - 50, 1f, _chunkSideLength * _currentChunkPosition.y - 80);
+        //added saveload check for save/load to work - jimmie
+        if(SaveLoad.Instance.Data.newGame)
+        {
+            _ship.GetComponent<ShipMovement>().Position = new Vector3(_chunkSideLength * _currentChunkPosition.x - 50, 1f, _chunkSideLength * _currentChunkPosition.y - 80);
+        }
         _enemies = new List<GameObject>();
         LoadWorld();
 
