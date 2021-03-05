@@ -37,6 +37,11 @@ public class CameraController : MonoBehaviour
             _inputManager = GameObject.Find("Canvas").GetComponent<InputManager>();
             allTargets = _inputManager.TargetEnemies;
             Debug.LogWarning("No player was assigned to the camera. Default: Player Tag. ");
+            _farthestTarget = null;
+            _offset = Vector3.Lerp(_offset, _minZoom, 0.01f);
+            _movePosition = _player.position + _offset;
+            //}
+            transform.position = _movePosition;
         }
     }
 

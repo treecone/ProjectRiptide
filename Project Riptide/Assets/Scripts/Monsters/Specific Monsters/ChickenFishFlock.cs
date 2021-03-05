@@ -110,7 +110,7 @@ public partial class ChickenFishFlock : Enemy
                 _chickenFlock[i].Cohesion(transform.position);
                 _chickenFlock[i].Seperation(closest);
                 _chickenFlock[i].MoveUpAndDown();
-                _chickenFlock[i].FlockerAnimator.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
+                _chickenFlock[i].FlockerAnimator?.SetFloat(_animParm[(int)Anim.Velocity], _chickenFlock[i].Velocity.sqrMagnitude);
             }
         }
     }
