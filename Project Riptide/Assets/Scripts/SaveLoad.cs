@@ -18,6 +18,8 @@ public class SaveLoad : MonoBehaviour
     private const string SAVE_FILE_NAME = "savedata.json";
     [SerializeField]
     private GameObject player;
+    [SerializeField]
+    private bool _forceNewSave;
 
     private SaveData save;
     public SaveData Data
@@ -63,7 +65,14 @@ public class SaveLoad : MonoBehaviour
     }
     private void Load()
     {
-        save = SaveData.FromJson();
+        if (_forceNewSave)
+        {
+            save = new SaveData();
+        }
+        else
+        {
+            save = SaveData.FromJson();
+        }
         if(!save.newGame)
         {
             MusicManager.instance.SetVolume((float)save.musicVolume);

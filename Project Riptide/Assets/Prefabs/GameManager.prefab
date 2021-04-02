@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 3325853544599996540}
   - component: {fileID: 1480690519635610825}
   - component: {fileID: 2787595829447960426}
+  - component: {fileID: 2085876752}
+  - component: {fileID: 2085876753}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -53,10 +55,10 @@ MonoBehaviour:
   _showAllChunks: 0
   _currentRegion: 
   _outOfBoundsUI: {fileID: 0}
-  _xLen: 0
-  _zLen: 0
-  _yStartingChunk: 0
-  _xStartingChunk: 0
+  _xLen: 7
+  _zLen: 7
+  _yStartingChunk: 3
+  _xStartingChunk: 4
   _worldScale: 1
 --- !u!114 &5105691598381198447
 MonoBehaviour:
@@ -111,6 +113,35 @@ MonoBehaviour:
   _textDisplayPanel: {fileID: 0}
   _textPrefab: {fileID: 2772879933312041671, guid: 90b6ce1c9a137674a83ea02c5ea3019e,
     type: 3}
+--- !u!114 &2085876752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847726073716374341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efc5ad791a26b524593ebe1d4d19d6d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mapBackground: {fileID: 0}
+  _invMethods: {fileID: 0}
+  _mapTopLeftCorner: {x: 447.98, y: -81.77588}
+  _mapCursor: {fileID: 0}
+--- !u!114 &2085876753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6847726073716374341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86b6b43ef7f8f58418ad02681c186812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
 --- !u!1 &7406812458519785190
 GameObject:
   m_ObjectHideFlags: 0

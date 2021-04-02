@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -24548,30 +24548,31 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2085876752, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: _mapBackground
+      value: 
+      objectReference: {fileID: 968499632}
+    - target: {fileID: 2085876752, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: _invMethods
+      value: 
+      objectReference: {fileID: 968499631}
+    - target: {fileID: 2085876752, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: _mapCursor
+      value: 
+      objectReference: {fileID: 968499624}
+    - target: {fileID: 2085876753, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 968499626}
     - target: {fileID: 2787595829447960426, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
       propertyPath: _textDisplayPanel
       value: 
       objectReference: {fileID: 968499629}
-    - target: {fileID: 5105691598381198447, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6847726073716374341, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374342, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: camera
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374342, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: speedSlider
-      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6847726073716374344, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
@@ -24630,148 +24631,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
-      propertyPath: ship
-      value: 
-      objectReference: {fileID: 968499626}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: showAllChunks
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: koiPrefab
-      value: 
-      objectReference: {fileID: 6999395955324292061, guid: 01c7a363ac02e6a4fafa073c227fe3d1,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: _xLen
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: _zLen
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: rockCrabPrefab
-      value: 
-      objectReference: {fileID: 4618212861017856793, guid: e33f9a6bc37da5b4c9ffa778d5f72ea4,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: seaSheepPrefab
-      value: 
-      objectReference: {fileID: 3334725380338985693, guid: baa3edbacdce21f4ba4cc26346e42e45,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: flowerFrogPrefab
-      value: 
-      objectReference: {fileID: 1357992965091392217, guid: 6e8cbc8eb5720ab42a9071686742aa49,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: pandaTreePrefab
-      value: 
-      objectReference: {fileID: 7088349654756902322, guid: 10fb968b1c4c71f41a6af939296791ac,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: clamPrefab
-      value: 
-      objectReference: {fileID: 1265968856254124121, guid: eb0454320b687fb41bb35e0226d811ab,
-        type: 3}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: currentChunkPosition.x
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: currentChunkPosition.y
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
       propertyPath: _ship
       value: 
       objectReference: {fileID: 968499626}
     - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
         type: 3}
-      propertyPath: _xStartingChunk
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: _yStartingChunk
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
       propertyPath: _outOfBoundsUI
       value: 
       objectReference: {fileID: 968499630}
-    - target: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-        type: 3}
-      propertyPath: _worldScale
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6847726073716374342, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
-    - {fileID: 6847726073716374343, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f8f6b8361e57fc44826fcc94588f7b7, type: 3}
---- !u!1 &2085876750 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6847726073716374341, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
-    type: 3}
-  m_PrefabInstance: {fileID: 2085876749}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2085876751 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6847726073716374345, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
     type: 3}
   m_PrefabInstance: {fileID: 2085876749}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2085876750}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a023ad00236b4f47b45bc47c614d7c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2085876752
+--- !u!114 &2085876752 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2085876752, guid: 6f8f6b8361e57fc44826fcc94588f7b7,
+    type: 3}
+  m_PrefabInstance: {fileID: 2085876749}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2085876750}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: efc5ad791a26b524593ebe1d4d19d6d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mapBackground: {fileID: 968499632}
-  _invMethods: {fileID: 968499631}
-  _mapTopLeftCorner: {x: 447.98, y: -81.77588}
-  _mapCursor: {fileID: 968499624}
---- !u!114 &2085876753
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2085876750}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86b6b43ef7f8f58418ad02681c186812, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 968499626}
